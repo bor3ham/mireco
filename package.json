@@ -2,9 +2,40 @@
   "name": "mireco",
   "version": "0.0.0",
   "description": "MIcro REact COmponents - extensible library for interfaces with no heavy deps",
-  "main": "index.js",
+  "main": "dist/mireco.cjs.js",
+  "module": "dist/mireco.esm.js",
   "repository": "git@github.com:bor3ham/mireco.git",
   "author": "Michael Boreham <bor3ham@gmail.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "scripts": {
+    "build-js": "rollup -c",
+    "build-css": "./node_modules/stylus/bin/stylus src/components.styl -o dist/mireco-components.css",
+    "build": "npm run build-js && npm run build-css",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "prop-types": "^15.6.2",
+    "react-textarea-autosize": "^7.0.4"
+  },
+  "peerDependencies": {
+    "prop-types": "^15.0.0 || ^16.0.0",
+    "react": "^15.0.0 || ^16.0.0",
+    "react-dom": "^15.0.0 || ^16.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "rollup": "^0.63.5",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-commonjs": "^9.1.4",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "stylus": "^0.54.5"
+  }
 }

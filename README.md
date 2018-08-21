@@ -19,6 +19,7 @@ All Mireco components should be designed with the following guidelines:
 - All components should work by default on any platform (mobile, desktop)
 - All css selectors are namespaced to avoid clashes
 - Use native browser focus, and support keyboard navigation with js events
+- All size units are in `rem` (`em` for `line-height`s relative to `font-size` permitted)
 
 Non battle-tested guidelines:
 
@@ -26,6 +27,8 @@ Non battle-tested guidelines:
   where there are multiple injection points eg. `containerStyle` and `inputStyle`
 - All inputs are rendered as `inline-block` by default, can be switched to `block` mode to fit
   width (so resizing is done by wrapping in a fixed width container)
+- All inputs are expected to be used by Mireco consumers as flat components - eg. the `Checkbox`
+  component uses a convenience `label` prop instead of requiring `<Label><Checkbox/> label</Label>`
 
 ## Components
 
