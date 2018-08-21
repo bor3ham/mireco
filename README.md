@@ -1,6 +1,6 @@
 # mireco
 
-Mireco is an extensible library for interfaces with no heavy dependencies (especially css)
+Mireco is an extensible library for user interfaces with no heavy dependencies (especially css)
 
 ## Design philosophy
 
@@ -40,6 +40,8 @@ Form inputs:
 - DateRange
 - Datetime
 - DatetimeRange
+- Month
+- CalendarMonth
 - Duration
 - Select
 
