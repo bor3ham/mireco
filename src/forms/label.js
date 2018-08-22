@@ -6,6 +6,7 @@ class Label extends React.Component {
     return (
       <label
         className={classNames('MIRECO-label', this.props.className)}
+        tabIndex={this.props.tabIndex}
       >
         {this.props.children}
       </label>
