@@ -10,6 +10,11 @@ class Textarea extends React.Component {
     maxRows: PropTypes.number,
     placeholder: PropTypes.string,
     name: PropTypes.string,
+    disabled: PropTypes.bool,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
+    onKeyDown: PropTypes.func,
+    onKeyUp: PropTypes.func,
   }
   static defaultProps = {
     minRows: 2,
@@ -30,6 +35,11 @@ class Textarea extends React.Component {
         maxRows={this.props.maxRows}
         placeholder={this.props.placeholder}
         name={this.props.name}
+        disabled={this.props.disabled}
+        onFocus={this.props.onFocus}
+        onBlur={this.props.onBlur}
+        onKeyDown={this.props.onKeyDown}
+        onKeyUp={this.props.onKeyUp}
       />
     )
   }

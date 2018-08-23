@@ -10,3 +10,7 @@ export { Checkbox }
 
 import Button from './button.js'
 export { Button }
+
+import Time from './time.js'
+export { Time }
+

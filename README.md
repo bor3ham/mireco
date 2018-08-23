@@ -36,6 +36,7 @@ Form inputs:
 
 - Button
 - Text
+- Time
 - Date
 - DateRange
 - Datetime

@@ -6,6 +6,12 @@ class Text extends React.Component {
   static propTypes = {
     placeholder: PropTypes.string,
     name: PropTypes.string,
+    disabled: PropTypes.bool,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
+    onChange: PropTypes.func,
+    onKeyDown: PropTypes.func,
+    onKeyUp: PropTypes.func,
   }
   static defaultProps = {
   }
@@ -14,7 +20,12 @@ class Text extends React.Component {
     this.inputRef = React.createRef()
   }
   handleChange = (event) => {
-    this.props.onChange(this.inputRef.current.value)
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(this.inputRef.current.value)
+    }
+  }
+  focus() {
+    this.inputRef.current && this.inputRef.current.focus()
   }
   render() {
     return (
@@ -26,6 +37,11 @@ class Text extends React.Component {
         className={classNames('MIRECO-text', this.props.className)}
         placeholder={this.props.placeholder || ''}
         name={this.props.name}
+        disabled={this.props.disabled}
+        onFocus={this.props.onFocus}
+        onBlur={this.props.onBlur}
+        onKeyDown={this.props.onKeyDown}
+        onKeyUp={this.props.onKeyUp}
       />
     )
   }

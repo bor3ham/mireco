@@ -9,13 +9,17 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build-js": "rollup -c",
+    "build-js": "./node_modules/rollup/bin/rollup -c",
+    "watch-js": "./node_modules/rollup/bin/rollup -c --watch",
     "build-css": "./node_modules/stylus/bin/stylus src/components.styl -o dist/mireco-components.css",
+    "watch-css": "./node_modules/stylus/bin/stylus src/components.styl -o dist/mireco-components.css --watch",
+    "watch": "concurrently \"npm run watch-js\" \"npm run watch-css\"",
     "build": "npm run build-js && npm run build-css",
     "prepare": "npm run build"
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "react-textarea-autosize": "^7.0.4"
   },

@@ -8,11 +8,15 @@
   font-weight: standard-font-weight
   font-size: standard-font-size
   line-height: standard-line-height
-  border: thin-line solid content-border-line
+  border: thin-line solid content-muted
   border-radius: edge-rounding
   outline: none
+  
+  &:disabled
+    background: content-faint
 
+  &:not(:disabled)
+    &:hover
+      border-color: primary-colour
   &:focus
-    box-shadow: inset 0 0 0 thin-line transparent, 0 0 0 edge-rounding content-faint-line
-  &:hover
-    border-color: primary-colour
+    box-shadow: inset 0 0 0 thin-line transparent, 0 0 0 edge-rounding content-faint
