@@ -1,6 +1,6 @@
 import React from 'react'
-import classNames from 'classnames'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 class DropdownOption extends React.Component {
   static propTypes = {
@@ -65,6 +65,7 @@ class Dropdown extends React.Component {
     disabled: PropTypes.bool,
     onSelect: PropTypes.func,
     continuousOptions: PropTypes.bool,
+    block: PropTypes.bool,
   }
   static defaultProps = {
     continuousOptions: false,

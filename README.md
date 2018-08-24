@@ -25,8 +25,13 @@ Non battle-tested guidelines:
 
 - Existing html properties such as `style` and `className` should be passed through - with prefixes
   where there are multiple injection points eg. `containerStyle` and `inputStyle`
-- All inputs are rendered as `inline-block` by default, can be switched to `block` mode to fit
-  width (so resizing is done by wrapping in a fixed width container)
+- Like normal html form inputs, all form components are rendered as `inline` or `inline-block` by
+  default. For convenience, the Mireco api provides a block version of all inputs eg.
+  `Mireco.block.checkbox` versus `Mireco.checkbox`
+- The `style` prop refers to the outermost container of a Mireco component. More specific style
+  overrides are given with explicit references eg. `inputStyle` and `labelStyle`. Where these
+  overlap and refer to the same element as the `style` prop, they are merged with the more specific
+  name taking precedent.
 - All inputs are expected to be used by Mireco consumers as flat components - eg. the `Checkbox`
   component uses a convenience `label` prop instead of requiring `<Label><Checkbox/> label</Label>`
 

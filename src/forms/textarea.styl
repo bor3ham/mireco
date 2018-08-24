@@ -1,5 +1,4 @@
 .MIRECO-textarea
-  display: inline-block
   vertical-align: middle
   width: 15rem
   padding: (standard-padding / 2)
@@ -11,7 +10,13 @@
   border: thin-line solid content-muted
   border-radius: edge-rounding
   outline: none
-  
+
+  display: inline-block
+  &.block
+    display: block
+    width: 100%
+    margin-bottom: standard-padding
+
   &:disabled
     background: content-faint
 
@@ -19,4 +24,4 @@
     &:hover
       border-color: primary-colour
   &:focus
-    box-shadow: inset 0 0 0 thin-line transparent, 0 0 0 edge-rounding content-faint
+    box-shadow: 0 0 0 thin-line transparent, 0 0 0 edge-rounding content-faint

@@ -1,5 +1,4 @@
 .MIRECO-text
-  display: inline-block
   vertical-align: middle
   width: 15rem
   font-family: standard-font-families
@@ -12,6 +11,12 @@
   outline: none
   background: content-background
 
+  display: inline-block
+  &.block
+    display: block
+    width: 100%
+    margin-bottom: standard-padding
+
   &:disabled
     background: content-faint
 
@@ -20,4 +25,4 @@
       border-color: primary-colour
 
   &:focus
-    box-shadow: inset 0 0 0 thin-line transparent, 0 0 0 edge-rounding content-faint
+    box-shadow: 0 0 0 thin-line transparent, 0 0 0 edge-rounding content-faint

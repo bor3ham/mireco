@@ -1,9 +1,16 @@
-.MIRECO-time-container
-  display: inline-block
+.MIRECO-time
   position: relative
   &:focus
     outline: none
 
-.MIRECO-time
-  width: 5rem
-  text-align: right
+  display: inline-block
+  &.block
+    display: block
+    margin-bottom: standard-padding
+    >.MIRECO-text
+      display: block
+      width: 100%
+
+  >.MIRECO-text
+    width: 5rem
+    // text-align: right

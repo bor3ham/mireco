@@ -31,6 +31,8 @@ class Checkbox extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     disabled: PropTypes.bool,
+    block: PropTypes.bool,
+    style: PropTypes.object,
   }
   constructor(props) {
     super(props)
@@ -41,11 +43,15 @@ class Checkbox extends React.Component {
   }
   render() {
     return (
-      <Label className={classNames(
-        'MIRECO-checkbox-label', {
-          disabled: this.props.disabled,
-        }
-      )}>
+      <Label
+        className={classNames(
+          'MIRECO-checkbox-label', {
+            disabled: this.props.disabled,
+            block: this.props.block,
+          }
+        )}
+        style={this.props.style}
+      >
         <input
           ref={this.inputRef}
           type="checkbox"

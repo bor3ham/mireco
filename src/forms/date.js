@@ -1,26 +1,31 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment'
 import classNames from 'classnames'
+import moment from 'moment'
 
 import Text from './text.js'
-import Dropdown from './dropdown.js'
 
-class Time extends React.Component {
+class Calendar extends React.Component {
+  render() {
+    return (
+      <div className="MIRECO-calendar">
+
+      </div>
+    )
+  }
+}
+
+class Date extends React.Component {
   static propTypes = {
     format: PropTypes.string.isRequired,
-    shortFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     value: PropTypes.number,
     disabled: PropTypes.bool,
-    step: PropTypes.number.isRequired,
     block: PropTypes.bool,
   }
   static defaultProps = {
-    format: 'HH:mm:ss',
-    shortFormat: 'HH:mm',
-    placeholder: 'hh:mm',
-    step: 30,
+    format: 'DD/MM/YYYY',
+    placeholder: 'dd/mm/yyyy',
   }
   constructor(props) {
     super(props)
@@ -29,15 +34,7 @@ class Time extends React.Component {
       textValue: this.format(props, props.value),
       inFocus: false,
     }
-    this.options = this.generateOptions(props.step)
     this.containerRef = React.createRef()
-    this.textRef = React.createRef()
-    this.dropdownRef = React.createRef()
-  }
-  componentWillUpdate = (nextProps, nextState) => {
-    if (nextProps.step != this.props.step) {
-      this.options = this.generateOptions(nextProps.step)
-    }
   }
   componentDidUpdate = (prevProps, prevState) => {
     if (prevProps.value !== this.props.value ) {
@@ -54,32 +51,12 @@ class Time extends React.Component {
       this.onBlur()
     }
   }
-  generateOptions = (step) => {
-    let options = []
-    for (var min = 0; min < 24 * 60; min += step) {
-      let ms = min * 60 * 1000
-      options.push({
-        value: ms,
-        label: moment.utc(ms).format(this.props.shortFormat),
-      })
-    }
-    return options
-  }
-  format = (props, value) => {
+  format(props, value) {
     if (value === null || typeof value === 'undefined') {
       return ''
     }
     let parsed = moment.utc(value)
-    let longFormatted = parsed.format(props.format)
-    let shortFormatted = parsed.format(props.shortFormat)
-    let longParsed = +moment.utc(longFormatted, props.format)
-    let shortParsed = +moment.utc(shortFormatted, props.format)
-    if (longParsed === shortParsed) {
-      return shortFormatted
-    }
-    else {
-      return longFormatted
-    }
+    return parsed.format(props.format)
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
@@ -88,27 +65,9 @@ class Time extends React.Component {
     }
     let parsed = moment.utc(trimmed, this.props.format)
     if (parsed.isValid()) {
-      return +parsed % +moment.duration({days: 1})
+      return +parsed
     }
     return undefined
-  }
-  handleTextChange = (newValue) => {
-    this.setState({textValue: newValue}, () => {
-      this.props.onChange(this.parseText(newValue))
-    })
-  }
-  handleTextKeyDown = (event) => {
-    this.setState({inFocus: true})
-    if (event) {
-      if (event.which === 40) {
-        event.preventDefault()
-        this.dropdownRef.current && this.dropdownRef.current.selectNext()
-      }
-      if (event.which === 38) {
-        event.preventDefault()
-        this.dropdownRef.current && this.dropdownRef.current.selectPrevious()
-      }
-    }
   }
   handleFocus = (event) => {
     this.setState({inFocus: true})
@@ -125,6 +84,26 @@ class Time extends React.Component {
       return
     }
     this.onBlur()
+  }
+  handleTextKeyDown = (event) => {
+    this.setState({inFocus: true})
+    if (event) {
+      if (event.which === 40) {
+        event.preventDefault()
+        let current = this.props.value || +moment.utc().startOf('day')
+        this.props.onChange(current + +moment.duration({days: 1}))
+      }
+      if (event.which === 38) {
+        event.preventDefault()
+        let current = this.props.value || +moment.utc().startOf('day')
+        this.props.onChange(current - +moment.duration({days: 1}))
+      }
+    }
+  }
+  handleTextChange = (newValue) => {
+    this.setState({textValue: newValue}, () => {
+      this.props.onChange(this.parseText(newValue))
+    })
   }
   onBlur = () => {
     if (typeof this.props.value === 'number') {
@@ -143,42 +122,30 @@ class Time extends React.Component {
       })
     }
   }
-  handleSelect = (value) => {
-    this.props.onChange(value)
-    this.textRef.current && this.textRef.current.focus()
-  }
   render() {
     return (
       <div
         ref={this.containerRef}
-        className={classNames("MIRECO-time", {
+        className={classNames("MIRECO-date", {
           block: this.props.block,
         })}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
       >
         <Text
-          ref={this.textRef}
           placeholder={this.props.placeholder}
-          onChange={this.handleTextChange}
           value={this.state.textValue}
+          onChange={this.handleTextChange}
           onFocus={this.handleFocus}
           disabled={this.props.disabled}
           onKeyDown={this.handleTextKeyDown}
         />
         {this.state.inFocus && !this.props.disabled && (
-          <Dropdown
-            ref={this.dropdownRef}
-            options={this.options}
-            value={this.props.value}
-            disabled={this.props.disabled}
-            onSelect={this.handleSelect}
-            continuousOptions={true}
-          />
+          <Calendar />
         )}
       </div>
     )
   }
 }
 
-export default Time
+export default Date
