@@ -1,5 +1,8 @@
 .MIRECO-date
+  position: relative
   display: inline-block
+  &:focus
+    outline: none
   &.block
     display: block
     >.MIRECO-text
@@ -9,3 +12,8 @@
 
   >.MIRECO-text
     width: 8rem
+
+  >.MIRECO-calendar
+    position: absolute
+    left: 0
+    top: 100%

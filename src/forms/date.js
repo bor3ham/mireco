@@ -3,17 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import moment from 'moment'
 
+import { Calendar } from './components'
 import Text from './text.js'
-
-class Calendar extends React.Component {
-  render() {
-    return (
-      <div className="MIRECO-calendar">
-
-      </div>
-    )
-  }
-}
 
 class Date extends React.Component {
   static propTypes = {
@@ -35,6 +26,7 @@ class Date extends React.Component {
       inFocus: false,
     }
     this.containerRef = React.createRef()
+    this.textRef = React.createRef()
   }
   componentDidUpdate = (prevProps, prevState) => {
     if (prevProps.value !== this.props.value ) {
@@ -105,6 +97,12 @@ class Date extends React.Component {
       this.props.onChange(this.parseText(newValue))
     })
   }
+  onSelectDay = (day) => {
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(day)
+    }
+    this.textRef.current && this.textRef.current.focus()
+  }
   onBlur = () => {
     if (typeof this.props.value === 'number') {
       let formatted = this.format(this.props, this.props.value)
@@ -133,6 +131,7 @@ class Date extends React.Component {
         onBlur={this.handleContainerBlur}
       >
         <Text
+          ref={this.textRef}
           placeholder={this.props.placeholder}
           value={this.state.textValue}
           onChange={this.handleTextChange}
@@ -141,7 +140,10 @@ class Date extends React.Component {
           onKeyDown={this.handleTextKeyDown}
         />
         {this.state.inFocus && !this.props.disabled && (
-          <Calendar />
+          <Calendar
+            selectDay={this.onSelectDay}
+            current={this.props.value}
+          />
         )}
       </div>
     )

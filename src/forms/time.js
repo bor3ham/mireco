@@ -4,13 +4,14 @@ import moment from 'moment'
 import classNames from 'classnames'
 
 import Text from './text.js'
-import Dropdown from './dropdown.js'
+import { Dropdown } from './components'
 
 class Time extends React.Component {
   static propTypes = {
     format: PropTypes.string.isRequired,
     shortFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
+    onChange: PropTypes.func,
     value: PropTypes.number,
     disabled: PropTypes.bool,
     step: PropTypes.number.isRequired,
@@ -94,7 +95,9 @@ class Time extends React.Component {
   }
   handleTextChange = (newValue) => {
     this.setState({textValue: newValue}, () => {
-      this.props.onChange(this.parseText(newValue))
+      if (typeof this.props.onChange === 'function') {
+        this.props.onChange(this.parseText(newValue))
+      }
     })
   }
   handleTextKeyDown = (event) => {
@@ -139,12 +142,16 @@ class Time extends React.Component {
         textValue: '',
         inFocus: false,
       }, () => {
-        this.props.onChange(null)
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(null)
+        }
       })
     }
   }
   handleSelect = (value) => {
-    this.props.onChange(value)
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(value)
+    }
     this.textRef.current && this.textRef.current.focus()
   }
   render() {

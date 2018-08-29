@@ -28,16 +28,21 @@
     display: block
     button
       margin: 0
-      padding: (standard-padding / 2) standard-padding
+      padding: (standard-padding / 2) (standard-padding)
       background: none
       color: content-foreground
       margin: 0
       display: block
       outline: none
       border: none
-      font-size: standard-font-size
+      font-size: (standard-font-size * 0.8)
       line-height: standard-line-height
       &:not(:disabled)
         cursor: pointer
-    button:not(:disabled):hover, &.current button
-      background: rgba(0, 0, 0, 0.05)
+    button:not(:disabled):hover
+      color: primary-colour
+    &.current button
+      background: primary-colour
+      color: primary-content-colour
+      &:not(:disabled):hover
+        color: primary-content-colour

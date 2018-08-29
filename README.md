@@ -6,7 +6,8 @@ Mireco is an extensible library for user interfaces with no heavy dependencies (
 
 All Mireco components should be designed with the following guidelines:
 
-- No external static file requirements - all images are inline `svg`, only use native fonts
+- No external static file requirements - all images are inline `svg` so they support css styling,
+  only use native fonts
 - All components are stateless where possible - eg. an input with a `value` prop will not have a
   `value` state, but may have a `dropdownOpen` state
 - Adhere to strict html components where reasonable for accessibilty
