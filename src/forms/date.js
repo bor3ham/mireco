@@ -83,14 +83,14 @@ class Date extends React.Component {
     if (event) {
       if (event.which === 40) {
         event.preventDefault()
-        let current = this.props.value || +moment.utc().startOf('day')
+        let current = (typeof this.props.value === 'number') ? this.props.value : +moment.utc().startOf('day')
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(current + +moment.duration({days: 1}), false)
         }
       }
       if (event.which === 38) {
         event.preventDefault()
-        let current = this.props.value || +moment.utc().startOf('day')
+        let current = (typeof this.props.value === 'number') ? this.props.value : +moment.utc().startOf('day')
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(current - +moment.duration({days: 1}), false)
         }
