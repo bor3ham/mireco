@@ -13,6 +13,7 @@ const arrowLeft = (
       <path
         style={{
           fill: 'none',
+          stroke: '#333',
           strokeWidth: '0.5291667',
           strokeLinecap: 'butt',
           strokeLinejoin: 'miter',
@@ -35,6 +36,7 @@ const arrowRight = (
       <path
         style={{
           fill: 'none',
+          stroke: '#333',
           strokeWidth: '0.5291667',
           strokeLinecap: 'butt',
           strokeLinejoin: 'miter',

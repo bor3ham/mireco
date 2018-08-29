@@ -33,9 +33,11 @@
       svg
         width: (standard-padding * 2)
         path
-          stroke: content-muted
+          // important to override inline style for no css fallback
+          stroke: content-muted !important
       &:hover svg path
-        stroke: primary-colour
+        // important to override inline style for no css fallback
+        stroke: primary-colour !important
 
   >table
     flex: 1
