@@ -11,6 +11,7 @@ class Date extends React.Component {
     format: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     value: PropTypes.number,
+    onChange: PropTypes.func,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
   }
@@ -83,23 +84,29 @@ class Date extends React.Component {
       if (event.which === 40) {
         event.preventDefault()
         let current = this.props.value || +moment.utc().startOf('day')
-        this.props.onChange(current + +moment.duration({days: 1}))
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(current + +moment.duration({days: 1}), false)
+        }
       }
       if (event.which === 38) {
         event.preventDefault()
         let current = this.props.value || +moment.utc().startOf('day')
-        this.props.onChange(current - +moment.duration({days: 1}))
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(current - +moment.duration({days: 1}), false)
+        }
       }
     }
   }
   handleTextChange = (newValue) => {
     this.setState({textValue: newValue}, () => {
-      this.props.onChange(this.parseText(newValue))
+      if (typeof this.props.onChange === 'function') {
+        this.props.onChange(this.parseText(newValue), false)
+      }
     })
   }
   onSelectDay = (day) => {
     if (typeof this.props.onChange === 'function') {
-      this.props.onChange(day)
+      this.props.onChange(day, false)
     }
     this.textRef.current && this.textRef.current.focus()
   }
@@ -109,6 +116,10 @@ class Date extends React.Component {
       this.setState({
         textValue: formatted,
         inFocus: false,
+      }, () => {
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(this.props.value, true)
+        }
       })
     }
     else {
@@ -116,7 +127,9 @@ class Date extends React.Component {
         textValue: '',
         inFocus: false,
       }, () => {
-        this.props.onChange(null)
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(null, true)
+        }
       })
     }
   }

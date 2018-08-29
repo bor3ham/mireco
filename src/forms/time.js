@@ -96,7 +96,7 @@ class Time extends React.Component {
   handleTextChange = (newValue) => {
     this.setState({textValue: newValue}, () => {
       if (typeof this.props.onChange === 'function') {
-        this.props.onChange(this.parseText(newValue))
+        this.props.onChange(this.parseText(newValue), false)
       }
     })
   }
@@ -135,6 +135,10 @@ class Time extends React.Component {
       this.setState({
         textValue: formatted,
         inFocus: false,
+      }, () => {
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(this.props.value, true)
+        }
       })
     }
     else {
@@ -143,14 +147,14 @@ class Time extends React.Component {
         inFocus: false,
       }, () => {
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(null)
+          this.props.onChange(null, true)
         }
       })
     }
   }
   handleSelect = (value) => {
     if (typeof this.props.onChange === 'function') {
-      this.props.onChange(value)
+      this.props.onChange(value, false)
     }
     this.textRef.current && this.textRef.current.focus()
   }

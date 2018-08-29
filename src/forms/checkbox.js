@@ -45,12 +45,12 @@ class Checkbox extends React.Component {
     return (
       <Label
         className={classNames(
-          'MIRECO-checkbox-label', {
+          'MIRECO-checkbox', {
             disabled: this.props.disabled,
-            block: this.props.block,
           }
         )}
         style={this.props.style}
+        block={this.props.block}
       >
         <input
           ref={this.inputRef}
@@ -58,7 +58,7 @@ class Checkbox extends React.Component {
           checked={!!this.props.value}
           onChange={this.handleChange}
           name={this.props.name}
-          className={classNames('MIRECO-checkbox', this.props.className)}
+          className={classNames('MIRECO-checkbox-input', this.props.className)}
           disabled={this.props.disabled}
         />
         {check}
