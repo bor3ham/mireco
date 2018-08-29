@@ -1,0 +1,20 @@
+.MIRECO-datetime
+  display: inline-block
+  &.block
+    display: flex
+    width: 100%
+    margin-bottom: standard-padding
+
+    >.MIRECO-date
+      flex: 4
+      >.MIRECO-text
+        display: block
+        width: 100%
+    >.MIRECO-time
+      flex: 3
+      >.MIRECO-text
+        display: block
+        width: 100%
+    >.MIRECO-date, >.MIRECO-time
+      &:first-child
+        margin-right: (standard-font-size / 3)

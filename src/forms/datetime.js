@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 import Date from './date.js'
@@ -86,7 +87,9 @@ class Datetime extends React.Component {
   render() {
     let split = this.splitValue(this.props.value)
     return (
-      <span>
+      <span className={classNames("MIRECO-datetime", {
+        block: this.props.block,
+      })}>
         <Date
           value={this.state.date}
           onChange={this.handleDateChange}
