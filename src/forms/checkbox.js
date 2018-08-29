@@ -9,6 +9,7 @@ const check = (
     width="24"
     height="24"
     viewBox="0 0 6.35 6.35"
+    style={{display: 'none'}}
   >
     <g transform="translate(0,-290.65)">
       <path
