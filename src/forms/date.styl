@@ -1,10 +1,10 @@
 .MIRECO-date
   position: relative
-  display: inline-block
   &:focus
     outline: none
   &.block
-    display: block
+    // important to override default inline display of div
+    display: block !important
     >.MIRECO-text
       display: block
       width: 100%

@@ -142,6 +142,9 @@ class Date extends React.Component {
         })}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
+        style={{
+          display: 'inline-block',
+        }}
       >
         <Text
           ref={this.textRef}

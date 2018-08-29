@@ -3,9 +3,9 @@
   &:focus
     outline: none
 
-  display: inline-block
   &.block
-    display: block
+    // important to override default inline display of div
+    display: block !important
     margin-bottom: standard-padding
     >.MIRECO-text
       display: block
