@@ -36,7 +36,7 @@ class Datetime extends React.Component {
     let timeValue = (value === null ? null : undefined)
     if (typeof this.props.value === 'number') {
       dateValue = +moment.utc(this.props.value).startOf('day')
-      timeValue = this.props.value % +moment.duration({days: 1})
+      timeValue = this.props.value - dateValue
     }
     return {
       date: dateValue,
