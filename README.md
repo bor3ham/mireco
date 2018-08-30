@@ -7,9 +7,12 @@ following guidelines:
 
 ## React Interface Philosophy
 
-- All components are stateless where possible - eg. an input with a `value` prop will not have a
-  `value` state, but may have a `dropdownOpen` state
 - All input props take the form of a singular `value` and `onChange`
+- All components are stateless where possible, more specifically:
+  - The input's `value` is completely bound, meaning it can be updated at any time by the parent and
+    the component will reflect these changes
+  - Similarly, an input should update its parent with the `onChange` as soon and frequently as
+    it can with sensible defaults that aren't destructive when they circle back as a `value` prop
 - Input's `onChange` is a function callback with the new `value` as an argument (consumers do no
   direct reading from dom elements with refs)
 - All time or duration values are handled internally as `milliseconds from epoch` in `utc`. Any
