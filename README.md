@@ -1,10 +1,13 @@
 # mireco
 
-Mireco is an extensible library for user interfaces with no heavy dependencies (especially css)
+Mireco is an extensible library for user interfaces with no heavy dependencies (especially css).
+
+It intends to be a simple example html implementation of a `React` interface that adheres to the
+following guidelines:
 
 ## Design philosophy
 
-All Mireco components should be designed with the following guidelines:
+All Mireco components should be designed with the following in mind:
 
 - No external static file requirements - all images are inline `svg` so they support css styling,
   only use native fonts
