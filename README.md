@@ -23,20 +23,21 @@ All Mireco components should be designed with the following guidelines:
 - All size units are in `rem` (except for `em` for `line-height`s relative to `font-size`)
 - All time or duration values are handled internally as `milliseconds from epoch` in `utc`. Any
   localisation should be performed in your own wrapper components.
+- Like normal html form inputs, all form components are rendered as `inline` or `inline-block` by
+  default. For convenience, the Mireco api provides a block version of all inputs eg.
+  `Mireco.block.checkbox` versus `Mireco.checkbox`
 
 Non battle-tested guidelines:
 
 - Existing html properties such as `style` and `className` should be passed through - with prefixes
   where there are multiple injection points eg. `containerStyle` and `inputStyle`
-- Like normal html form inputs, all form components are rendered as `inline` or `inline-block` by
-  default. For convenience, the Mireco api provides a block version of all inputs eg.
-  `Mireco.block.checkbox` versus `Mireco.checkbox`
 - The `style` prop refers to the outermost container of a Mireco component. More specific style
   overrides are given with explicit references eg. `inputStyle` and `labelStyle`. Where these
   overlap and refer to the same element as the `style` prop, they are merged with the more specific
   name taking precedent.
-- All inputs are expected to be used by Mireco consumers as flat components - eg. the `Checkbox`
-  component uses a convenience `label` prop instead of requiring `<Label><Checkbox/> label</Label>`
+- Form basic use cases, all inputs are expected to be used by Mireco consumers as flat components -
+  eg. the `Checkbox` component uses a convenience `label="label contents"` prop instead of requiring
+  `<Label><Checkbox/> label contents</Label>`
 
 ## Components
 
