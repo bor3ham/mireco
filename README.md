@@ -14,12 +14,12 @@ following guidelines:
   direct reading from dom elements with refs)
 - All time or duration values are handled internally as `milliseconds from epoch` in `utc`. Any
   localisation should be performed in your own wrapper components.
+- For basic use cases, all inputs are expected to be used by Mireco consumers as flat components -
+  eg. the `Checkbox` component uses a convenience `label="label contents"` prop instead of requiring
+  `<Label><Checkbox/> label contents</Label>`
 
 Non battle-tested guidelines:
 
-- Form basic use cases, all inputs are expected to be used by Mireco consumers as flat components -
-  eg. the `Checkbox` component uses a convenience `label="label contents"` prop instead of requiring
-  `<Label><Checkbox/> label contents</Label>`
 - Existing html properties such as `style` and `className` should be passed through - with prefixes
   where there are multiple injection points eg. `containerStyle` and `inputStyle`
 - The `style` prop refers to the outermost container of a Mireco component. More specific style
