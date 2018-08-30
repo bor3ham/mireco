@@ -20,7 +20,9 @@ All Mireco components should be designed with the following guidelines:
 - All components should work by default on any platform (mobile, desktop)
 - All css selectors are namespaced to avoid clashes
 - Use native browser focus, and support keyboard navigation with js events
-- All size units are in `rem` (`em` for `line-height`s relative to `font-size` permitted)
+- All size units are in `rem` (except for `em` for `line-height`s relative to `font-size`)
+- All time or duration values are handled internally as `milliseconds from epoch` in `utc`. Any
+  localisation should be performed in your own wrapper components.
 
 Non battle-tested guidelines:
 
@@ -38,21 +40,24 @@ Non battle-tested guidelines:
 
 ## Components
 
-Form inputs:
+Basic form inputs:
 
-- Button
-- Text
-- Time
-- Date
-- DateRange
-- Datetime
-- DatetimeRange
-- Month
-- CalendarMonth
-- Duration
-- Select
+- [x] Button
+- [x] Text
+- [x] Time
+- [x] Date
+- [ ] Duration
+- [ ] Select
+- [ ] Month
+- [ ] CalendarMonth
+
+Compound form inputs:
+
+- [x] Datetime
+- [ ] DateRange
+- [ ] DatetimeRange
 
 Layout:
 
-- Label
-- Modal
+- [ ] Label
+- [ ] Modal
