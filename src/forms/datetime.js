@@ -31,7 +31,28 @@ class Datetime extends React.Component {
         })
       }
       else if (typeof this.props.value === 'number') {
-        this.setState(this.splitValue(this.props.value))
+        let split = this.splitValue(this.props.value)
+        this.setState(prevState => {
+          let updates = {}
+          // check if the date value WHEN DEFAULTED is different
+          let fallbackStateDate = +moment.utc().startOf('day')
+          if (typeof prevState.date === 'number') {
+            fallbackStateDate = prevState.date
+          }
+          if (split.date !== fallbackStateDate) {
+            updates.date = split.date
+          }
+          // check if the time value WHEN DEFAULTED is different
+          let fallbackStateTime = 0
+          if (typeof prevState.time === 'number') {
+            fallbackStateTime = prevState.time
+          }
+          if (split.time !== fallbackStateTime) {
+            updates.time = split.time
+          }
+          return updates
+        })
+        // this.setState(this.splitValue(this.props.value))
       }
     }
   }
@@ -69,7 +90,7 @@ class Datetime extends React.Component {
       if (this.state.date === null && this.state.time === null) {
         value = null
       }
-      else if (typeof this.state.date === 'number' && typeof this.state.time === 'number') {
+      else if (typeof this.state.date === 'number' || typeof this.state.time === 'number') {
         value = this.combinedStateValue()
       }
       this.props.onChange(value, false)
@@ -89,15 +110,20 @@ class Datetime extends React.Component {
     this.onBlur()
   }
   onBlur = () => {
-    if (typeof this.state.date === 'number' || typeof this.state.time === 'number') {
-      let value = this.combinedStateValue()
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(value, true)
-      }
-    }
-    else {
-      this.props.onChange(null, true)
-    }
+    // delay to ensure that child onBlur's complete first
+    window.setTimeout(() => {
+      this.setState(this.splitValue(this.props.value), () => {
+        if (typeof this.state.date === 'number' || typeof this.state.time === 'number') {
+          let value = this.combinedStateValue()
+          if (typeof this.props.onChange === 'function') {
+            this.props.onChange(value, true)
+          }
+        }
+        else {
+          this.props.onChange(null, true)
+        }
+      })
+    }, 0)
   }
   render() {
     let split = this.splitValue(this.props.value)
