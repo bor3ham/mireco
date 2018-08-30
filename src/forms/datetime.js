@@ -34,25 +34,18 @@ class Datetime extends React.Component {
         let split = this.splitValue(this.props.value)
         this.setState(prevState => {
           let updates = {}
-          // check if the date value WHEN DEFAULTED is different
-          let fallbackStateDate = +moment.utc().startOf('day')
-          if (typeof prevState.date === 'number') {
-            fallbackStateDate = prevState.date
-          }
-          if (split.date !== fallbackStateDate) {
+          // check if the date value is different
+          let prevFallbackDate = this.fallbackDate(prevState.date)
+          if (split.date !== prevFallbackDate) {
             updates.date = split.date
           }
-          // check if the time value WHEN DEFAULTED is different
-          let fallbackStateTime = 0
-          if (typeof prevState.time === 'number') {
-            fallbackStateTime = prevState.time
-          }
-          if (split.time !== fallbackStateTime) {
+          // check if the time value is different
+          let prevFallbackTime = this.fallbackTime(prevState.time)
+          if (split.time !== prevFallbackTime) {
             updates.time = split.time
           }
           return updates
         })
-        // this.setState(this.splitValue(this.props.value))
       }
     }
   }
@@ -68,14 +61,23 @@ class Datetime extends React.Component {
       time: timeValue,
     }
   }
-  combinedStateValue = () => {
+  fallbackDate = (dateValue) => {
     let value = +moment.utc().startOf('day')
-    if (typeof this.state.date === 'number') {
-      value = this.state.date
+    if (typeof dateValue === 'number') {
+      value = dateValue
     }
-    if (typeof this.state.time === 'number') {
-      value += this.state.time
+    return value
+  }
+  fallbackTime = (timeValue) => {
+    let value = 0
+    if (typeof timeValue === 'number') {
+      value = timeValue
     }
+    return value
+  }
+  combinedStateValue = () => {
+    let value = this.fallbackDate(this.state.date)
+    value += this.fallbackTime(this.state.time)
     return value
   }
   handleDateChange = (newDate, wasBlur) => {
