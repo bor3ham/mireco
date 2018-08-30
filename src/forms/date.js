@@ -14,10 +14,12 @@ class Date extends React.Component {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
+    autoErase: PropTypes.bool,
   }
   static defaultProps = {
     format: 'DD/MM/YYYY',
     placeholder: 'dd/mm/yyyy',
+    autoErase: true,
   }
   constructor(props) {
     super(props)
@@ -123,12 +125,22 @@ class Date extends React.Component {
       })
     }
     else {
-      this.setState({
-        textValue: '',
-        inFocus: false,
+      this.setState(prevState => {
+        let updates = {
+          inFocus: false,
+        }
+        if (this.props.autoErase) {
+          updates.textValue = ''
+        }
+        return updates
       }, () => {
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(null, true)
+          if (this.props.autoErase) {
+            this.props.onChange(null, true)
+          }
+          else {
+            this.props.onChange(this.props.value, true)
+          }
         }
       })
     }

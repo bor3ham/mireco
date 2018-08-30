@@ -16,12 +16,14 @@ class Time extends React.Component {
     disabled: PropTypes.bool,
     step: PropTypes.number.isRequired,
     block: PropTypes.bool,
+    autoErase: PropTypes.bool,
   }
   static defaultProps = {
     format: 'HH:mm:ss',
     shortFormat: 'HH:mm',
     placeholder: 'hh:mm',
     step: 30,
+    autoErase: true,
   }
   constructor(props) {
     super(props)
@@ -142,12 +144,22 @@ class Time extends React.Component {
       })
     }
     else {
-      this.setState({
-        textValue: '',
-        inFocus: false,
+      this.setState(prevState => {
+        let updates = {
+          inFocus: false,
+        }
+        if (this.props.autoErase) {
+          updates.textValue = ''
+        }
+        return updates
       }, () => {
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(null, true)
+          if (this.props.autoErase) {
+            this.props.onChange(null, true)
+          }
+          else {
+            this.props.onChange(this.props.value, true)
+          }
         }
       })
     }
