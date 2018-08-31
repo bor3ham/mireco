@@ -13,5 +13,7 @@ export { Button }
 
 import Time from './time.js'
 import Date from './date.js'
+import Duration from './duration.js'
 import Datetime from './datetime.js'
-export { Time, Date, Datetime }
+import DatetimeRange from './datetime-range.js'
+export { Time, Date, Duration, Datetime, DatetimeRange }

@@ -48,6 +48,30 @@ All Mireco components should be designed with the following in mind:
   default. For convenience, the Mireco api provides a block version of all inputs eg.
   `Mireco.block.checkbox` versus `Mireco.checkbox`
 
+## Installation
+
+Install the package from npm:
+
+```
+npm install mireco
+```
+
+Make sure your html document is encoded properly (required by `parse-duration` micro symbol):
+
+```
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+</html>
+```
+
+Add the component stylesheet:
+
+```
+<link rel="stylesheet" href="node_modules/mireco/dist/mireco-components.css" />
+```
+
 ## Components
 
 Basic form inputs:

@@ -17,6 +17,7 @@ class Date extends React.Component {
     autoErase: PropTypes.bool,
   }
   static defaultProps = {
+    block: false,
     format: 'DD/MM/YYYY',
     placeholder: 'dd/mm/yyyy',
     autoErase: true,
@@ -149,7 +150,7 @@ class Date extends React.Component {
     return (
       <div
         ref={this.containerRef}
-        className={classNames("MIRECO-date", {
+        className={classNames('MIRECO-date', {
           block: this.props.block,
         })}
         tabIndex={-1}

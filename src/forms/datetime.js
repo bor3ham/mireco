@@ -14,6 +14,7 @@ class Datetime extends React.Component {
     block: PropTypes.bool,
   }
   static defaultProps = {
+    block: false,
   }
   constructor(props) {
     super(props)
@@ -146,7 +147,7 @@ class Datetime extends React.Component {
           onChange={this.handleDateChange}
           disabled={this.props.disabled}
         />
-        {' '}
+        {!this.props.block && (<span>&nbsp;</span>)}
         <Time
           value={this.state.time}
           onChange={this.handleTimeChange}
