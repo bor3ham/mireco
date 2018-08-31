@@ -22,7 +22,7 @@ class Duration extends React.Component {
     defaultTimeUnit: 'hours',
     placeholder: 'Duration',
     incrementUnits: [
-      1000, // seconds
+      // 1000, // seconds
       60 * 1000, // minutes
       60 * 60 * 1000, // hours
       24 * 60 * 60 * 1000, // days

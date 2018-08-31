@@ -80,7 +80,7 @@ Basic form inputs:
 - [x] Text
 - [x] Time
 - [x] Date
-- [ ] Duration
+- [x] Duration
 - [ ] Select
 - [ ] Month
 - [ ] CalendarMonth
