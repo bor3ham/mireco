@@ -3,7 +3,7 @@
 Mireco is an extensible library for user interfaces with no heavy dependencies (especially css).
 
 >"The golden spoon of date pickers"
->- Luke Hodkinson
+>-- _Luke Hodkinson_
 
 It intends to be a simple example html implementation of a `React` interface that adheres to the
 following guidelines:
@@ -108,8 +108,8 @@ Having properly bound components in React is tricky when the components that the
 interact with are required to sometimes be in invalid states.
 
 The best example of this is a date selector with a text input component - if a user is typing in a
-value of '31/3/2012', between each keystroke the value when parsed could either be completely
-different ('31/3' would resolve to the current year) or invalid ('31' would be of the current month
+value of `31/3/2012`, between each keystroke the value when parsed could either be completely
+different (`31/3` would resolve to the current year) or invalid (`31` would be of the current month
 which does not necessarily contain 31 days).
 
 Most packages get around this with a variety of strategies that have their own drawbacks:
