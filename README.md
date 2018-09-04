@@ -131,7 +131,7 @@ All Mireco components should instead follow this flow of value update:
     is reported when the value can be parsed with the most generous rules possible (does not have to
     be perfect)
 - When a Mireco component receives a new `prop value`, it is compared to the current `various state
-  contents`:
+  contents`. If it has changed:
   - If the `prop value` is set to `undefined`, do absolutely nothing
   - If the `prop value` is set to a `true value` or `null`:
     - If this is different from the current parsed `various state contents`:
