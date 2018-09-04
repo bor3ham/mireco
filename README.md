@@ -2,8 +2,9 @@
 
 Mireco is an extensible library for user interfaces with no heavy dependencies (especially css).
 
->"The golden spoon of date pickers"
->-- _Luke Hodkinson_
+>_"The golden spoon of date pickers"_
+>
+>-- Luke Hodkinson
 
 It intends to be a simple example html implementation of a `React` interface that adheres to the
 following guidelines:
