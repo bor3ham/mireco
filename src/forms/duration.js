@@ -16,6 +16,7 @@ class Duration extends React.Component {
     placeholder: PropTypes.string,
     incrementUnits: PropTypes.arrayOf(PropTypes.number),
     humanizeUnits: PropTypes.arrayOf(PropTypes.string),
+    disabled: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
@@ -36,6 +37,7 @@ class Duration extends React.Component {
       'm',
       's',
     ],
+    disabled: false,
   }
   constructor(props) {
     super(props)
@@ -144,6 +146,7 @@ class Duration extends React.Component {
         block={this.props.block}
         placeholder={this.props.placeholder}
         onKeyDown={this.handleTextKeyDown}
+        disabled={this.props.disabled}
       />
     )
   }
