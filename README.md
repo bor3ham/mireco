@@ -15,8 +15,8 @@ following guidelines:
     it can with sensible defaults that aren't destructive when they circle back as a `value` prop
 - Input's `onChange` is a function callback with the new `value` as an argument (consumers do no
   direct reading from dom elements with refs)
-- All time or duration values are handled internally as `milliseconds from epoch` in `utc`. Any
-  localisation should be performed in your own wrapper components.
+- All time values are handled internally as `milliseconds from utc epoch`. Any localisation should
+  be performed in your own wrapper components. Similarly, all durations are in `milliseconds`
 - For basic use cases, all inputs are expected to be used by Mireco consumers as flat components -
   eg. the `Checkbox` component uses a convenience `label="label contents"` prop instead of requiring
   `<Label><Checkbox/> label contents</Label>`
