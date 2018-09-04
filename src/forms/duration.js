@@ -66,7 +66,7 @@ class Duration extends React.Component {
       trimmed += ` ${this.props.defaultTimeUnit}`
     }
 
-    let parsed = parseDuration(trimmed)
+    let parsed = Math.floor(parseDuration(trimmed))
     return parsed
   }
   formatValue = (value) => {
