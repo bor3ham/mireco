@@ -172,6 +172,7 @@ class DatetimeRange extends React.Component {
           value={split.end}
           onChange={this.handleEndChange}
           disabled={this.props.disabled}
+          timeFirst={true}
         />
         {' '}
         <Duration

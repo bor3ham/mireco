@@ -12,9 +12,11 @@ class Datetime extends React.Component {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
+    timeFirst: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
+    timeFirst: false,
   }
   constructor(props) {
     super(props)
@@ -130,6 +132,28 @@ class Datetime extends React.Component {
   }
   render() {
     let split = this.splitValue(this.props.value)
+    let date = (
+      <Date
+        value={this.state.date}
+        onChange={this.handleDateChange}
+        disabled={this.props.disabled}
+      />
+    )
+    let time = (
+      <Time
+        value={this.state.time}
+        onChange={this.handleTimeChange}
+        disabled={this.props.disabled}
+      />
+    )
+
+    let first = date
+    let second = time
+    if (this.props.timeFirst) {
+      first = time
+      second = date
+    }
+
     return (
       <div
         ref={this.containerRef}
@@ -142,17 +166,9 @@ class Datetime extends React.Component {
           display: 'inline-block',
         }}
       >
-        <Date
-          value={this.state.date}
-          onChange={this.handleDateChange}
-          disabled={this.props.disabled}
-        />
+        {first}
         {!this.props.block && (<span>&nbsp;</span>)}
-        <Time
-          value={this.state.time}
-          onChange={this.handleTimeChange}
-          disabled={this.props.disabled}
-        />
+        {second}
       </div>
     )
   }
