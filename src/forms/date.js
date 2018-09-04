@@ -9,6 +9,7 @@ import Text from './text.js'
 class Date extends React.Component {
   static propTypes = {
     format: PropTypes.string.isRequired,
+    displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     value: PropTypes.number,
     onChange: PropTypes.func,
@@ -19,6 +20,7 @@ class Date extends React.Component {
   static defaultProps = {
     block: false,
     format: 'DD/MM/YYYY',
+    displayFormat: 'Do MMM YYYY',
     placeholder: 'dd/mm/yyyy',
     autoErase: true,
   }
@@ -52,14 +54,14 @@ class Date extends React.Component {
       return ''
     }
     let parsed = moment.utc(value)
-    return parsed.format(props.format)
+    return parsed.format(props.displayFormat)
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
     if (trimmed.length === 0) {
       return null
     }
-    let parsed = moment.utc(trimmed, this.props.format)
+    let parsed = moment.utc(trimmed, [this.props.format, this.props.displayFormat])
     if (parsed.isValid()) {
       return +parsed
     }
