@@ -2,17 +2,17 @@
 
 Mireco is an extensible library for user interfaces with no heavy dependencies (especially css).
 
+>"The golden spoon of date pickers"
+>- Luke Hodkinson
+
 It intends to be a simple example html implementation of a `React` interface that adheres to the
 following guidelines:
 
 ## React Interface Philosophy
 
 - All input props take the form of a singular `value` and `onChange`
-- All components are stateless where possible, more specifically:
-  - The input's `value` is completely bound, meaning it can be updated at any time by the parent and
-    the component will reflect these changes
-  - Similarly, an input should update its parent with the `onChange` as soon and frequently as
-    it can with sensible defaults that aren't destructive when they circle back as a `value` prop
+- All components are stateless where possible, following the
+  [Tri-State Value System](#tri-state-values)
 - Input's `onChange` is a function callback with the new `value` as an argument (consumers do no
   direct reading from dom elements with refs)
 - All time values are handled internally as `milliseconds from utc epoch`. Any localisation should
@@ -101,3 +101,49 @@ Layout:
 
 - [ ] Label
 - [ ] Modal
+
+## Tri-State Values
+
+Having properly bound components in React is tricky when the components that the user needs to
+interact with are required to sometimes be in invalid states.
+
+The best example of this is a date selector with a text input component - if a user is typing in a
+value of '31/3/2012', between each keystroke the value when parsed could either be completely
+different ('31/3' would resolve to the current year) or invalid ('31' would be of the current month
+which does not necessarily contain 31 days).
+
+Most packages get around this with a variety of strategies that have their own drawbacks:
+
+- Requiring some kind of "commitment" action to the value, for instance typing only highlights a day
+  on a calendar and the user must click the day to select it (clunky to use and does not report
+  new values to higher components early enough to integrate well)
+- Completely detaching the state from its value prop (so the parent cannot change the value whilst
+  the user is interacting with the widget)
+
+All Mireco components should instead follow this flow of value update:
+
+- The component _always_ updates its parent when any part of it is changed:
+  - A value of `undefined` means that a `true value` cannot in any way be understood from the
+    `various state contents`
+  - A value of `null` means that the value is explicitly set to nothing
+  - A `true value` (of whatever data type is appropriate for your input, eg. milliseconds integer)
+    is reported when the value can be parsed with the most generous rules possible (does not have to
+    be perfect)
+- When a Mireco component receives a new `prop value`, it is compared to the current `various state
+  contents`:
+  - If the `prop value` is set to `undefined`, do absolutely nothing
+  - If the `prop value` is set to a `true value` or `null`:
+    - If this is different from the current parsed `various state contents`:
+      - Update the `various state contents` to a perfectly formatted representation of the new
+        `prop value`, as this means the parent has explicitly overridden our value
+    - Otherwise, do nothing as this update was likely initiated by this component itself
+- When a Mireco component is blurred:
+  - If the `prop value` is set to a `true value`:
+    - Set the `various state contents` to a perfectly formatted representation of the `prop value`
+  - Otherwise:
+    - Reset the `various state contents` to defaults
+
+Following this flow, self-initiated updates of value are non destructive to the current state whilst
+still allowing the parent to change its value. Also, as `undefined` and `null` are often
+interchangeable you can simply take the given `value` `onChange` without any validation or workflow
+in Mireco consumers.
