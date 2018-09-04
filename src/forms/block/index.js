@@ -15,4 +15,5 @@ import Time from './time.js'
 import Date from './date.js'
 import Datetime from './datetime.js'
 import DatetimeRange from './datetime-range.js'
-export { Time, Date, Datetime, DatetimeRange }
+import Duration from './duration.js'
+export { Time, Date, Datetime, DatetimeRange, Duration }

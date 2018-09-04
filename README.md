@@ -48,6 +48,12 @@ All Mireco components should be designed with the following in mind:
   default. For convenience, the Mireco api provides a block version of all inputs eg.
   `Mireco.block.checkbox` versus `Mireco.checkbox`
 
+Non battle-tested guidelines:
+
+- Block-style components that need to restructure based on width should do so relative to their
+  parent size (eg. with `flex-wrap`ing and `min-width`), as opposed to with screen sized media
+  queries
+
 ## Installation
 
 Install the package from npm:
@@ -89,7 +95,7 @@ Compound form inputs:
 
 - [x] Datetime
 - [ ] DateRange
-- [ ] DatetimeRange
+- [x] DatetimeRange
 
 Layout:
 

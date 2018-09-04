@@ -155,7 +155,7 @@ class DatetimeRange extends React.Component {
     let split = this.splitValue(this.props.value)
     return (
       <div
-        className={classNames('MIRECO_datetime-range', {
+        className={classNames('MIRECO-datetime-range', {
           block: this.props.block,
         })}
         style={{
@@ -166,15 +166,19 @@ class DatetimeRange extends React.Component {
           value={split.start}
           onChange={this.handleStartChange}
           disabled={this.props.disabled}
+          block={this.props.block}
+          className="start"
         />
-        {' to '}
+        <span className="to">{' to '}</span>
         <Datetime
           value={split.end}
           onChange={this.handleEndChange}
           disabled={this.props.disabled}
           timeFirst={true}
+          block={this.props.block}
+          className="end"
         />
-        {' '}
+        <span className="duration-spacer">{' '}</span>
         <Duration
           value={this.state.duration}
           onChange={this.handleDurationChange}

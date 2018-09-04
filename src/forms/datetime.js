@@ -137,6 +137,7 @@ class Datetime extends React.Component {
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
+        rightHang={this.props.timeFirst}
       />
     )
     let time = (
@@ -159,7 +160,7 @@ class Datetime extends React.Component {
         ref={this.containerRef}
         className={classNames('MIRECO-datetime', {
           block: this.props.block,
-        })}
+        }, this.props.className)}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
         style={{

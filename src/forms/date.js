@@ -16,6 +16,7 @@ class Date extends React.Component {
     disabled: PropTypes.bool,
     block: PropTypes.bool,
     autoErase: PropTypes.bool,
+    rightHang: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
@@ -23,6 +24,7 @@ class Date extends React.Component {
     displayFormat: 'Do MMM YYYY',
     placeholder: 'dd/mm/yyyy',
     autoErase: true,
+    rightHang: false,
   }
   constructor(props) {
     super(props)
@@ -154,6 +156,7 @@ class Date extends React.Component {
         ref={this.containerRef}
         className={classNames('MIRECO-date', {
           block: this.props.block,
+          'right-hang': this.props.rightHang,
         })}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}

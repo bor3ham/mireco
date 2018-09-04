@@ -1,0 +1,20 @@
+.MIRECO-datetime-range
+  &.block
+    // important to override default inline display of div
+    display: flex !important
+    flex-wrap: wrap
+    align-items: center
+    margin-right: -(standard-font-size / 3)
+
+    >.MIRECO-datetime, span.to, >.MIRECO-text.duration
+      flex: 1
+      min-width: 0
+      margin-bottom: (standard-font-size / 3)
+      margin-right: (standard-font-size / 3)
+    >.MIRECO-datetime, >.MIRECO-text.duration
+      min-width: 15rem
+    >.MIRECO-datetime
+      max-width: 20rem
+    span.to
+      flex-grow: 0
+      min-width: auto

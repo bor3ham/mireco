@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import humanizeDuration from 'humanize-duration'
 import parseDuration from 'parse-duration'
 // simplify large units rather than exact
@@ -147,6 +148,7 @@ class Duration extends React.Component {
         placeholder={this.props.placeholder}
         onKeyDown={this.handleTextKeyDown}
         disabled={this.props.disabled}
+        className={classNames('duration', this.props.className)}
       />
     )
   }
