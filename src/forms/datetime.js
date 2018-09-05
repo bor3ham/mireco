@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 
 import Date from './date.js'
 import Time from './time.js'
+import { ClearButton } from './components'
 
 class Datetime extends React.Component {
   static propTypes = {
@@ -13,10 +14,12 @@ class Datetime extends React.Component {
     disabled: PropTypes.bool,
     block: PropTypes.bool,
     timeFirst: PropTypes.bool,
+    showClear: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
     timeFirst: false,
+    showClear: false,
   }
   constructor(props) {
     super(props)
@@ -114,6 +117,11 @@ class Datetime extends React.Component {
     }
     this.onBlur()
   }
+  handleClearClick = (event) => {
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(null, true)
+    }
+  }
   onBlur = () => {
     // delay to ensure that child onBlur's complete first
     window.setTimeout(() => {
@@ -154,6 +162,12 @@ class Datetime extends React.Component {
       first = time
       second = date
     }
+    let clear
+    if (this.props.showClear) {
+      clear = (
+        <ClearButton onClick={this.handleClearClick} />
+      )
+    }
 
     return (
       <div
@@ -170,6 +184,8 @@ class Datetime extends React.Component {
         {first}
         {!this.props.block && (<span>&nbsp;</span>)}
         {second}
+        {!this.props.block && this.props.showClear && (<span>&nbsp;</span>)}
+        {clear}
       </div>
     )
   }
