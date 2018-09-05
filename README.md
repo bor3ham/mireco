@@ -2,7 +2,7 @@
 
 Mireco is an extensible library for user interfaces with no heavy dependencies (especially css).
 
->_"The golden spoon of date pickers"_
+>_"The golden teaspoon of date pickers"_
 >
 >\- Luke Hodkinson
 
