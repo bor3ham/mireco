@@ -48,6 +48,10 @@ const cross = (
 class ClearButton extends React.Component {
   static propTypes = {
     onClick: PropTypes.func,
+    disabled: PropTypes.bool,
+  }
+  static defaultProps = {
+    disabled: false,
   }
   render() {
     return (
@@ -55,6 +59,7 @@ class ClearButton extends React.Component {
         tabIndex={-1}
         onClick={this.props.onClick}
         className="MIRECO-clear-button"
+        disabled={this.props.disabled}
       >
         &nbsp;
         {cross}

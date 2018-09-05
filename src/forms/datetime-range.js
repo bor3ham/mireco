@@ -203,7 +203,10 @@ class DatetimeRange extends React.Component {
           <span>{' '}</span>
         )}
         {this.props.showClear && (
-          <ClearButton onClick={this.handleClearClick} />
+          <ClearButton
+            onClick={this.handleClearClick}
+            disabled={this.props.disabled}
+          />
         )}
       </div>
     )

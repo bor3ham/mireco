@@ -9,10 +9,12 @@ class Button extends React.Component {
     name: PropTypes.string,
     block: PropTypes.bool,
     tabIndex: PropTypes.number,
+    disabled: PropTypes.bool,
   }
   static defaultProps = {
     type: 'button',
     tabIndex: 0,
+    disabled: false,
   }
   render() {
     return (
@@ -25,6 +27,7 @@ class Button extends React.Component {
         name={this.props.name}
         value={this.props.value}
         tabIndex={this.props.tabIndex}
+        disabled={this.props.disabled}
       >
         {this.props.children}
       </button>
