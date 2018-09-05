@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 
 import Datetime from './datetime.js'
 import Duration from './duration.js'
+import { ClearButton } from './components'
 
 class DatetimeRange extends React.Component {
   static propTypes = {
@@ -17,6 +18,7 @@ class DatetimeRange extends React.Component {
     disabled: PropTypes.bool,
     defaultDuration: PropTypes.number.isRequired,
     getDefaultStart: PropTypes.func.isRequired,
+    showClear: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
@@ -25,6 +27,7 @@ class DatetimeRange extends React.Component {
     getDefaultStart: function() {
       return +moment.utc().startOf('hour').add({hours: 1})
     },
+    showClear: true,
   }
   constructor(props) {
     super(props)
@@ -151,6 +154,14 @@ class DatetimeRange extends React.Component {
       }
     })
   }
+  handleClearClick = () => {
+    if (typeof this.props.onChange == 'function') {
+      this.props.onChange({
+        start: null,
+        end: null,
+      })
+    }
+  }
   render() {
     let split = this.splitValue(this.props.value)
     return (
@@ -168,6 +179,7 @@ class DatetimeRange extends React.Component {
           disabled={this.props.disabled}
           block={this.props.block}
           className="start"
+          showClear={false}
         />
         <span className="to">{' to '}</span>
         <Datetime
@@ -177,13 +189,22 @@ class DatetimeRange extends React.Component {
           timeFirst={true}
           block={this.props.block}
           className="end"
+          showClear={false}
         />
-        <span className="duration-spacer">{' '}</span>
+        {!this.props.block && (
+          <span>{' '}</span>
+        )}
         <Duration
           value={this.state.duration}
           onChange={this.handleDurationChange}
           disabled={this.props.disabled}
         />
+        {!this.props.block && this.props.showClear && (
+          <span>{' '}</span>
+        )}
+        {this.props.showClear && (
+          <ClearButton onClick={this.handleClearClick} />
+        )}
       </div>
     )
   }

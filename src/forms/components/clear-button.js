@@ -56,7 +56,9 @@ class ClearButton extends React.Component {
         onClick={this.props.onClick}
         className="MIRECO-clear-button"
       >
+        &nbsp;
         {cross}
+        &nbsp;
       </Button>
     )
   }

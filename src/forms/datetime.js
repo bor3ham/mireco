@@ -19,7 +19,7 @@ class Datetime extends React.Component {
   static defaultProps = {
     block: false,
     timeFirst: false,
-    showClear: false,
+    showClear: true,
   }
   constructor(props) {
     super(props)
@@ -162,12 +162,6 @@ class Datetime extends React.Component {
       first = time
       second = date
     }
-    let clear
-    if (this.props.showClear) {
-      clear = (
-        <ClearButton onClick={this.handleClearClick} />
-      )
-    }
 
     return (
       <div
@@ -184,8 +178,12 @@ class Datetime extends React.Component {
         {first}
         {!this.props.block && (<span>&nbsp;</span>)}
         {second}
-        {!this.props.block && this.props.showClear && (<span>&nbsp;</span>)}
-        {clear}
+        {!this.props.block && this.props.showClear && (
+          <span>&nbsp;</span>
+        )}
+        {this.props.showClear && (
+          <ClearButton onClick={this.handleClearClick} />
+        )}
       </div>
     )
   }

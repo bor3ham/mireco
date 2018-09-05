@@ -1,4 +1,6 @@
 .MIRECO-datetime-range
+  >.MIRECO-clear-button
+    vertical-align: middle
   &.block
     // important to override default inline display of div
     display: flex !important
@@ -6,11 +8,13 @@
     align-items: center
     margin-right: -(standard-font-size / 3)
 
-    >.MIRECO-datetime, span.to, >.MIRECO-text.duration
+    >.MIRECO-datetime, span.to, >.MIRECO-text.duration, >.MIRECO-clear-button
       flex: 1
       min-width: 0
       margin-bottom: (standard-font-size / 3)
       margin-right: (standard-font-size / 3)
+    >.MIRECO-clear-button
+      flex: none
     >.MIRECO-datetime, >.MIRECO-text.duration
       min-width: 15rem
     >.MIRECO-datetime
