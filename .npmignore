@@ -1,0 +1,4 @@
+src/**/*.js
+src/**/*.babelrc
+demo/**/*
+rollup.config.js
