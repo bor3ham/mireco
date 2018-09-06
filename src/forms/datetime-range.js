@@ -197,6 +197,7 @@ class DatetimeRange extends React.Component {
           block={this.props.block}
           className="end"
           showClear={false}
+          relativeTo={split.start}
         />
         {!this.props.block && (
           <span>{' '}</span>

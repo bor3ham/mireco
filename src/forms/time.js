@@ -1,14 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
+import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 
 import Text from './text.js'
 import { Dropdown } from './components'
 
+const shortHumanizeDur = humanizeDuration.humanizer({
+  language: 'shortEn',
+  languages: {
+    shortEn: {
+      h: () => 'h',
+      m: () => 'm',
+    },
+  },
+})
+
 class Time extends React.Component {
   static propTypes = {
-    format: PropTypes.string.isRequired,
+    inputFormat: PropTypes.string.isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     onChange: PropTypes.func,
@@ -18,6 +29,8 @@ class Time extends React.Component {
     block: PropTypes.bool,
     autoErase: PropTypes.bool,
     className: PropTypes.string,
+    relativeTo: PropTypes.number,
+    relativeStart: PropTypes.number
   }
   static defaultProps = {
     inputFormat: 'h:mm:ss a',
@@ -25,6 +38,7 @@ class Time extends React.Component {
     placeholder: 'hh:mm',
     step: 30,
     autoErase: true,
+    relativeStart: 0,
   }
   constructor(props) {
     super(props)
@@ -33,14 +47,18 @@ class Time extends React.Component {
       textValue: this.format(props, props.value),
       inFocus: false,
     }
-    this.options = this.generateOptions(props.step)
+    this.options = this.generateOptions(props)
     this.containerRef = React.createRef()
     this.textRef = React.createRef()
     this.dropdownRef = React.createRef()
   }
   componentWillUpdate = (nextProps, nextState) => {
-    if (nextProps.step != this.props.step) {
-      this.options = this.generateOptions(nextProps.step)
+    if (
+      nextProps.step != this.props.step
+      || nextProps.relativeTo != this.props.relativeTo
+      || nextProps.relativeStart != this.props.relativeStart
+    ) {
+      this.options = this.generateOptions(nextProps)
     }
   }
   componentDidUpdate = (prevProps, prevState) => {
@@ -58,14 +76,30 @@ class Time extends React.Component {
       this.onBlur()
     }
   }
-  generateOptions = (step) => {
+  generateOptions = (props) => {
     let options = []
-    for (var min = 0; min < 24 * 60; min += step) {
+    for (var min = 0; min < 24 * 60; min += props.step) {
       let ms = min * 60 * 1000
-      options.push({
+      let newOption = {
         value: ms,
-        label: moment.utc(ms).format(this.props.displayFormat),
-      })
+        label: moment.utc(ms).format(props.displayFormat),
+      }
+      if (typeof props.relativeTo === 'number') {
+        let msAbsolute = props.relativeStart + newOption.value
+        if (msAbsolute > props.relativeTo) {
+          let duration = msAbsolute - props.relativeTo
+          if (
+            duration <= +moment.duration({hours: 24})
+            && duration % +moment.duration({minutes: 5}) === 0
+          ) {
+            newOption.label += ` (${shortHumanizeDur(duration, {
+              units: ['h', 'm'],
+              spacer: '',
+            })})`
+          }
+        }
+      }
+      options.push(newOption)
     }
     return options
   }

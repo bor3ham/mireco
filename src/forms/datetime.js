@@ -16,6 +16,7 @@ class Datetime extends React.Component {
     timeFirst: PropTypes.bool,
     showClear: PropTypes.bool,
     className: PropTypes.string,
+    relativeTo: PropTypes.number,
   }
   static defaultProps = {
     block: false,
@@ -154,6 +155,8 @@ class Datetime extends React.Component {
         value={this.state.time}
         onChange={this.handleTimeChange}
         disabled={this.props.disabled}
+        relativeTo={this.props.relativeTo}
+        relativeStart={this.state.date}
       />
     )
 
