@@ -58,7 +58,7 @@ class ClearButton extends React.Component {
       <Button
         tabIndex={-1}
         onClick={this.props.onClick}
-        className="MIRECO-clear-button"
+        className="MIRECO-clear-button content outline"
         disabled={this.props.disabled}
       >
         &nbsp;

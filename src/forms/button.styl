@@ -1,3 +1,25 @@
+solid-colourise-button(background-colour, foreground-colour)
+  background: background-colour
+  color: foreground-colour
+  border: thin-line solid (background-colour - 10%)
+  &:hover
+    background: background-colour + hover-highlight
+    border-color: background-colour
+  &:active
+    background: background-colour + interact-highlight
+    border-color: background-colour
+
+outline-colourise-button(colour, interact-colour)
+  background: content-background
+  color: colour
+  border: thin-line solid colour
+  &:hover
+    background: content-background
+    border-color: interact-colour + hover-highlight
+  &:active
+    background: content-background
+    border-color: interact-colour + interact-highlight
+
 .MIRECO-button
   -webkit-appearance: none
   box-sizing: border-box
@@ -8,8 +30,9 @@
   font-weight: standard-font-weight
   font-size: standard-font-size
   line-height: standard-line-height
-  cursor: pointer
   user-select: none
+  &:not(:disabled)
+    cursor: pointer
 
   display: inline-block
   &.block
@@ -20,19 +43,20 @@
   &:focus
     input-focus()
 
-  background: primary-colour
-  border: thin-line solid (primary-colour - 10%)
-  color: primary-content-colour
-  &:hover
-    background: primary-colour + hover-highlight
-  &:active
-    background: primary-colour + interact-highlight
-
-  &.secondary
-    background: secondary-colour
-    border: thin-line solid (secondary-colour - 10%)
-    color: secondary-content-colour
-    &:hover
-      background: secondary-colour + hover-highlight
-    &:active
-      background: secondary-colour + interact-highlight
+  &:not(:disabled)
+    &:not(.outline)
+      solid-colourise-button(primary-colour, primary-content-colour)
+      &.secondary
+        solid-colourise-button(secondary-colour, secondary-content-colour)
+      &.content
+        solid-colourise-button(content-foreground, content-background)
+    &.outline
+      outline-colourise-button(primary-colour, primary-colour)
+      &.secondary
+        outline-colourise-button(secondary-colour, secondary-colour)
+      &.content
+        outline-colourise-button(content-foreground, primary-colour)
+  &:disabled
+    background: content-faint
+    color: content-muted
+    border: thin-line solid content-foreground
