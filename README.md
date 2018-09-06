@@ -79,6 +79,10 @@ Add the component stylesheet:
 <link rel="stylesheet" href="node_modules/mireco/dist/mireco-components.css" />
 ```
 
+To support inputs that have modal dropdowns, ensure that the body of your document (and any
+absolutely positioned content blocks such as modals) all have a padding of at least `15rem` at the
+bottom.
+
 ## Components
 
 Basic form inputs:
