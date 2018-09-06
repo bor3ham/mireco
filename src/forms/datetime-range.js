@@ -34,7 +34,7 @@ class DatetimeRange extends React.Component {
     super(props)
     this.state = {
       ...this.state,
-      duration: this.durationFromValue(this.props.value),
+      duration: this.durationFromValue(props.value),
     }
   }
   componentDidUpdate = (prevProps, prevState) => {

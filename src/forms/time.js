@@ -9,7 +9,7 @@ import { Dropdown } from './components'
 class Time extends React.Component {
   static propTypes = {
     format: PropTypes.string.isRequired,
-    shortFormat: PropTypes.string.isRequired,
+    displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     onChange: PropTypes.func,
     value: PropTypes.number,
@@ -20,8 +20,8 @@ class Time extends React.Component {
     className: PropTypes.string,
   }
   static defaultProps = {
-    format: 'HH:mm:ss',
-    shortFormat: 'HH:mm',
+    inputFormat: 'h:mm:ss a',
+    displayFormat: 'h:mm a',
     placeholder: 'hh:mm',
     step: 30,
     autoErase: true,
@@ -64,7 +64,7 @@ class Time extends React.Component {
       let ms = min * 60 * 1000
       options.push({
         value: ms,
-        label: moment.utc(ms).format(this.props.shortFormat),
+        label: moment.utc(ms).format(this.props.displayFormat),
       })
     }
     return options
@@ -74,12 +74,12 @@ class Time extends React.Component {
       return ''
     }
     let parsed = moment.utc(value)
-    let longFormatted = parsed.format(props.format)
-    let shortFormatted = parsed.format(props.shortFormat)
-    let longParsed = +moment.utc(longFormatted, props.format)
-    let shortParsed = +moment.utc(shortFormatted, props.format)
+    let longFormatted = parsed.format(props.inputFormat)
+    let displayFormatted = parsed.format(props.displayFormat)
+    let longParsed = +moment.utc(longFormatted, props.inputFormat)
+    let shortParsed = +moment.utc(displayFormatted, props.inputFormat)
     if (longParsed === shortParsed) {
-      return shortFormatted
+      return displayFormatted
     }
     else {
       return longFormatted
@@ -90,7 +90,7 @@ class Time extends React.Component {
     if (trimmed.length === 0) {
       return null
     }
-    let parsed = moment.utc(trimmed, this.props.format)
+    let parsed = moment.utc(trimmed, this.props.inputFormat)
     if (parsed.isValid()) {
       return +parsed % +moment.duration({days: 1})
     }
