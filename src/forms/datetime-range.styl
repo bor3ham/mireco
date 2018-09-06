@@ -7,17 +7,27 @@
     margin-right: -(standard-font-size / 3)
     margin-bottom: standard-padding
 
-    >.MIRECO-datetime, span.to, >.MIRECO-text.duration, >.MIRECO-clear-button
+    >.MIRECO-datetime, span.to, >.MIRECO-text.duration, >.duration-container
       flex: 1
       min-width: 0
       margin-bottom: (standard-font-size / 3)
       margin-right: (standard-font-size / 3)
-    >.MIRECO-clear-button
-      flex: none
-    >.MIRECO-datetime, >.MIRECO-text.duration
+    >.MIRECO-datetime
       min-width: 15rem
     >.MIRECO-datetime
       max-width: 20rem
+    >.duration-container
+      min-width: 15rem
+      // important to override default inline display of div
+      display: flex !important
+      align-items: center
+      margin-right: (standard-font-size / 3)
+      >.MIRECO-text.duration
+        flex: 1
+        min-width: 0
+        margin-right: (standard-font-size / 3)
+      >.MIRECO-clear-button
+        flex: none
     span.to
       flex-grow: 0
       min-width: auto

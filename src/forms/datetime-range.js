@@ -194,20 +194,22 @@ class DatetimeRange extends React.Component {
         {!this.props.block && (
           <span>{' '}</span>
         )}
-        <Duration
-          value={this.state.duration}
-          onChange={this.handleDurationChange}
-          disabled={this.props.disabled}
-        />
-        {!this.props.block && this.props.showClear && (
-          <span>{' '}</span>
-        )}
-        {this.props.showClear && (
-          <ClearButton
-            onClick={this.handleClearClick}
+        <div className="duration-container" style={{display: 'inline-block'}}>
+          <Duration
+            value={this.state.duration}
+            onChange={this.handleDurationChange}
             disabled={this.props.disabled}
           />
-        )}
+          {!this.props.block && this.props.showClear && (
+            <span>{' '}</span>
+          )}
+          {this.props.showClear && (
+            <ClearButton
+              onClick={this.handleClearClick}
+              disabled={this.props.disabled}
+            />
+          )}
+        </div>
       </div>
     )
   }
