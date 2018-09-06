@@ -5,41 +5,38 @@ import Button from '../button.js'
 
 const cross = (
   <svg
-    width="30"
-    height="30"
-    viewBox="0 0 7.9375 7.9375"
+    width="24"
+    height="24"
+    viewBox="0 0 6.35 6.35"
   >
     <g
-      id="layer1"
-      transform="translate(0,-289.0625)"
+      transform="translate(0,-290.65)"
     >
       <path
         style={{
           fill: 'none',
           stroke: '#333333',
-          strokeWidth: '0.79375',
+          strokeWidth: '0.66145833',
           strokeLinecap: 'butt',
           strokeLinejoin: 'miter',
           strokeMiterlimit: '4',
           strokeDasharray: 'none',
           strokeOpacity: '1',
         }}
-        d="m 1.8520833,290.91458 4.2333334,4.23334"
-        id="path817"
+        d="m 1.0583333,291.70833 4.2333334,4.23334"
       />
       <path
         style={{
           fill: 'none',
           stroke: '#333333',
-          strokeWidth: '0.79375',
+          strokeWidth: '0.66145833',
           strokeLinecap: 'butt',
           strokeLinejoin: 'miter',
           strokeMiterlimit: '4',
           strokeDasharray: 'none',
           strokeOpacity: '1',
         }}
-        d="m 1.8520833,295.14792 4.2333334,-4.23334"
-        id="path819"
+        d="m 1.0583333,295.94167 4.2333334,-4.23334"
       />
     </g>
   </svg>
