@@ -19,6 +19,7 @@ class DatetimeRange extends React.Component {
     defaultDuration: PropTypes.number.isRequired,
     getDefaultStart: PropTypes.func.isRequired,
     showClear: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
     block: false,
@@ -166,9 +167,13 @@ class DatetimeRange extends React.Component {
     let split = this.splitValue(this.props.value)
     return (
       <div
-        className={classNames('MIRECO-datetime-range', {
-          block: this.props.block,
-        })}
+        className={classNames(
+          'MIRECO-datetime-range',
+          {
+            block: this.props.block,
+          },
+          this.props.className,
+        )}
         style={{
           display: 'inline-block',
         }}

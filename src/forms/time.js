@@ -17,6 +17,7 @@ class Time extends React.Component {
     step: PropTypes.number.isRequired,
     block: PropTypes.bool,
     autoErase: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
     format: 'HH:mm:ss',
@@ -174,9 +175,13 @@ class Time extends React.Component {
     return (
       <div
         ref={this.containerRef}
-        className={classNames("MIRECO-time", {
-          block: this.props.block,
-        })}
+        className={classNames(
+          'MIRECO-time',
+          {
+            block: this.props.block,
+          },
+          this.props.className,
+        )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
         style={{

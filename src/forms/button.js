@@ -10,6 +10,7 @@ class Button extends React.Component {
     block: PropTypes.bool,
     tabIndex: PropTypes.number,
     disabled: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
     type: 'button',
@@ -20,9 +21,13 @@ class Button extends React.Component {
     return (
       <button
         type={this.props.type}
-        className={classNames('MIRECO-button', {
-          block: this.props.block,
-        }, this.props.className)}
+        className={classNames(
+          'MIRECO-button',
+          {
+            block: this.props.block,
+          },
+          this.props.className,
+        )}
         onClick={this.props.onClick}
         name={this.props.name}
         value={this.props.value}

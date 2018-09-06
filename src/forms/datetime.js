@@ -15,6 +15,7 @@ class Datetime extends React.Component {
     block: PropTypes.bool,
     timeFirst: PropTypes.bool,
     showClear: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
     block: false,
@@ -166,9 +167,13 @@ class Datetime extends React.Component {
     return (
       <div
         ref={this.containerRef}
-        className={classNames('MIRECO-datetime', {
-          block: this.props.block,
-        }, this.props.className)}
+        className={classNames(
+          'MIRECO-datetime',
+          {
+            block: this.props.block,
+          },
+          this.props.className,
+        )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
         style={{

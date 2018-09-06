@@ -13,6 +13,7 @@ class Text extends React.Component {
     onKeyDown: PropTypes.func,
     onKeyUp: PropTypes.func,
     block: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
   }
@@ -35,9 +36,13 @@ class Text extends React.Component {
         type="text"
         value={this.props.value}
         onChange={this.handleChange}
-        className={classNames('MIRECO-text', {
-          block: this.props.block,
-        }, this.props.className)}
+        className={classNames(
+          'MIRECO-text',
+          {
+            block: this.props.block,
+          },
+          this.props.className,
+        )}
         placeholder={this.props.placeholder || ''}
         name={this.props.name}
         disabled={this.props.disabled}

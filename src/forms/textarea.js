@@ -16,6 +16,7 @@ class Textarea extends React.Component {
     onKeyDown: PropTypes.func,
     onKeyUp: PropTypes.func,
     block: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
     minRows: 2,
@@ -31,9 +32,13 @@ class Textarea extends React.Component {
       <TextareaAutosize
         value={this.props.value || ''}
         onChange={this.handleChange}
-        className={classNames('MIRECO-textarea', {
-          block: this.props.block,
-        }, this.props.className)}
+        className={classNames(
+          'MIRECO-textarea',
+          {
+            block: this.props.block,
+          },
+          this.props.className,
+        )}
         minRows={this.props.minRows}
         maxRows={this.props.maxRows}
         placeholder={this.props.placeholder}

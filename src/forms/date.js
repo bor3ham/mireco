@@ -17,6 +17,7 @@ class Date extends React.Component {
     block: PropTypes.bool,
     autoErase: PropTypes.bool,
     rightHang: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
     block: false,
@@ -154,10 +155,14 @@ class Date extends React.Component {
     return (
       <div
         ref={this.containerRef}
-        className={classNames('MIRECO-date', {
-          block: this.props.block,
-          'right-hang': this.props.rightHang,
-        })}
+        className={classNames(
+          'MIRECO-date',
+          {
+            block: this.props.block,
+            'right-hang': this.props.rightHang,
+          },
+          this.props.className,
+        )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
         style={{
