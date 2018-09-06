@@ -89,7 +89,7 @@ class DatetimeRange extends React.Component {
       }
       newValue.start = newStart
       if (typeof newValue.start === 'number') {
-        if (typeof this.props.value.end === 'number') {
+        if (typeof this.props.value === 'object' && typeof this.props.value.end === 'number') {
           let prevDuration = this.durationFromValue(this.props.value)
           if (prevDuration !== null) {
             newValue.end = newValue.start + prevDuration
@@ -125,33 +125,35 @@ class DatetimeRange extends React.Component {
     this.setState({
       duration: newDuration,
     }, () => {
-      if (typeof this.state.duration === 'number') {
-        let split = this.splitValue(this.props.value)
-        if (typeof split.start === 'number') {
+      if (typeof this.props.onChange === 'function') {
+        if (typeof this.state.duration === 'number') {
+          let split = this.splitValue(this.props.value)
+          if (typeof split.start === 'number') {
+            this.props.onChange({
+              start: split.start,
+              end: split.start + this.state.duration,
+            })
+          }
+          else if (typeof split.end === 'number') {
+            this.props.onChange({
+              start: split.end - this.state.duration,
+              end: split.end,
+            })
+          }
+          else {
+            let defaultStart = this.props.getDefaultStart()
+            this.props.onChange({
+              start: defaultStart,
+              end: defaultStart + this.state.duration,
+            })
+          }
+        }
+        else if (this.state.duration === null) {
           this.props.onChange({
-            start: split.start,
-            end: split.start + this.state.duration,
+            ...this.props.value,
+            end: null,
           })
         }
-        else if (typeof split.end === 'number') {
-          this.props.onChange({
-            start: split.end - this.state.duration,
-            end: split.end,
-          })
-        }
-        else {
-          let defaultStart = this.props.getDefaultStart()
-          this.props.onChange({
-            start: defaultStart,
-            end: defaultStart + this.state.duration,
-          })
-        }
-      }
-      else if (this.state.duration === null) {
-        this.props.onChange({
-          ...this.props.value,
-          end: null,
-        })
       }
     })
   }
