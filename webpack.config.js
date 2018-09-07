@@ -2,10 +2,10 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './demo.js',
   output: {
     path: __dirname + '/dist',
-    filename: 'mireco-demo.js',
+    filename: 'demo.js',
   },
   mode: 'development',
   module: {
