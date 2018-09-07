@@ -51,7 +51,6 @@ class Demo extends React.Component {
       intervalDisable: !!Cookies.get('intervalDisable'),
       intervalRandomise: !!Cookies.get('intervalRandomise'),
       intervalRemount: !!Cookies.get('intervalRemount'),
-      disableCss: !!Cookies.get('disableCss'),
       blockMode: !!Cookies.get('blockMode'),
 
       showText: !!Cookies.get('showText'),
@@ -166,13 +165,6 @@ class Demo extends React.Component {
           <div style={{display: 'flex', flexWrap: 'wrap'}}>
             <div className="flag-column">
               <h2>Form settings</h2>
-              <Mireco.block.Checkbox
-                value={this.state.flags.disableCss}
-                onChange={(newValue) => {
-                  this.setFlag('disableCss', newValue)
-                }}
-                label="Disable Mireco CSS"
-              />
               <Mireco.block.Checkbox
                 value={this.state.flags.blockMode}
                 onChange={(newValue) => {
@@ -314,7 +306,7 @@ class Demo extends React.Component {
         <form
           onSubmit={this.handleSubmit}
           key={`form-mount-${this.state.mountIndex}`}
-          style={{margin: '10rem 1rem'}}
+          style={{margin: '20rem 1rem'}}
         >
           {this.state.flags.showText && (
             <Mireco.Text
@@ -415,18 +407,12 @@ class Demo extends React.Component {
             Submit Results
           </Mireco.Button>
         </form>
-        {!this.state.flags.disableCss && (
-          <link rel="stylesheet" href="node_modules/mireco/dist/mireco-components.css" />
-        )}
       </div>
     )
   }
 }
 
-const mount = document.querySelectorAll('div.mireco-demo-mount')
-if (mount.length > 0) {
-  ReactDOM.render(
-    <Demo />,
-    mount[0]
-  )
+const mount = document.querySelectorAll('div.demo-mount-stress-test')
+if (mount.length) {
+  ReactDOM.render(<Demo />, mount[0])
 }
