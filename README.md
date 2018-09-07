@@ -94,31 +94,7 @@ yarn watch
 
 ### Accessing demo page
 
-To run the demo, install the demo dependencies and build/watch the demo code for changes
-
-```
-cd demo
-yarn
-yarn watch
-```
-
-The demo can be accessed by opening the `.html` file in the demo folder:
-
-```
-xdg-open demo/demo.html
-```
-
-### Linking local version
-
-If you would like the demo to use your local copy of Mireco, link as follows:
-
-```
-yarn link
-cd demo
-yarn link mireco
-```
-
-Then run the demo as above.
+Follow the instructions found in `demo/README.md`.
 
 ## Components
 

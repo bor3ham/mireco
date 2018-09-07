@@ -66,3 +66,8 @@ dist/*.css
 
 # demo build
 demo/dist/*.js
+
+# jekyll build
+demo/_site
+demo/dist/*.js
+demo/dist/*.css
