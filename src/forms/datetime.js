@@ -17,6 +17,8 @@ class Datetime extends React.Component {
     showClear: PropTypes.bool,
     className: PropTypes.string,
     relativeTo: PropTypes.number,
+    timeProps: PropTypes.object,
+    dateProp: PropTypes.object,
   }
   static defaultProps = {
     block: false,
@@ -144,6 +146,7 @@ class Datetime extends React.Component {
     let split = this.splitValue(this.props.value)
     let date = (
       <Date
+        {...this.props.dateProps}
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
@@ -152,6 +155,7 @@ class Datetime extends React.Component {
     )
     let time = (
       <Time
+        {...this.props.timeProps}
         value={this.state.time}
         onChange={this.handleTimeChange}
         disabled={this.props.disabled}
