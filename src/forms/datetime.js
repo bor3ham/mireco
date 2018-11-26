@@ -45,13 +45,11 @@ class Datetime extends React.Component {
         this.setState(prevState => {
           let updates = {}
           // check if the date value is different
-          let prevFallbackDate = this.fallbackDate(prevState.date)
-          if (split.date !== prevFallbackDate || prevProps.value === null) {
+          if (split.date !== prevState.date) {
             updates.date = split.date
           }
           // check if the time value is different
-          let prevFallbackTime = this.fallbackTime(prevState.time)
-          if (split.time !== prevFallbackTime || prevProps.value === null) {
+          if (split.time !== prevState.time) {
             updates.time = split.time
           }
           return updates
