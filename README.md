@@ -98,6 +98,8 @@ Follow the instructions found in `demo/README.md`.
 
 ## Components
 
+Check out the [API Documentation](/docs/api.md).
+
 Basic form inputs:
 
 - [x] Button
