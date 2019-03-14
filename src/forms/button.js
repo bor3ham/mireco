@@ -4,13 +4,17 @@ import classNames from 'classnames'
 
 class Button extends React.Component {
   static propTypes = {
-    type: PropTypes.string.isRequired,
-    children: PropTypes.node,
+    type: PropTypes.oneOf(['button', 'submit']),
     name: PropTypes.string,
-    block: PropTypes.bool,
-    tabIndex: PropTypes.number,
+    value: PropTypes.string,
     disabled: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    tabIndex: PropTypes.number,
+
+    children: PropTypes.node,
+    block: PropTypes.bool,
     className: PropTypes.string,
+    style: PropTypes.object,
   }
   static defaultProps = {
     type: 'button',
@@ -20,7 +24,14 @@ class Button extends React.Component {
   render() {
     return (
       <button
+        onClick={this.props.onClick}
         type={this.props.type}
+        name={this.props.name}
+        value={this.props.value}
+        disabled={this.props.disabled}
+        autoFocus={this.props.autoFocus}
+        tabIndex={this.props.tabIndex}
+
         className={classNames(
           'MIRECO-button',
           {
@@ -28,11 +39,7 @@ class Button extends React.Component {
           },
           this.props.className,
         )}
-        onClick={this.props.onClick}
-        name={this.props.name}
-        value={this.props.value}
-        tabIndex={this.props.tabIndex}
-        disabled={this.props.disabled}
+        style={this.props.style}
       >
         {this.props.children}
       </button>

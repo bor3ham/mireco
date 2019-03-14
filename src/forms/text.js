@@ -4,18 +4,28 @@ import classNames from 'classnames'
 
 class Text extends React.Component {
   static propTypes = {
-    placeholder: PropTypes.string,
-    name: PropTypes.string,
-    disabled: PropTypes.bool,
-    onFocus: PropTypes.func,
-    onBlur: PropTypes.func,
+    value: PropTypes.string,
     onChange: PropTypes.func,
-    onKeyDown: PropTypes.func,
-    onKeyUp: PropTypes.func,
+    type: PropTypes.oneOf(['text', 'password', 'email']),
+    name: PropTypes.string,
+    placeholder: PropTypes.string,
+    disabled: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    tabIndex: PropTypes.number,
+    maxLength: PropTypes.number,
+
     block: PropTypes.bool,
     className: PropTypes.string,
+    style: PropTypes.object,
+    size: PropTypes.number,
+
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
+    onKeyDown: PropTypes.func,
+    onKeyUp: PropTypes.func,
   }
   static defaultProps = {
+    type: 'text',
   }
   constructor(props) {
     super(props)
@@ -33,9 +43,17 @@ class Text extends React.Component {
     return (
       <input
         ref={this.inputRef}
-        type="text"
+        type={this.props.type}
+
         value={this.props.value}
         onChange={this.handleChange}
+        name={this.props.name}
+        placeholder={this.props.placeholder || ''}
+        disabled={this.props.disabled}
+        autoFocus={this.props.autoFocus}
+        tabIndex={this.props.tabIndex}
+        maxLength={this.props.maxLength}
+
         className={classNames(
           'MIRECO-text',
           {
@@ -43,9 +61,9 @@ class Text extends React.Component {
           },
           this.props.className,
         )}
-        placeholder={this.props.placeholder || ''}
-        name={this.props.name}
-        disabled={this.props.disabled}
+        style={this.props.style}
+        size={this.props.size}
+
         onFocus={this.props.onFocus}
         onBlur={this.props.onBlur}
         onKeyDown={this.props.onKeyDown}
