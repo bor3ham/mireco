@@ -44,4 +44,6 @@ Miscellaneous event handlers:
 
 ## Vanilla Mireco additional style classes
 
-None.
+| Class | Description |
+| ----- | ----------- |
+|  |  |

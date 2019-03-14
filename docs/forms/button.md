@@ -1,4 +1,4 @@
-# Mireco.Text
+# Mireco.Button
 
 Standard one-line text input.
 
