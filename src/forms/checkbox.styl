@@ -1,6 +1,10 @@
 size = standard-font-size
 
-// .MIRECO-checkbox
+.MIRECO-checkbox
+  &:not(.disabled)
+    cursor: pointer
+    .MIRECO-checkbox-input
+      cursor: pointer
 
 .MIRECO-checkbox-input
   width: 0
@@ -8,9 +12,6 @@ size = standard-font-size
   margin: 0
   position: absolute
   opacity: 0
-
-  &:not(.disabled)
-    cursor: pointer
 
   &+svg
     background: content-background
