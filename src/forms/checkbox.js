@@ -26,7 +26,6 @@ const check = (
     </g>
   </svg>
 )
-const unchecked = checked
 
 class Checkbox extends React.Component {
   static propTypes = {
