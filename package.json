@@ -13,7 +13,6 @@
     "watch-js": "./node_modules/.bin/webpack --watch",
     "build-css": "./node_modules/.bin/stylus src/components.styl -o dist/mireco-components.css",
     "watch-css": "./node_modules/.bin/stylus src/components.styl -o dist/mireco-components.css --watch",
-    "watch": "concurrently \"npm run watch-js\" \"npm run watch-css\"",
     "build": "npm run build-js && npm run build-css",
     "prepare": "npm run build"
   },

@@ -10,7 +10,8 @@ class DemoText extends React.Component {
     return (
       <div>
         Field value: {JSON.stringify(this.state.text)}
-        <Mireco.block.Text
+        <Mireco.Text
+          block
           placeholder="Text value"
           value={this.state.text}
           onChange={(newValue) => {

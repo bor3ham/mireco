@@ -10,7 +10,8 @@ class DemoTextarea extends React.Component {
     return (
       <div>
         Field value: {JSON.stringify(this.state.text)}
-        <Mireco.block.Textarea
+        <Mireco.Textarea
+          block
           placeholder="Textarea value"
           value={this.state.text}
           onChange={(newValue) => {
