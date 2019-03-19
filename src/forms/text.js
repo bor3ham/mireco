@@ -39,6 +39,9 @@ class Text extends React.Component {
   focus() {
     this.inputRef.current && this.inputRef.current.focus()
   }
+  blur() {
+    this.inputRef.current && this.inputRef.current.blur()
+  }
   render() {
     return (
       <input

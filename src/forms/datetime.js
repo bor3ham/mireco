@@ -17,8 +17,6 @@ class Datetime extends React.Component {
     showClear: PropTypes.bool,
     className: PropTypes.string,
     relativeTo: PropTypes.number,
-    timeProps: PropTypes.object,
-    dateProp: PropTypes.object,
   }
   static defaultProps = {
     block: false,
@@ -144,21 +142,21 @@ class Datetime extends React.Component {
     let split = this.splitValue(this.props.value)
     let date = (
       <Date
-        {...this.props.dateProps}
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
         rightHang={this.props.timeFirst}
+        block={this.props.block}
       />
     )
     let time = (
       <Time
-        {...this.props.timeProps}
         value={this.state.time}
         onChange={this.handleTimeChange}
         disabled={this.props.disabled}
         relativeTo={this.props.relativeTo}
         relativeStart={this.state.date}
+        block={this.props.block}
       />
     )
 
@@ -181,9 +179,7 @@ class Datetime extends React.Component {
         )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
-        style={{
-          display: 'inline-block',
-        }}
+        style={{display: 'inline-block'}}
       >
         {first}
         {!this.props.block && (<span>&nbsp;</span>)}

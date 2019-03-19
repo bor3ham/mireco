@@ -1,6 +1,7 @@
 .MIRECO-textarea
   vertical-align: middle
-  width: 15rem
+  max-width: 15rem
+  width: 100%
   padding: (standard-padding / 2)
   resize: none
   font-family: standard-font-families
@@ -11,12 +12,13 @@
   border-radius: edge-rounding
   outline: none
   box-sizing: border-box
-
   display: inline-block
+
   &.block
     display: block
     width: 100%
     min-width: 0
+    max-width: none
     margin-bottom: standard-padding
 
   &:disabled

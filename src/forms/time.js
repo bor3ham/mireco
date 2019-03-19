@@ -218,9 +218,7 @@ class Time extends React.Component {
         )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
-        style={{
-          display: 'inline-block',
-        }}
+        style={{display: 'inline-block'}}
       >
         <Text
           ref={this.textRef}
@@ -230,6 +228,7 @@ class Time extends React.Component {
           onFocus={this.handleFocus}
           disabled={this.props.disabled}
           onKeyDown={this.handleTextKeyDown}
+          block={this.props.block}
         />
         {this.state.inFocus && !this.props.disabled && (
           <Dropdown

@@ -1,16 +1,10 @@
 .MIRECO-time
+  div-block-break()
+
   position: relative
   &:focus
     outline: none
 
-  &.block
-    // important to override default inline display of div
-    display: block !important
-    margin-bottom: standard-padding
+  &:not(.block)
     >.MIRECO-text
-      display: block
-      width: 100%
-
-  >.MIRECO-text
-    width: 6rem
-    // text-align: right
+      max-width: 8rem
