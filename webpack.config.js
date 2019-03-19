@@ -11,27 +11,20 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: [
-          {
-            loader: 'babel-loader',
-            query: {
-              presets: [
-                'env',
-                'react',
-                'stage-0',
-              ],
-            },
-          },
-        ],
-      },
-    ],
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      }
+    ]
   },
   resolve: {
     modules: [
-      path.resolve('src'),
       path.resolve('node_modules'),
     ],
+    alias: {
+      mireco: path.resolve('../dist/mireco.js'),
+    },
   },
 };

@@ -165,14 +165,16 @@ class Demo extends React.Component {
           <div style={{display: 'flex', flexWrap: 'wrap'}}>
             <div className="flag-column">
               <h2>Form settings</h2>
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.blockMode}
                 onChange={(newValue) => {
                   this.setFlag('blockMode', newValue)
                 }}
                 label="Block mode"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.disabled}
                 onChange={(newValue) => {
                   this.setFlag('disabled', newValue)
@@ -182,21 +184,24 @@ class Demo extends React.Component {
             </div>
             <div className="flag-column">
               <h2>Interval changes</h2>
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.intervalDisable}
                 onChange={(newValue) => {
                   this.setFlag('intervalDisable', newValue)
                 }}
                 label="Periodically disable"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.intervalRandomise}
                 onChange={(newValue) => {
                   this.setFlag('intervalRandomise', newValue)
                 }}
                 label="Periodically randomise"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.intervalRemount}
                 onChange={(newValue) => {
                   this.setFlag('intervalRemount', newValue)
@@ -206,42 +211,48 @@ class Demo extends React.Component {
             </div>
             <div className="flag-column">
               <h2>Basic inputs</h2>
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showText}
                 onChange={(newValue) => {
                   this.setFlag('showText', newValue)
                 }}
                 label="Show text input"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showCheckbox}
                 onChange={(newValue) => {
                   this.setFlag('showCheckbox', newValue)
                 }}
                 label="Show checkbox input"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showTime}
                 onChange={(newValue) => {
                   this.setFlag('showTime', newValue)
                 }}
                 label="Show time input"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showTextarea}
                 onChange={(newValue) => {
                   this.setFlag('showTextarea', newValue)
                 }}
                 label="Show textarea input"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showDate}
                 onChange={(newValue) => {
                   this.setFlag('showDate', newValue)
                 }}
                 label="Show date input"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showDuration}
                 onChange={(newValue) => {
                   this.setFlag('showDuration', newValue)
@@ -251,14 +262,16 @@ class Demo extends React.Component {
             </div>
             <div className="flag-column">
               <h2>Compound inputs</h2>
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showDatetime}
                 onChange={(newValue) => {
                   this.setFlag('showDatetime', newValue)
                 }}
                 label="Show datetime input"
               />
-              <Mireco.block.Checkbox
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showDatetimeRange}
                 onChange={(newValue) => {
                   this.setFlag('showDatetimeRange', newValue)
