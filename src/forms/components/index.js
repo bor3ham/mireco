@@ -6,3 +6,6 @@ export { Dropdown }
 
 import ClearButton from './clear-button.js'
 export { ClearButton }
+
+import Label from './label.js'
+export { Label }

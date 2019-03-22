@@ -6,6 +6,8 @@ import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
 
+import ResizeContainer from './resize-container.js'
+
 const defaultValue = {
   text: 'hi there',
   checked: false,
@@ -316,110 +318,112 @@ class Demo extends React.Component {
             {beautify(this.state.formValue, null, 2, 80)}
           </pre>
         </div>
-        <form
-          onSubmit={this.handleSubmit}
-          key={`form-mount-${this.state.mountIndex}`}
-          style={{margin: '20rem 1rem'}}
-        >
-          {this.state.flags.showText && (
-            <Mireco.Text
-              value={this.state.formValue.text}
-              onChange={(newValue) => {
-                this.updateFormValue('text', newValue)
-              }}
-              placeholder="Single text"
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showText && inlineSpace}
-          {this.state.flags.showCheckbox && (
-            <Mireco.Checkbox
-              value={this.state.formValue.checked}
-              onChange={(newValue) => {
-                this.updateFormValue('checked', newValue)
-              }}
-              label="Checked or not?"
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showCheckbox && inlineSpace}
-          {this.state.flags.showTime && (
-            <Mireco.Time
-              value={this.state.formValue.time}
-              onChange={(newValue) => {
-                this.updateFormValue('time', newValue)
-              }}
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showTime && inlineSpace}
-          {this.state.flags.showTextarea && (
-            <Mireco.Textarea
-              value={this.state.formValue.textarea}
-              onChange={(newValue) => {
-                this.updateFormValue('textarea', newValue)
-              }}
-              placeholder="Multiline text..."
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showTextarea && inlineSpace}
-          {this.state.flags.showDate && (
-            <Mireco.Date
-              value={this.state.formValue.date}
-              onChange={(newValue) => {
-                this.updateFormValue('date', newValue)
-              }}
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showDate && inlineSpace}
-          {this.state.flags.showDuration && (
-            <Mireco.Duration
-              value={this.state.formValue.duration}
-              onChange={(newValue) => {
-                this.updateFormValue('duration', newValue)
-              }}
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showDuration && inlineSpace}
-          {this.state.flags.showDatetime && (
-            <Mireco.Datetime
-              value={this.state.formValue.datetime}
-              onChange={(newValue) => {
-                this.updateFormValue('datetime', newValue)
-              }}
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showDatetime && inlineSpace}
-          {this.state.flags.showDatetimeRange && (
-            <Mireco.DatetimeRange
-              value={this.state.formValue.datetime_range}
-              onChange={(newValue) => {
-                this.updateFormValue('datetime_range', newValue)
-              }}
-              disabled={this.state.flags.disabled}
-              block={this.state.flags.blockMode}
-            />
-          )}
-          {this.state.flags.showDatetimeRange && inlineSpace}
-          <Mireco.Button
-            type="submit"
-            block={this.state.flags.blockMode}
-            disabled={this.state.flags.disabled}
+        <ResizeContainer>
+          <form
+            onSubmit={this.handleSubmit}
+            key={`form-mount-${this.state.mountIndex}`}
+            style={{margin: '20rem 1rem'}}
           >
-            Submit Results
-          </Mireco.Button>
-        </form>
+            {this.state.flags.showText && (
+              <Mireco.Text
+                value={this.state.formValue.text}
+                onChange={(newValue) => {
+                  this.updateFormValue('text', newValue)
+                }}
+                placeholder="Single text"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showText && inlineSpace}
+            {this.state.flags.showCheckbox && (
+              <Mireco.Checkbox
+                value={this.state.formValue.checked}
+                onChange={(newValue) => {
+                  this.updateFormValue('checked', newValue)
+                }}
+                label="Checked or not?"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showCheckbox && inlineSpace}
+            {this.state.flags.showTime && (
+              <Mireco.Time
+                value={this.state.formValue.time}
+                onChange={(newValue) => {
+                  this.updateFormValue('time', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showTime && inlineSpace}
+            {this.state.flags.showTextarea && (
+              <Mireco.Textarea
+                value={this.state.formValue.textarea}
+                onChange={(newValue) => {
+                  this.updateFormValue('textarea', newValue)
+                }}
+                placeholder="Multiline text..."
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showTextarea && inlineSpace}
+            {this.state.flags.showDate && (
+              <Mireco.Date
+                value={this.state.formValue.date}
+                onChange={(newValue) => {
+                  this.updateFormValue('date', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showDate && inlineSpace}
+            {this.state.flags.showDuration && (
+              <Mireco.Duration
+                value={this.state.formValue.duration}
+                onChange={(newValue) => {
+                  this.updateFormValue('duration', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showDuration && inlineSpace}
+            {this.state.flags.showDatetime && (
+              <Mireco.Datetime
+                value={this.state.formValue.datetime}
+                onChange={(newValue) => {
+                  this.updateFormValue('datetime', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showDatetime && inlineSpace}
+            {this.state.flags.showDatetimeRange && (
+              <Mireco.DatetimeRange
+                value={this.state.formValue.datetime_range}
+                onChange={(newValue) => {
+                  this.updateFormValue('datetime_range', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showDatetimeRange && inlineSpace}
+            <Mireco.Button
+              type="submit"
+              block={this.state.flags.blockMode}
+              disabled={this.state.flags.disabled}
+            >
+              Submit Results
+            </Mireco.Button>
+          </form>
+        </ResizeContainer>
       </div>
     )
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Label from './label.js'
+import { Label } from '../components'
 
 const check = (
   <svg

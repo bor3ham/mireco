@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import moment from 'moment'
 
-import { Calendar } from './components'
+import { Calendar } from '../components'
 import Text from './text.js'
 
 class Date extends React.Component {

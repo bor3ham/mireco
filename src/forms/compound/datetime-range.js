@@ -4,8 +4,8 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 import Datetime from './datetime.js'
-import Duration from './duration.js'
-import { ClearButton } from './components'
+import { Duration } from '../basics'
+import { ClearButton } from '../components'
 
 class DatetimeRange extends React.Component {
   static propTypes = {
@@ -176,9 +176,7 @@ class DatetimeRange extends React.Component {
           },
           this.props.className,
         )}
-        style={{
-          display: 'inline-block',
-        }}
+        style={{display: 'inline-block'}}
       >
         <Datetime
           value={split.start}

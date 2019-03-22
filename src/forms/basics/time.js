@@ -5,7 +5,7 @@ import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 
 import Text from './text.js'
-import { Dropdown } from './components'
+import { Dropdown } from '../components'
 
 const shortHumanizeDur = humanizeDuration.humanizer({
   language: 'shortEn',
