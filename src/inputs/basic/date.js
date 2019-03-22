@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import moment from 'moment'
 
-import { Calendar } from '../components'
-import Text from './text.js'
+import { Text } from 'inputs'
+import { Calendar } from 'components'
 
 class Date extends React.Component {
   static propTypes = {

@@ -1,2 +1,2 @@
+export * from './basic'
 export * from './compound'
-export * from './basics'

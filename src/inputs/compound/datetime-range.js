@@ -3,9 +3,8 @@ import moment from 'moment'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
-import Datetime from './datetime.js'
-import { Duration } from '../basics'
-import { ClearButton } from '../components'
+import { Datetime, Duration } from 'inputs'
+import { ClearButton } from 'components'
 
 class DatetimeRange extends React.Component {
   static propTypes = {

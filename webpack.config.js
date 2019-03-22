@@ -22,5 +22,11 @@ module.exports = {
   },
   plugins: [
     new PeerDepsExternalsPlugin()
-  ]
+  ],
+  resolve: {
+    modules: [
+      path.resolve('node_modules'),
+      path.resolve('src'),
+    ],
+  }
 };
