@@ -1,6 +1,6 @@
-# Mireco.Text
+# Mireco.Textarea
 
-Standard one-line text input.
+Auto sizing multi-line text input.
 
 ## Props
 
@@ -10,8 +10,8 @@ Form function:
 | ---- | -------- | ------- | ----------- |
 | value | `string|undefined` | `undefined` | Current text value. |
 | onChange | `function(string)` | `undefined` | Callback when value changes. |
-| type | `'text', 'password', 'email'` | `'text'` | Type of text input. |
 | name | `string` | `undefined` | HTML form `name` value to render to the DOM. |
+| required | `boolean` | `false` | Whether or not this field is flagged as required for the DOM. |
 | placeholder | `string` | `''` | Placeholder text to show when empty. |
 | disabled | `boolean` | `false` | Whether or not this field can be selected / entered into. |
 | autoFocus | `boolean` | `false` | Take user focus on mount. |
@@ -25,7 +25,6 @@ Customisation:
 | block | `boolean` | `false` | Whether this input should be block or inline. |
 | className | `string` | `''` | List of additional class names to add to the top-level component. |
 | style | `object` | `{}` | Additional inline styles to add to the top-level component. |
-| size | `number` | `undefined` | Width of element when inline, in characters. |
 
 Miscellaneous event handlers:
 

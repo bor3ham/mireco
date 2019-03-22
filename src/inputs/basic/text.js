@@ -8,6 +8,7 @@ class Text extends React.Component {
     onChange: PropTypes.func,
     type: PropTypes.oneOf(['text', 'password', 'email']),
     name: PropTypes.string,
+    required: PropTypes.bool,
     placeholder: PropTypes.string,
     disabled: PropTypes.bool,
     autoFocus: PropTypes.bool,
@@ -31,6 +32,22 @@ class Text extends React.Component {
     super(props)
     this.inputRef = React.createRef()
   }
+  componentDidUpdate = (prevProps, prevState) => {
+    if (
+      this.props.disabled && !prevProps.disabled
+      && this.inputRef.current === document.activeElement
+      && typeof this.props.onBlur === 'function'
+    ) {
+      this.props.onBlur()
+    }
+    if (
+      !this.props.disabled && prevProps.disabled
+      && this.inputRef.current === document.activeElement
+      && typeof this.props.onFocus === 'function'
+    ) {
+      this.props.onFocus()
+    }
+  }
   handleChange = (event) => {
     if (typeof this.props.onChange === 'function') {
       this.props.onChange(this.inputRef.current.value)
@@ -46,11 +63,12 @@ class Text extends React.Component {
     return (
       <input
         ref={this.inputRef}
-        type={this.props.type}
 
         value={this.props.value}
         onChange={this.handleChange}
+        type={this.props.type}
         name={this.props.name}
+        required={this.props.required}
         placeholder={this.props.placeholder || ''}
         disabled={this.props.disabled}
         autoFocus={this.props.autoFocus}
@@ -61,6 +79,7 @@ class Text extends React.Component {
           'MIRECO-text',
           {
             block: this.props.block,
+            sized: !!this.props.size,
           },
           this.props.className,
         )}
