@@ -6,7 +6,7 @@ import moment from 'moment'
 import { Text } from 'inputs'
 import { Calendar } from 'components'
 
-class Date extends React.Component {
+export default class Date extends React.Component {
   static propTypes = {
     format: PropTypes.string.isRequired,
     displayFormat: PropTypes.string.isRequired,
@@ -187,5 +187,3 @@ class Date extends React.Component {
     )
   }
 }
-
-export default Date

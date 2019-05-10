@@ -2,10 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-class Label extends React.Component {
+export default class Label extends React.Component {
   static propTypes = {
     block: PropTypes.bool,
     className: PropTypes.string,
+    tabIndex: PropTypes.number,
+    children: PropTypes.node,
   }
   render() {
     return (
@@ -24,5 +26,3 @@ class Label extends React.Component {
     )
   }
 }
-
-export default Label

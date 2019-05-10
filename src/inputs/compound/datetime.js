@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import { Date, Time } from 'inputs'
 import { ClearButton } from 'components'
 
-class Datetime extends React.Component {
+export default class Datetime extends React.Component {
   static propTypes = {
     value: PropTypes.number,
     onChange: PropTypes.func,
@@ -196,5 +196,3 @@ class Datetime extends React.Component {
     )
   }
 }
-
-export default Datetime

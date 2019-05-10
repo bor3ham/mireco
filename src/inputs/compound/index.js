@@ -1,3 +1,2 @@
-import Datetime from './datetime.js'
-import DatetimeRange from './datetime-range.js'
-export { Datetime, DatetimeRange }
+export Datetime from './datetime.js'
+export DatetimeRange from './datetime-range.js'

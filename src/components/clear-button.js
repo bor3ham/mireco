@@ -42,7 +42,7 @@ const cross = (
   </svg>
 )
 
-class ClearButton extends React.Component {
+export default class ClearButton extends React.Component {
   static propTypes = {
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
@@ -65,5 +65,3 @@ class ClearButton extends React.Component {
     )
   }
 }
-
-export default ClearButton

@@ -51,7 +51,7 @@ const arrowRight = (
   </svg>
 )
 
-class Calendar extends React.Component {
+export default class Calendar extends React.Component {
   static propTypes = {
     selectDay: PropTypes.func,
     current: PropTypes.number,
@@ -80,9 +80,9 @@ class Calendar extends React.Component {
       month: valueMonth,
     }
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props.current !== nextProps.current && typeof this.props.current === 'number') {
-      this.setState(this.splitDateValue(nextProps.current))
+  componentDidUpdate(prevProps) {
+    if (this.props.current !== prevProps.current && typeof this.props.current === 'number') {
+      this.setState(this.splitDateValue(prevProps.current))
     }
   }
   selectDay = (day) => {
@@ -183,5 +183,3 @@ class Calendar extends React.Component {
     )
   }
 }
-
-export default Calendar

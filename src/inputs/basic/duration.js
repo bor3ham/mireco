@@ -9,7 +9,7 @@ parseDuration.year = parseDuration.week * 52
 
 import { Text } from 'inputs'
 
-class Duration extends React.Component {
+export default class Duration extends React.Component {
   static propTypes = {
     block: PropTypes.bool,
     onChange: PropTypes.func,
@@ -19,6 +19,7 @@ class Duration extends React.Component {
     humanizeUnits: PropTypes.arrayOf(PropTypes.string),
     disabled: PropTypes.bool,
     className: PropTypes.string,
+    value: PropTypes.number,
   }
   static defaultProps = {
     block: false,
@@ -157,5 +158,3 @@ class Duration extends React.Component {
     )
   }
 }
-
-export default Duration

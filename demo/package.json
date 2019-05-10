@@ -7,10 +7,10 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build-js": "webpack-cli",
+    "build-js": "./node_modules/.bin/webpack",
     "build-css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css",
     "watch-css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css --watch",
-    "watch-js": "webpack-cli --config webpack.watch.js",
+    "watch-js": "./node_modules/.bin/webpack --watch",
     "build": "npm run build-js && npm run build-css"
   },
   "dependencies": {

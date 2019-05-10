@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import { Datetime, Duration } from 'inputs'
 import { ClearButton } from 'components'
 
-class DatetimeRange extends React.Component {
+export default class DatetimeRange extends React.Component {
   static propTypes = {
     block: PropTypes.bool,
     onChange: PropTypes.func,
@@ -219,5 +219,3 @@ class DatetimeRange extends React.Component {
     )
   }
 }
-
-export default DatetimeRange

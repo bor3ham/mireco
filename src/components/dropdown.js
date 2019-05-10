@@ -55,7 +55,7 @@ class DropdownOption extends React.Component {
   }
 }
 
-class Dropdown extends React.Component {
+export default class Dropdown extends React.Component {
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
@@ -149,5 +149,3 @@ class Dropdown extends React.Component {
     )
   }
 }
-
-export default Dropdown

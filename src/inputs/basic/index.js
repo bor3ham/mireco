@@ -1,14 +1,10 @@
-import Text from './text.js'
-import Textarea from './textarea.js'
-export { Text, Textarea }
+export Text from './text.js'
+export Textarea from './textarea.js'
 
-import Checkbox from './checkbox.js'
-export { Checkbox }
+export Checkbox from './checkbox.js'
 
-import Button from './button.js'
-export { Button }
+export Button from './button.js'
 
-import Time from './time.js'
-import Date from './date.js'
-import Duration from './duration.js'
-export { Time, Date, Duration }
+export Time from './time.js'
+export Date from './date.js'
+export Duration from './duration.js'

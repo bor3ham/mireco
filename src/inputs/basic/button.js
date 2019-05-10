@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-class Button extends React.Component {
+export default class Button extends React.Component {
   static propTypes = {
+    onClick: PropTypes.func,
     type: PropTypes.oneOf(['button', 'submit']),
     name: PropTypes.string,
     value: PropTypes.string,
@@ -46,5 +47,3 @@ class Button extends React.Component {
     )
   }
 }
-
-export default Button

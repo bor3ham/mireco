@@ -1,11 +1,4 @@
-import Calendar from './calendar.js'
-export { Calendar }
-
-import Dropdown from './dropdown.js'
-export { Dropdown }
-
-import ClearButton from './clear-button.js'
-export { ClearButton }
-
-import Label from './label.js'
-export { Label }
+export Calendar from './calendar.js'
+export Dropdown from './dropdown.js'
+export ClearButton from './clear-button.js'
+export Label from './label.js'

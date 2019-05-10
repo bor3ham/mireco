@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-class Text extends React.Component {
+export default class Text extends React.Component {
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
@@ -94,5 +94,3 @@ class Text extends React.Component {
     )
   }
 }
-
-export default Text

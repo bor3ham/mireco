@@ -17,7 +17,7 @@ const shortHumanizeDur = humanizeDuration.humanizer({
   },
 })
 
-class Time extends React.Component {
+export default class Time extends React.Component {
   static propTypes = {
     inputFormat: PropTypes.string.isRequired,
     displayFormat: PropTypes.string.isRequired,
@@ -52,16 +52,14 @@ class Time extends React.Component {
     this.textRef = React.createRef()
     this.dropdownRef = React.createRef()
   }
-  componentWillUpdate = (nextProps, nextState) => {
+  componentDidUpdate(prevProps, prevState) {
     if (
-      nextProps.step != this.props.step
-      || nextProps.relativeTo != this.props.relativeTo
-      || nextProps.relativeStart != this.props.relativeStart
+      prevProps.step != this.props.step
+      || prevProps.relativeTo != this.props.relativeTo
+      || prevProps.relativeStart != this.props.relativeStart
     ) {
-      this.options = this.generateOptions(nextProps)
+      this.options = this.generateOptions(prevProps)
     }
-  }
-  componentDidUpdate = (prevProps, prevState) => {
     if (prevProps.value !== this.props.value ) {
       if (this.props.value === null) {
         this.setState({textValue: ''})
@@ -244,5 +242,3 @@ class Time extends React.Component {
     )
   }
 }
-
-export default Time

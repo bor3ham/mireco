@@ -27,13 +27,16 @@ const check = (
   </svg>
 )
 
-class Checkbox extends React.Component {
+export default class Checkbox extends React.Component {
   static propTypes = {
+    onChange: PropTypes.func,
     name: PropTypes.string,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
     style: PropTypes.object,
     className: PropTypes.string,
+    label: PropTypes.string,
+    value: PropTypes.bool,
   }
   constructor(props) {
     super(props)
@@ -71,5 +74,3 @@ class Checkbox extends React.Component {
     )
   }
 }
-
-export default Checkbox
