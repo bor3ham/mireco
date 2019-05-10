@@ -1,22 +1,22 @@
 .MIRECO-datetime
-  div-block-break(flex)
-
   &.block
-    margin-bottom: standard-padding
+    display: flex
     flex-wrap: wrap
+    margin-right: -0.4rem
 
-    .MIRECO-text
-      margin-bottom: 0
-
-    >.MIRECO-date
-      flex: 4
-    >.MIRECO-time
-      flex: 3
-    >.MIRECO-date, >.MIRECO-time
-      &:first-child
-        margin-right: (standard-font-size / 3)
-    >.MIRECO-clear-button
-      margin-left: (standard-font-size / 3)
+    >:first-child
+      flex-basis: 9rem
+      flex-grow: 1
+      margin-right: 0.4rem
+    div.second
+      margin-right: 0.4rem
+      white-space: pre
+      flex-basis: 12rem
+      flex-grow: 1
+      align-items: flex-start
+      display: flex
+      .MIRECO-time, .MIRECO-date
+        flex: 1
 
   &:focus
     outline: none

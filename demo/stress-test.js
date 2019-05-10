@@ -8,9 +8,17 @@ import Cookies from 'js-cookie'
 
 import ResizeContainer from './resize-container.js'
 
+const SELECT_OPTIONS = [
+  {value: 'car', label: 'Car'},
+  {value: 'bike', label: 'Bicycle'},
+  {value: 'plane', label: 'Aeroplane'},
+  {value: 'hike', label: 'Hiking'},
+]
+
 const defaultValue = {
   text: 'hi there',
   checked: false,
+  select: null,
   time: null,
   textarea: 'Wow this is two lines...\nIn this text box',
   date: null,
@@ -22,6 +30,7 @@ function randomValue() {
   return {
     text: casual.title,
     checked: casual.coin_flip,
+    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS),
     time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
     textarea: casual.description,
     date: casual.coin_flip ? null : moment.utc().startOf('day') - (casual.integer(-30, 30) * +moment.duration({days: 1})),
@@ -57,6 +66,7 @@ class Demo extends React.Component {
 
       showText: !!Cookies.get('showText'),
       showCheckbox: !!Cookies.get('showCheckbox'),
+      showSelect: !!Cookies.get('showSelect'),
       showTime: !!Cookies.get('showTime'),
       showTextarea: !!Cookies.get('showTextarea'),
       showDate: !!Cookies.get('showDate'),
@@ -231,6 +241,14 @@ class Demo extends React.Component {
               />
               <Mireco.Checkbox
                 block
+                value={this.state.flags.showSelect}
+                onChange={(newValue) => {
+                  this.setFlag('showSelect', newValue)
+                }}
+                label="Show select input"
+              />
+              <Mireco.Checkbox
+                block
                 value={this.state.flags.showTime}
                 onChange={(newValue) => {
                   this.setFlag('showTime', newValue)
@@ -348,6 +366,19 @@ class Demo extends React.Component {
               />
             )}
             {this.state.flags.showCheckbox && inlineSpace}
+            {this.state.flags.showSelect && (
+              <Mireco.Select
+                value={this.state.formValue.select}
+                options={SELECT_OPTIONS}
+                onChange={(newValue) => {
+                  this.updateFormValue('select', newValue)
+                }}
+                placeholder="Mode of transport"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showSelect && inlineSpace}
             {this.state.flags.showTime && (
               <Mireco.Time
                 value={this.state.formValue.time}

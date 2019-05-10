@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import moment from 'moment'
 
 import { Text } from 'inputs'
-import { Calendar } from 'components'
+import { Calendar, BlockDiv } from 'components'
 
 export default class Date extends React.Component {
   static propTypes = {
@@ -76,9 +76,10 @@ export default class Date extends React.Component {
   handleContainerBlur = (event) => {
     if (
       this.containerRef.current
+      && this.containerRef.current.divRef.current
       && (
-        this.containerRef.current.contains(event.relatedTarget)
-        || this.containerRef.current === event.relatedTarget
+        this.containerRef.current.divRef.current.contains(event.relatedTarget)
+        || this.containerRef.current.divRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -153,19 +154,18 @@ export default class Date extends React.Component {
   }
   render() {
     return (
-      <div
+      <BlockDiv
         ref={this.containerRef}
+        block={this.props.block}
         className={classNames(
           'MIRECO-date',
           {
-            block: this.props.block,
             'right-hang': this.props.rightHang,
           },
           this.props.className,
         )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
-        style={{display: 'inline-block'}}
       >
         <Text
           ref={this.textRef}
@@ -176,6 +176,7 @@ export default class Date extends React.Component {
           disabled={this.props.disabled}
           onKeyDown={this.handleTextKeyDown}
           block={this.props.block}
+          style={{marginBottom: '0'}}
         />
         {this.state.inFocus && !this.props.disabled && (
           <Calendar
@@ -183,7 +184,7 @@ export default class Date extends React.Component {
             current={this.props.value}
           />
         )}
-      </div>
+      </BlockDiv>
     )
   }
 }

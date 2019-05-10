@@ -1,10 +1,9 @@
 import React from 'react'
 import moment from 'moment'
-import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 import { Datetime, Duration } from 'inputs'
-import { ClearButton } from 'components'
+import { ClearButton, BlockDiv } from 'components'
 
 export default class DatetimeRange extends React.Component {
   static propTypes = {
@@ -167,15 +166,9 @@ export default class DatetimeRange extends React.Component {
   render() {
     let split = this.splitValue(this.props.value)
     return (
-      <div
-        className={classNames(
-          'MIRECO-datetime-range',
-          {
-            block: this.props.block,
-          },
-          this.props.className,
-        )}
-        style={{display: 'inline-block'}}
+      <BlockDiv
+        block={this.props.block}
+        className={'MIRECO-datetime-range'}
       >
         <Datetime
           value={split.start}
@@ -185,37 +178,39 @@ export default class DatetimeRange extends React.Component {
           className="start"
           showClear={false}
         />
-        <span className="to">{' to '}</span>
-        <Datetime
-          value={split.end}
-          onChange={this.handleEndChange}
-          disabled={this.props.disabled}
-          timeFirst={true}
-          block={this.props.block}
-          className="end"
-          showClear={false}
-          relativeTo={split.start}
-        />
+        <BlockDiv className="datetime-range-second" block={this.props.block}>
+          <span className="to">{' to '}</span>
+          <Datetime
+            value={split.end}
+            onChange={this.handleEndChange}
+            disabled={this.props.disabled}
+            timeFirst={true}
+            block={this.props.block}
+            className="end"
+            showClear={false}
+            relativeTo={split.start}
+          />
+        </BlockDiv>
         {!this.props.block && (
           <span>{' '}</span>
         )}
-        <div className="duration-container" style={{display: 'inline-block'}}>
-          <Duration
-            value={this.state.duration}
-            onChange={this.handleDurationChange}
-            disabled={this.props.disabled}
-          />
-          {!this.props.block && this.props.showClear && (
-            <span>{' '}</span>
-          )}
-          {this.props.showClear && (
-            <ClearButton
-              onClick={this.handleClearClick}
+        <BlockDiv className="duration-container" block={this.props.block}>
+          <BlockDiv className="duration-inner" block={this.props.block} inlineDisplay="flex">
+            <Duration
+              value={this.state.duration}
+              onChange={this.handleDurationChange}
               disabled={this.props.disabled}
+              block={this.props.block}
             />
-          )}
-        </div>
-      </div>
+            {this.props.showClear && (
+              <ClearButton
+                onClick={this.handleClearClick}
+                disabled={this.props.disabled}
+              />
+            )}
+          </BlockDiv>
+        </BlockDiv>
+      </BlockDiv>
     )
   }
 }

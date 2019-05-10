@@ -1,10 +1,9 @@
 import React from 'react'
 import moment from 'moment'
-import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 import { Date, Time } from 'inputs'
-import { ClearButton } from 'components'
+import { ClearButton, BlockDiv } from 'components'
 
 export default class Datetime extends React.Component {
   static propTypes = {
@@ -106,9 +105,10 @@ export default class Datetime extends React.Component {
   handleContainerBlur = (event) => {
     if (
       this.containerRef.current
+      && this.containerRef.current.divRef.curent
       && (
-        this.containerRef.current.contains(event.relatedTarget)
-        || this.containerRef.current === event.relatedTarget
+        this.containerRef.current.divRef.current.contains(event.relatedTarget)
+        || this.containerRef.current.divRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -138,13 +138,11 @@ export default class Datetime extends React.Component {
     }, 0)
   }
   render() {
-    let split = this.splitValue(this.props.value)
     let date = (
       <Date
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
-        rightHang={this.props.timeFirst}
         block={this.props.block}
       />
     )
@@ -167,32 +165,28 @@ export default class Datetime extends React.Component {
     }
 
     return (
-      <div
+      <BlockDiv
         ref={this.containerRef}
-        className={classNames(
-          'MIRECO-datetime',
-          {
-            block: this.props.block,
-          },
-          this.props.className,
-        )}
+        block={this.props.block}
+        className="MIRECO-datetime"
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
-        style={{display: 'inline-block'}}
       >
         {first}
-        {!this.props.block && (<span>&nbsp;</span>)}
-        {second}
-        {!this.props.block && this.props.showClear && (
-          <span>&nbsp;</span>
-        )}
-        {this.props.showClear && (
-          <ClearButton
-            onClick={this.handleClearClick}
-            disabled={this.props.disabled}
-          />
-        )}
-      </div>
+        {!this.props.block && <span>{' '}</span>}
+        <BlockDiv block={this.props.block} className="second">
+          {second}
+          {this.props.showClear && (
+            <span>{' '}</span>
+          )}
+          {this.props.showClear && (
+            <ClearButton
+              onClick={this.handleClearClick}
+              disabled={this.props.disabled}
+            />
+          )}
+        </BlockDiv>
+      </BlockDiv>
     )
   }
 }

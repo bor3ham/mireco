@@ -46,8 +46,12 @@ All Mireco components should be designed with the following in mind:
 - Use native browser focus, and support keyboard navigation with js events
 - All size units are in `rem` (except for `em` for `line-height`s relative to `font-size`)
 - Like normal html form inputs, all form components are rendered as `inline` or `inline-block` by
-  default. For convenience, the Mireco api provides a block version of all inputs eg.
-  `Mireco.block.checkbox` versus `Mireco.checkbox`
+  default. For convenience, the Mireco api provides a block version of all inputs by passing a
+  `block` prop
+- No media queries are used in scaling inputs - they should size to their container and not the
+  screen, using `flex-basis` to take up multiple rows when necessary
+- There is no hard coded minimum width for any input
+
 
 Non battle-tested guidelines:
 

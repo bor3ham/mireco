@@ -69,7 +69,7 @@ export default class Checkbox extends React.Component {
         />
         {check}
         {!!this.props.label && ' '}
-        {this.props.label}
+        {!!this.props.label && (<span>{this.props.label}</span>)}
       </Label>
     )
   }

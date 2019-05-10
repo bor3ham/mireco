@@ -1,5 +1,6 @@
 .MIRECO-time
-  div-block-break()
+  &.block
+    margin-bottom: standard-padding
 
   position: relative
   &:focus
@@ -8,3 +9,7 @@
   &:not(.block)
     >.MIRECO-text
       max-width: 8rem
+
+  &.right-hang>.MIRECO-dropdown
+    left: auto
+    right: 0

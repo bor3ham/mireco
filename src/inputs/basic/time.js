@@ -5,7 +5,7 @@ import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 
 import { Text } from 'inputs'
-import { Dropdown } from 'components'
+import { Dropdown, BlockDiv } from 'components'
 
 const shortHumanizeDur = humanizeDuration.humanizer({
   language: 'shortEn',
@@ -30,7 +30,8 @@ export default class Time extends React.Component {
     autoErase: PropTypes.bool,
     className: PropTypes.string,
     relativeTo: PropTypes.number,
-    relativeStart: PropTypes.number
+    relativeStart: PropTypes.number,
+    rightHang: PropTypes.bool,
   }
   static defaultProps = {
     inputFormat: 'h:mm:ss a',
@@ -39,6 +40,7 @@ export default class Time extends React.Component {
     step: 30,
     autoErase: true,
     relativeStart: 0,
+    rightHang: false,
   }
   constructor(props) {
     super(props)
@@ -154,9 +156,10 @@ export default class Time extends React.Component {
   handleContainerBlur = (event) => {
     if (
       this.containerRef.current
+      && this.containerRef.current.divRef.current
       && (
-        this.containerRef.current.contains(event.relatedTarget)
-        || this.containerRef.current === event.relatedTarget
+        this.containerRef.current.divRef.current.contains(event.relatedTarget)
+        || this.containerRef.current.divRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -205,18 +208,18 @@ export default class Time extends React.Component {
   }
   render() {
     return (
-      <div
+      <BlockDiv
         ref={this.containerRef}
         className={classNames(
           'MIRECO-time',
           {
-            block: this.props.block,
+            'right-hang': this.props.rightHang,
           },
           this.props.className,
         )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
-        style={{display: 'inline-block'}}
+        block={this.props.block}
       >
         <Text
           ref={this.textRef}
@@ -227,6 +230,7 @@ export default class Time extends React.Component {
           disabled={this.props.disabled}
           onKeyDown={this.handleTextKeyDown}
           block={this.props.block}
+          style={{marginBottom: '0'}}
         />
         {this.state.inFocus && !this.props.disabled && (
           <Dropdown
@@ -238,7 +242,7 @@ export default class Time extends React.Component {
             continuousOptions={true}
           />
         )}
-      </div>
+      </BlockDiv>
     )
   }
 }
