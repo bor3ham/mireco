@@ -1,41 +1,25 @@
 .MIRECO-datetime-range
-  max-width: 100%
-  div.datetime-range-second
-    display: flex
-    align-items: center
-    .MIRECO-datetime
-      flex: 1
-
   span.to
+    margin-top: 0.4rem
     white-space: pre
-
-  div.duration-container
+  div.duration-inner
     display: flex
-    white-space: pre
-    max-width: 100%
-    .MIRECO-text.duration
-      width: auto
+    align-items: flex-start
+    input.MIRECO-text
+      flex: 1
       margin-right: 0.4rem
 
   &.block
-    margin-right: -0.4rem
     display: flex
     flex-wrap: wrap
-    >.MIRECO-datetime, div.datetime-range-second
-      flex-basis: 20rem
-      flex-grow: 1
-    div.datetime-range-second
-      margin-bottom: standard-padding
-      .MIRECO-time, .MIRECO-date
-        margin-bottom: 0
+
     div.duration-container
+      margin-left: 0.4rem
+
+    >div.MIRECO-datetime, div.datetime-range-second, div.duration-container
       flex-basis: 24rem
       flex-grow: 1
-    div.duration-inner
-      width: 100%
+    div.datetime-range-second
       display: flex
-      align-items: flex-start
-      min-width: 0
-    .MIRECO-text.duration
-      flex: 1
-      width: auto
+      div.MIRECO-datetime
+        flex: 1
