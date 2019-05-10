@@ -8,3 +8,5 @@ export Button from './button.js'
 export Time from './time.js'
 export Date from './date.js'
 export Duration from './duration.js'
+
+export Select from './select.js'

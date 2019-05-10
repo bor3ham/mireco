@@ -13,6 +13,11 @@ const SELECT_OPTIONS = [
   {value: 'bike', label: 'Bicycle'},
   {value: 'plane', label: 'Aeroplane'},
   {value: 'hike', label: 'Hiking'},
+  {value: 'glider', label: 'Hanglider'},
+  {value: 'jetski', label: 'Jetski'},
+  {value: 'tumbling', label: 'Tumbling Down Hill'},
+  {value: 'walking', label: 'Walking'},
+  {value: 'bouncing', label: 'Bouncing Off the Walls'},
 ]
 
 const defaultValue = {
@@ -30,7 +35,7 @@ function randomValue() {
   return {
     text: casual.title,
     checked: casual.coin_flip,
-    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS),
+    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
     time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
     textarea: casual.description,
     date: casual.coin_flip ? null : moment.utc().startOf('day') - (casual.integer(-30, 30) * +moment.duration({days: 1})),
