@@ -28,6 +28,7 @@ export default class Select extends React.Component {
     this.containerRef = React.createRef()
     this.textRef = React.createRef()
     this.dropdownRef = React.createRef()
+    this.hiddenInputRef = React.createRef()
     this.state = {
       ...this.state,
       searchTerm: '',
@@ -35,30 +36,26 @@ export default class Select extends React.Component {
     }
   }
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.value !== prevProps.value) {
-      // const bestValue = this.bestValue(this.state.searchTerm)
-      // if (this.props.value !== bestValue) {
-      //   this.setState({searchTerm: this.valueLabel(this.props.value)})
-      // }
-    }
-
   }
   filteredOptions = (searchTerm) => {
     return this.props.options.filter((option) => {
-      const term = searchTerm.toLowerCase().trim()
-      if (term.length === 0) {
-        return true
-      }
-      const searchText = `${option.label}${option.value}`.toLowerCase()
-      const terms = term.split(' ')
-      let allFound = true
-      terms.map((subTerm) => {
-        if (searchText.indexOf(subTerm) === -1) {
-          allFound = false
-        }
-      })
-      return allFound
+      return this.filterOption(option, searchTerm)
     })
+  }
+  filterOption = (option, searchTerm) => {
+    const term = searchTerm.toLowerCase().trim()
+    if (term.length === 0) {
+      return true
+    }
+    const searchText = `${option.label}${option.value}`.toLowerCase()
+    const terms = term.split(' ')
+    let allFound = true
+    terms.map((subTerm) => {
+      if (searchText.indexOf(subTerm) === -1) {
+        allFound = false
+      }
+    })
+    return allFound
   }
   bestValue = (term) => {
     const filtered = this.filteredOptions(term)
@@ -116,6 +113,15 @@ export default class Select extends React.Component {
     }
     this.textRef.current && this.textRef.current.focus()
   }
+  handleHiddenInputChange = () => {
+    if (this.hiddenInputRef.current) {
+      let value = this.hiddenInputRef.current.value
+      if (value === '') {
+        value = null
+      }
+      this.handleSelect(value)
+    }
+  }
   handleContainerBlur = (event) => {
     if (
       this.containerRef.current
@@ -132,37 +138,7 @@ export default class Select extends React.Component {
   }
   onBlur = () => {
     this.setState({inFocus: false, searchTerm: ''})
-    // if (typeof this.props.value === 'number') {
-    //   let formatted = this.format(this.props, this.props.value)
-    //   this.setState({
-    //     textValue: formatted,
-    //     inFocus: false,
-    //   }, () => {
-    //     if (typeof this.props.onChange === 'function') {
-    //       this.props.onChange(this.props.value, true)
-    //     }
-    //   })
-    // }
-    // else {
-    //   this.setState(prevState => {
-    //     let updates = {
-    //       inFocus: false,
-    //     }
-    //     if (this.props.autoErase) {
-    //       updates.textValue = ''
-    //     }
-    //     return updates
-    //   }, () => {
-    //     if (typeof this.props.onChange === 'function') {
-    //       if (this.props.autoErase) {
-    //         this.props.onChange(null, true)
-    //       }
-    //       else {
-    //         this.props.onChange(this.props.value, true)
-    //       }
-    //     }
-    //   })
-    // }
+    // todo: different onChange for blur events?
   }
   render() {
     const filteredOptions = this.filteredOptions(this.state.searchTerm)
@@ -193,9 +169,18 @@ export default class Select extends React.Component {
           />
         )}
         <select
+          ref={this.hiddenInputRef}
           style={{display: 'none'}}
+          value={this.props.value || ''}
+          onChange={this.handleHiddenInputChange}
         >
-          {this.props.options.map((selectOption) => {
+          {this.props.nullable && <option key="-" value="">-</option>}
+          {this.props.options.filter((selectOption) => {
+            return (
+              selectOption.value === this.props.value
+              || this.filterOption(selectOption, this.state.searchTerm)
+            )
+          }).map((selectOption) => {
             return (
               <option
                 key={selectOption.value}
