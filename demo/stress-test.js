@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Mireco from 'mireco'
-import moment from 'moment'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
+import { startOfDay, startOfHour, addDays, addHours, addMinutes } from 'date-fns'
 
 import ResizeContainer from './resize-container.js'
 
@@ -28,7 +28,7 @@ const defaultValue = {
   textarea: 'Wow this is two lines...\nIn this text box',
   date: null,
   duration: null,
-  datetime: +moment().utc(),
+  datetime: +(new Date()),
   datetime_range: {start: null, end: null},
 }
 function randomValue() {
@@ -38,21 +38,18 @@ function randomValue() {
     select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
     time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
     textarea: casual.description,
-    date: casual.coin_flip ? null : moment.utc().startOf('day') - (casual.integer(-30, 30) * +moment.duration({days: 1})),
-    duration: casual.coin_flip ? null : casual.integer(0, 400) * +moment.duration({minutes: 30}),
-    datetime: casual.coin_flip ? null : +moment().utc() + casual.integer(
-      -1 * +moment.duration({days: 10}),
-      +moment.duration({days: 10}),
-    ),
+    date: casual.coin_flip ? null : +addDays(startOfDay(new Date()), casual.integer(-30, 30)),
+    duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
+    datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
     datetime_range: {
-      start: casual.coin_flip ? null : +moment().utc().startOf('hour') + casual.integer(
-        -3 * 24,
-        3 * 24,
-      ) * +moment.duration({hours: 1}),
-      end: casual.coin_flip ? null : +moment().utc().startOf('hour') + casual.integer(
-        4 * 24,
-        7 * 24,
-      ) * +moment.duration({hours: 1}),
+      start: casual.coin_flip ? null : +addHours(
+        startOfHour(new Date()),
+        casual.integer(-3 * 24, 3 * 24)
+      ),
+      end: casual.coin_flip ? null : +addHours(
+        startOfHour(new Date()),
+        casual.integer(4 * 24, 7 * 24)
+      ),
     },
   }
 }
