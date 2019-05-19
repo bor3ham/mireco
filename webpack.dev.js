@@ -1,5 +1,5 @@
-const PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
 const path = require('path');
+const PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'mireco.js',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
@@ -15,18 +15,18 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
-        }
-      }
-    ]
+          loader: 'babel-loader',
+        },
+      },
+    ],
   },
   plugins: [
-    new PeerDepsExternalsPlugin()
+    new PeerDepsExternalsPlugin(),
   ],
   resolve: {
     modules: [
       path.resolve('node_modules'),
       path.resolve('src'),
     ],
-  }
+  },
 };

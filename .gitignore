@@ -71,3 +71,6 @@ demo/dist/*.js
 demo/_site
 demo/dist/*.js
 demo/dist/*.css
+
+# webpack build analysis
+report.html
