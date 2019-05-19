@@ -1,14 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import moment from 'moment'
+import { parse, format, isValid, startOfDay, addDays, subDays } from 'date-fns'
 
 import { Text } from 'inputs'
 import { Calendar, BlockDiv } from 'components'
 
-export default class Date extends React.Component {
+export default class MirecoDate extends React.Component {
   static propTypes = {
-    format: PropTypes.string.isRequired,
+    inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     value: PropTypes.number,
@@ -21,8 +21,20 @@ export default class Date extends React.Component {
   }
   static defaultProps = {
     block: false,
-    format: 'DD/MM/YYYY',
-    displayFormat: 'Do MMM YYYY',
+    inputFormats: [
+      'd',
+      'do',
+      'd/MM',
+      'do MMM',
+      'do MMMM',
+      'd/MM/yy',
+      'd/MM/yyyy',
+      'do MMM yy',
+      'do MMM yyyy',
+      'do MMMM yy',
+      'do MMMM yyyy',
+    ],
+    displayFormat: 'do MMM yyyy',
     placeholder: 'dd/mm/yyyy',
     autoErase: true,
     rightHang: false,
@@ -56,19 +68,27 @@ export default class Date extends React.Component {
     if (value === null || typeof value === 'undefined') {
       return ''
     }
-    let parsed = moment.utc(value)
-    return parsed.format(props.displayFormat)
+    return format(value, props.displayFormat)
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
+    // todo: remove superfluous spaces
     if (trimmed.length === 0) {
       return null
     }
-    let parsed = moment.utc(trimmed, [this.props.format, this.props.displayFormat])
-    if (parsed.isValid()) {
-      return +parsed
-    }
-    return undefined
+
+    let valid = undefined
+    this.props.inputFormats.map((format) => {
+      if (typeof valid !== 'undefined') {
+        return
+      }
+      let parsed = parse(trimmed, format, new Date())
+      if (isValid(parsed)) {
+        // console.log(textValue, 'valid format:', format, this.format(this.props, +parsed))
+        valid = +parsed
+      }
+    })
+    return valid
   }
   handleFocus = (event) => {
     this.setState({inFocus: true})
@@ -92,16 +112,16 @@ export default class Date extends React.Component {
     if (event) {
       if (event.which === 40) {
         event.preventDefault()
-        let current = (typeof this.props.value === 'number') ? this.props.value : +moment.utc().startOf('day')
+        let current = (typeof this.props.value === 'number') ? this.props.value : +startOfDay(new Date())
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(current + +moment.duration({days: 1}), false)
+          this.props.onChange(+addDays(current, 1), false)
         }
       }
       if (event.which === 38) {
         event.preventDefault()
-        let current = (typeof this.props.value === 'number') ? this.props.value : +moment.utc().startOf('day')
+        let current = (typeof this.props.value === 'number') ? this.props.value : +startOfDay(new Date())
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(current - +moment.duration({days: 1}), false)
+          this.props.onChange(+subDays(current, 1), false)
         }
       }
     }

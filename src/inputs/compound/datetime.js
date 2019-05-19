@@ -1,8 +1,8 @@
 import React from 'react'
-import moment from 'moment'
 import PropTypes from 'prop-types'
+import { startOfDay } from 'date-fns'
 
-import { Date, Time } from 'inputs'
+import { Date as MirecoDate, Time } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
 
 export default class Datetime extends React.Component {
@@ -57,7 +57,7 @@ export default class Datetime extends React.Component {
     let dateValue = (value === null ? null : undefined)
     let timeValue = (value === null ? null : undefined)
     if (typeof this.props.value === 'number') {
-      dateValue = +moment.utc(this.props.value).startOf('day')
+      dateValue = +startOfDay(this.props.value)
       timeValue = this.props.value - dateValue
     }
     return {
@@ -66,7 +66,7 @@ export default class Datetime extends React.Component {
     }
   }
   fallbackDate = (dateValue) => {
-    let value = +moment.utc().startOf('day')
+    let value = +startOfDay(new Date())
     if (typeof dateValue === 'number') {
       value = dateValue
     }
@@ -139,7 +139,7 @@ export default class Datetime extends React.Component {
   }
   render() {
     let date = (
-      <Date
+      <MirecoDate
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}

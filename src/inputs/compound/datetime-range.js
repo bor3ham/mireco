@@ -1,6 +1,6 @@
 import React from 'react'
-import moment from 'moment'
 import PropTypes from 'prop-types'
+import { startOfHour, addHours } from 'date-fns'
 
 import { Datetime, Duration } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
@@ -24,7 +24,7 @@ export default class DatetimeRange extends React.Component {
     disabled: false,
     defaultDuration: 60 * 60 * 1000,
     getDefaultStart: function() {
-      return +moment.utc().startOf('hour').add({hours: 1})
+      return +addHours(startOfHour(new Date()), 1)
     },
     showClear: true,
   }

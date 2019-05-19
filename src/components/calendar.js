@@ -1,7 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import moment from 'moment'
+import {
+  getYear,
+  getMonth,
+  startOfDay,
+  startOfISOWeek,
+  endOfMonth,
+  format,
+  addWeeks,
+  addDays,
+} from 'date-fns'
 
 const arrowLeft = (
   <svg
@@ -68,12 +77,11 @@ export default class Calendar extends React.Component {
     }
   }
   splitDateValue(value) {
-    let valueYear = moment().year()
-    let valueMonth = moment().month()
+    let valueYear = getYear(new Date())
+    let valueMonth = getMonth(new Date())
     if (typeof value === 'number') {
-      let momentValue = moment.utc(value)
-      valueYear = momentValue.year()
-      valueMonth = momentValue.month()
+      valueYear = getYear(value)
+      valueMonth = getMonth(value)
     }
     return {
       year: valueYear,
@@ -82,7 +90,7 @@ export default class Calendar extends React.Component {
   }
   componentDidUpdate(prevProps) {
     if (this.props.current !== prevProps.current && typeof this.props.current === 'number') {
-      this.setState(this.splitDateValue(prevProps.current))
+      this.setState(this.splitDateValue(this.props.current))
     }
   }
   selectDay = (day) => {
@@ -115,25 +123,25 @@ export default class Calendar extends React.Component {
     })
   }
   render() {
-    let today = +moment.utc().startOf('day')
+    let today = startOfDay(new Date())
 
     let weeks = []
-    let firstDay = moment.utc([this.state.year, this.state.month]).startOf('isoweek')
-    let lastDay = moment.utc([this.state.year, this.state.month]).endOf('month')
-    let day = firstDay.clone()
+    let firstDay = startOfISOWeek(new Date(this.state.year, this.state.month))
+    let lastDay = endOfMonth(new Date(this.state.year, this.state.month))
+    let day = firstDay
     while (+day < +lastDay) {
       let newWeek = []
       for (var i = 0; i < 7; i++) {
-        newWeek.push(day.clone().add({days: i}))
+        newWeek.push(addDays(day, i))
       }
       weeks.push(newWeek)
-      day.add(moment.duration({weeks: 1}))
+      day = addWeeks(day, 1)
     }
 
     return (
       <div className="MIRECO-calendar">
         <div className="calendar-header">
-          <h5>{moment.utc([this.state.year, this.state.month]).format('MMMM YYYY')}</h5>
+          <h5>{format(new Date(this.state.year, this.state.month), 'MMMM yyyy')}</h5>
           <button type="button" tabIndex={-1} alt="Prev Month" onClick={this.prevMonth}>
             {arrowLeft}
           </button>
@@ -147,7 +155,7 @@ export default class Calendar extends React.Component {
               {weeks[0].map((day, dayIndex) => {
                 return (
                   <th key={`header-${dayIndex}`}>
-                    {day.format('ddd')[0]}
+                    {format(day, 'EEEEEE')}
                   </th>
                 )
               })}
@@ -158,7 +166,7 @@ export default class Calendar extends React.Component {
                   {week.map((day, dayIndex) => {
                     return (
                       <td key={`day-${dayIndex}`} className={classNames({
-                        'outside-month': day.month() != this.state.month,
+                        'outside-month': getMonth(day) != this.state.month,
                         'current': (this.props.current === +day),
                         'today': (+day === today && this.props.showToday),
                       })}>
@@ -169,7 +177,7 @@ export default class Calendar extends React.Component {
                             this.selectDay(+day)
                           }}
                         >
-                          {day.format('D')}
+                          {format(day, 'd')}
                         </button>
                       </td>
                     )

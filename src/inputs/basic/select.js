@@ -14,7 +14,7 @@ export default class Select extends React.Component {
     options: PropTypes.arrayOf(PropTypes.shape({
       value: valueType,
       label: PropTypes.string,
-    })),
+    })).isRequired,
     placeholder: PropTypes.string,
     block: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -22,6 +22,7 @@ export default class Select extends React.Component {
   }
   static defaultProps = {
     nullable: true,
+    options: [],
   }
   constructor(props) {
     super(props)
@@ -159,6 +160,7 @@ export default class Select extends React.Component {
           block={this.props.block}
           onFocus={this.handleFocus}
           onKeyDown={this.handleSearchKeyDown}
+          disabled={this.props.disabled}
         />
         {this.state.inFocus && !this.props.disabled && (
           <Dropdown
@@ -173,6 +175,7 @@ export default class Select extends React.Component {
           style={{display: 'none'}}
           value={this.props.value || ''}
           onChange={this.handleHiddenInputChange}
+          disabled={this.props.disabled}
         >
           {this.props.nullable && <option key="-" value="">-</option>}
           {this.props.options.filter((selectOption) => {

@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
+import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
 
 import { Text } from 'inputs'
 import { Dropdown, BlockDiv } from 'components'
@@ -19,7 +19,7 @@ const shortHumanizeDur = humanizeDuration.humanizer({
 
 export default class Time extends React.Component {
   static propTypes = {
-    inputFormat: PropTypes.string.isRequired,
+    inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     onChange: PropTypes.func,
@@ -34,7 +34,24 @@ export default class Time extends React.Component {
     rightHang: PropTypes.bool,
   }
   static defaultProps = {
-    inputFormat: 'h:mm:ss a',
+    inputFormats: [
+      'h:m:s a',
+      'h:m:sa',
+      'h:m a',
+      'H:m:s a',
+      'H:m:sa',
+      'H:m a',
+      'h:ma',
+      'h:m',
+      'h a',
+      'H:ma',
+      'H:m',
+      'H a',
+      'ha',
+      'h',
+      'Ha',
+      'H',
+    ],
     displayFormat: 'h:mm a',
     placeholder: 'hh:mm',
     step: 30,
@@ -82,15 +99,15 @@ export default class Time extends React.Component {
       let ms = min * 60 * 1000
       let newOption = {
         value: ms,
-        label: moment.utc(ms).format(props.displayFormat),
+        label: format(addMilliseconds(startOfDay(new Date()), ms), props.displayFormat),
       }
       if (typeof props.relativeTo === 'number') {
         let msAbsolute = props.relativeStart + newOption.value
         if (msAbsolute > props.relativeTo) {
           let duration = msAbsolute - props.relativeTo
           if (
-            duration <= +moment.duration({hours: 24})
-            && duration % +moment.duration({minutes: 5}) === 0
+            duration <= (24 * 60 * 60 * 1000)
+            && duration % (5 * 60 * 1000) === 0
           ) {
             newOption.label += ` (${shortHumanizeDur(duration, {
               units: ['h', 'm'],
@@ -104,14 +121,15 @@ export default class Time extends React.Component {
     return options
   }
   format = (props, value) => {
-    if (value === null || typeof value === 'undefined') {
+    if (typeof value !== 'number') {
       return ''
     }
-    let parsed = moment.utc(value)
-    let longFormatted = parsed.format(props.inputFormat)
-    let displayFormatted = parsed.format(props.displayFormat)
-    let longParsed = +moment.utc(longFormatted, props.inputFormat)
-    let shortParsed = +moment.utc(displayFormatted, props.inputFormat)
+    let adjustedValue = value
+    adjustedValue = addMilliseconds(startOfDay(new Date()), value)
+    let longFormatted = format(adjustedValue, props.inputFormats[0])
+    let displayFormatted = format(adjustedValue, props.displayFormat)
+    let longParsed = this.parseText(longFormatted)
+    let shortParsed = this.parseText(displayFormatted)
     if (longParsed === shortParsed) {
       return displayFormatted
     }
@@ -121,14 +139,22 @@ export default class Time extends React.Component {
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
+    // todo: remove superfluous spaces
     if (trimmed.length === 0) {
       return null
     }
-    let parsed = moment.utc(trimmed, this.props.inputFormat)
-    if (parsed.isValid()) {
-      return +parsed % +moment.duration({days: 1})
-    }
-    return undefined
+    let valid = undefined
+    this.props.inputFormats.map((format) => {
+      if (typeof valid !== 'undefined') {
+        return
+      }
+      let parsed = parse(trimmed, format, startOfDay(new Date()))
+      if (isValid(parsed)) {
+        valid = +parsed
+        valid -= +startOfDay(new Date())
+      }
+    })
+    return valid
   }
   handleTextChange = (newValue) => {
     this.setState({textValue: newValue}, () => {
