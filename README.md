@@ -52,13 +52,6 @@ All Mireco components should be designed with the following in mind:
   screen, using `flex-basis` to take up multiple rows when necessary
 - There is no hard coded minimum width for any input
 
-
-Non battle-tested guidelines:
-
-- Block-style components that need to restructure based on width should do so relative to their
-  parent size (eg. with `flex-wrap`ing and `min-width`), as opposed to with screen sized media
-  queries
-
 ## Installation
 
 Install the package from npm:
