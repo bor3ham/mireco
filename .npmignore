@@ -4,3 +4,4 @@ src/**/*.json
 demo
 report.html
 rollup.config.js
+webpack.*.js
