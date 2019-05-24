@@ -63,6 +63,7 @@ typings/
 # build output
 dist/*.js
 dist/*.css
+dist/**/*.styl
 
 # demo build
 demo/dist/*.js

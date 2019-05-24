@@ -15,21 +15,24 @@ outline-colourise-button(colour, interact-colour)
   border: thin-line solid colour
   &:hover
     background: content-background
+    color: interact-colour
     border-color: interact-colour + hover-highlight
   &:active
     background: content-background
+    color: interact-colour
     border-color: interact-colour + interact-highlight
 
 .MIRECO-button
   -webkit-appearance: none
   box-sizing: border-box
   border-radius: edge-rounding
-  padding: (standard-padding / 2) standard-padding
+  padding: 0 standard-padding
+  padding-top: (standard-font-size / 5)
   outline: none
   font-family: standard-font-families
   font-weight: standard-font-weight
   font-size: standard-font-size
-  line-height: standard-line-height
+  line-height: 2em
   user-select: none
   &:not(:disabled)
     cursor: pointer
@@ -45,17 +48,17 @@ outline-colourise-button(colour, interact-colour)
 
   &:not(:disabled)
     &:not(.outline)
-      solid-colourise-button(primary-colour, primary-content-colour)
+      solid-colourise-button(primary-button-colour, primary-button-content-colour)
       &.secondary
-        solid-colourise-button(secondary-colour, secondary-content-colour)
+        solid-colourise-button(secondary-button-colour, secondary-button-content-colour)
       &.content
         solid-colourise-button(content-foreground, content-background)
     &.outline
-      outline-colourise-button(primary-colour, primary-colour)
+      outline-colourise-button(primary-button-colour, primary-button-colour)
       &.secondary
-        outline-colourise-button(secondary-colour, secondary-colour)
+        outline-colourise-button(secondary-button-colour, secondary-button-colour)
       &.content
-        outline-colourise-button(content-foreground, primary-colour)
+        outline-colourise-button(content-foreground, primary-button-colour)
   &:disabled
     background: content-faint
     color: content-muted
