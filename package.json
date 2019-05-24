@@ -13,8 +13,7 @@
     "watch-js": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "build-css": "./node_modules/.bin/stylus src/index.styl -o dist/mireco-components.css",
     "watch-css": "./node_modules/.bin/stylus src/index.styl -o dist/mireco-components.css --watch",
-    "copy-styl": "rsync -zarv --include=\"*/\" --include=\"*.styl\" --exclude=\"*\" src/ dist",
-    "build": "npm run build-js && npm run build-css && npm run copy-styl",
+    "build": "npm run build-js && npm run build-css",
     "prepare": "npm run build"
   },
   "dependencies": {

@@ -1,4 +1,6 @@
 src/**/*.js
 src/**/*.babelrc
-demo/**/*
+src/**/*.json
+demo
+report.html
 rollup.config.js
