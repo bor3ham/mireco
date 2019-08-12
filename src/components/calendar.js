@@ -167,8 +167,8 @@ export default class Calendar extends React.Component {
                     return (
                       <td key={`day-${dayIndex}`} className={classNames({
                         'outside-month': getMonth(day) != this.state.month,
-                        'current': (this.props.current === +day),
-                        'today': (+day === today && this.props.showToday),
+                        'current': (this.props.current === (+day - day.getTimezoneOffset() * 60000)),
+                        'today': (+day === +today && this.props.showToday),
                       })}>
                         <button
                           type="button"

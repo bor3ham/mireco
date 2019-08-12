@@ -82,11 +82,9 @@ export default class MirecoDate extends React.Component {
       if (typeof valid !== 'undefined') {
         return
       }
-      // todo: work with values in UTC not localtime
       let parsed = parse(trimmed, format, new Date())
       if (isValid(parsed)) {
-        // console.log(textValue, 'valid format:', format, this.format(this.props, +parsed))
-        valid = +parsed
+        valid = +startOfDay(parsed) - (parsed.getTimezoneOffset() * 60000)
       }
     })
     return valid
