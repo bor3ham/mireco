@@ -24,6 +24,7 @@ export default class Text extends React.Component {
     onBlur: PropTypes.func,
     onKeyDown: PropTypes.func,
     onKeyUp: PropTypes.func,
+    onClick: PropTypes.func,
   }
   static defaultProps = {
     type: 'text',
@@ -90,6 +91,7 @@ export default class Text extends React.Component {
         onBlur={this.props.onBlur}
         onKeyDown={this.props.onKeyDown}
         onKeyUp={this.props.onKeyUp}
+        onClick={this.props.onClick}
       />
     )
   }

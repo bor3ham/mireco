@@ -45,6 +45,7 @@ export default class MirecoDate extends React.Component {
       ...this.state,
       textValue: this.format(props, props.value),
       inFocus: false,
+      calendarOpen: false,
     }
     this.containerRef = React.createRef()
     this.textRef = React.createRef()
@@ -92,7 +93,10 @@ export default class MirecoDate extends React.Component {
     return valid
   }
   handleFocus = (event) => {
-    this.setState({inFocus: true})
+    this.setState({
+      inFocus: true,
+      calendarOpen: true,
+    })
   }
   handleContainerBlur = (event) => {
     if (
@@ -116,6 +120,7 @@ export default class MirecoDate extends React.Component {
         let current = (typeof this.props.value === 'number') ? this.props.value : +startOfDay(new Date())
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(+addDays(current, 1), false)
+          this.setState({calendarOpen: true})
         }
       }
       if (event.which === 38) {
@@ -123,6 +128,7 @@ export default class MirecoDate extends React.Component {
         let current = (typeof this.props.value === 'number') ? this.props.value : +startOfDay(new Date())
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(+subDays(current, 1), false)
+          this.setState({calendarOpen: true})
         }
       }
     }
@@ -131,14 +137,19 @@ export default class MirecoDate extends React.Component {
     this.setState({textValue: newValue}, () => {
       if (typeof this.props.onChange === 'function') {
         this.props.onChange(this.parseText(newValue), false)
+        this.setState({calendarOpen: true})
       }
     })
+  }
+  handleTextClick = () => {
+    this.setState({calendarOpen: true})
   }
   onSelectDay = (day) => {
     if (typeof this.props.onChange === 'function') {
       this.props.onChange(day, false)
     }
     this.textRef.current && this.textRef.current.focus()
+    this.setState({calendarOpen: false})
   }
   onBlur = () => {
     if (typeof this.props.value === 'number') {
@@ -146,6 +157,7 @@ export default class MirecoDate extends React.Component {
       this.setState({
         textValue: formatted,
         inFocus: false,
+        calendarOpen: false,
       }, () => {
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(this.props.value, true)
@@ -156,6 +168,7 @@ export default class MirecoDate extends React.Component {
       this.setState(prevState => {
         let updates = {
           inFocus: false,
+          calendarOpen: false,
         }
         if (this.props.autoErase) {
           updates.textValue = ''
@@ -193,13 +206,14 @@ export default class MirecoDate extends React.Component {
           placeholder={this.props.placeholder}
           value={this.state.textValue}
           onChange={this.handleTextChange}
+          onClick={this.handleTextClick}
           onFocus={this.handleFocus}
           disabled={this.props.disabled}
           onKeyDown={this.handleTextKeyDown}
           block={this.props.block}
           style={{marginBottom: '0'}}
         />
-        {this.state.inFocus && !this.props.disabled && (
+        {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
           <Calendar
             selectDay={this.onSelectDay}
             current={this.props.value}
