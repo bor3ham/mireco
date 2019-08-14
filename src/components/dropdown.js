@@ -14,22 +14,7 @@ class DropdownOption extends React.Component {
   }
   constructor(props) {
     super(props)
-    this.optionRef = React.createRef()
-  }
-  componentDidMount() {
-    if (this.props.current) {
-      this.focus()
-    }
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.current && !prevProps.current) {
-      this.focus()
-    }
-  }
-  focus = () => {
-    if (this.optionRef.current) {
-      this.optionRef.current.scrollIntoView()
-    }
+    this.itemRef = React.createRef()
   }
   handleClick = () => {
     this.props.onSelect(this.props.option.value)
@@ -40,7 +25,7 @@ class DropdownOption extends React.Component {
         className={classNames({
           current: this.props.current,
         })}
-        ref={this.optionRef}
+        ref={this.itemRef}
       >
         <button
           type="button"
@@ -69,6 +54,33 @@ export default class Dropdown extends React.Component {
   }
   static defaultProps = {
     continuousOptions: false,
+  }
+  constructor(props) {
+    super(props)
+    this.containerRef = React.createRef()
+    this.currentRef = React.createRef()
+  }
+  componentDidMount() {
+    if (this.props.value) {
+      this.focusOnCurrent()
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.props.value
+      && this.props.value !== prevProps.value
+    ) {
+      this.focusOnCurrent()
+    }
+  }
+  focusOnCurrent = () => {
+    if (
+      this.containerRef.current
+      && this.currentRef.current
+      && this.currentRef.current.itemRef.current
+    ) {
+      this.containerRef.current.scrollTop = this.currentRef.current.itemRef.current.offsetTop
+    }
   }
   getCurrentIndex = () => {
     let currentIndex = -1
@@ -120,31 +132,36 @@ export default class Dropdown extends React.Component {
     }
   }
   render() {
-    let options
-    if (this.props.options && this.props.options.length) {
-      options = this.props.options.map((option, index) => {
-        return (
-          <DropdownOption
-            key={`option-${index}`}
-            option={option}
-            current={option.value === this.props.value}
-            disabled={this.props.disabled}
-            onSelect={this.handleSelect}
-          />
-        )
-      })
-    }
-    else {
-      options = (<li>No options</li>)
-    }
+    const options = this.props.options || []
     return (
       <ul
         className={classNames('MIRECO-dropdown', {
           disabled: this.props.disabled,
         })}
         tabIndex={-1}
+        ref={this.containerRef}
       >
-        {options}
+        {this.props.options.map((option, index) => {
+          const extraProps = {}
+          const current = (option.value === this.props.value)
+          if (current) {
+            extraProps.ref = this.currentRef
+          }
+          return (
+            <DropdownOption
+              key={`option-${index}`}
+              option={option}
+              current={current}
+              disabled={this.props.disabled}
+              onSelect={this.handleSelect}
+              setScrollTop={this.setScrollTop}
+              {...extraProps}
+            />
+          )
+        })}
+        {!options.length && (
+          <li>No options</li>
+        )}
       </ul>
     )
   }

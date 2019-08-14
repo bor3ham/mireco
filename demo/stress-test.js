@@ -10,7 +10,9 @@ import ResizeContainer from './resize-container.js'
 
 const SELECT_OPTIONS = [
   {value: 'car', label: 'Car'},
-  {value: 'bike', label: 'Bicycle'},
+  {value: 'bmx', label: 'Bicycle (BMX)'},
+  {value: 'mountain_bike', label: 'Bicycle (Mountain Bike)'},
+  {value: 'road_bike', label: 'Bicycle (Road Bike)'},
   {value: 'plane', label: 'Aeroplane'},
   {value: 'hike', label: 'Hiking'},
   {value: 'glider', label: 'Hanglider'},
