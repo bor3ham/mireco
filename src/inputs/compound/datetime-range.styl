@@ -1,20 +1,21 @@
 .MIRECO-datetime-range
   span.to
-    margin-top: 0.4rem
+    margin-top: text-space-width
     white-space: pre
   div.duration-inner
     display: flex
     align-items: flex-start
     input.MIRECO-text
       flex: 1
-      margin-right: 0.4rem
+      margin-right: text-space-width
 
   &.block
     display: flex
     flex-wrap: wrap
+    margin-left: -1 * text-space-width
 
-    div.duration-container
-      margin-left: 0.4rem
+    div.MIRECO-datetime, div.duration-container
+      margin-left: text-space-width
 
     >div.MIRECO-datetime, div.datetime-range-second, div.duration-container
       flex-basis: 24rem
