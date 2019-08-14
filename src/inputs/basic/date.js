@@ -113,7 +113,7 @@ export default class MirecoDate extends React.Component {
     this.onBlur()
   }
   handleTextKeyDown = (event) => {
-    this.setState({inFocus: true})
+    this.setState({inFocus: true, calendarOpen: true})
     if (event) {
       if (event.which === 40) {
         event.preventDefault()
