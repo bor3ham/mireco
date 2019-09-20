@@ -140,6 +140,7 @@ export default class Datetime extends React.Component {
     }
   }
   onBlur = () => {
+    // delay to ensure child onBlur has finished (ugly)
     window.setTimeout(() => {
       if (
         typeof this.state.date === 'string'
@@ -163,24 +164,6 @@ export default class Datetime extends React.Component {
         })
       }
     }, 0)
-
-    // const combined = this.combinedStateValue()
-    // console.log('blurring values to', splitDateTime(combined))
-    // this.setState({
-    //   ...splitDateTime(combined),
-    // }, () => {
-    //   if (typeof this.props.onChange === 'function') {
-    //     if (
-    //       typeof this.state.date === 'string'
-    //       || (typeof this.state.time === 'number' && !isNaN(this.state.time))
-    //     ) {
-    //       this.props.onChange(combined, true)
-    //     }
-    //     else {
-    //       this.props.onChange(null, true)
-    //     }
-    //   }
-    // })
   }
   render() {
     let date = (
