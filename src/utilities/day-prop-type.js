@@ -1,9 +1,9 @@
 import { isValid, parse } from 'date-fns'
 
-import { ISO_8601_FORMAT } from 'utilities'
+import { ISO_8601_DATE_FORMAT } from 'utilities'
 
-function isIso8601Day(string) {
-  return isValid(parse(string, ISO_8601_FORMAT))
+function isIso8601Date(string) {
+  return isValid(parse(string, ISO_8601_DATE_FORMAT, new Date()))
 }
 
 const requiredDayPropType = (props, propName, componentName) => {
@@ -21,7 +21,7 @@ const requiredDayPropType = (props, propName, componentName) => {
     )
   }
 
-  if (!isIso8601Day(value)) {
+  if (!isIso8601Date(value)) {
     return new TypeError(
       `Invalid value of ISO 8601 date: ${value} for ${propName} in ${componentName}`
     )

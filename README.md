@@ -16,8 +16,11 @@ following guidelines:
   [Tri-State Value System](#tri-state-values)
 - Input's `onChange` is a function callback with the new `value` as an argument (consumers do no
   direct reading from dom elements with refs)
-- All time values are handled internally as `milliseconds from utc epoch`. Any localisation should
-  be performed in your own wrapper components. Similarly, all durations are in `milliseconds`
+- For the purpose of `onChange` and `value` props:
+  - All date values are in ISO 8601 Date formatted string (`YYYY-MM-DD`)
+  - All datetime values are `utc milliseconds from epoch`. Any localisation should be performed in
+    your own wrapper components
+  - All durations are in `milliseconds`
 - For basic use cases, all inputs are expected to be used by Mireco consumers as flat components -
   eg. the `Checkbox` component uses a convenience `label="label contents"` prop instead of requiring
   `<Label><Checkbox/> label contents</Label>`

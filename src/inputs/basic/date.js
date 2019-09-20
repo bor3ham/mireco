@@ -1,17 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { parse, format, isValid, startOfDay, addDays, subDays } from 'date-fns'
+import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { Text } from 'inputs'
 import { Calendar, BlockDiv } from 'components'
+import { dayPropType, ISO_8601_DATE_FORMAT } from 'utilities'
 
 export default class MirecoDate extends React.Component {
   static propTypes = {
     inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
-    value: PropTypes.number,
+    value: dayPropType,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
@@ -55,7 +56,7 @@ export default class MirecoDate extends React.Component {
       if (this.props.value === null) {
         this.setState({textValue: ''})
       }
-      else if (typeof this.props.value === 'number') {
+      else if (typeof this.props.value === 'string') {
         if (this.props.value !== this.parseText(this.state.textValue)) {
           this.setState({textValue: this.format(this.props, this.props.value)})
         }
@@ -69,7 +70,7 @@ export default class MirecoDate extends React.Component {
     if (value === null || typeof value === 'undefined') {
       return ''
     }
-    return format(value, props.displayFormat)
+    return format(parse(value, ISO_8601_DATE_FORMAT, new Date()), props.displayFormat)
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
@@ -79,15 +80,14 @@ export default class MirecoDate extends React.Component {
     }
 
     let valid = undefined
-    this.props.inputFormats.map((format) => {
+    this.props.inputFormats.map((inputFormat) => {
       if (typeof valid !== 'undefined') {
         return
       }
-      // todo: work with values in UTC not localtime
-      let parsed = parse(trimmed, format, new Date())
+      let parsed = parse(trimmed, inputFormat, new Date())
       if (isValid(parsed)) {
         // console.log(textValue, 'valid format:', format, this.format(this.props, +parsed))
-        valid = +parsed
+        valid = format(parsed, ISO_8601_DATE_FORMAT)
       }
     })
     return valid
@@ -115,19 +115,21 @@ export default class MirecoDate extends React.Component {
   handleTextKeyDown = (event) => {
     this.setState({inFocus: true, calendarOpen: true})
     if (event) {
+      let current = new Date()
+      if (typeof this.props.value === 'string') {
+        current = parse(this.props.value, ISO_8601_DATE_FORMAT, new Date())
+      }
       if (event.which === 40) {
         event.preventDefault()
-        let current = (typeof this.props.value === 'number') ? this.props.value : +startOfDay(new Date())
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(+addDays(current, 1), false)
+          this.props.onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
           this.setState({calendarOpen: true})
         }
       }
       if (event.which === 38) {
         event.preventDefault()
-        let current = (typeof this.props.value === 'number') ? this.props.value : +startOfDay(new Date())
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(+subDays(current, 1), false)
+          this.props.onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
           this.setState({calendarOpen: true})
         }
       }
@@ -152,7 +154,7 @@ export default class MirecoDate extends React.Component {
     this.setState({calendarOpen: false})
   }
   onBlur = () => {
-    if (typeof this.props.value === 'number') {
+    if (typeof this.props.value === 'string') {
       let formatted = this.format(this.props, this.props.value)
       this.setState({
         textValue: formatted,

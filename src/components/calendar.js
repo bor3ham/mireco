@@ -10,7 +10,10 @@ import {
   format,
   addWeeks,
   addDays,
+  parse,
 } from 'date-fns'
+
+import { ISO_8601_DATE_FORMAT, dayPropType } from 'utilities'
 
 const arrowLeft = (
   <svg
@@ -63,7 +66,7 @@ const arrowRight = (
 export default class Calendar extends React.Component {
   static propTypes = {
     selectDay: PropTypes.func,
-    current: PropTypes.number,
+    current: dayPropType,
     showToday: PropTypes.bool,
   }
   static defaultProps = {
@@ -79,9 +82,10 @@ export default class Calendar extends React.Component {
   splitDateValue(value) {
     let valueYear = getYear(new Date())
     let valueMonth = getMonth(new Date())
-    if (typeof value === 'number') {
-      valueYear = getYear(value)
-      valueMonth = getMonth(value)
+    if (typeof value === 'string') {
+      let parsedValue = parse(value, ISO_8601_DATE_FORMAT, new Date())
+      valueYear = getYear(parsedValue)
+      valueMonth = getMonth(parsedValue)
     }
     return {
       year: valueYear,
@@ -89,7 +93,7 @@ export default class Calendar extends React.Component {
     }
   }
   componentDidUpdate(prevProps) {
-    if (this.props.current !== prevProps.current && typeof this.props.current === 'number') {
+    if (this.props.current !== prevProps.current && typeof this.props.current === 'string') {
       this.setState(this.splitDateValue(this.props.current))
     }
   }
@@ -132,7 +136,7 @@ export default class Calendar extends React.Component {
     while (+day < +lastDay) {
       let newWeek = []
       for (var i = 0; i < 7; i++) {
-        newWeek.push(addDays(day, i))
+        newWeek.push(format(addDays(day, i), ISO_8601_DATE_FORMAT))
       }
       weeks.push(newWeek)
       day = addWeeks(day, 1)
@@ -153,9 +157,10 @@ export default class Calendar extends React.Component {
           <tbody>
             <tr>
               {weeks[0].map((day, dayIndex) => {
+                const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
                 return (
                   <th key={`header-${dayIndex}`}>
-                    {format(day, 'EEEEEE')}
+                    {format(parsedDay, 'EEEEEE')}
                   </th>
                 )
               })}
@@ -164,20 +169,21 @@ export default class Calendar extends React.Component {
               return (
                 <tr key={`week-${weekIndex}`}>
                   {week.map((day, dayIndex) => {
+                    const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
                     return (
                       <td key={`day-${dayIndex}`} className={classNames({
-                        'outside-month': getMonth(day) != this.state.month,
-                        'current': (this.props.current === +day),
-                        'today': (+day === today && this.props.showToday),
+                        'outside-month': getMonth(parsedDay) != this.state.month,
+                        'current': (this.props.current === day),
+                        'today': (day === today && this.props.showToday),
                       })}>
                         <button
                           type="button"
                           tabIndex={-1}
                           onClick={() => {
-                            this.selectDay(+day)
+                            this.selectDay(day)
                           }}
                         >
-                          {format(day, 'd')}
+                          {format(parsedDay, 'd')}
                         </button>
                       </td>
                     )
