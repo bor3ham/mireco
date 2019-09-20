@@ -35,23 +35,24 @@ export default class Time extends React.Component {
   }
   static defaultProps = {
     inputFormats: [
-      'h:m:s a',
-      'h:m:sa',
-      'h:m a',
-      'H:m:s a',
-      'H:m:sa',
-      'H:m a',
-      'h:ma',
-      'h:m',
+      'h:mm:ss a',
+      'h:mm:ssa',
+      'h:mm a',
+      'H:mm:ss a',
+      'H:mm:ssa',
+      'H:mm a',
+      'h:mma',
+      'h:mm',
       'h a',
-      'H:ma',
-      'H:m',
+      'H:mma',
+      'H:mm',
       'H a',
       'ha',
       'h',
       'Ha',
       'H',
     ],
+    longFormat: 'h:mm:ss a',
     displayFormat: 'h:mm a',
     placeholder: 'hh:mm',
     step: 30,
@@ -126,7 +127,7 @@ export default class Time extends React.Component {
     }
     let adjustedValue = value
     adjustedValue = addMilliseconds(startOfDay(new Date()), value)
-    let longFormatted = format(adjustedValue, props.inputFormats[0])
+    let longFormatted = format(adjustedValue, props.longFormat)
     let displayFormatted = format(adjustedValue, props.displayFormat)
     let longParsed = this.parseText(longFormatted)
     let shortParsed = this.parseText(displayFormatted)

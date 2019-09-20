@@ -1,9 +1,37 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { startOfDay } from 'date-fns'
+import { startOfDay, format, parse } from 'date-fns'
 
 import { Date as MirecoDate, Time } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
+import { ISO_8601_DATE_FORMAT } from 'utilities'
+
+function dateAsMs(date) {
+  return +parse(date, ISO_8601_DATE_FORMAT, new Date())
+}
+function combineDateTime(date, time) {
+  return +startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) + time
+}
+function splitDateTime(value) {
+  if (value === null) {
+    return {
+      date: null,
+      time: null,
+    }
+  }
+  if (typeof value === 'number' && !isNaN(value)) {
+    const date = format(value, ISO_8601_DATE_FORMAT)
+    const time = value - dateAsMs(date)
+    return {
+      date,
+      time,
+    }
+  }
+  return {
+    date: undefined,
+    time: undefined,
+  }
+}
 
 export default class Datetime extends React.Component {
   static propTypes = {
@@ -24,9 +52,11 @@ export default class Datetime extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      ...this.splitValue(props.value),
+      ...splitDateTime(props.value),
     }
     this.containerRef = React.createRef()
+    this.dateRef = React.createRef()
+    this.timeRef = React.createRef()
   }
   componentDidUpdate = (prevProps, prevState) => {
     if (prevProps.value !== this.props.value ) {
@@ -36,53 +66,20 @@ export default class Datetime extends React.Component {
           time: null,
         })
       }
-      else if (typeof this.props.value === 'number') {
-        let split = this.splitValue(this.props.value)
-        this.setState(prevState => {
-          let updates = {}
-          // check if the date value is different
-          if (split.date !== prevState.date) {
-            updates.date = split.date
-          }
-          // check if the time value is different
-          if (split.time !== prevState.time) {
-            updates.time = split.time
-          }
-          return updates
-        })
+      else if (typeof this.props.value === 'number' && !isNaN(this.props.value)) {
+        if (this.props.value !== this.combinedStateValue()) {
+          this.setState({
+            ...splitDateTime(this.props.value),
+          })
+        }
       }
     }
   }
-  splitValue = (value) => {
-    let dateValue = (value === null ? null : undefined)
-    let timeValue = (value === null ? null : undefined)
-    if (typeof this.props.value === 'number') {
-      dateValue = +startOfDay(this.props.value)
-      timeValue = this.props.value - dateValue
-    }
-    return {
-      date: dateValue,
-      time: timeValue,
-    }
-  }
-  fallbackDate = (dateValue) => {
-    let value = +startOfDay(new Date())
-    if (typeof dateValue === 'number') {
-      value = dateValue
-    }
-    return value
-  }
-  fallbackTime = (timeValue) => {
-    let value = 0
-    if (typeof timeValue === 'number') {
-      value = timeValue
-    }
-    return value
-  }
-  combinedStateValue = () => {
-    let value = this.fallbackDate(this.state.date)
-    value += this.fallbackTime(this.state.time)
-    return value
+  combinedStateValue() {
+    return combineDateTime(
+      this.state.date || format(new Date(), ISO_8601_DATE_FORMAT),
+      this.state.time || 0
+    )
   }
   handleDateChange = (newDate, wasBlur) => {
     this.setState({date: newDate}, this.updateParentValue)
@@ -92,27 +89,48 @@ export default class Datetime extends React.Component {
   }
   updateParentValue = () => {
     if (typeof this.props.onChange === 'function') {
-      let value = undefined
       if (this.state.date === null && this.state.time === null) {
-        value = null
+        this.props.onChange(null, false)
       }
-      else if (typeof this.state.date === 'number' || typeof this.state.time === 'number') {
-        value = this.combinedStateValue()
+      else if (
+        typeof this.state.date === 'string'
+        || (typeof this.state.time === 'number' && !isNaN(this.state.time))
+      ) {
+        this.props.onChange(this.combinedStateValue(), false)
       }
-      this.props.onChange(value, false)
+      else {
+        this.props.onChange(undefined, false)
+      }
     }
   }
   handleContainerBlur = (event) => {
-    if (
-      this.containerRef.current
-      && this.containerRef.current.divRef.curent
-      && (
-        this.containerRef.current.divRef.current.contains(event.relatedTarget)
-        || this.containerRef.current.divRef.current === event.relatedTarget
+    if (event.relatedTarget) {
+      const containedInDate = (
+        this.dateRef.current
+        && this.dateRef.current.containerRef.current
+        && this.dateRef.current.containerRef.current.divRef.current
+        && (
+          this.dateRef.current.containerRef.current.divRef.current.contains(
+            event.relatedTarget
+          )
+          || this.dateRef.current.containerRef.current.divRef.current == event.relatedTarget
+        )
       )
-    ) {
-      // ignore internal blur
-      return
+      const containedInTime = (
+        this.timeRef.current
+        && this.timeRef.current.containerRef.current
+        && this.timeRef.current.containerRef.current.divRef.current
+        && (
+          this.timeRef.current.containerRef.current.divRef.current.contains(
+            event.relatedTarget
+          )
+          || this.timeRef.current.containerRef.current.divRef.current == event.relatedTarget
+        )
+      )
+      if (containedInDate || containedInTime) {
+        // ignore internal blur
+        return
+      }
     }
     this.onBlur()
   }
@@ -122,24 +140,52 @@ export default class Datetime extends React.Component {
     }
   }
   onBlur = () => {
-    // delay to ensure that child onBlur's complete first
     window.setTimeout(() => {
-      this.setState(this.splitValue(this.props.value), () => {
-        if (typeof this.state.date === 'number' || typeof this.state.time === 'number') {
-          let value = this.combinedStateValue()
+      if (
+        typeof this.state.date === 'string'
+        || (typeof this.state.time === 'number' && !isNaN(this.state.time))
+      ) {
+        const combined = this.combinedStateValue()
+        this.setState({
+          ...splitDateTime(combined)
+        }, () => {
           if (typeof this.props.onChange === 'function') {
-            this.props.onChange(value, true)
+            this.props.onChange(combined, true)
           }
-        }
-        else {
+        })
+      }
+      else {
+        this.setState({
+          date: null,
+          time: null,
+        }, () => {
           this.props.onChange(null, true)
-        }
-      })
+        })
+      }
     }, 0)
+
+    // const combined = this.combinedStateValue()
+    // console.log('blurring values to', splitDateTime(combined))
+    // this.setState({
+    //   ...splitDateTime(combined),
+    // }, () => {
+    //   if (typeof this.props.onChange === 'function') {
+    //     if (
+    //       typeof this.state.date === 'string'
+    //       || (typeof this.state.time === 'number' && !isNaN(this.state.time))
+    //     ) {
+    //       this.props.onChange(combined, true)
+    //     }
+    //     else {
+    //       this.props.onChange(null, true)
+    //     }
+    //   }
+    // })
   }
   render() {
     let date = (
       <MirecoDate
+        ref={this.dateRef}
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
@@ -148,11 +194,12 @@ export default class Datetime extends React.Component {
     )
     let time = (
       <Time
+        ref={this.timeRef}
         value={this.state.time}
         onChange={this.handleTimeChange}
         disabled={this.props.disabled}
         relativeTo={this.props.relativeTo}
-        relativeStart={this.state.date}
+        relativeStart={dateAsMs(this.state.date)}
         block={this.props.block}
       />
     )
