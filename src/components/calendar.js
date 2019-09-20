@@ -79,6 +79,13 @@ export default class Calendar extends React.Component {
       ...this.splitDateValue(this.props.current),
     }
   }
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      nextProps.selectDay !== this.props.selectDay
+      || nextProps.current !== this.props.current
+      || nextState !== this.state
+    )
+  }
   splitDateValue(value) {
     let valueYear = getYear(new Date())
     let valueMonth = getMonth(new Date())
