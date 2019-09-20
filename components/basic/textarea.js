@@ -4,18 +4,18 @@ import Mireco from 'mireco'
 
 class DemoTextarea extends React.Component {
   state = {
-    text: 'Example text value...\nWith multiple lines.',
+    value: 'Example text value...\nWith multiple lines.',
   }
   render() {
     return (
       <div>
-        Field value: {JSON.stringify(this.state.text)}
+        <p>Field value: {JSON.stringify(this.state.value)}</p>
         <Mireco.Textarea
           block
           placeholder="Textarea value"
-          value={this.state.text}
+          value={this.state.value}
           onChange={(newValue) => {
-            this.setState({text: newValue})
+            this.setState({value: newValue})
           }}
         />
       </div>
