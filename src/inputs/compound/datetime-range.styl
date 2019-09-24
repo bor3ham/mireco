@@ -12,15 +12,29 @@
   &.block
     display: flex
     flex-wrap: wrap
-    margin-left: -1 * text-space-width
 
-    div.MIRECO-datetime, div.duration-container
+    // replace individual padding with overall
+    div.MIRECO-time, div.MIRECO-date
+      margin-bottom: 0
+
+    // pad out components on narrow devices
+    > div.MIRECO-datetime, div.datetime-range-second
+      margin-bottom: standard-padding
+
+    button.MIRECO-clear-button
       margin-left: text-space-width
 
-    >div.MIRECO-datetime, div.datetime-range-second, div.duration-container
-      flex-basis: 24rem
+    div.MIRECO-datetime
+      flex-wrap: nowrap
+
+    > div.MIRECO-datetime
+      flex-basis: 14rem
       flex-grow: 1
     div.datetime-range-second
+      flex-basis: 14rem
+      flex-grow: 1
       display: flex
+      align-items: flex-start
+
       div.MIRECO-datetime
         flex: 1
