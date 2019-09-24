@@ -64,7 +64,11 @@ export default class Dropdown extends React.Component {
     this.focusOnCurrent()
   }
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.value && this.props.value !== prevProps.value) {
+    if (
+      typeof this.props.value !== 'undefined'
+      && this.props.value !== null
+      && this.props.value !== prevProps.value
+    ) {
       this.focusOnCurrent()
     }
   }
@@ -84,6 +88,12 @@ export default class Dropdown extends React.Component {
     let prevIndex
     if (this.props.value !== 'undefined' && this.props.value !== null) {
       let currentIndex = this.getCurrentIndex()
+      if (
+        this.props.continuousOptions
+        && this.props.value !== this.props.options[currentIndex].value
+      ) {
+        currentIndex += 1
+      }
       prevIndex = currentIndex - 1
       if (prevIndex < 0) {
         prevIndex = this.props.options.length - 1
