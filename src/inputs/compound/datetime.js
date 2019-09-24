@@ -196,6 +196,7 @@ export default class Datetime extends React.Component {
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
         block={this.props.block}
+        rightHang={this.props.timeFirst}
       />
     )
     let time = (
