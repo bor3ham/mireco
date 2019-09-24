@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { startOfDay, format, parse } from 'date-fns'
+import classNames from 'classnames'
 
 import { Date as MirecoDate, Time } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
@@ -226,7 +227,10 @@ export default class Datetime extends React.Component {
       >
         {first}
         {!this.props.block && <span>{' '}</span>}
-        <BlockDiv block={this.props.block} className="second">
+        <BlockDiv block={this.props.block} className={classNames('second', {
+          time: !this.props.timeFirst,
+          date: this.props.timeFirst,
+        })}>
           {second}
           {this.props.showClear && (
             <span>{' '}</span>
