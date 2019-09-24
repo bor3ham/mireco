@@ -270,11 +270,9 @@ export default class DatetimeRange extends React.Component {
             relativeTo={this.state.start}
             defaultDate={defaultEndDate}
           />
-        </BlockDiv>
-        {!this.props.block && (
-          <span>{' '}</span>
-        )}
-        <BlockDiv className="duration-container" block={this.props.block}>
+          {!this.props.block && (
+            <span>{' '}</span>
+          )}
           {this.props.showClear && (
             <ClearButton
               onClick={this.handleClearClick}
