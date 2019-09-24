@@ -11,6 +11,7 @@ class DropdownOption extends React.Component {
       label: PropTypes.string.isRequired,
     }),
     onSelect: PropTypes.func.isRequired,
+    setScrollPosition: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props)
@@ -28,7 +29,7 @@ class DropdownOption extends React.Component {
   }
   focus = () => {
     if (this.optionRef.current) {
-      this.optionRef.current.scrollIntoView()
+      this.props.setScrollPosition(this.optionRef.current.offsetTop)
     }
   }
   handleClick = () => {
@@ -69,6 +70,10 @@ export default class Dropdown extends React.Component {
   }
   static defaultProps = {
     continuousOptions: false,
+  }
+  constructor(props) {
+    super(props)
+    this.listRef = React.createRef()
   }
   getCurrentIndex = () => {
     let currentIndex = -1
@@ -119,6 +124,11 @@ export default class Dropdown extends React.Component {
       this.props.onSelect(value)
     }
   }
+  setScrollPosition = (y) => {
+    if (this.listRef.current) {
+      this.listRef.current.scrollTop = y
+    }
+  }
   render() {
     let options
     if (this.props.options && this.props.options.length) {
@@ -130,6 +140,7 @@ export default class Dropdown extends React.Component {
             current={option.value === this.props.value}
             disabled={this.props.disabled}
             onSelect={this.handleSelect}
+            setScrollPosition={this.setScrollPosition}
           />
         )
       })
@@ -143,6 +154,7 @@ export default class Dropdown extends React.Component {
           disabled: this.props.disabled,
         })}
         tabIndex={-1}
+        ref={this.listRef}
       >
         {options}
       </ul>
