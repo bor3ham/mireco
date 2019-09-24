@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { startOfHour, addHours } from 'date-fns'
+import { startOfHour, addHours, format } from 'date-fns'
 
-import { Datetime, Duration } from 'inputs'
+import { Datetime } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
+import { ISO_8601_DATE_FORMAT } from 'utilities'
 
 function datetimeNull(datetime) {
   return datetime === null
@@ -27,6 +28,11 @@ function splitRange(range) {
   }
 }
 function combineRange(start, end) {
+  if (validDatetime(start) && validDatetime(end) && start > end) {
+    let tempStart = start
+    start = end
+    end = tempStart
+  }
   return {
     start,
     end,
@@ -114,7 +120,12 @@ export default class DatetimeRange extends React.Component {
     )
   }
   handleStartChange = (newStart, wasBlur) => {
-    this.setState({start: newStart}, this.updateParentValue)
+    let newEnd = this.state.end
+    if (validDatetime(newStart) && validDatetime(this.state.start) && validDatetime(newEnd)) {
+      let oldDuration = newEnd - this.state.start
+      newEnd = newStart + oldDuration
+    }
+    this.setState({start: newStart, end: newEnd}, this.updateParentValue)
   }
   handleEndChange = (newEnd, wasBlur) => {
     this.setState({end: newEnd}, this.updateParentValue)
@@ -220,6 +231,14 @@ export default class DatetimeRange extends React.Component {
     }, 1)
   }
   render() {
+    let defaultStartDate = undefined
+    if (validDatetime(this.state.end)) {
+      defaultStartDate = format(new Date(this.state.end), ISO_8601_DATE_FORMAT)
+    }
+    let defaultEndDate = undefined
+    if (validDatetime(this.state.start)) {
+      defaultEndDate = format(new Date(this.state.start), ISO_8601_DATE_FORMAT)
+    }
     return (
       <BlockDiv
         block={this.props.block}
@@ -235,6 +254,7 @@ export default class DatetimeRange extends React.Component {
           block={this.props.block}
           className="start"
           showClear={false}
+          defaultDate={defaultStartDate}
         />
         <BlockDiv className="datetime-range-second" block={this.props.block}>
           <span className="to">{' - '}</span>
@@ -248,6 +268,7 @@ export default class DatetimeRange extends React.Component {
             className="end"
             showClear={false}
             relativeTo={this.state.start}
+            defaultDate={defaultEndDate}
           />
         </BlockDiv>
         {!this.props.block && (

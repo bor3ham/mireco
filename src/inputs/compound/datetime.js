@@ -4,7 +4,7 @@ import { startOfDay, format, parse } from 'date-fns'
 
 import { Date as MirecoDate, Time } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
-import { ISO_8601_DATE_FORMAT } from 'utilities'
+import { ISO_8601_DATE_FORMAT, dayPropType } from 'utilities'
 
 function validDate(date) {
   return typeof date === 'string'
@@ -58,6 +58,7 @@ export default class Datetime extends React.Component {
     showClear: PropTypes.bool,
     className: PropTypes.string,
     relativeTo: PropTypes.number,
+    defaultDate: dayPropType,
   }
   static defaultProps = {
     block: false,
@@ -90,9 +91,15 @@ export default class Datetime extends React.Component {
       }
     }
   }
+  getDefaultDate() {
+    if (this.props.defaultDate) {
+      return this.props.defaultDate
+    }
+    return format(new Date(), ISO_8601_DATE_FORMAT)
+  }
   combinedStateValue() {
     return combineDateTime(
-      this.state.date || format(new Date(), ISO_8601_DATE_FORMAT),
+      this.state.date || this.getDefaultDate(),
       this.state.time || 0
     )
   }
