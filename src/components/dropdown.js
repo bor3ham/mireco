@@ -11,26 +11,10 @@ class DropdownOption extends React.Component {
       label: PropTypes.string.isRequired,
     }),
     onSelect: PropTypes.func.isRequired,
-    setScrollPosition: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props)
     this.optionRef = React.createRef()
-  }
-  componentDidMount() {
-    if (this.props.current) {
-      this.focus()
-    }
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.current && !prevProps.current) {
-      this.focus()
-    }
-  }
-  focus = () => {
-    if (this.optionRef.current) {
-      this.props.setScrollPosition(this.optionRef.current.offsetTop)
-    }
   }
   handleClick = () => {
     this.props.onSelect(this.props.option.value)
@@ -74,6 +58,15 @@ export default class Dropdown extends React.Component {
   constructor(props) {
     super(props)
     this.listRef = React.createRef()
+    this.currentRef = React.createRef()
+  }
+  componentDidMount() {
+    this.focusOnCurrent()
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.value && this.props.value !== prevProps.value) {
+      this.focusOnCurrent()
+    }
   }
   getCurrentIndex = () => {
     let currentIndex = -1
@@ -124,23 +117,35 @@ export default class Dropdown extends React.Component {
       this.props.onSelect(value)
     }
   }
-  setScrollPosition = (y) => {
-    if (this.listRef.current) {
-      this.listRef.current.scrollTop = y
+  focusOnCurrent = () => {
+    if (
+      this.listRef.current
+      && this.currentRef.current
+      && this.currentRef.current.optionRef.current
+    ) {
+      const offset = this.currentRef.current.optionRef.current.offsetTop
+      this.listRef.current.scrollTop = offset
     }
   }
   render() {
     let options
     if (this.props.options && this.props.options.length) {
       options = this.props.options.map((option, index) => {
+        let extraProps = {}
+        const current = option.value === this.props.value
+        if (current) {
+          extraProps = {
+            ref: this.currentRef,
+          }
+        }
         return (
           <DropdownOption
+            {...extraProps}
             key={`option-${index}`}
             option={option}
-            current={option.value === this.props.value}
+            current={current}
             disabled={this.props.disabled}
             onSelect={this.handleSelect}
-            setScrollPosition={this.setScrollPosition}
           />
         )
       })
