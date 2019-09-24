@@ -270,7 +270,7 @@ export default class DatetimeRange extends React.Component {
             relativeTo={this.state.start}
             defaultDate={defaultEndDate}
           />
-          {!this.props.block && (
+          {!this.props.block && this.props.showClear && (
             <span>{' '}</span>
           )}
           {this.props.showClear && (

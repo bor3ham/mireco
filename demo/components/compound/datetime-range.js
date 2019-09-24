@@ -32,6 +32,7 @@ class DemoDatetimeRange extends React.Component {
       <div>
         <p>Field value: {this.stringifiedValue()}</p>
         <Mireco.DatetimeRange
+          block
           value={this.state.value}
           onChange={(newValue) => {
             this.setState({value: newValue})
