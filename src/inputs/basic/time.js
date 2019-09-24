@@ -37,6 +37,7 @@ export default class Time extends React.Component {
     inputFormats: [
       'h:mm:ss a',
       'h:mm:ssa',
+      'h:mm:ss',
       'h:mm a',
       'H:mm:ss a',
       'H:mm:ssa',

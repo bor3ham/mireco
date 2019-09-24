@@ -21,7 +21,6 @@ class DemoDatetime extends React.Component {
         <p>Field value: {this.stringifiedValue()}</p>
         <Mireco.Datetime
           block
-          placeholder="Datetime value"
           value={this.state.value}
           onChange={(newValue) => {
             this.setState({value: newValue})
