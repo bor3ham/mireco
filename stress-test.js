@@ -44,12 +44,12 @@ function randomValue() {
     ),
     duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
     datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
-    datetime_range: {
-      start: casual.coin_flip ? null : +addHours(
+    datetime_range: casual.coin_flip ? null : {
+      start: +addHours(
         startOfHour(new Date()),
         casual.integer(-3 * 24, 3 * 24)
       ),
-      end: casual.coin_flip ? null : +addHours(
+      end: +addHours(
         startOfHour(new Date()),
         casual.integer(4 * 24, 7 * 24)
       ),
