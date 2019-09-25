@@ -204,9 +204,6 @@ export default class Datetime extends React.Component {
     if (this.props.relativeTo && !datetimeNull(combined)) {
       relativeStart = +startOfDay(new Date(combined))
     }
-    if (this.props.relativeTo) {
-      console.log(new Date(this.props.relativeTo))
-    }
     let time = (
       <Time
         ref={this.timeRef}

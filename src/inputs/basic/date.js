@@ -123,15 +123,15 @@ export default class MirecoDate extends React.Component {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
-          this.setState({calendarOpen: true})
         }
+        this.setState({calendarOpen: true})
       }
       if (event.which === 38) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
-          this.setState({calendarOpen: true})
         }
+        this.setState({calendarOpen: true})
       }
     }
   }
@@ -139,8 +139,8 @@ export default class MirecoDate extends React.Component {
     this.setState({textValue: newValue}, () => {
       if (typeof this.props.onChange === 'function') {
         this.props.onChange(this.parseText(newValue), false)
-        this.setState({calendarOpen: true})
       }
+      this.setState({calendarOpen: true})
     })
   }
   handleTextClick = () => {
