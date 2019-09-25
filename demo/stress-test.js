@@ -40,7 +40,7 @@ function randomValue() {
     textarea: casual.description,
     date: casual.coin_flip ? null : format(
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
-      Mireco.ISO_8601_FORMAT,
+      Mireco.ISO_8601_DATE_FORMAT,
     ),
     duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
     datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
@@ -129,7 +129,8 @@ class Demo extends React.Component {
     }})
   }
   randomise = () => {
-    this.setState({formValue: randomValue()})
+    const newValue = randomValue()
+    this.setState({formValue: newValue})
   }
   remount = () => {
     this.setState(prevState => {
