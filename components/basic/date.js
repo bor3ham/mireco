@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mireco from 'mireco'
+import { Date as DateInput } from 'mireco'
 
 class DemoDate extends React.Component {
   state = {
@@ -10,7 +10,7 @@ class DemoDate extends React.Component {
     return (
       <div>
         <p>Field value: {JSON.stringify(this.state.value) || 'undefined'}</p>
-        <Mireco.Date
+        <DateInput
           block
           placeholder="Date value"
           value={this.state.value}

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mireco from 'mireco'
+import { DatetimeRange } from 'mireco'
 
 class DemoDatetimeRange extends React.Component {
   state = {
@@ -31,7 +31,7 @@ class DemoDatetimeRange extends React.Component {
     return (
       <div>
         <p>Field value: {this.stringifiedValue()}</p>
-        <Mireco.DatetimeRange
+        <DatetimeRange
           block
           value={this.state.value}
           onChange={(newValue) => {

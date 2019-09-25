@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mireco from 'mireco'
+import { Text } from 'mireco'
 
 class DemoText extends React.Component {
   state = {
@@ -10,7 +10,7 @@ class DemoText extends React.Component {
     return (
       <div>
         <p>Field value: {JSON.stringify(this.state.value)}</p>
-        <Mireco.Text
+        <Text
           block
           placeholder="Text value"
           value={this.state.value}
