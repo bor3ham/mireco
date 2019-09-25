@@ -1,3 +1,4 @@
-import dayPropType from './day-prop-type.js'
-export { dayPropType }
-export * from './constants.js'
+import * as propTypes from './prop-types'
+export { propTypes }
+import * as constants from './constants.js'
+export { constants }

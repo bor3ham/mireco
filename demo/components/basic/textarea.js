@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mireco from 'mireco'
+import { Textarea } from 'mireco'
 
 class DemoTextarea extends React.Component {
   state = {
@@ -10,7 +10,7 @@ class DemoTextarea extends React.Component {
     return (
       <div>
         <p>Field value: {JSON.stringify(this.state.value)}</p>
-        <Mireco.Textarea
+        <Textarea
           block
           placeholder="Textarea value"
           value={this.state.value}

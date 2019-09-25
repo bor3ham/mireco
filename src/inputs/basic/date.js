@@ -5,14 +5,14 @@ import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { Text } from 'inputs'
 import { Calendar, BlockDiv } from 'components'
-import { dayPropType, ISO_8601_DATE_FORMAT } from 'utilities'
+import { propTypes as mirecoPropTypes, constants } from 'utilities'
 
 export default class MirecoDate extends React.Component {
   static propTypes = {
     inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
-    value: dayPropType,
+    value: mirecoPropTypes.date,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
@@ -70,7 +70,7 @@ export default class MirecoDate extends React.Component {
     if (value === null || typeof value === 'undefined') {
       return ''
     }
-    return format(parse(value, ISO_8601_DATE_FORMAT, new Date()), props.displayFormat)
+    return format(parse(value, constants.ISO_8601_DATE_FORMAT, new Date()), props.displayFormat)
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
@@ -87,7 +87,7 @@ export default class MirecoDate extends React.Component {
       let parsed = parse(trimmed, inputFormat, new Date())
       if (isValid(parsed)) {
         // console.log(textValue, 'valid format:', format, this.format(this.props, +parsed))
-        valid = format(parsed, ISO_8601_DATE_FORMAT)
+        valid = format(parsed, constants.ISO_8601_DATE_FORMAT)
       }
     })
     return valid
@@ -117,19 +117,19 @@ export default class MirecoDate extends React.Component {
     if (event) {
       let current = new Date()
       if (typeof this.props.value === 'string') {
-        current = parse(this.props.value, ISO_8601_DATE_FORMAT, new Date())
+        current = parse(this.props.value, constants.ISO_8601_DATE_FORMAT, new Date())
       }
       if (event.which === 40) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
+          this.props.onChange(format(addDays(current, 1), constants.ISO_8601_DATE_FORMAT), false)
         }
         this.setState({calendarOpen: true})
       }
       if (event.which === 38) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
+          this.props.onChange(format(subDays(current, 1), constants.ISO_8601_DATE_FORMAT), false)
         }
         this.setState({calendarOpen: true})
       }

@@ -5,7 +5,7 @@ import classNames from 'classnames'
 
 import { Date as MirecoDate, Time } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
-import { ISO_8601_DATE_FORMAT, dayPropType } from 'utilities'
+import { constants, propTypes as mirecoPropTypes } from 'utilities'
 
 function validDate(date) {
   return typeof date === 'string'
@@ -23,10 +23,10 @@ function dateNull(date) {
   return (date === null)
 }
 function dateAsMs(date) {
-  return +parse(date, ISO_8601_DATE_FORMAT, new Date())
+  return +parse(date, constants.ISO_8601_DATE_FORMAT, new Date())
 }
 function combineDateTime(date, time) {
-  return +startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) + time
+  return +startOfDay(parse(date, constants.ISO_8601_DATE_FORMAT, new Date())) + time
 }
 function splitDateTime(value) {
   if (value === null) {
@@ -36,7 +36,7 @@ function splitDateTime(value) {
     }
   }
   if (validDatetime(value)) {
-    const date = format(value, ISO_8601_DATE_FORMAT)
+    const date = format(value, constants.ISO_8601_DATE_FORMAT)
     const time = value - dateAsMs(date)
     return {
       date,
@@ -59,7 +59,7 @@ export default class Datetime extends React.Component {
     showClear: PropTypes.bool,
     className: PropTypes.string,
     relativeTo: PropTypes.number,
-    defaultDate: dayPropType,
+    defaultDate: mirecoPropTypes.date,
   }
   static defaultProps = {
     block: false,
@@ -96,7 +96,7 @@ export default class Datetime extends React.Component {
     if (this.props.defaultDate) {
       return this.props.defaultDate
     }
-    return format(new Date(), ISO_8601_DATE_FORMAT)
+    return format(new Date(), constants.ISO_8601_DATE_FORMAT)
   }
   combinedStateValue() {
     return combineDateTime(

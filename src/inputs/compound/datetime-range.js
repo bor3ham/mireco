@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { startOfHour, addHours, format } from 'date-fns'
+import { format } from 'date-fns'
 
 import { Datetime } from 'inputs'
 import { ClearButton, BlockDiv } from 'components'
-import { ISO_8601_DATE_FORMAT } from 'utilities'
+import { constants } from 'utilities'
 
 function datetimeNull(datetime) {
   return datetime === null
@@ -233,11 +233,11 @@ export default class DatetimeRange extends React.Component {
   render() {
     let defaultStartDate = undefined
     if (validDatetime(this.state.end)) {
-      defaultStartDate = format(new Date(this.state.end), ISO_8601_DATE_FORMAT)
+      defaultStartDate = format(new Date(this.state.end), constants.ISO_8601_DATE_FORMAT)
     }
     let defaultEndDate = undefined
     if (validDatetime(this.state.start)) {
-      defaultEndDate = format(new Date(this.state.start), ISO_8601_DATE_FORMAT)
+      defaultEndDate = format(new Date(this.state.start), constants.ISO_8601_DATE_FORMAT)
     }
     return (
       <BlockDiv

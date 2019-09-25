@@ -1,6 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mireco from 'mireco'
+import {
+  constants as mirecoConstants,
+  Date as DateInput,
+  Datetime,
+  DatetimeRange,
+  Checkbox,
+  Text,
+  Textarea,
+  Button,
+  Time,
+  Select,
+  Duration,
+} from 'mireco'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
@@ -40,7 +52,7 @@ function randomValue() {
     textarea: casual.description,
     date: casual.coin_flip ? null : format(
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
-      Mireco.ISO_8601_DATE_FORMAT,
+      mirecoConstants.ISO_8601_DATE_FORMAT,
     ),
     duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
     datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
@@ -183,7 +195,7 @@ class Demo extends React.Component {
           <div style={{display: 'flex', flexWrap: 'wrap'}}>
             <div className="flag-column">
               <h2>Form settings</h2>
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.blockMode}
                 onChange={(newValue) => {
@@ -191,7 +203,7 @@ class Demo extends React.Component {
                 }}
                 label="Block mode"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.disabled}
                 onChange={(newValue) => {
@@ -202,7 +214,7 @@ class Demo extends React.Component {
             </div>
             <div className="flag-column">
               <h2>Interval changes</h2>
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.intervalDisable}
                 onChange={(newValue) => {
@@ -210,7 +222,7 @@ class Demo extends React.Component {
                 }}
                 label="Periodically disable"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.intervalRandomise}
                 onChange={(newValue) => {
@@ -218,7 +230,7 @@ class Demo extends React.Component {
                 }}
                 label="Periodically randomise"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.intervalRemount}
                 onChange={(newValue) => {
@@ -229,7 +241,7 @@ class Demo extends React.Component {
             </div>
             <div className="flag-column">
               <h2>Basic inputs</h2>
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showText}
                 onChange={(newValue) => {
@@ -237,7 +249,7 @@ class Demo extends React.Component {
                 }}
                 label="Show text input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showCheckbox}
                 onChange={(newValue) => {
@@ -245,7 +257,7 @@ class Demo extends React.Component {
                 }}
                 label="Show checkbox input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showSelect}
                 onChange={(newValue) => {
@@ -253,7 +265,7 @@ class Demo extends React.Component {
                 }}
                 label="Show select input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showTime}
                 onChange={(newValue) => {
@@ -261,7 +273,7 @@ class Demo extends React.Component {
                 }}
                 label="Show time input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showTextarea}
                 onChange={(newValue) => {
@@ -269,7 +281,7 @@ class Demo extends React.Component {
                 }}
                 label="Show textarea input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showDate}
                 onChange={(newValue) => {
@@ -277,7 +289,7 @@ class Demo extends React.Component {
                 }}
                 label="Show date input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showDuration}
                 onChange={(newValue) => {
@@ -288,7 +300,7 @@ class Demo extends React.Component {
             </div>
             <div className="flag-column">
               <h2>Compound inputs</h2>
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showDatetime}
                 onChange={(newValue) => {
@@ -296,7 +308,7 @@ class Demo extends React.Component {
                 }}
                 label="Show datetime input"
               />
-              <Mireco.Checkbox
+              <Checkbox
                 block
                 value={this.state.flags.showDatetimeRange}
                 onChange={(newValue) => {
@@ -307,26 +319,26 @@ class Demo extends React.Component {
             </div>
           </div>
           <div style={{marginBottom: '1rem'}}>
-            <Mireco.Button
+            <Button
               onClick={this.randomise}
               className="secondary"
             >
               Randomise
-            </Mireco.Button>
+            </Button>
             {' '}
-            <Mireco.Button
+            <Button
               onClick={this.remount}
               className="secondary"
             >
               Remount
-            </Mireco.Button>
+            </Button>
             {' '}
-            <Mireco.Button
+            <Button
               onClick={this.reset}
               className="secondary"
             >
               Reset
-            </Mireco.Button>
+            </Button>
           </div>
         </div>
         <div style={{
@@ -349,7 +361,7 @@ class Demo extends React.Component {
             style={{margin: '20rem 1rem'}}
           >
             {this.state.flags.showText && (
-              <Mireco.Text
+              <Text
                 value={this.state.formValue.text}
                 onChange={(newValue) => {
                   this.updateFormValue('text', newValue)
@@ -361,7 +373,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showText && inlineSpace}
             {this.state.flags.showCheckbox && (
-              <Mireco.Checkbox
+              <Checkbox
                 value={this.state.formValue.checked}
                 onChange={(newValue) => {
                   this.updateFormValue('checked', newValue)
@@ -373,7 +385,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showCheckbox && inlineSpace}
             {this.state.flags.showSelect && (
-              <Mireco.Select
+              <Select
                 value={this.state.formValue.select}
                 options={SELECT_OPTIONS}
                 onChange={(newValue) => {
@@ -386,7 +398,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showSelect && inlineSpace}
             {this.state.flags.showTime && (
-              <Mireco.Time
+              <Time
                 value={this.state.formValue.time}
                 onChange={(newValue) => {
                   this.updateFormValue('time', newValue)
@@ -397,7 +409,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showTime && inlineSpace}
             {this.state.flags.showTextarea && (
-              <Mireco.Textarea
+              <Textarea
                 value={this.state.formValue.textarea}
                 onChange={(newValue) => {
                   this.updateFormValue('textarea', newValue)
@@ -409,7 +421,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showTextarea && inlineSpace}
             {this.state.flags.showDate && (
-              <Mireco.Date
+              <DateInput
                 value={this.state.formValue.date}
                 onChange={(newValue) => {
                   this.updateFormValue('date', newValue)
@@ -420,7 +432,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showDate && inlineSpace}
             {this.state.flags.showDuration && (
-              <Mireco.Duration
+              <Duration
                 value={this.state.formValue.duration}
                 onChange={(newValue) => {
                   this.updateFormValue('duration', newValue)
@@ -431,7 +443,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showDuration && inlineSpace}
             {this.state.flags.showDatetime && (
-              <Mireco.Datetime
+              <Datetime
                 value={this.state.formValue.datetime}
                 onChange={(newValue) => {
                   this.updateFormValue('datetime', newValue)
@@ -442,7 +454,7 @@ class Demo extends React.Component {
             )}
             {this.state.flags.showDatetime && inlineSpace}
             {this.state.flags.showDatetimeRange && (
-              <Mireco.DatetimeRange
+              <DatetimeRange
                 value={this.state.formValue.datetime_range}
                 onChange={(newValue) => {
                   this.updateFormValue('datetime_range', newValue)
@@ -452,13 +464,13 @@ class Demo extends React.Component {
               />
             )}
             {this.state.flags.showDatetimeRange && inlineSpace}
-            <Mireco.Button
+            <Button
               type="submit"
               block={this.state.flags.blockMode}
               disabled={this.state.flags.disabled}
             >
               Submit Results
-            </Mireco.Button>
+            </Button>
           </form>
         </ResizeContainer>
       </div>

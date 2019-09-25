@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Mireco from 'mireco'
+import { Select } from 'mireco'
 
 const OPTIONS = [
   {
@@ -29,7 +29,7 @@ class DemoText extends React.Component {
     return (
       <div>
         <p>Field value: {JSON.stringify(this.state.value)}</p>
-        <Mireco.Select
+        <Select
           block
           placeholder="Select value"
           value={this.state.value}
