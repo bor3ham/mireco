@@ -12,15 +12,12 @@ following guidelines:
 ## React Interface Philosophy
 
 - All input props take the form of a singular `value` and `onChange`
-- All components are stateless where possible, following the
+- All components are stateless where practical, following the
   [Tri-State Value System](#tri-state-values)
 - Input's `onChange` is a function callback with the new `value` as an argument (consumers do no
   direct reading from dom elements with refs)
-- For the purpose of `onChange` and `value` props:
-  - All date values are in ISO 8601 Date formatted string (`YYYY-MM-DD`)
-  - All datetime values are `utc milliseconds from epoch`. Any localisation should be performed in
-    your own wrapper components
-  - All durations are in `milliseconds`
+- The `onChange` callback and `value` prop both use the same `value` format, which is always a
+  primitive or predefined shape of primitives
 - For basic use cases, all inputs are expected to be used by Mireco consumers as flat components -
   eg. the `Checkbox` component uses a convenience `label="label contents"` prop instead of requiring
   `<Label><Checkbox/> label contents</Label>`
