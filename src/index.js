@@ -1,7 +1,2 @@
-import * as inputs from 'inputs'
-import * as utilities from 'utilities'
-
-export default {
-  ...inputs,
-  ...utilities,
-}
+export * from 'inputs'
+export { propTypes, constants } from 'utilities'

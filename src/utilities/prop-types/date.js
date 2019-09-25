@@ -1,12 +1,12 @@
 import { isValid, parse } from 'date-fns'
 
-import { ISO_8601_DATE_FORMAT } from 'utilities'
+import { constants } from 'utilities'
 
 function isIso8601Date(string) {
-  return isValid(parse(string, ISO_8601_DATE_FORMAT, new Date()))
+  return isValid(parse(string, constants.ISO_8601_DATE_FORMAT, new Date()))
 }
 
-const requiredDayPropType = (props, propName, componentName) => {
+const requiredDatePropType = (props, propName, componentName) => {
   const value = props[propName]
 
   if (value === null || typeof value === 'undefined') {
@@ -30,12 +30,12 @@ const requiredDayPropType = (props, propName, componentName) => {
   return null
 }
 
-const dayPropType = (props, propName, componentName) => {
+const datePropType = (props, propName, componentName) => {
   if (props[propName] == null || typeof props[propName] === 'undefined') {
     return null
   }
-  return requiredDayPropType(props, propName, componentName)
+  return requiredDatePropType(props, propName, componentName)
 }
-dayPropType.isRequired = requiredDayPropType
+datePropType.isRequired = requiredDatePropType
 
-export default dayPropType
+export default datePropType
