@@ -5,6 +5,10 @@ import classNames from 'classnames'
 import { Text } from 'inputs'
 import { BlockDiv, Dropdown } from 'components'
 
+function validChoice(choiceValue) {
+  return choiceValue !== null && typeof choiceValue !== 'undefined'
+}
+
 const valueType = PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
 
 export default class Select extends React.Component {
@@ -74,6 +78,44 @@ export default class Select extends React.Component {
     }
     return ''
   }
+  nextOption = () => {
+    if (this.props.options.length === 0) {
+      return null
+    }
+    if (!validChoice(this.props.value)) {
+      return this.props.options.length > 0 ? this.props.options[0].value : null
+    }
+    let currentIndex = 0
+    this.props.options.map((option, index) => {
+      if (option.value === this.props.value) {
+        currentIndex = index
+      }
+    })
+    currentIndex += 1
+    if (currentIndex >= this.props.options.length) {
+      currentIndex = 0
+    }
+    return this.props.options[currentIndex].value
+  }
+  previousOption = () => {
+    if (this.props.options.length === 0) {
+      return null
+    }
+    if (!validChoice(this.props.value)) {
+      return this.nextOption()
+    }
+    let currentIndex = 0
+    this.props.options.map((option, index) => {
+      if (option.value === this.props.value) {
+        currentIndex = index
+      }
+    })
+    currentIndex -= 1
+    if (currentIndex < 0) {
+      currentIndex = this.props.options.length - 1
+    }
+    return this.props.options[currentIndex].value
+  }
   handleFocus = () => {
     this.setState({inFocus: true})
   }
@@ -82,11 +124,15 @@ export default class Select extends React.Component {
     if (event) {
       if (event.which === 40) {
         event.preventDefault()
-        this.dropdownRef.current && this.dropdownRef.current.selectNext()
+        if (typeof this.props.onChange === 'function' && !this.props.disabled) {
+          this.props.onChange(this.nextOption())
+        }
       }
       if (event.which === 38) {
         event.preventDefault()
-        this.dropdownRef.current && this.dropdownRef.current.selectPrevious()
+        if (typeof this.props.onChange === 'function' && !this.props.disabled) {
+          this.props.onChange(this.previousOption())
+        }
       }
       if (
         event.which === 8

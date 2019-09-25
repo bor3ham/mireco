@@ -4,18 +4,18 @@ import Mireco from 'mireco'
 
 class DemoText extends React.Component {
   state = {
-    text: 'Example text value',
+    value: 'Example text value',
   }
   render() {
     return (
       <div>
-        Field value: {JSON.stringify(this.state.text)}
+        <p>Field value: {JSON.stringify(this.state.value)}</p>
         <Mireco.Text
           block
           placeholder="Text value"
-          value={this.state.text}
+          value={this.state.value}
           onChange={(newValue) => {
-            this.setState({text: newValue})
+            this.setState({value: newValue})
           }}
         />
       </div>

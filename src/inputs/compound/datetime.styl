@@ -2,16 +2,22 @@
   &.block
     display: flex
     flex-wrap: wrap
-    margin-right: -0.4rem
+    margin-right: -1 * text-space-width
 
     >:first-child
-      flex-basis: 9rem
+      &.MIRECO-date
+        flex-basis: 9rem
+      &.MIRECO-time
+        flex-basis: 7rem
       flex-grow: 1
-      margin-right: 0.4rem
+      margin-right: text-space-width
     div.second
-      margin-right: 0.4rem
+      margin-right: text-space-width
       white-space: pre
-      flex-basis: 12rem
+      &.date
+        flex-basis: 12rem
+      &.time
+        flex-basis: 10rem
       flex-grow: 1
       align-items: flex-start
       display: flex

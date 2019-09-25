@@ -16,21 +16,6 @@ class DropdownOption extends React.Component {
     super(props)
     this.optionRef = React.createRef()
   }
-  componentDidMount() {
-    if (this.props.current) {
-      this.focus()
-    }
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.current && !prevProps.current) {
-      this.focus()
-    }
-  }
-  focus = () => {
-    if (this.optionRef.current) {
-      this.optionRef.current.scrollIntoView()
-    }
-  }
   handleClick = () => {
     this.props.onSelect(this.props.option.value)
   }
@@ -64,54 +49,23 @@ export default class Dropdown extends React.Component {
     value: PropTypes.any,
     disabled: PropTypes.bool,
     onSelect: PropTypes.func,
-    continuousOptions: PropTypes.bool,
     block: PropTypes.bool,
   }
-  static defaultProps = {
-    continuousOptions: false,
+  constructor(props) {
+    super(props)
+    this.listRef = React.createRef()
+    this.currentRef = React.createRef()
   }
-  getCurrentIndex = () => {
-    let currentIndex = -1
-    this.props.options.map((option, index) => {
-      if (
-        option.value === this.props.value
-        || (this.props.continuousOptions && this.props.value >= option.value)
-      ) {
-        currentIndex = index
-      }
-    })
-    return currentIndex
+  componentDidMount() {
+    this.focusOnCurrent()
   }
-  selectPrevious = () => {
-    let prevIndex
-    if (this.props.value !== 'undefined' && this.props.value !== null) {
-      let currentIndex = this.getCurrentIndex()
-      prevIndex = currentIndex - 1
-      if (prevIndex < 0) {
-        prevIndex = this.props.options.length - 1
-      }
-    }
-    else {
-      prevIndex = this.props.options.length - 1
-    }
-    if (this.props.options.length > prevIndex) {
-      this.handleSelect(this.props.options[prevIndex].value)
-    }
-  }
-  selectNext = () => {
-    let nextIndex
-    if (this.props.value !== 'undefined' && this.props.value !== null) {
-      let currentIndex = this.getCurrentIndex()
-      nextIndex = currentIndex + 1
-      if (nextIndex >= this.props.options.length) {
-        nextIndex = 0
-      }
-    }
-    else {
-      nextIndex = 0
-    }
-    if (this.props.options.length > nextIndex) {
-      this.handleSelect(this.props.options[nextIndex].value)
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      typeof this.props.value !== 'undefined'
+      && this.props.value !== null
+      && this.props.value !== prevProps.value
+    ) {
+      this.focusOnCurrent()
     }
   }
   handleSelect = (value) => {
@@ -119,15 +73,43 @@ export default class Dropdown extends React.Component {
       this.props.onSelect(value)
     }
   }
+  focusOnCurrent = () => {
+    if (
+      this.listRef.current
+      && this.currentRef.current
+      && this.currentRef.current.optionRef.current
+    ) {
+      // don't use scroll into view because this also scrolls parent containers (the body included)
+      const currentOption = this.currentRef.current.optionRef.current
+      const currentTop = currentOption.offsetTop
+      const currentBottom = currentTop + currentOption.getBoundingClientRect().height
+      const list = this.listRef.current
+      const viewBottom = list.scrollTop + list.getBoundingClientRect().height
+      if (list.scrollTop > currentTop) {
+        list.scrollTop = currentTop
+      }
+      if (currentBottom > viewBottom) {
+        list.scrollTop = currentBottom - list.getBoundingClientRect().height
+      }
+    }
+  }
   render() {
     let options
     if (this.props.options && this.props.options.length) {
       options = this.props.options.map((option, index) => {
+        let extraProps = {}
+        const current = option.value === this.props.value
+        if (current) {
+          extraProps = {
+            ref: this.currentRef,
+          }
+        }
         return (
           <DropdownOption
+            {...extraProps}
             key={`option-${index}`}
             option={option}
-            current={option.value === this.props.value}
+            current={current}
             disabled={this.props.disabled}
             onSelect={this.handleSelect}
           />
@@ -143,6 +125,7 @@ export default class Dropdown extends React.Component {
           disabled: this.props.disabled,
         })}
         tabIndex={-1}
+        ref={this.listRef}
       >
         {options}
       </ul>

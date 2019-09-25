@@ -4,7 +4,7 @@ import Mireco from 'mireco'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
-import { startOfDay, startOfHour, addDays, addHours, addMinutes } from 'date-fns'
+import { startOfDay, startOfHour, addDays, addHours, addMinutes, format } from 'date-fns'
 
 import ResizeContainer from './resize-container.js'
 
@@ -38,15 +38,18 @@ function randomValue() {
     select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
     time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
     textarea: casual.description,
-    date: casual.coin_flip ? null : +addDays(startOfDay(new Date()), casual.integer(-30, 30)),
+    date: casual.coin_flip ? null : format(
+      addDays(startOfDay(new Date()), casual.integer(-30, 30)),
+      Mireco.ISO_8601_DATE_FORMAT,
+    ),
     duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
     datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
-    datetime_range: {
-      start: casual.coin_flip ? null : +addHours(
+    datetime_range: casual.coin_flip ? null : {
+      start: +addHours(
         startOfHour(new Date()),
         casual.integer(-3 * 24, 3 * 24)
       ),
-      end: casual.coin_flip ? null : +addHours(
+      end: +addHours(
         startOfHour(new Date()),
         casual.integer(4 * 24, 7 * 24)
       ),
@@ -126,7 +129,8 @@ class Demo extends React.Component {
     }})
   }
   randomise = () => {
-    this.setState({formValue: randomValue()})
+    const newValue = randomValue()
+    this.setState({formValue: newValue})
   }
   remount = () => {
     this.setState(prevState => {

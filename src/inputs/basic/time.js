@@ -7,6 +7,10 @@ import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
 import { Text } from 'inputs'
 import { Dropdown, BlockDiv } from 'components'
 
+function validTime(time) {
+  return typeof time === 'number' && !isNaN(time)
+}
+
 const shortHumanizeDur = humanizeDuration.humanizer({
   language: 'shortEn',
   languages: {
@@ -35,23 +39,21 @@ export default class Time extends React.Component {
   }
   static defaultProps = {
     inputFormats: [
-      'h:m:s a',
-      'h:m:sa',
-      'h:m a',
-      'H:m:s a',
-      'H:m:sa',
-      'H:m a',
-      'h:ma',
-      'h:m',
+      'h:mm:ss a',
+      'h:mm:ssa',
+      'h:mm:ss',
+      'h:mm a',
+      'H:mm:ss',
+      'H:mm',
+      'h:mma',
+      'h:mm',
       'h a',
-      'H:ma',
-      'H:m',
-      'H a',
+      'H:mm',
+      'H',
       'ha',
       'h',
-      'Ha',
-      'H',
     ],
+    longFormat: 'h:mm:ss a',
     displayFormat: 'h:mm a',
     placeholder: 'hh:mm',
     step: 30,
@@ -65,6 +67,7 @@ export default class Time extends React.Component {
       ...this.state,
       textValue: this.format(props, props.value),
       inFocus: false,
+      dropdownOpen: false,
     }
     this.options = this.generateOptions(props)
     this.containerRef = React.createRef()
@@ -73,11 +76,11 @@ export default class Time extends React.Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.step != this.props.step
-      || prevProps.relativeTo != this.props.relativeTo
-      || prevProps.relativeStart != this.props.relativeStart
+      prevProps.step !== this.props.step
+      || prevProps.relativeTo !== this.props.relativeTo
+      || prevProps.relativeStart !== this.props.relativeStart
     ) {
-      this.options = this.generateOptions(prevProps)
+      this.options = this.generateOptions(this.props)
     }
     if (prevProps.value !== this.props.value ) {
       if (this.props.value === null) {
@@ -101,7 +104,7 @@ export default class Time extends React.Component {
         value: ms,
         label: format(addMilliseconds(startOfDay(new Date()), ms), props.displayFormat),
       }
-      if (typeof props.relativeTo === 'number') {
+      if (typeof props.relativeTo === 'number' && typeof props.relativeStart === 'number') {
         let msAbsolute = props.relativeStart + newOption.value
         if (msAbsolute > props.relativeTo) {
           let duration = msAbsolute - props.relativeTo
@@ -126,7 +129,7 @@ export default class Time extends React.Component {
     }
     let adjustedValue = value
     adjustedValue = addMilliseconds(startOfDay(new Date()), value)
-    let longFormatted = format(adjustedValue, props.inputFormats[0])
+    let longFormatted = format(adjustedValue, props.longFormat)
     let displayFormatted = format(adjustedValue, props.displayFormat)
     let longParsed = this.parseText(longFormatted)
     let shortParsed = this.parseText(displayFormatted)
@@ -161,23 +164,61 @@ export default class Time extends React.Component {
       if (typeof this.props.onChange === 'function') {
         this.props.onChange(this.parseText(newValue), false)
       }
+      this.setState({dropdownOpen: true})
     })
   }
+  previousOption = () => {
+    if (!validTime(this.props.value)) {
+      return this.nextOption()
+    }
+    if (this.props.value === this.options[0].value) {
+      return this.options[this.options.length - 1].value
+    }
+    let nextIndex = 0
+    this.options.map((option, index) => {
+      if (option.value < this.props.value) {
+        nextIndex = index
+      }
+    })
+    return this.options[nextIndex].value
+  }
+  nextOption = () => {
+    if (!validTime(this.props.value)) {
+      return this.options[0].value
+    }
+    let nextIndex = 0
+    this.options.map((option, index) => {
+      if (option.value <= this.props.value) {
+        nextIndex = index
+      }
+    })
+    nextIndex += 1
+    if (nextIndex >= this.options.length) {
+      nextIndex = 0
+    }
+    return this.options[nextIndex].value
+  }
   handleTextKeyDown = (event) => {
-    this.setState({inFocus: true})
+    this.setState({inFocus: true, dropdownOpen: true})
     if (event) {
       if (event.which === 40) {
         event.preventDefault()
-        this.dropdownRef.current && this.dropdownRef.current.selectNext()
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(this.nextOption(), false)
+        }
+        this.setState({dropdownOpen: true})
       }
       if (event.which === 38) {
         event.preventDefault()
-        this.dropdownRef.current && this.dropdownRef.current.selectPrevious()
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(this.previousOption(), false)
+        }
+        this.setState({dropdownOpen: true})
       }
     }
   }
   handleFocus = (event) => {
-    this.setState({inFocus: true})
+    this.setState({inFocus: true, dropdownOpen: true})
   }
   handleContainerBlur = (event) => {
     if (
@@ -193,12 +234,16 @@ export default class Time extends React.Component {
     }
     this.onBlur()
   }
+  handleTextClick = () => {
+    this.setState({dropdownOpen: true})
+  }
   onBlur = () => {
     if (typeof this.props.value === 'number') {
       let formatted = this.format(this.props, this.props.value)
       this.setState({
         textValue: formatted,
         inFocus: false,
+        dropdownOpen: false,
       }, () => {
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(this.props.value, true)
@@ -209,6 +254,7 @@ export default class Time extends React.Component {
       this.setState(prevState => {
         let updates = {
           inFocus: false,
+          dropdownOpen: false,
         }
         if (this.props.autoErase) {
           updates.textValue = ''
@@ -231,6 +277,7 @@ export default class Time extends React.Component {
       this.props.onChange(value, false)
     }
     this.textRef.current && this.textRef.current.focus()
+    this.setState({dropdownOpen: false})
   }
   render() {
     return (
@@ -257,8 +304,9 @@ export default class Time extends React.Component {
           onKeyDown={this.handleTextKeyDown}
           block={this.props.block}
           style={{marginBottom: '0'}}
+          onClick={this.handleTextClick}
         />
-        {this.state.inFocus && !this.props.disabled && (
+        {this.state.inFocus && this.state.dropdownOpen && !this.props.disabled && (
           <Dropdown
             ref={this.dropdownRef}
             options={this.options}

@@ -72,6 +72,7 @@ demo/dist/*.js
 demo/_site
 demo/dist/*.js
 demo/dist/*.css
+demo/.jekyll-cache
 
 # webpack build analysis
 report.html
