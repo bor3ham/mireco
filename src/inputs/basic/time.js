@@ -173,7 +173,7 @@ export default class Time extends React.Component {
   }
   previousOption = () => {
     if (!validTime(this.props.value)) {
-      return this.options[0].value
+      return this.nextOption()
     }
     if (this.props.value === this.options[0].value) {
       return this.options[this.options.length - 1].value

@@ -2,18 +2,38 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Mireco from 'mireco'
 
+const OPTIONS = [
+  {
+    value: 'bike',
+    label: 'Bicycle',
+  },
+  {
+    value: 'cyclone',
+    label: 'Cyclone',
+  },
+  {
+    value: 'wash_cycle',
+    label: 'Wash Cycle',
+  },
+  {
+    value: 'binoculars',
+    label: 'Binoculars',
+  },
+]
+
 class DemoText extends React.Component {
   state = {
-    value: 'Example text value',
+    value: null,
   }
   render() {
     return (
       <div>
         <p>Field value: {JSON.stringify(this.state.value)}</p>
-        <Mireco.Text
+        <Mireco.Select
           block
-          placeholder="Text value"
+          placeholder="Select value"
           value={this.state.value}
+          options={OPTIONS}
           onChange={(newValue) => {
             this.setState({value: newValue})
           }}
@@ -23,7 +43,7 @@ class DemoText extends React.Component {
   }
 }
 
-const mount = document.querySelectorAll('div.demo-mount-text')
+const mount = document.querySelectorAll('div.demo-mount-select')
 if (mount.length) {
   ReactDOM.render(<DemoText />, mount[0])
 }
