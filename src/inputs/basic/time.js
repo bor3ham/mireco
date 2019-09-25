@@ -75,9 +75,9 @@ export default class Time extends React.Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.step != this.props.step
-      || prevProps.relativeTo != this.props.relativeTo
-      || prevProps.relativeStart != this.props.relativeStart
+      prevProps.step !== this.props.step
+      || prevProps.relativeTo !== this.props.relativeTo
+      || prevProps.relativeStart !== this.props.relativeStart
     ) {
       this.options = this.generateOptions(prevProps)
     }
@@ -103,8 +103,9 @@ export default class Time extends React.Component {
         value: ms,
         label: format(addMilliseconds(startOfDay(new Date()), ms), props.displayFormat),
       }
-      if (typeof props.relativeTo === 'number') {
+      if (typeof props.relativeTo === 'number' && typeof props.relativeStart === 'number') {
         let msAbsolute = props.relativeStart + newOption.value
+        console.log('option diff from', new Date(msAbsolute))
         if (msAbsolute > props.relativeTo) {
           let duration = msAbsolute - props.relativeTo
           if (

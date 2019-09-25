@@ -199,6 +199,14 @@ export default class Datetime extends React.Component {
         rightHang={this.props.timeFirst}
       />
     )
+    let relativeStart = undefined
+    const combined = this.combinedStateValue()
+    if (this.props.relativeTo && !datetimeNull(combined)) {
+      relativeStart = +startOfDay(new Date(combined))
+    }
+    if (this.props.relativeTo) {
+      console.log(new Date(this.props.relativeTo))
+    }
     let time = (
       <Time
         ref={this.timeRef}
@@ -206,7 +214,7 @@ export default class Datetime extends React.Component {
         onChange={this.handleTimeChange}
         disabled={this.props.disabled}
         relativeTo={this.props.relativeTo}
-        relativeStart={dateAsMs(this.state.date)}
+        relativeStart={relativeStart}
         block={this.props.block}
       />
     )

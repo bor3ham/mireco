@@ -133,6 +133,7 @@ export default class Dropdown extends React.Component {
       && this.currentRef.current
       && this.currentRef.current.optionRef.current
     ) {
+      // don't use scroll into view because this also scrolls parent containers (the body included)
       const offset = this.currentRef.current.optionRef.current.offsetTop
       this.listRef.current.scrollTop = offset
     }
