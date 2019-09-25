@@ -80,7 +80,7 @@ export default class Time extends React.Component {
       || prevProps.relativeTo !== this.props.relativeTo
       || prevProps.relativeStart !== this.props.relativeStart
     ) {
-      this.options = this.generateOptions(prevProps)
+      this.options = this.generateOptions(this.props)
     }
     if (prevProps.value !== this.props.value ) {
       if (this.props.value === null) {
