@@ -1,3 +1,4 @@
 export * from 'inputs'
 export { propTypes, constants } from 'utilities'
-export components from './components'
+import * as components from './components'
+export { components }

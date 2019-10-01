@@ -67,10 +67,14 @@ export default class Calendar extends React.Component {
   static propTypes = {
     selectDay: PropTypes.func,
     current: mirecoPropTypes.date,
-    showToday: PropTypes.bool,
+    showCurrent: PropTypes.bool,
+    highlight: PropTypes.func,
   }
   static defaultProps = {
-    showToday: true,
+    showCurrent: true,
+    highlight: (calendarDay, today) => {
+      return (calendarDay === today)
+    },
   }
   constructor(props) {
     super(props)
@@ -134,7 +138,7 @@ export default class Calendar extends React.Component {
     })
   }
   render() {
-    let today = startOfDay(new Date())
+    let today = format(new Date(), constants.ISO_8601_DATE_FORMAT)
 
     let weeks = []
     let firstDay = startOfISOWeek(new Date(this.state.year, this.state.month))
@@ -180,8 +184,11 @@ export default class Calendar extends React.Component {
                     return (
                       <td key={`day-${dayIndex}`} className={classNames({
                         'outside-month': getMonth(parsedDay) != this.state.month,
-                        'current': (this.props.current === day),
-                        'today': (day === today && this.props.showToday),
+                        'current': this.props.showCurrent && (this.props.current === day),
+                        'highlight': (
+                          typeof this.props.highlight === 'function'
+                          && this.props.highlight(day, today)
+                        ),
                       })}>
                         <button
                           type="button"
