@@ -1,3 +1,6 @@
+clear-width = 3rem
+desired-datetime-width = 16rem
+
 .MIRECO-datetime-range
   span.to
     margin-top: text-space-width
@@ -28,13 +31,17 @@
       flex-wrap: nowrap
 
     > div.MIRECO-datetime
-      flex-basis: 14rem
+      flex-basis: desired-datetime-width
       flex-grow: 1
     div.datetime-range-second
-      flex-basis: 16rem
+      flex-basis: desired-datetime-width
       flex-grow: 1
       display: flex
       align-items: flex-start
 
       div.MIRECO-datetime
         flex: 1
+
+    &.clearable
+      div.datetime-range-second
+        flex-basis: (desired-datetime-width + clear-width)

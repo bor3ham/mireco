@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import { format } from 'date-fns'
 
 import { Datetime } from 'inputs'
@@ -243,7 +244,9 @@ export default class DatetimeRange extends React.Component {
       <BlockDiv
         block={this.props.block}
         ref={this.containerRef}
-        className={'MIRECO-datetime-range'}
+        className={classNames('MIRECO-datetime-range', this.props.className, {
+          clearable: this.props.showClear,
+        })}
         onBlur={this.handleContainerBlur}
       >
         <Datetime

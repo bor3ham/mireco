@@ -227,7 +227,9 @@ export default class Datetime extends React.Component {
       <BlockDiv
         ref={this.containerRef}
         block={this.props.block}
-        className="MIRECO-datetime"
+        className={classNames('MIRECO-datetime', this.props.className, {
+          clearable: this.props.showClear,
+        })}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
       >

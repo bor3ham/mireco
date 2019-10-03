@@ -1,3 +1,7 @@
+clear-width = 3rem
+desired-date-width = 8rem
+desired-time-width = 8rem
+
 .MIRECO-datetime
   &.block
     display: flex
@@ -6,23 +10,29 @@
 
     >:first-child
       &.MIRECO-date
-        flex-basis: 9rem
+        flex-basis: desired-date-width
       &.MIRECO-time
-        flex-basis: 7rem
+        flex-basis: desired-time-width
       flex-grow: 1
       margin-right: text-space-width
     div.second
       margin-right: text-space-width
       white-space: pre
       &.date
-        flex-basis: 12rem
+        flex-basis: desired-date-width
       &.time
-        flex-basis: 10rem
+        flex-basis: desired-time-width
       flex-grow: 1
       align-items: flex-start
       display: flex
       .MIRECO-time, .MIRECO-date
         flex: 1
+
+    &.clearable div.second
+      &.date
+        flex-basis: (desired-date-width + clear-width)
+      &.time
+        flex-basis: (desired-time-width + clear-width)
 
   &:focus
     outline: none
