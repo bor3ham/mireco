@@ -188,6 +188,11 @@ export default class MirecoDate extends React.Component {
       })
     }
   }
+  focus = () => {
+    if (this.textRef.current) {
+      this.textRef.current.focus()
+    }
+  }
   render() {
     return (
       <BlockDiv
