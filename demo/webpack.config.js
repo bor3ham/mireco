@@ -24,7 +24,7 @@ module.exports = {
       path.resolve('node_modules'),
     ],
     alias: {
-      mireco: path.resolve('../dist/mireco.js'),
+      mireco: path.resolve('..'),
     },
   },
 };

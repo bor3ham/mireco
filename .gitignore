@@ -61,9 +61,13 @@ typings/
 .next
 
 # build output
-dist/*.js
-dist/*.css
-dist/**/*.styl
+dist/
+
+# packaged js
+main.js
+constants.js
+components.js
+prop-types.js
 
 # demo build
 demo/dist/*.js

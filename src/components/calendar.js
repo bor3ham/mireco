@@ -4,7 +4,6 @@ import classNames from 'classnames'
 import {
   getYear,
   getMonth,
-  startOfDay,
   startOfISOWeek,
   endOfMonth,
   format,

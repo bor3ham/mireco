@@ -3,11 +3,17 @@ const PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.js',
+  entry: {
+    main: path.resolve('src', 'index.js'),
+    constants: path.resolve('src/utilities', 'constants.js'),
+    'prop-types': path.resolve('src/utilities/prop-types', 'index.js'),
+    components: path.resolve('src/components', 'index.js')
+  },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'mireco.js',
+    path: path.resolve(__dirname),
+    filename: '[name].js',
     libraryTarget: 'umd',
+    library: 'mireco',
   },
   module: {
     rules: [
