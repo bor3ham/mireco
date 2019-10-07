@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
-  constants as mirecoConstants,
   Date as DateInput,
   Datetime,
   DatetimeRange,
@@ -13,6 +12,7 @@ import {
   Select,
   Duration,
 } from 'mireco'
+import mirecoConstants from 'mireco/constants'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
