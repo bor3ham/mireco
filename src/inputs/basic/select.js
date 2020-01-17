@@ -5,11 +5,18 @@ import classNames from 'classnames'
 import { Text } from 'inputs'
 import { BlockDiv, Dropdown } from 'components'
 
-function validChoice(choiceValue) {
-  return choiceValue !== null && typeof choiceValue !== 'undefined'
-}
+const ARROW_DOWN = 40
+const ARROW_UP = 38
 
 const valueType = PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
+
+function validChoice(value, props) {
+  return (
+    typeof props.value === 'string'
+    || typeof props.value === 'number'
+    || typeof props.value === 'boolean'
+  )
+}
 
 export default class Select extends React.Component {
   static propTypes = {
@@ -33,141 +40,61 @@ export default class Select extends React.Component {
     this.containerRef = React.createRef()
     this.textRef = React.createRef()
     this.dropdownRef = React.createRef()
-    this.hiddenInputRef = React.createRef()
+    let initialText = ''
+    if (validChoice(this.props.value, this.props)) {
+      const current = this.props.options.find(option => {
+        return option.value === this.props.value
+      })
+      initialText = current ? current.label : `${this.props.value}`
+    }
     this.state = {
       ...this.state,
-      searchTerm: '',
-      inFocus: false,
+      textValue: initialText,
+      dropdownOpen: false,
     }
   }
-  componentDidUpdate(prevProps, prevState) {
-  }
-  filteredOptions = (searchTerm) => {
-    return this.props.options.filter((option) => {
-      return this.filterOption(option, searchTerm)
-    })
-  }
-  filterOption = (option, searchTerm) => {
-    const term = searchTerm.toLowerCase().trim()
-    if (term.length === 0) {
-      return true
-    }
-    const searchText = `${option.label}${option.value}`.toLowerCase()
-    const terms = term.split(' ')
-    let allFound = true
-    terms.map((subTerm) => {
-      if (searchText.indexOf(subTerm) === -1) {
-        allFound = false
+  componentDidUpdate = (prevProps, prevState) => {
+    if (prevProps.value !== this.props.value ) {
+      if (this.props.value === null) {
+        this.setState({textValue: ''})
       }
-    })
-    return allFound
-  }
-  bestValue = (term) => {
-    const filtered = this.filteredOptions(term)
-    if (filtered.length > 0) {
-      return filtered[0]
-    }
-    return null
-  }
-  valueLabel = (value) => {
-    const found = this.props.options.find((option) => {
-      return option.value === value
-    })
-    if (found) {
-      return found.label
-    }
-    return ''
-  }
-  nextOption = () => {
-    if (this.props.options.length === 0) {
-      return null
-    }
-    if (!validChoice(this.props.value)) {
-      return this.props.options.length > 0 ? this.props.options[0].value : null
-    }
-    let currentIndex = 0
-    this.props.options.map((option, index) => {
-      if (option.value === this.props.value) {
-        currentIndex = index
-      }
-    })
-    currentIndex += 1
-    if (currentIndex >= this.props.options.length) {
-      currentIndex = 0
-    }
-    return this.props.options[currentIndex].value
-  }
-  previousOption = () => {
-    if (this.props.options.length === 0) {
-      return null
-    }
-    if (!validChoice(this.props.value)) {
-      return this.nextOption()
-    }
-    let currentIndex = 0
-    this.props.options.map((option, index) => {
-      if (option.value === this.props.value) {
-        currentIndex = index
-      }
-    })
-    currentIndex -= 1
-    if (currentIndex < 0) {
-      currentIndex = this.props.options.length - 1
-    }
-    return this.props.options[currentIndex].value
-  }
-  handleFocus = () => {
-    this.setState({inFocus: true})
-  }
-  handleSearchKeyDown = (event) => {
-    this.setState({inFocus: true})
-    if (event) {
-      if (event.which === 40) {
-        event.preventDefault()
-        if (typeof this.props.onChange === 'function' && !this.props.disabled) {
-          this.props.onChange(this.nextOption())
+      else if (validChoice(this.props.value, this.props)) {
+        const filtered = this.getFilteredOptions()
+        let current = null
+        filtered.find(option => {
+          return (option.value === this.props.value)
+        })
+        if (!current) {
+          current = this.props.options.find(option => {
+            return (option.value === this.props.value)
+          })
+          if (current) {
+            this.setState({textValue: current.label})
+          }
+          else {
+            this.setState({textValue: `${this.props.value}`})
+          }
         }
       }
-      if (event.which === 38) {
-        event.preventDefault()
-        if (typeof this.props.onChange === 'function' && !this.props.disabled) {
-          this.props.onChange(this.previousOption())
-        }
-      }
-      if (
-        event.which === 8
-        && this.state.searchTerm.length === 0
-        && typeof this.props.onChange === 'function'
-      ) {
-        this.props.onChange(null)
-      }
+    }
+    if (this.props.disabled && !prevProps.disabled) {
+      this.onBlur()
     }
   }
-  handleSearchChange = (newValue) => {
-    this.setState({searchTerm: newValue}, () => {
-      if (typeof this.props.onChange !== 'function') {
-        return
-      }
-      const first = this.filteredOptions(newValue)
-      if (first.length > 0) {
-        this.props.onChange(first[0].value)
-      }
+  getFilteredOptions = () => {
+    const terms = this.state.textValue.split(' ').map(term => {
+      return term.trim().toLowerCase()
     })
-  }
-  handleSelect = (value) => {
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(value, false)
-    }
-    this.textRef.current && this.textRef.current.focus()
-  }
-  handleHiddenInputChange = () => {
-    if (this.hiddenInputRef.current) {
-      let value = this.hiddenInputRef.current.value
-      if (value === '') {
-        value = null
-      }
-      this.handleSelect(value)
-    }
+    return this.props.options.filter(option => {
+      const searchable = `${option.label}${option.value}`.toLowerCase()
+      let match = false
+      terms.map(term => {
+        if (searchable.indexOf(term) !== -1) {
+          match = true
+        }
+      })
+      return match
+    })
   }
   handleContainerBlur = (event) => {
     if (
@@ -183,63 +110,158 @@ export default class Select extends React.Component {
     }
     this.onBlur()
   }
+  handleTextFocus = (event) => {
+    this.setState({
+      dropdownOpen: true,
+    })
+  }
+  handleTextKeyDown = (event) => {
+    this.setState({dropdownOpen: true})
+    if (event) {
+      if (event.which === ARROW_DOWN || event.which === ARROW_UP) {
+        event.preventDefault()
+        if (typeof this.props.onChange !== 'function') {
+          return
+        }
+        let currentIndex = -1
+        const filtered = this.getFilteredOptions()
+        filtered.map((option, index) => {
+          if (option.value === this.props.value) {
+            currentIndex = index
+          }
+        })
+        let nextIndex = currentIndex
+        if (event.which === ARROW_DOWN) {
+          nextIndex++
+          if (nextIndex >= filtered.length) {
+            nextIndex = 0
+          }
+        }
+        if (event.which === ARROW_UP) {
+          nextIndex--
+          if (nextIndex < 0) {
+            nextIndex = filtered.length - 1
+          }
+        }
+        if (filtered[nextIndex]) {
+          this.props.onChange(filtered[nextIndex].value)
+        }
+        else {
+          this.props.onChange(null)
+        }
+      }
+    }
+  }
+  handleTextChange = (newValue) => {
+    this.setState({textValue: newValue}, () => {
+      if (typeof this.props.onChange !== 'function') {
+        return
+      }
+      let cleaned = newValue.trim().toLowerCase()
+      if (cleaned.length <= 0) {
+        this.props.onChange(null, false)
+      }
+      else {
+        let valueMatch = null
+        this.props.options.map(option => {
+          const optionValue = `${option.value}`.trim().toLowerCase()
+          if (valueMatch === null && optionValue === cleaned) {
+            valueMatch = option.value
+          }
+        })
+        if (valueMatch !== null) {
+          this.props.onChange(valueMatch, false)
+        }
+        else {
+          let labelMatch = null
+          this.props.options.map(option => {
+            const optionLabel = `${option.label}`.trim().toLowerCase()
+            if (labelMatch === null && optionLabel === cleaned) {
+              labelMatch = option.value
+            }
+          })
+          if (labelMatch !== null) {
+            this.props.onChange(labelMatch, false)
+          }
+          else {
+            this.props.onChange(undefined, false)
+          }
+        }
+      }
+    })
+  }
+  handleDropdownSelect = (value) => {
+    const selected = this.props.options.find(option => {
+      return option.value === value
+    })
+    if (!selected) {
+      console.warn('Could not find selected value in options', value)
+      return
+    }
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(value, true)
+    }
+    this.textRef.current && this.textRef.current.focus()
+    this.setState({
+      dropdownOpen: false,
+      textValue: selected.label,
+    })
+  }
   onBlur = () => {
-    this.setState({inFocus: false, searchTerm: ''})
-    // todo: different onChange for blur events?
+    if (validChoice(this.props.value, this.props)) {
+      const selectedOption = this.props.options.find(option => {
+        return option.value === this.props.value
+      })
+      let formatted = selectedOption ? selectedOption.label : `${this.props.value}`
+      this.setState({
+        textValue: formatted,
+        dropdownOpen: false,
+      }, () => {
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(this.props.value, true)
+        }
+      })
+    }
+    else {
+      this.setState({
+        textValue: '',
+        dropdownOpen: false,
+      }, () => {
+        if (typeof this.props.onChange === 'function') {
+          this.props.onChange(null, true)
+        }
+      })
+    }
   }
   render() {
-    const filteredOptions = this.filteredOptions(this.state.searchTerm)
+    const filtered = this.getFilteredOptions()
     return (
       <BlockDiv
         ref={this.containerRef}
+        block={this.props.block}
         className={classNames('MIRECO-select', {
           'has-value': !!this.props.value,
         })}
-        block={this.props.block}
+        tabIndex={-1}
         onBlur={this.handleContainerBlur}
       >
         <Text
           ref={this.textRef}
-          placeholder={this.props.value ? this.valueLabel(this.props.value) : this.props.placeholder}
-          value={this.state.searchTerm}
-          onChange={this.handleSearchChange}
-          block={this.props.block}
-          onFocus={this.handleFocus}
-          onKeyDown={this.handleSearchKeyDown}
+          placeholder={this.props.placeholder}
+          value={this.state.textValue}
+          onFocus={this.handleTextFocus}
+          onKeyDown={this.handleTextKeyDown}
+          onChange={this.handleTextChange}
           disabled={this.props.disabled}
         />
-        {this.state.inFocus && !this.props.disabled && (
+        {this.state.dropdownOpen && (
           <Dropdown
             ref={this.dropdownRef}
-            options={filteredOptions}
+            options={filtered}
             value={this.props.value}
-            onSelect={this.handleSelect}
+            onSelect={this.handleDropdownSelect}
           />
         )}
-        <select
-          ref={this.hiddenInputRef}
-          style={{display: 'none'}}
-          value={this.props.value || ''}
-          onChange={this.handleHiddenInputChange}
-          disabled={this.props.disabled}
-        >
-          {this.props.nullable && <option key="-" value="">-</option>}
-          {this.props.options.filter((selectOption) => {
-            return (
-              selectOption.value === this.props.value
-              || this.filterOption(selectOption, this.state.searchTerm)
-            )
-          }).map((selectOption) => {
-            return (
-              <option
-                key={selectOption.value}
-                value={selectOption.value}
-              >
-                {selectOption.label}
-              </option>
-            )
-          })}
-        </select>
       </BlockDiv>
     )
   }

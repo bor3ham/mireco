@@ -12,7 +12,7 @@ import {
   Select,
   Duration,
 } from 'mireco'
-import mirecoConstants from 'mireco/constants'
+import * as mirecoConstants from 'mireco/constants'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
@@ -22,6 +22,7 @@ import ResizeContainer from './resize-container.js'
 
 const SELECT_OPTIONS = [
   {value: 'car', label: 'Car'},
+  {value: 'boot', label: 'Car Boot'},
   {value: 'bike', label: 'Bicycle'},
   {value: 'plane', label: 'Aeroplane'},
   {value: 'hike', label: 'Hiking'},

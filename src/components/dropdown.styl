@@ -28,7 +28,7 @@
     margin: 0
     padding: 0
     display: block
-    button
+    button, &.none
       margin: 0
       padding: (standard-padding / 2) (standard-padding)
       background: none
@@ -42,6 +42,7 @@
       font-size: (standard-font-size * 0.8)
       line-height: standard-line-height
       white-space: nowrap
+    button
       &:not(:disabled)
         cursor: pointer
     button:not(:disabled):hover

@@ -28,7 +28,7 @@ class DemoText extends React.Component {
   render() {
     return (
       <div>
-        <p>Field value: {JSON.stringify(this.state.value)}</p>
+        <p>Field value: {JSON.stringify(this.state.value) || 'undefined'}</p>
         <Select
           block
           placeholder="Select value"

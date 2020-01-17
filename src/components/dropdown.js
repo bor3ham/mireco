@@ -117,7 +117,7 @@ export default class Dropdown extends React.Component {
       })
     }
     else {
-      options = (<li>No options</li>)
+      options = (<li className="none">No options</li>)
     }
     return (
       <ul
