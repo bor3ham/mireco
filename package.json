@@ -1,6 +1,6 @@
 {
   "name": "mireco",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "MIcro REact COmponents - extensible library for interfaces with no heavy deps",
   "main": "main.js",
   "repository": "git@github.com:bor3ham/mireco.git",
