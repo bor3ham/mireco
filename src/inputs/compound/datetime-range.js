@@ -61,7 +61,7 @@ function rangesEqual(range1, range2) {
   return false
 }
 
-export default class DatetimeRange extends React.Component {
+export default class DatetimeRange extends React.PureComponent {
   static propTypes = {
     block: PropTypes.bool,
     onChange: PropTypes.func,

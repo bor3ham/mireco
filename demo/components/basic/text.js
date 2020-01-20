@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Text } from 'mireco'
 
-class DemoText extends React.Component {
+class DemoText extends React.PureComponent {
   state = {
     value: 'Example text value',
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Time } from 'mireco'
 
-class DemoTime extends React.Component {
+class DemoTime extends React.PureComponent {
   state = {
     value: null,
   }

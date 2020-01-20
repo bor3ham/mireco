@@ -9,7 +9,7 @@ parseDuration.year = parseDuration.week * 52
 
 import Text from './text.js'
 
-export default class Duration extends React.Component {
+export default class Duration extends React.PureComponent {
   static propTypes = {
     block: PropTypes.bool,
     onChange: PropTypes.func,

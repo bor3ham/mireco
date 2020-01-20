@@ -51,7 +51,7 @@ function splitDateTime(value) {
   }
 }
 
-export default class Datetime extends React.Component {
+export default class Datetime extends React.PureComponent {
   static propTypes = {
     value: PropTypes.number,
     onChange: PropTypes.func,

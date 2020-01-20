@@ -8,7 +8,7 @@ import Calendar from '../../components/calendar.js'
 import BlockDiv from '../../components/block-div.js'
 import { propTypes as mirecoPropTypes, constants } from 'utilities'
 
-export default class MirecoDate extends React.Component {
+export default class MirecoDate extends React.PureComponent {
   static propTypes = {
     inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,

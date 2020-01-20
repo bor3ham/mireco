@@ -27,7 +27,7 @@ const check = (
   </svg>
 )
 
-export default class Checkbox extends React.Component {
+export default class Checkbox extends React.PureComponent {
   static propTypes = {
     onChange: PropTypes.func,
     name: PropTypes.string,

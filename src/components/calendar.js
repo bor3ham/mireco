@@ -62,7 +62,7 @@ const arrowRight = (
   </svg>
 )
 
-export default class Calendar extends React.Component {
+export default class Calendar extends React.PureComponent {
   static propTypes = {
     selectDay: PropTypes.func,
     current: mirecoPropTypes.date,

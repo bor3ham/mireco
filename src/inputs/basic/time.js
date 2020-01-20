@@ -22,7 +22,7 @@ const shortHumanizeDur = humanizeDuration.humanizer({
   },
 })
 
-export default class Time extends React.Component {
+export default class Time extends React.PureComponent {
   static propTypes = {
     inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,

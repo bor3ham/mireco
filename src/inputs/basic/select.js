@@ -20,7 +20,7 @@ function validChoice(value, props) {
   )
 }
 
-export default class Select extends React.Component {
+export default class Select extends React.PureComponent {
   static propTypes = {
     value: valueType,
     nullable: PropTypes.bool,

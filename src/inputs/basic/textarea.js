@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import TextareaAutosize from 'react-textarea-autosize'
 import classNames from 'classnames'
 
-export default class Textarea extends React.Component {
+export default class Textarea extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,

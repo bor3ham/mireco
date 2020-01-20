@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-export default class Text extends React.Component {
+export default class Text extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,

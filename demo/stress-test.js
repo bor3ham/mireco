@@ -70,7 +70,7 @@ function randomValue() {
   }
 }
 
-class Demo extends React.Component {
+class Demo extends React.PureComponent {
   state = {
     formValue: {
       ...defaultValue,

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-class DropdownOption extends React.Component {
+class DropdownOption extends React.PureComponent {
   static propTypes = {
     current: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -40,7 +40,7 @@ class DropdownOption extends React.Component {
   }
 }
 
-export default class Dropdown extends React.Component {
+export default class Dropdown extends React.PureComponent {
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,

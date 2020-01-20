@@ -1,7 +1,7 @@
 import React from 'react'
 import Cookies from 'js-cookie'
 
-class ResizeContainer extends React.Component {
+class ResizeContainer extends React.PureComponent {
   constructor(props) {
     super(props)
 
