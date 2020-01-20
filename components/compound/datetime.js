@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Datetime } from 'mireco'
 
-class DemoDatetime extends React.Component {
+class DemoDatetime extends React.PureComponent {
   state = {
     value: null,
   }

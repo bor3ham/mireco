@@ -21,7 +21,7 @@ const OPTIONS = [
   },
 ]
 
-class DemoText extends React.Component {
+class DemoText extends React.PureComponent {
   state = {
     value: null,
   }

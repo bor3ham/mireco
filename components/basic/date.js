@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Date as DateInput } from 'mireco'
 
-class DemoDate extends React.Component {
+class DemoDate extends React.PureComponent {
   state = {
     value: null,
   }

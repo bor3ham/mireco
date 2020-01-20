@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Textarea } from 'mireco'
 
-class DemoTextarea extends React.Component {
+class DemoTextarea extends React.PureComponent {
   state = {
     value: 'Example text value...\nWith multiple lines.',
   }
