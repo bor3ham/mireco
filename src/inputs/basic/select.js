@@ -8,6 +8,7 @@ import Dropdown from '../../components/dropdown.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
+const ENTER = 13
 
 const valueType = PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
 
@@ -61,8 +62,7 @@ export default class Select extends React.Component {
       }
       else if (validChoice(this.props.value, this.props)) {
         const filtered = this.getFilteredOptions()
-        let current = null
-        filtered.find(option => {
+        let current = filtered.find(option => {
           return (option.value === this.props.value)
         })
         if (!current) {
@@ -117,7 +117,19 @@ export default class Select extends React.Component {
     })
   }
   handleTextKeyDown = (event) => {
-    this.setState({dropdownOpen: true})
+    if (event.which === ENTER ) {
+      if (this.state.dropdownOpen) {
+        const current = this.props.options.find(option => {
+          return option.value === this.props.value
+        })
+        this.setState({dropdownOpen: false, textValue: current ? current.label : ''})
+        event.preventDefault()
+      }
+      return
+    }
+    if (!this.state.dropdownOpen) {
+      this.setState({dropdownOpen: true})
+    }
     if (event) {
       if (event.which === ARROW_DOWN || event.which === ARROW_UP) {
         event.preventDefault()
@@ -185,7 +197,11 @@ export default class Select extends React.Component {
             this.props.onChange(labelMatch, false)
           }
           else {
-            this.props.onChange(undefined, false)
+            const filtered = this.getFilteredOptions()
+            const current = filtered.find(option => {
+              return option.value === this.props.value
+            })
+            this.props.onChange(current ? current.value : undefined, false)
           }
         }
       }
@@ -254,6 +270,7 @@ export default class Select extends React.Component {
           onKeyDown={this.handleTextKeyDown}
           onChange={this.handleTextChange}
           disabled={this.props.disabled}
+          block={this.props.block}
         />
         {this.state.dropdownOpen && (
           <Dropdown
