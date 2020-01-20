@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 
-import { Datetime } from 'inputs'
-import { ClearButton, BlockDiv } from 'components'
+import Datetime from './datetime.js'
+import ClearButton from '../../components/clear-button.js'
+import BlockDiv from '../../components/block-div.js'
 import { constants } from 'utilities'
 
 function datetimeNull(datetime) {

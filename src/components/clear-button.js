@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { Button } from 'inputs'
+import Button from '../inputs/basic/button.js'
 
 const cross = (
   <svg

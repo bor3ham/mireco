@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
-import { Text } from 'inputs'
-import { Calendar, BlockDiv } from 'components'
+import Text from './text.js'
+import Calendar from '../../components/calendar.js'
+import BlockDiv from '../../components/block-div.js'
 import { propTypes as mirecoPropTypes, constants } from 'utilities'
 
 export default class MirecoDate extends React.Component {

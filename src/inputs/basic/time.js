@@ -4,8 +4,9 @@ import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
 
-import { Text } from 'inputs'
-import { Dropdown, BlockDiv } from 'components'
+import Text from './text.js'
+import BlockDiv from '../../components/block-div.js'
+import Dropdown from '../../components/dropdown.js'
 
 function validTime(time) {
   return typeof time === 'number' && !isNaN(time)

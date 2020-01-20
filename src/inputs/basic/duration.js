@@ -7,7 +7,7 @@ import parseDuration from 'parse-duration'
 parseDuration.month = parseDuration.week * 4
 parseDuration.year = parseDuration.week * 52
 
-import { Text } from 'inputs'
+import Text from './text.js'
 
 export default class Duration extends React.Component {
   static propTypes = {

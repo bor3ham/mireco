@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import { Text } from 'inputs'
-import { BlockDiv, Dropdown } from 'components'
+import Text from './text.js'
+import BlockDiv from '../../components/block-div.js'
+import Dropdown from '../../components/dropdown.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
