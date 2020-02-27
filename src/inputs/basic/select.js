@@ -32,6 +32,7 @@ export default class Select extends React.PureComponent {
     block: PropTypes.bool,
     disabled: PropTypes.bool,
     onChange: PropTypes.func,
+    style: PropTypes.object,
   }
   static defaultProps = {
     nullable: true,
@@ -271,6 +272,7 @@ export default class Select extends React.PureComponent {
           onChange={this.handleTextChange}
           disabled={this.props.disabled}
           block={this.props.block}
+          style={this.props.style}
         />
         {this.state.dropdownOpen && (
           <Dropdown
