@@ -105,7 +105,7 @@ Basic form inputs:
 - [x] Date
 - [x] Duration
 - [ ] Abstract Duration (understands months, years)
-- [ ] Select
+- [x] Select
 - [ ] Month
 - [ ] CalendarMonth
 
