@@ -2343,11 +2343,6 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-jquery@^3.1.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
-  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
-
 js-cookie@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-2.2.1.tgz#69e106dc5d5806894562902aa5baec3744e9b2b8"
@@ -3920,12 +3915,10 @@ upath@^1.1.1:
   resolved "https://registry.yarnpkg.com/upath/-/upath-1.2.0.tgz#8f66dbcd55a883acdae4408af8b035a5044c1894"
   integrity sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==
 
-uptick-demo-site@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/uptick-demo-site/-/uptick-demo-site-1.1.5.tgz#fb2a2880b5b4ec576cb5edca61240b3f93d9e50a"
-  integrity sha512-IwXTbvKyTKmvWuSAWO9WOPaNUJ1qJvRSk8NgxGeIWzvebxRMyCYi+sKPQDeUZ70rU2w0r3RD70MTSLoFm8E6/A==
-  dependencies:
-    jquery "^3.1.1"
+uptick-demo-site@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/uptick-demo-site/-/uptick-demo-site-1.1.8.tgz#61f4b57de56f6df7a959c7694598ce301f025356"
+  integrity sha512-gDosLE7aChRsc4kJmGgd37lRtTi9SwGOp1xQdhZ+vMSqUseuH8CJhNCkpsvzNiyuYu/d+cSN+oc8ZPOKfQ4hdw==
 
 uri-js@^4.2.2:
   version "4.2.2"
