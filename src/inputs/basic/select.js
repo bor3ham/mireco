@@ -236,7 +236,7 @@ function Select(props) {
         }
         else {
           const filtered = getFilteredOptions()
-          const current = props.options.find(option => {
+          const current = filtered.find(option => {
             return (option.value === props.value)
           })
           if (!current) {
