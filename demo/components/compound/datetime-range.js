@@ -1,47 +1,44 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { DatetimeRange } from 'mireco'
 
-class DemoDatetimeRange extends React.PureComponent {
-  state = {
-    value: null,
+function stringifyDate(date) {
+  if (typeof date === 'number') {
+    return JSON.stringify(new Date(date))
   }
-  stringifiedDate = (date) => {
-    if (typeof date === 'number') {
-      return JSON.stringify(new Date(date))
-    }
-    if (typeof date === 'undefined') {
-      return 'undefined'
-    }
-    return JSON.stringify(date)
+  if (typeof date === 'undefined') {
+    return 'undefined'
   }
-  stringifiedValue = () => {
-    if (this.state.value) {
-      return JSON.stringify({
-        start: this.stringifiedDate(this.state.value.start),
-        end: this.stringifiedDate(this.state.value.end),
-      })
-    }
-    if (typeof this.state.value === 'undefined') {
-      return 'undefined'
-    }
-    return JSON.stringify(this.state.value)
-  }
-  render() {
-    return (
-      <div>
-        <p>Field value: {this.stringifiedValue()}</p>
-        <DatetimeRange
-          block
-          value={this.state.value}
-          onChange={(newValue) => {
-            this.setState({value: newValue})
-          }}
-        />
-      </div>
-    )
-  }
+  return JSON.stringify(date)
 }
+
+function stringifyValue(value) {
+  if (value) {
+    return JSON.stringify({
+      start: stringifyDate(value.start),
+      end: stringifyDate(value.end),
+    })
+  }
+  if (typeof value === 'undefined') {
+    return 'undefined'
+  }
+  return JSON.stringify(value)
+}
+
+function DemoDatetimeRange(props) {
+  const [value, setValue] = useState(null)
+  return (
+    <>
+      <p>Field value: {stringifyValue(value)}</p>
+      <DatetimeRange
+        block
+        value={value}
+        onChange={setValue}
+      />
+    </>
+  )
+}
+
 const mount = document.querySelectorAll('div.demo-mount-datetime-range')
 if (mount.length) {
   ReactDOM.render(<DemoDatetimeRange />, mount[0])

@@ -1,31 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Time } from 'mireco'
 
-class DemoTime extends React.PureComponent {
-  state = {
-    value: null,
+function stringifyTime(time) {
+  if (typeof time === 'undefined') {
+    return 'undefined'
   }
-  stringifyValue() {
-    if (typeof this.state.value === 'undefined') {
-      return 'undefined'
-    }
-    return JSON.stringify(this.state.value)
-  }
-  render() {
-    return (
-      <div>
-        <p>Field value: {this.stringifyValue()}</p>
-        <Time
-          block
-          value={this.state.value}
-          onChange={(newValue) => {
-            this.setState({value: newValue})
-          }}
-        />
-      </div>
-    )
-  }
+  return JSON.stringify(time)
+}
+
+function DemoTime(props) {
+  const [value, setValue] = useState(null)
+  return (
+    <>
+      <p>Field value: {stringifyTime(value)}</p>
+      <Time
+        block
+        value={value}
+        onChange={setValue}
+      />
+    </>
+  )
 }
 
 const mount = document.querySelectorAll('div.demo-mount-time')

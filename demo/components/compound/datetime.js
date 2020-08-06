@@ -1,34 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Datetime } from 'mireco'
 
-class DemoDatetime extends React.PureComponent {
-  state = {
-    value: null,
+function stringifyDate(date) {
+  if (typeof date === 'number') {
+    return JSON.stringify(new Date(date))
   }
-  stringifiedValue = () => {
-    if (typeof this.state.value === 'number') {
-      return JSON.stringify(new Date(this.state.value))
-    }
-    if (typeof this.state.value === 'undefined') {
-      return 'undefined'
-    }
-    return JSON.stringify(this.state.value)
+  if (typeof date === 'undefined') {
+    return 'undefined'
   }
-  render() {
-    return (
-      <div>
-        <p>Field value: {this.stringifiedValue()}</p>
-        <Datetime
-          block
-          value={this.state.value}
-          onChange={(newValue) => {
-            this.setState({value: newValue})
-          }}
-        />
-      </div>
-    )
-  }
+  return JSON.stringify(date)
+}
+
+function DemoDatetime(props) {
+  const [value, setValue] = useState(null)
+  return (
+    <>
+      <p>Field value: {stringifyDate(value)}</p>
+      <Datetime
+        block
+        value={value}
+        onChange={setValue}
+      />
+    </>
+  )
 }
 
 const mount = document.querySelectorAll('div.demo-mount-datetime')
