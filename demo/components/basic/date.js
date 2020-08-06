@@ -4,6 +4,9 @@ import { Date as DateInput } from 'mireco'
 
 function DemoDate(props) {
   const [value, setValue] = useState(null)
+  const handleValueChange = (newValue, wasBlur) => {
+    setValue(newValue)
+  }
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
@@ -11,7 +14,7 @@ function DemoDate(props) {
         block
         placeholder="Date value"
         value={value}
-        onChange={setValue}
+        onChange={handleValueChange}
       />
     </>
   )

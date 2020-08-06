@@ -14,13 +14,16 @@ function stringifyDate(date) {
 
 function DemoDatetime(props) {
   const [value, setValue] = useState(null)
+  const handleValueChange = (newValue, wasBlur) => {
+    setValue(newValue)
+  }
   return (
     <>
       <p>Field value: {stringifyDate(value)}</p>
       <Datetime
         block
         value={value}
-        onChange={setValue}
+        onChange={handleValueChange}
       />
     </>
   )

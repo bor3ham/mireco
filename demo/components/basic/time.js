@@ -11,13 +11,16 @@ function stringifyTime(time) {
 
 function DemoTime(props) {
   const [value, setValue] = useState(null)
+  const handleValueChange = (newValue, wasBlur) => {
+    setValue(newValue)
+  }
   return (
     <>
       <p>Field value: {stringifyTime(value)}</p>
       <Time
         block
         value={value}
-        onChange={setValue}
+        onChange={handleValueChange}
       />
     </>
   )

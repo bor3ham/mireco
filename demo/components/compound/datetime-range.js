@@ -27,13 +27,16 @@ function stringifyValue(value) {
 
 function DemoDatetimeRange(props) {
   const [value, setValue] = useState(null)
+  const handleValueChange = (newValue, wasBlur) => {
+    setValue(newValue)
+  }
   return (
     <>
       <p>Field value: {stringifyValue(value)}</p>
       <DatetimeRange
         block
         value={value}
-        onChange={setValue}
+        onChange={handleValueChange}
       />
     </>
   )
