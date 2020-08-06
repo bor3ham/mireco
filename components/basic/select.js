@@ -23,6 +23,9 @@ const OPTIONS = [
 
 function DemoText(props) {
   const [value, setValue] = useState(null)
+  const handleValueChange = (newValue, wasBlur) => {
+    setValue(newValue)
+  }
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
@@ -31,7 +34,7 @@ function DemoText(props) {
         placeholder="Select value"
         value={value}
         options={OPTIONS}
-        onChange={setValue}
+        onChange={handleValueChange}
       />
     </>
   )
