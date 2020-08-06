@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Select } from 'mireco'
 
@@ -21,26 +21,20 @@ const OPTIONS = [
   },
 ]
 
-class DemoText extends React.PureComponent {
-  state = {
-    value: null,
-  }
-  render() {
-    return (
-      <div>
-        <p>Field value: {JSON.stringify(this.state.value) || 'undefined'}</p>
-        <Select
-          block
-          placeholder="Select value"
-          value={this.state.value}
-          options={OPTIONS}
-          onChange={(newValue) => {
-            this.setState({value: newValue})
-          }}
-        />
-      </div>
-    )
-  }
+function DemoText(props) {
+  const [value, setValue] = useState(null)
+  return (
+    <>
+      <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
+      <Select
+        block
+        placeholder="Select value"
+        value={value}
+        options={OPTIONS}
+        onChange={setValue}
+      />
+    </>
+  )
 }
 
 const mount = document.querySelectorAll('div.demo-mount-select')

@@ -1,26 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Date as DateInput } from 'mireco'
 
-class DemoDate extends React.PureComponent {
-  state = {
-    value: null,
-  }
-  render() {
-    return (
-      <div>
-        <p>Field value: {JSON.stringify(this.state.value) || 'undefined'}</p>
-        <DateInput
-          block
-          placeholder="Date value"
-          value={this.state.value}
-          onChange={(newValue) => {
-            this.setState({value: newValue})
-          }}
-        />
-      </div>
-    )
-  }
+function DemoDate(props) {
+  const [value, setValue] = useState(null)
+  return (
+    <>
+      <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
+      <DateInput
+        block
+        placeholder="Date value"
+        value={value}
+        onChange={setValue}
+      />
+    </>
+  )
 }
 
 const mount = document.querySelectorAll('div.demo-mount-date')

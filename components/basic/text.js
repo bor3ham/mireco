@@ -1,26 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Text } from 'mireco'
 
-class DemoText extends React.PureComponent {
-  state = {
-    value: 'Example text value',
-  }
-  render() {
-    return (
-      <div>
-        <p>Field value: {JSON.stringify(this.state.value)}</p>
-        <Text
-          block
-          placeholder="Text value"
-          value={this.state.value}
-          onChange={(newValue) => {
-            this.setState({value: newValue})
-          }}
-        />
-      </div>
-    )
-  }
+function DemoText(props) {
+  const [value, setValue] = useState('Example text value')
+  return (
+    <>
+      <p>Field value: {JSON.stringify(value)}</p>
+      <Text
+        block
+        placeholder="Text value"
+        value={value}
+        onChange={setValue}
+      />
+    </>
+  )
 }
 
 const mount = document.querySelectorAll('div.demo-mount-text')
