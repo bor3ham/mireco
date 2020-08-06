@@ -7,10 +7,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build-js": "./node_modules/.bin/webpack",
-    "build-css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css",
-    "watch-css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css --watch",
-    "watch-js": "./node_modules/.bin/webpack --watch",
+    "build:js": "./node_modules/.bin/webpack",
+    "build:css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css",
+    "watch:css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css --watch",
+    "watch:js": "./node_modules/.bin/webpack --watch",
+    "watch": "./node_modules/.bin/concurrently \"npm run watch:js\" \"npm run watch:css\"",
+    "start": "./node_modules/.bin/concurrently \"npm run watch\" \"jekyll serve\"",
     "build": "npm run build-js && npm run build-css"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
+    "concurrently": "^5.2.0",
     "stylus": "^0.54.7",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
