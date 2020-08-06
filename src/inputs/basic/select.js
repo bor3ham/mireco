@@ -47,8 +47,13 @@ function Select(props) {
   const getFilteredOptions = () => {
     const terms = text.split(' ').map(term => {
       return term.trim().toLowerCase()
+    }).filter(term => {
+      return (term.length > 0)
     })
     return props.options.filter(option => {
+      if (terms.length === 0) {
+        return true
+      }
       const searchable = `${option.label}${option.value}`.toLowerCase()
       let match = false
       terms.map(term => {
