@@ -13,6 +13,7 @@
     "watch:js": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "build:css": "./node_modules/.bin/stylus src/index.styl -o dist/mireco-components.css",
     "watch:css": "./node_modules/.bin/stylus src/index.styl -o dist/mireco-components.css --watch",
+    "watch": "./node_modules/.bin/concurrently \"npm run watch:js\" \"npm run watch:css\"",
     "build": "npm run build:js && npm run build:css",
     "prepare": "npm run build"
   },
@@ -37,6 +38,7 @@
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "circular-dependency-plugin": "^5.2.0",
+    "concurrently": "^5.2.0",
     "eslint": "^6.4.0",
     "eslint-plugin-react": "^7.14.3",
     "peer-deps-externals-webpack-plugin": "^1.0.4",
