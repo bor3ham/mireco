@@ -21,7 +21,7 @@ const OPTIONS = [
   },
 ]
 
-function DemoText(props) {
+function DemoSelect(props) {
   const [value, setValue] = useState(null)
   const handleValueChange = (newValue, wasBlur) => {
     setValue(newValue)
@@ -42,5 +42,5 @@ function DemoText(props) {
 
 const mount = document.querySelectorAll('div.demo-mount-select')
 if (mount.length) {
-  ReactDOM.render(<DemoText />, mount[0])
+  ReactDOM.render(<DemoSelect />, mount[0])
 }

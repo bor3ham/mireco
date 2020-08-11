@@ -7,6 +7,7 @@ import './components/basic/time.js'
 import './components/basic/select.js'
 import './components/compound/datetime.js'
 import './components/compound/datetime-range.js'
+import './components/compound/async-select.js'
 import './stress-test.js'
 
 init()

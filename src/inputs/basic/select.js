@@ -5,12 +5,11 @@ import classNames from 'classnames'
 import Text from './text.js'
 import BlockDiv from '../../components/block-div.js'
 import Dropdown from '../../components/dropdown.js'
+import { propTypes as mirecoPropTypes } from 'utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
 const ENTER = 13
-
-const valueType = PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
 
 function usePrevious(value) {
   const ref = useRef()
@@ -124,6 +123,9 @@ function Select(props) {
         }
         let currentIndex = -1
         const filtered = getFilteredOptions()
+        if (!filtered.length) {
+          return
+        }
         filtered.map((option, index) => {
           if (option.value === props.value) {
             currentIndex = index
@@ -153,6 +155,9 @@ function Select(props) {
   }
   const handleTextChange = (newValue) => {
     setText(newValue)
+    if (typeof props.onTextChange === 'function') {
+      props.onTextChange(newValue)
+    }
     if (typeof props.onChange !== 'function') {
       return
     }
@@ -284,16 +289,14 @@ function Select(props) {
   )
 }
 Select.propTypes = {
-  value: valueType,
+  value: mirecoPropTypes.selectValue,
   nullable: PropTypes.bool,
-  options: PropTypes.arrayOf(PropTypes.shape({
-    value: valueType,
-    label: PropTypes.string,
-  })).isRequired,
+  options: PropTypes.arrayOf(mirecoPropTypes.selectOption).isRequired,
   placeholder: PropTypes.string,
   block: PropTypes.bool,
   disabled: PropTypes.bool,
   onChange: PropTypes.func,
+  onTextChange: PropTypes.func,
   style: PropTypes.object,
 }
 Select.defaultProps = {
