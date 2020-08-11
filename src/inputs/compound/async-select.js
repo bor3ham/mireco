@@ -28,9 +28,9 @@ function AsyncSelect(props) {
   }
   const handleTextChange = (newText) => {
     const cleaned = newText.trim()
+    setSearchedTerm(cleaned)
     if (cleaned.length > 0) {
       if (typeof props.getOptions === 'function') {
-        setSearchedTerm(cleaned)
         setLoading(true)
         props.getOptions(cleaned).then(newOptions => {
           if (cleaned != stateRef.current) {
@@ -66,6 +66,20 @@ function AsyncSelect(props) {
     }
     props.onChange(newValue)
   }
+  const dropdownProps = {
+    noOptionsPrompt: 'No options',
+  }
+  if (loading) {
+    if (basicOptions.length > 0) {
+      dropdownProps.afterOptions = (<li className="none">{props.loadingPrompt}</li>)
+    }
+    else {
+      dropdownProps.noOptionsPrompt = props.loadingPrompt
+    }
+  }
+  else if (props.value === null) {
+    dropdownProps.noOptionsPrompt = props.searchPrompt
+  }
   return (
     <Select
       {...props}
@@ -73,6 +87,7 @@ function AsyncSelect(props) {
       value={basicValue}
       onTextChange={handleTextChange}
       onChange={handleChange}
+      dropdownProps={dropdownProps}
     />
   )
 }
@@ -80,6 +95,12 @@ AsyncSelect.propTypes = {
   value: mirecoPropTypes.selectOption,
   onChange: PropTypes.func,
   getOptions: PropTypes.func.isRequired,
+  loadingPrompt: PropTypes.string,
+  searchPrompt: PropTypes.string,
+}
+AsyncSelect.defaultProps = {
+  loadingPrompt: 'Loading...',
+  searchPrompt: 'Type to search',
 }
 
 export default AsyncSelect

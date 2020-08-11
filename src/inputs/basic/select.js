@@ -5,19 +5,11 @@ import classNames from 'classnames'
 import Text from './text.js'
 import BlockDiv from '../../components/block-div.js'
 import Dropdown from '../../components/dropdown.js'
-import { propTypes as mirecoPropTypes } from 'utilities'
+import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
 const ENTER = 13
-
-function usePrevious(value) {
-  const ref = useRef()
-  useEffect(() => {
-    ref.current = value
-  }, [value])
-  return ref.current
-}
 
 function validChoice(value, props) {
   return (
@@ -30,7 +22,6 @@ function validChoice(value, props) {
 function Select(props) {
   const containerRef = useRef(null)
   const textRef = useRef(null)
-  const dropdownRef = useRef(null)
 
   let initialText = ''
   if (validChoice(props.value, props)) {
@@ -279,10 +270,10 @@ function Select(props) {
       />
       {dropdownOpen && (
         <Dropdown
-          ref={dropdownRef}
           options={filtered}
           value={props.value}
           onSelect={handleDropdownSelect}
+          {...props.dropdownProps}
         />
       )}
     </BlockDiv>
@@ -298,6 +289,7 @@ Select.propTypes = {
   onChange: PropTypes.func,
   onTextChange: PropTypes.func,
   style: PropTypes.object,
+  dropdownProps: PropTypes.object,
 }
 Select.defaultProps = {
   nullable: true,
