@@ -41,7 +41,7 @@ function Select(props) {
       return (term.length > 0)
     })
     return props.options.filter(option => {
-      if (terms.length === 0) {
+      if (terms.length === 0 || !props.filter) {
         return true
       }
       const searchable = `${option.label}${option.value}`.toLowerCase()
@@ -267,6 +267,7 @@ function Select(props) {
         disabled={props.disabled}
         block={props.block}
         style={props.style}
+        autoFocus={props.autoFocus}
       />
       {dropdownOpen && (
         <Dropdown
@@ -290,10 +291,13 @@ Select.propTypes = {
   onTextChange: PropTypes.func,
   style: PropTypes.object,
   dropdownProps: PropTypes.object,
+  filter: PropTypes.bool,
+  autoFocus: PropTypes.bool,
 }
 Select.defaultProps = {
   nullable: true,
   options: [],
+  filter: true,
 }
 
 export default Select

@@ -101,6 +101,7 @@ function AsyncSelect(props) {
       onTextChange={handleTextChange}
       onChange={handleChange}
       dropdownProps={dropdownProps}
+      filter={false}
     />
   )
 }

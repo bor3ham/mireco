@@ -19,6 +19,10 @@ function fakeResults(searchTerm) {
       value: `new_${keyedTerm}`,
       label: `New ${searchTerm}`,
     },
+    {
+      value: 'unfiltered_result',
+      label: 'Result to test filtering is not happening',
+    },
   ]
 }
 
