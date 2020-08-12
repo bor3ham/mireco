@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import Select from '../basic/select.js'
@@ -9,8 +9,16 @@ function AsyncSelect(props) {
   const [loading, setLoading] = useState(false)
   const [searchedTerm, setSearchedTerm] = useState('')
   const stateRef = useRef()
+  const debounce = useRef()
 
   stateRef.current = searchedTerm
+
+  useEffect(() => {
+    if (props.value === null) {
+      setOptions([])
+      setLoading(false)
+    }
+  })
 
   let basicOptions = []
   if (!loading) {
@@ -32,13 +40,18 @@ function AsyncSelect(props) {
     if (cleaned.length > 0) {
       if (typeof props.getOptions === 'function') {
         setLoading(true)
-        props.getOptions(cleaned).then(newOptions => {
-          if (cleaned != stateRef.current) {
-            return
-          }
-          setOptions(newOptions)
-          setLoading(false)
-        })
+        if (debounce.current) {
+          window.clearTimeout(debounce.current)
+        }
+        debounce.current = window.setTimeout(() => {
+          props.getOptions(cleaned).then(newOptions => {
+            if (cleaned != stateRef.current) {
+              return
+            }
+            setOptions(newOptions)
+            setLoading(false)
+          })
+        }, props.debounce)
       }
     }
     else {
@@ -97,10 +110,12 @@ AsyncSelect.propTypes = {
   getOptions: PropTypes.func.isRequired,
   loadingPrompt: PropTypes.string,
   searchPrompt: PropTypes.string,
+  debounce: PropTypes.number,
 }
 AsyncSelect.defaultProps = {
   loadingPrompt: 'Loading...',
   searchPrompt: 'Type to search',
+  debounce: 500,
 }
 
 export default AsyncSelect
