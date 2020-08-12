@@ -14,7 +14,7 @@ function AsyncSelect(props) {
   stateRef.current = searchedTerm
 
   useEffect(() => {
-    if (props.value === null) {
+    if (props.value === null && (options.length > 0 || loading)) {
       setOptions([])
       setLoading(false)
     }
