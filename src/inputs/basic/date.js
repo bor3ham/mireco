@@ -20,6 +20,7 @@ export default class MirecoDate extends React.PureComponent {
     autoErase: PropTypes.bool,
     rightHang: PropTypes.bool,
     className: PropTypes.string,
+    required: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
@@ -40,6 +41,7 @@ export default class MirecoDate extends React.PureComponent {
     placeholder: 'dd/mm/yyyy',
     autoErase: true,
     rightHang: false,
+    required: false,
   }
   constructor(props) {
     super(props)
@@ -220,6 +222,7 @@ export default class MirecoDate extends React.PureComponent {
           onKeyDown={this.handleTextKeyDown}
           block={this.props.block}
           style={{marginBottom: '0'}}
+          required={this.props.required}
         />
         {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
           <Calendar
