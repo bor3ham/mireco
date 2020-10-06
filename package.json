@@ -13,7 +13,7 @@
     "watch:js": "./node_modules/.bin/webpack --watch",
     "watch": "./node_modules/.bin/concurrently \"npm run watch:js\" \"npm run watch:css\"",
     "start": "./node_modules/.bin/concurrently \"npm run watch\" \"jekyll serve\"",
-    "build": "npm run build-js && npm run build-css"
+    "build": "npm run build:js && npm run build:css"
   },
   "dependencies": {
     "casual-browserify": "^1.5.19-2",
