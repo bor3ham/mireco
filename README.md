@@ -6,6 +6,8 @@ Mireco is an extensible library for user interfaces with no heavy dependencies (
 >
 >\- Luke Hodkinson
 
+Check out the [live demo page here][1].
+
 It intends to be a simple example html implementation of a `React` interface that adheres to the
 following guidelines:
 
@@ -95,7 +97,7 @@ Follow the instructions found in `demo/README.md`.
 
 ## Components
 
-Check out the [API Documentation](/docs/api.md).
+Check out the [API Documentation][2].
 
 Basic form inputs:
 
@@ -165,3 +167,6 @@ Following this flow, self-initiated updates of value are non destructive to the 
 still allowing the parent to change its value. Also, as `undefined` and `null` are often
 interchangeable you can simply take the given `value` `onChange` without any validation or workflow
 in Mireco consumers.
+
+[1]: https://bor3ham.github.io/mireco/
+[2]: /docs/api.md
