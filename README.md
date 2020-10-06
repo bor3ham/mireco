@@ -35,15 +35,14 @@ yarn
 
 ## Development
 
-Build and watch the javascript/css changes:
+From the Mireco root folder, build and watch the javascript/css changes:
 
 ```
 yarn watch
 ```
 
-Serve the jekyll page (if you are using `yarn link` you cannot have `watch` enabled with `jekyll`
-due to a circular loop following symlinks):
+From the demo folder, watch any javascript/css files and serve the html with:
 
 ```
-jekyll serve --no-watch
+yarn start
 ```
