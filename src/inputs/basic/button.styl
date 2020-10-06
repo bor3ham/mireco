@@ -22,7 +22,7 @@ outline-colourise-button(colour, interact-colour)
     color: interact-colour
     border-color: interact-colour + interact-highlight
 
-.MIRECO-button, .MIRECO-link.button
+.MIRECO-button
   -webkit-appearance: none
   box-sizing: border-box
   border-radius: edge-rounding
@@ -34,7 +34,7 @@ outline-colourise-button(colour, interact-colour)
   line-height: standard-line-height
   user-select: none
   text-align: center
-  &:not(:disabled)
+  &:not(:disabled):not(.disabled)
     cursor: pointer
 
   display: inline-block
@@ -46,7 +46,7 @@ outline-colourise-button(colour, interact-colour)
   &:focus
     input-focus()
 
-  &:not(:disabled)
+  &:not(:disabled):not(.disabled)
     &:not(.outline)
       solid-colourise-button(primary-button-colour, primary-button-content-colour)
       &.secondary
@@ -54,12 +54,12 @@ outline-colourise-button(colour, interact-colour)
       &.content
         solid-colourise-button(content-foreground, content-background)
     &.outline
-      outline-colourise-button(primary-button-colour, primary-button-colour)
+      outline-colourise-button(primary-button-colour, darken(primary-button-colour, 20%))
       &.secondary
-        outline-colourise-button(secondary-button-colour, secondary-button-colour)
+        outline-colourise-button(secondary-button-colour, darken(secondary-button-colour, 20%))
       &.content
         outline-colourise-button(content-foreground, primary-button-colour)
-  &:disabled
+  &:disabled, &.disabled
     background: content-faint
     color: content-muted
     border: thin-line solid content-foreground
