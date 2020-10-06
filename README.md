@@ -1,5 +1,8 @@
 # mireco
 
+[![npm version](https://badge.fury.io/js/mireco.svg)](http://badge.fury.io/js/mireco)
+![Downloads](http://img.shields.io/npm/dm/mireco.svg?style=flat)
+
 Mireco is an extensible library for user interfaces with no heavy dependencies (especially css).
 
 >_"The golden teaspoon of date pickers"_
