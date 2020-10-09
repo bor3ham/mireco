@@ -8,6 +8,7 @@ export default class Label extends React.PureComponent {
     className: PropTypes.string,
     tabIndex: PropTypes.number,
     children: PropTypes.node,
+    style: PropTypes.object,
   }
   render() {
     return (
@@ -20,6 +21,7 @@ export default class Label extends React.PureComponent {
           this.props.className,
         )}
         tabIndex={this.props.tabIndex}
+        style={this.props.style}
       >
         {this.props.children}
       </label>
