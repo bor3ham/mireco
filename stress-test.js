@@ -7,6 +7,7 @@ import {
   Checkbox,
   Text,
   Textarea,
+  Number as NumberInput,
   Button,
   Time,
   Select,
@@ -35,6 +36,7 @@ const SELECT_OPTIONS = [
 
 const defaultValue = {
   text: 'hi there',
+  number: null,
   checked: false,
   select: null,
   time: null,
@@ -47,6 +49,7 @@ const defaultValue = {
 function randomValue() {
   return {
     text: casual.title,
+    number: casual.coin_flip ? null : casual.integer(0, 100),
     checked: casual.coin_flip,
     select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
     time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
@@ -83,6 +86,7 @@ class Demo extends React.PureComponent {
       blockMode: !!Cookies.get('blockMode'),
 
       showText: !!Cookies.get('showText'),
+      showNumber: !!Cookies.get('showNumber'),
       showCheckbox: !!Cookies.get('showCheckbox'),
       showSelect: !!Cookies.get('showSelect'),
       showTime: !!Cookies.get('showTime'),
@@ -252,6 +256,14 @@ class Demo extends React.PureComponent {
               />
               <Checkbox
                 block
+                value={this.state.flags.showNumber}
+                onChange={(newValue) => {
+                  this.setFlag('showNumber', newValue)
+                }}
+                label="Show number input"
+              />
+              <Checkbox
+                block
                 value={this.state.flags.showCheckbox}
                 onChange={(newValue) => {
                   this.setFlag('showCheckbox', newValue)
@@ -373,6 +385,18 @@ class Demo extends React.PureComponent {
               />
             )}
             {this.state.flags.showText && inlineSpace}
+            {this.state.flags.showNumber && (
+              <NumberInput
+                value={this.state.formValue.number}
+                onChange={(newValue) => {
+                  this.updateFormValue('number', newValue)
+                }}
+                placeholder="Number"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showNumber && inlineSpace}
             {this.state.flags.showCheckbox && (
               <Checkbox
                 value={this.state.formValue.checked}
