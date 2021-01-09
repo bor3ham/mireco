@@ -2,6 +2,7 @@ import { init } from 'uptick-demo-site'
 
 import './components/basic/text.js'
 import './components/basic/textarea.js'
+import './components/basic/number.js'
 import './components/basic/date.js'
 import './components/basic/time.js'
 import './components/basic/select.js'

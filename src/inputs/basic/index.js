@@ -1,6 +1,8 @@
 export Text from './text.js'
 export Textarea from './textarea.js'
 
+export Number from './number.js'
+
 export Checkbox from './checkbox.js'
 
 export Button from './button.js'
