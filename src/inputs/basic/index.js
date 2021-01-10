@@ -2,6 +2,7 @@ export Text from './text.js'
 export Textarea from './textarea.js'
 
 export Number from './number.js'
+export Range from './range.js'
 
 export Checkbox from './checkbox.js'
 

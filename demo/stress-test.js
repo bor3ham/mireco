@@ -8,6 +8,7 @@ import {
   Text,
   Textarea,
   Number as NumberInput,
+  Range,
   Button,
   Time,
   Select,
@@ -37,6 +38,7 @@ const SELECT_OPTIONS = [
 const defaultValue = {
   text: 'hi there',
   number: null,
+  range: 50,
   checked: false,
   select: null,
   time: null,
@@ -50,6 +52,7 @@ function randomValue() {
   return {
     text: casual.title,
     number: casual.coin_flip ? null : casual.integer(0, 100),
+    range: casual.integer(0, 100),
     checked: casual.coin_flip,
     select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
     time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
@@ -87,6 +90,7 @@ class Demo extends React.PureComponent {
 
       showText: !!Cookies.get('showText'),
       showNumber: !!Cookies.get('showNumber'),
+      showRange: !!Cookies.get('showRange'),
       showCheckbox: !!Cookies.get('showCheckbox'),
       showSelect: !!Cookies.get('showSelect'),
       showTime: !!Cookies.get('showTime'),
@@ -264,6 +268,14 @@ class Demo extends React.PureComponent {
               />
               <Checkbox
                 block
+                value={this.state.flags.showRange}
+                onChange={(newValue) => {
+                  this.setFlag('showRange', newValue)
+                }}
+                label="Show range input"
+              />
+              <Checkbox
+                block
                 value={this.state.flags.showCheckbox}
                 onChange={(newValue) => {
                   this.setFlag('showCheckbox', newValue)
@@ -392,6 +404,17 @@ class Demo extends React.PureComponent {
                   this.updateFormValue('number', newValue)
                 }}
                 placeholder="Number"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showText && inlineSpace}
+            {this.state.flags.showRange && (
+              <Range
+                value={this.state.formValue.range}
+                onChange={(newValue) => {
+                  this.updateFormValue('range', newValue)
+                }}
                 disabled={this.state.flags.disabled}
                 block={this.state.flags.blockMode}
               />
