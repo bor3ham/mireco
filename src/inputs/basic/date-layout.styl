@@ -3,12 +3,6 @@
     margin-bottom: standard-padding
 
   position: relative
-  &:focus
-    outline: none
-
-  &:not(.block)
-    >.MIRECO-text
-      max-width: 8rem
 
   >.MIRECO-calendar
     position: absolute
@@ -18,3 +12,7 @@
   &.right-hang>.MIRECO-calendar
     left: auto
     right: 0
+
+  &:not(.block)
+    >.MIRECO-text
+      max-width: 8rem

@@ -1,10 +1,5 @@
 .MIRECO-text, .MIRECO-number
   -webkit-appearance: none
-  box-sizing: border-box
-  &:not(.sized)
-    width: 100%
-    max-width: 15rem
-    min-width: 0
   font-family: standard-font-families
   font-weight: standard-font-weight
   font-size: standard-font-size
@@ -14,14 +9,6 @@
   input-textaligned-padding(standard-padding)
   outline: none
   background: content-background
-
-  display: inline-block
-  &.block
-    display: block
-    width: 100%
-    max-width: none
-    min-width: 0
-    margin-bottom: standard-padding
 
   &:disabled
     background: content-faint
