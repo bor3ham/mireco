@@ -5,6 +5,7 @@ export Number from './number.js'
 export Range from './range.js'
 
 export Checkbox from './checkbox.js'
+export CheckboxInput from './checkbox-input.js'
 
 export Button from './button.js'
 

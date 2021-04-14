@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Label from '../../components/label.js'
+import CheckboxInput from './checkbox-input.js'
 
 const check = (
   <svg
@@ -27,50 +28,43 @@ const check = (
   </svg>
 )
 
-export default class Checkbox extends React.PureComponent {
-  static propTypes = {
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-    disabled: PropTypes.bool,
-    block: PropTypes.bool,
-    style: PropTypes.object,
-    className: PropTypes.string,
-    label: PropTypes.string,
-    value: PropTypes.bool,
-  }
-  constructor(props) {
-    super(props)
-    this.inputRef = React.createRef()
-  }
-  handleChange = (event) => {
-    this.props.onChange(this.inputRef.current.checked)
-  }
-  render() {
-    return (
-      <Label
-        className={classNames(
-          'MIRECO-checkbox',
-          {
-            disabled: this.props.disabled,
-          },
-          this.props.className,
-        )}
-        style={this.props.style}
-        block={this.props.block}
-      >
-        <input
-          ref={this.inputRef}
-          type="checkbox"
-          checked={!!this.props.value}
-          onChange={this.handleChange}
-          name={this.props.name}
-          className={classNames('MIRECO-checkbox-input', this.props.className)}
-          disabled={this.props.disabled}
-        />
-        {check}
-        {!!this.props.label && ' '}
-        {!!this.props.label && (<span>{this.props.label}</span>)}
-      </Label>
-    )
-  }
+function Checkbox(props) {
+  return (
+    <Label
+      className={classNames(
+        'MIRECO-checkbox',
+        {
+          disabled: props.disabled,
+        },
+        props.className,
+      )}
+      style={props.style}
+      block={props.block}
+    >
+      <CheckboxInput
+        value={props.value}
+        onChange={props.onChange}
+        disabled={props.disabled}
+        id={props.id}
+      />
+      {check}
+      {!!props.label && ' '}
+      {!!props.label && (<span>{props.label}</span>)}
+    </Label>
+  )
 }
+Checkbox.propTypes = {
+  value: PropTypes.bool,
+  onChange: PropTypes.func,
+  disabled: PropTypes.bool,
+
+  block: PropTypes.bool,
+  label: PropTypes.string,
+
+  id: PropTypes.string,
+  name: PropTypes.string,
+  style: PropTypes.object,
+  className: PropTypes.string,
+}
+
+export default Checkbox
