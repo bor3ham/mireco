@@ -24,6 +24,12 @@ function validChoice(value, props) {
 function Select(props) {
   const containerRef = useRef(null)
   const textRef = useRef(null)
+  const lastValidValue = useRef(props.value ? props.value : null)
+  useEffect(() => {
+    if (props.value) {
+      lastValidValue.current = props.value
+    }
+  }, [props.value])
 
   let initialText = ''
   if (validChoice(props.value, props)) {
@@ -72,7 +78,7 @@ function Select(props) {
       setText('')
       setDropdownOpen(false)
       if (typeof props.onChange === 'function') {
-        props.onChange(null, true)
+        props.onChange(props.nullable ? null : lastValidValue.current, true)
       }
     }
   }
@@ -140,7 +146,7 @@ function Select(props) {
           props.onChange(filtered[nextIndex].value)
         }
         else {
-          props.onChange(null)
+          props.onChange(props.nullable ? null : undefined)
         }
       }
     }
@@ -155,7 +161,7 @@ function Select(props) {
     }
     let cleaned = newValue.trim().toLowerCase()
     if (cleaned.length <= 0) {
-      props.onChange(null, false)
+      props.onChange(props.nullable ? null : undefined, false)
     }
     else {
       let valueMatch = null
@@ -249,14 +255,15 @@ function Select(props) {
   })
   const onClear = () => {
     if (typeof props.onChange === 'function') {
-      props.onChange(null, false)
+      props.onChange(props.nullable ? null : undefined, false)
+      setText('')
       textRef.current && textRef.current.focus()
     }
   }
 
   const filtered = getFilteredOptions(text)
   const hasValue = !!props.value
-  const clearable = hasValue && props.nullable
+  const clearable = hasValue
   return (
     <BlockDiv
       ref={containerRef}
@@ -282,13 +289,10 @@ function Select(props) {
           className={props.textClassName}
           id={props.id}
         />
-        {clearable && !props.clearButton && (
+        {clearable && (
           <ClearButton
             onClick={onClear}
           />
-        )}
-        {clearable && !!props.clearButton && (
-          props.clearButton
         )}
         {props.dropdownArrow}
       </BlockDiv>
@@ -319,7 +323,6 @@ Select.propTypes = {
   className: PropTypes.string,
   textClassName: PropTypes.string,
   dropdownArrow: PropTypes.node,
-  clearButton: PropTypes.node,
   id: PropTypes.string,
 }
 Select.defaultProps = {
