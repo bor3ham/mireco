@@ -77,10 +77,9 @@ function Select(props) {
   const handleContainerBlur = (event) => {
     if (
       containerRef.current
-      && containerRef.current.divRef.current
       && (
-        containerRef.current.divRef.current.contains(event.relatedTarget)
-        || containerRef.current.divRef.current === event.relatedTarget
+        containerRef.current.contains(event.relatedTarget)
+        || containerRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -253,7 +252,7 @@ function Select(props) {
       block={props.block}
       className={classNames('MIRECO-select', {
         'has-value': !!props.value,
-      })}
+      }, props.className)}
       tabIndex={-1}
       onBlur={handleContainerBlur}
     >
@@ -268,6 +267,7 @@ function Select(props) {
         block={props.block}
         style={props.style}
         autoFocus={props.autoFocus}
+        className={props.textClassName}
       />
       {dropdownOpen && (
         <Dropdown
@@ -293,6 +293,8 @@ Select.propTypes = {
   dropdownProps: PropTypes.object,
   filter: PropTypes.bool,
   autoFocus: PropTypes.bool,
+  className: PropTypes.string,
+  textClassName: PropTypes.string,
 }
 Select.defaultProps = {
   nullable: true,

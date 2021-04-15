@@ -2,50 +2,47 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-export default class BlockDiv extends React.PureComponent {
-  static propTypes = {
-    style: PropTypes.object,
-    children: PropTypes.node,
-    block: PropTypes.bool,
-    className: PropTypes.string,
-    inlineDisplay: PropTypes.string,
+let BlockDiv = (props, ref) => {
+  let style = {}
+  if (!props.block) {
+    style.display = props.inlineDisplay
   }
-  static defaultProps = {
-    inlineDisplay: 'inline-block',
+  style = {
+    ...style,
+    ...props.style,
   }
-  constructor(props) {
-    super(props)
-    this.divRef = React.createRef()
+  const divProps = {
+    ...props,
   }
-  render() {
-    let style = {}
-    if (!this.props.block) {
-      style.display = this.props.inlineDisplay
-    }
-    style = {
-      ...style,
-      ...this.props.style,
-    }
-    const divProps = {
-      ...this.props,
-    }
-    if ('block' in divProps) {
-      delete divProps['block']
-    }
-    if ('inlineDisplay' in divProps) {
-      delete divProps['inlineDisplay']
-    }
-    return (
-      <div
-        {...divProps}
-        ref={this.divRef}
-        style={style}
-        className={classNames(this.props.className, {
-          block: this.props.block,
-        })}
-      >
-        {this.props.children}
-      </div>
-    )
+  if ('block' in divProps) {
+    delete divProps['block']
   }
+  if ('inlineDisplay' in divProps) {
+    delete divProps['inlineDisplay']
+  }
+  return (
+    <div
+      {...divProps}
+      ref={ref}
+      style={style}
+      className={classNames(props.className, {
+        block: props.block,
+      })}
+    >
+      {props.children}
+    </div>
+  )
 }
+BlockDiv = React.forwardRef(BlockDiv)
+BlockDiv.propTypes = {
+  style: PropTypes.object,
+  children: PropTypes.node,
+  block: PropTypes.bool,
+  className: PropTypes.string,
+  inlineDisplay: PropTypes.string,
+}
+BlockDiv.defaultProps = {
+  inlineDisplay: 'inline-block',
+}
+
+export default BlockDiv
