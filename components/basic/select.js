@@ -22,6 +22,8 @@ const OPTIONS = [
 ]
 
 function DemoSelect(props) {
+  // non-nullable example:
+  // const [value, setValue] = useState(OPTIONS[0].value)
   const [value, setValue] = useState(null)
   const handleValueChange = (newValue, wasBlur) => {
     setValue(newValue)
@@ -35,6 +37,7 @@ function DemoSelect(props) {
         value={value}
         options={OPTIONS}
         onChange={handleValueChange}
+        // nullable={false}
       />
     </>
   )
