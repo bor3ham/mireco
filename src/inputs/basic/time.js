@@ -224,10 +224,9 @@ export default class Time extends React.PureComponent {
   handleContainerBlur = (event) => {
     if (
       this.containerRef.current
-      && this.containerRef.current.divRef.current
       && (
-        this.containerRef.current.divRef.current.contains(event.relatedTarget)
-        || this.containerRef.current.divRef.current === event.relatedTarget
+        this.containerRef.current.contains(event.relatedTarget)
+        || this.containerRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur

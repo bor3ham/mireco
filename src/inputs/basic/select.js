@@ -253,22 +253,23 @@ function Select(props) {
       className={classNames('MIRECO-select', {
         'has-value': !!props.value,
       }, props.className)}
-      tabIndex={-1}
       onBlur={handleContainerBlur}
     >
-      <Text
-        ref={textRef}
-        placeholder={props.placeholder}
-        value={text}
-        onFocus={handleTextFocus}
-        onKeyDown={handleTextKeyDown}
-        onChange={handleTextChange}
-        disabled={props.disabled}
-        block={props.block}
-        style={props.style}
-        autoFocus={props.autoFocus}
-        className={props.textClassName}
-      />
+      <BlockDiv block={props.block} style={{position: 'relative'}}>
+        <Text
+          ref={textRef}
+          placeholder={props.placeholder}
+          value={text}
+          onFocus={handleTextFocus}
+          onKeyDown={handleTextKeyDown}
+          onChange={handleTextChange}
+          disabled={props.disabled}
+          block={props.block}
+          style={props.style}
+          autoFocus={props.autoFocus}
+          className={props.textClassName}
+        />
+      </BlockDiv>
       {dropdownOpen && (
         <Dropdown
           options={filtered}
