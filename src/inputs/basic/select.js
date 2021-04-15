@@ -255,12 +255,14 @@ function Select(props) {
 
   const filtered = getFilteredOptions()
   const hasValue = !!props.value
+  const clearable = hasValue && props.nullable
   return (
     <BlockDiv
       ref={containerRef}
       block={props.block}
       className={classNames('MIRECO-select', {
         'has-value': hasValue,
+        clearable,
       }, props.className)}
       onBlur={handleContainerBlur}
     >
@@ -277,11 +279,15 @@ function Select(props) {
           style={props.style}
           autoFocus={props.autoFocus}
           className={props.textClassName}
+          id={props.id}
         />
-        {hasValue && props.nullable && (
+        {clearable && !props.clearButton && (
           <ClearButton
             onClick={onClear}
           />
+        )}
+        {clearable && !!props.clearButton && (
+          props.clearButton
         )}
         {props.dropdownArrow}
       </BlockDiv>
@@ -312,6 +318,8 @@ Select.propTypes = {
   className: PropTypes.string,
   textClassName: PropTypes.string,
   dropdownArrow: PropTypes.node,
+  clearButton: PropTypes.node,
+  id: PropTypes.string,
 }
 Select.defaultProps = {
   nullable: true,

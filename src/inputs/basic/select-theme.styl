@@ -11,6 +11,10 @@
       right: (standard-padding / 4)
       border-left: thin-line solid content-muted
 
+  &.clearable
+    > div > input
+      padding-right: "calc(%s + 48px)" % standard-padding
+
   &.has-value
     input::placeholder
       color: content-foreground

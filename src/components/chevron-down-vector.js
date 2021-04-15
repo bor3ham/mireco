@@ -14,24 +14,24 @@ export default (
         style={{
           fill: 'none',
           stroke: '#333333',
-          'stroke-width': 0.529167,
-          'stroke-linecap': 'butt',
-          'stroke-linejoin': 'miter',
-          'stroke-miterlimit': 4,
-          'stroke-dasharray': 'none',
-          'stroke-opacity': 1,
+          strokeWidth: 0.529167,
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter',
+          strokeMiterlimit: 4,
+          strokeDasharray: 'none',
+          strokeOpacity: 1,
         }}
       />
       <path
         style={{
           fill: 'none',
           stroke: '#333333',
-          'stroke-width': 0.529167,
-          'stroke-linecap': 'butt',
-          'stroke-linejoin': 'miter',
-          'stroke-miterlimit': 4,
-          'stroke-dasharray': 'none',
-          'stroke-opacity': 1,
+          strokeWidth: 0.529167,
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter',
+          strokeMiterlimit: 4,
+          strokeDasharray: 'none',
+          strokeOpacity: 1,
         }}
         d="m 4.7624938,293.03124 -1.5875,1.5875 -1.5875,-1.5875"
       />

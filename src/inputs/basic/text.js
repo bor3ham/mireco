@@ -14,6 +14,7 @@ export default class Text extends React.PureComponent {
     autoFocus: PropTypes.bool,
     tabIndex: PropTypes.number,
     maxLength: PropTypes.number,
+    id: PropTypes.string,
 
     block: PropTypes.bool,
     className: PropTypes.string,
@@ -75,6 +76,7 @@ export default class Text extends React.PureComponent {
         autoFocus={this.props.autoFocus}
         tabIndex={this.props.tabIndex}
         maxLength={this.props.maxLength}
+        id={this.props.id}
 
         className={classNames(
           'MIRECO-text',

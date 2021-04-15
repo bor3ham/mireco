@@ -1,8 +1,21 @@
 .MIRECO-select
+  &:not(.sized)
+    width: 100%
+    max-width: 15rem
+    min-width: 0
+
+  display: inline-block
+  &.block
+    display: block
+    width: 100%
+    max-width: none
+    min-width: 0
+
   position: relative
 
   > div
     position: relative
+    width: 100%
     > .MIRECO-clear-button
       position: absolute
       right: 0
@@ -15,6 +28,6 @@
       transform: translateY(-50%)
       pointer-events: none
 
-  .MIRECO-dropdown
+  > .MIRECO-dropdown
     max-width: none
     right: 0

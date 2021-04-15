@@ -8,12 +8,13 @@ export default class Textarea extends React.PureComponent {
     value: PropTypes.string,
     onChange: PropTypes.func,
     name: PropTypes.string,
-    requried: PropTypes.bool,
+    required: PropTypes.bool,
     placeholder: PropTypes.string,
     disabled: PropTypes.bool,
     autoFocus: PropTypes.bool,
     tabIndex: PropTypes.number,
     maxLength: PropTypes.number,
+    id: PropTypes.string,
 
     block: PropTypes.bool,
     className: PropTypes.string,
@@ -71,6 +72,7 @@ export default class Textarea extends React.PureComponent {
         autoFocus={this.props.autoFocus}
         tabIndex={this.props.tabIndex}
         maxLength={this.props.maxLength}
+        id={this.props.id}
 
         className={classNames(
           'MIRECO-textarea',
