@@ -5,6 +5,8 @@ import classNames from 'classnames'
 import Text from './text.js'
 import BlockDiv from '../../components/block-div.js'
 import Dropdown from '../../components/dropdown.js'
+import ClearButton from '../../components/clear-button.js'
+import ChevronDownVector from '../../components/chevron-down-vector.js'
 import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
 
 const ARROW_DOWN = 40
@@ -244,14 +246,21 @@ function Select(props) {
       onBlur()
     }
   })
+  const onClear = () => {
+    if (typeof props.onChange === 'function') {
+      props.onChange(null, false)
+      textRef.current && textRef.current.focus()
+    }
+  }
 
   const filtered = getFilteredOptions()
+  const hasValue = !!props.value
   return (
     <BlockDiv
       ref={containerRef}
       block={props.block}
       className={classNames('MIRECO-select', {
-        'has-value': !!props.value,
+        'has-value': hasValue,
       }, props.className)}
       onBlur={handleContainerBlur}
     >
@@ -269,6 +278,12 @@ function Select(props) {
           autoFocus={props.autoFocus}
           className={props.textClassName}
         />
+        {hasValue && props.nullable && (
+          <ClearButton
+            onClick={onClear}
+          />
+        )}
+        {props.dropdownArrow}
       </BlockDiv>
       {dropdownOpen && (
         <Dropdown
@@ -296,11 +311,13 @@ Select.propTypes = {
   autoFocus: PropTypes.bool,
   className: PropTypes.string,
   textClassName: PropTypes.string,
+  dropdownArrow: PropTypes.node,
 }
 Select.defaultProps = {
   nullable: true,
   options: [],
   filter: true,
+  dropdownArrow: ChevronDownVector,
 }
 
 export default Select

@@ -1,4 +1,16 @@
 .MIRECO-select
+  > div
+    > input
+      padding-right: "calc(%s + 24px)" % (standard-padding / 2)
+    > .MIRECO-button.MIRECO-clear-button
+      background: none !important
+      border: none !important
+      right: "calc(%s + 24px)" % (standard-padding / 2)
+    > svg
+      padding-left: (standard-padding / 4)
+      right: (standard-padding / 4)
+      border-left: thin-line solid content-muted
+
   &.has-value
     input::placeholder
       color: content-foreground
