@@ -12,7 +12,7 @@
     "watch:css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css --watch",
     "watch:js": "./node_modules/.bin/webpack --watch",
     "watch": "./node_modules/.bin/concurrently \"npm run watch:js\" \"npm run watch:css\"",
-    "start": "./node_modules/.bin/concurrently \"npm run watch\" \"jekyll serve\"",
+    "start": "./node_modules/.bin/concurrently \"npm run watch\" \"jekyll serve -P 4001\"",
     "build": "npm run build:js && npm run build:css"
   },
   "dependencies": {
