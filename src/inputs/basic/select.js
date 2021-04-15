@@ -36,8 +36,8 @@ function Select(props) {
   const [text, setText] = useState(initialText)
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  const getFilteredOptions = () => {
-    const terms = text.split(' ').map(term => {
+  const getFilteredOptions = (search) => {
+    const terms = search.split(' ').map(term => {
       return term.trim().toLowerCase()
     }).filter(term => {
       return (term.length > 0)
@@ -114,7 +114,7 @@ function Select(props) {
           return
         }
         let currentIndex = -1
-        const filtered = getFilteredOptions()
+        const filtered = getFilteredOptions(text)
         if (!filtered.length) {
           return
         }
@@ -180,11 +180,12 @@ function Select(props) {
           props.onChange(labelMatch, false)
         }
         else {
-          const filtered = getFilteredOptions()
+          const filtered = getFilteredOptions(newValue)
           const current = filtered.find(option => {
             return option.value === props.value
           })
-          props.onChange(current ? current.value : undefined, false)
+          const firstFilteredValue = filtered.length > 0 ? filtered[0].value : undefined
+          props.onChange(current ? current.value : firstFilteredValue, false)
         }
       }
     }
@@ -232,7 +233,7 @@ function Select(props) {
           setTextFromPropValue()
         }
         else {
-          const filtered = getFilteredOptions()
+          const filtered = getFilteredOptions(text)
           const current = filtered.find(option => {
             return (option.value === props.value)
           })
@@ -253,7 +254,7 @@ function Select(props) {
     }
   }
 
-  const filtered = getFilteredOptions()
+  const filtered = getFilteredOptions(text)
   const hasValue = !!props.value
   const clearable = hasValue && props.nullable
   return (
