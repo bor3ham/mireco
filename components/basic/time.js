@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Time } from 'mireco'
+import { Time } from 'mireco/inputs'
 
 function stringifyTime(time) {
   if (typeof time === 'undefined') {

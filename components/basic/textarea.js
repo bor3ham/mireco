@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Textarea } from 'mireco'
+import { Textarea } from 'mireco/inputs'
 
 function DemoTextarea(props) {
   const [value, setValue] = useState('Example text value...\nWith multiple lines.')

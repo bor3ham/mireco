@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Number as NumberInput } from 'mireco'
+import { Number as NumberInput } from 'mireco/inputs'
 
 function DemoNumber(props) {
   const [value, setValue] = useState(15)

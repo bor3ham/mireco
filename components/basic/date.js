@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Date as DateInput } from 'mireco'
+import { Date as DateInput } from 'mireco/inputs'
 
 function DemoDate(props) {
   const [value, setValue] = useState(null)
