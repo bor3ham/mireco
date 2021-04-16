@@ -4,7 +4,7 @@ const PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
 module.exports = {
   mode: 'development',
   entry: {
-    main: path.resolve('src', 'index.js'),
+    inputs: path.resolve('src/inputs', 'index.js'),
     constants: path.resolve('src/utilities', 'constants.js'),
     'prop-types': path.resolve('src/utilities/prop-types', 'index.js'),
     components: path.resolve('src/components', 'index.js')

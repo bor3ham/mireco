@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { AsyncSelect } from 'mireco'
+import { AsyncSelect } from 'mireco/inputs'
 
 const SIMULATED_LAG = 1000
 

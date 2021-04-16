@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'mireco'
+import { Button } from 'mireco/inputs'
 
 function DemoButton(props) {
   const [numPresses, setNumPresses] = useState(0)

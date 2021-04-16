@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'mireco'
+import { Button } from 'mireco/inputs'
 
 function DemoButtonStyles(props) {
   return (

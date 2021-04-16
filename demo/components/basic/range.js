@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Range } from 'mireco'
+import { Range } from 'mireco/inputs'
 
 function DemoRange(props) {
   const [value, setValue] = useState(1)

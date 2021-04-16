@@ -313,6 +313,9 @@ function Select(props) {
     }
   })
   const onClear = () => {
+    if (props.disabled) {
+      return
+    }
     if (typeof props.onChange === 'function') {
       props.onChange(props.nullable ? null : undefined, false)
       dispatchState({

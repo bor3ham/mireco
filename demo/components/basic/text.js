@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Text } from 'mireco'
+import { Text } from 'mireco/inputs'
 
 function DemoText(props) {
   const [value, setValue] = useState('Example text value')

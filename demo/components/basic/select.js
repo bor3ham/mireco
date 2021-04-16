@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Select } from 'mireco'
+import { Select } from 'mireco/inputs'
 
 const OPTIONS = [
   {

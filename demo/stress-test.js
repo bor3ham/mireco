@@ -13,7 +13,7 @@ import {
   Time,
   Select,
   Duration,
-} from 'mireco'
+} from 'mireco/inputs'
 import * as mirecoConstants from 'mireco/constants'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'

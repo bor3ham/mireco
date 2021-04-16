@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Datetime } from 'mireco'
+import { Datetime } from 'mireco/inputs'
 
 function stringifyDate(date) {
   if (typeof date === 'number') {

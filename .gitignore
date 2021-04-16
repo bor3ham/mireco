@@ -64,7 +64,7 @@ typings/
 dist/
 
 # packaged js
-main.js
+inputs.js
 constants.js
 components.js
 prop-types.js
@@ -80,3 +80,6 @@ demo/.jekyll-cache
 
 # webpack build analysis
 report.html
+
+# mac bullshit
+*.DS_Store
