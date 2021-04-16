@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { usePrevious } from 'utilities'
 
 let DropdownOption = (props, ref) => {
-  const optionRef = useRef(null)
   const handleClick = () => {
     props.onSelect(props.option.value)
   }
@@ -14,7 +13,7 @@ let DropdownOption = (props, ref) => {
       className={classNames({
         current: props.current,
       })}
-      ref={optionRef}
+      ref={ref}
     >
       <button
         type="button"
@@ -46,13 +45,12 @@ function Dropdown(props) {
     if (
       listRef.current
       && currentRef.current
-      && currentRef.current.optionRef.current
     ) {
       // don't use scroll into view because this also scrolls parent containers (the body included)
-      const currentOption = this.currentRef.current.optionRef.current
+      const currentOption = currentRef.current
       const currentTop = currentOption.offsetTop
       const currentBottom = currentTop + currentOption.getBoundingClientRect().height
-      const list = this.listRef.current
+      const list = listRef.current
       const viewBottom = list.scrollTop + list.getBoundingClientRect().height
       if (list.scrollTop > currentTop) {
         list.scrollTop = currentTop
