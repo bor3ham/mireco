@@ -80,10 +80,11 @@ Make sure your html document is encoded properly (required by `parse-duration` m
 </html>
 ```
 
-Add the component stylesheet:
+Add the stylesheets:
 
 ```
-<link rel="stylesheet" href="node_modules/mireco/dist/mireco-components.css" />
+<link rel="stylesheet" href="node_modules/mireco/dist/mireco-layout.css" />
+<link rel="stylesheet" href="node_modules/mireco/dist/mireco-theme.css" />
 ```
 
 To support inputs that have modal dropdowns, ensure that the body of your document (and any
@@ -109,20 +110,20 @@ Check out the [API Documentation][3].
 
 Basic form inputs:
 
+- [ ] Abstract Duration (understands months, years)
 - [x] Button
-- [x] Text
-- [x] Time
+- [ ] CalendarMonth
 - [x] Date
 - [x] Duration
-- [ ] Abstract Duration (understands months, years)
-- [x] Select
 - [ ] Month
-- [ ] CalendarMonth
+- [x] Select
+- [x] Text
+- [x] Time
 
 Compound form inputs:
 
-- [x] Datetime
 - [ ] DateRange
+- [x] Datetime
 - [x] DatetimeRange
 
 Layout:

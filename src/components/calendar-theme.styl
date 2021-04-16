@@ -3,21 +3,13 @@
   height: 15rem
   border-radius: edge-rounding
   border: thin-line solid content-muted
-  background: content-background
   color: content-foreground
   margin-top: -(thin-line)
   popover-shadow()
 
-  display: flex
-  flex-direction: column
-  align-items: stretch
   >.calendar-header
-    display: flex
-    flex-direction: row
-    align-items: center
     margin-bottom: (standard-padding / 2)
     h5
-      flex: 1
       margin: 0
       margin-left: (standard-padding / 2)
       font-weight: standard-font-weight
@@ -40,29 +32,18 @@
         stroke: primary-colour !important
 
   >table
-    flex: 1
-    display: flex
     tbody
-      display: flex
-      flex: 1
-      flex-direction: column
       tr
-        flex: 1
-        display: flex
-        flex-direction: row
         td, th
-          flex: 1
           text-align: center
           font-weight: standard-font-weight
         th
           color: content-muted
           font-size: (standard-font-size * 0.7)
         td
-          display: flex
           button
             font-size: (standard-font-size * 0.8)
             color: content-foreground
-            flex: 1
             background: none
             border: none
             border-radius: edge-rounding
