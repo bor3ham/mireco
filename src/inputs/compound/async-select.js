@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 import Select from '../basic/select.js'
 import { propTypes as mirecoPropTypes } from 'utilities'
+import ChevronDownVector from '../../components/chevron-down-vector.js'
+import SpinnerVector from '../../components/spinner-vector.js'
 
 function AsyncSelect(props) {
   const [options, setOptions] = useState([])
@@ -96,12 +99,14 @@ function AsyncSelect(props) {
   return (
     <Select
       {...props}
+      className={classNames(props.className, 'MIRECO-async-select')}
       options={basicOptions}
       value={basicValue}
       onTextChange={handleTextChange}
       onChange={handleChange}
       dropdownProps={dropdownProps}
       filter={false}
+      dropdownArrow={loading ? SpinnerVector : ChevronDownVector}
     />
   )
 }
@@ -112,6 +117,7 @@ AsyncSelect.propTypes = {
   loadingPrompt: PropTypes.string,
   searchPrompt: PropTypes.string,
   debounce: PropTypes.number,
+  className: PropTypes.string,
 }
 AsyncSelect.defaultProps = {
   loadingPrompt: 'Loading...',

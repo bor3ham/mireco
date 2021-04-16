@@ -7,9 +7,15 @@
       border: none !important
       right: "calc(%s + 24px)" % (standard-padding / 2)
     > svg
-      padding-left: (standard-padding / 4)
       right: (standard-padding / 4)
-      border-left: thin-line solid content-muted
+    &:after
+      content: ' '
+      position: absolute
+      height: 24px
+      right: "calc(%s + 24px)" % (standard-padding / 2)
+      top: 50%
+      margin-top: -12px
+      border-right: thin-line solid content-muted
 
   &.clearable
     > div > input
