@@ -2,12 +2,12 @@ import React, { useRef, useReducer, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Text from './text.js'
 import BlockDiv from '../../components/block-div.js'
 import Dropdown from '../../components/dropdown.js'
 import ClearButton from '../../components/clear-button.js'
 import ChevronDownVector from '../../components/chevron-down-vector.js'
 import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
+import WidgetText from './widget-text.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
@@ -339,28 +339,22 @@ function Select(props) {
       }, props.className)}
       onBlur={handleContainerBlur}
     >
-      <BlockDiv block={props.block} style={{position: 'relative'}}>
-        <Text
-          ref={textRef}
-          placeholder={props.placeholder}
-          value={state.text}
-          onFocus={handleTextFocus}
-          onKeyDown={handleTextKeyDown}
-          onChange={handleTextChange}
-          disabled={props.disabled}
-          block={props.block}
-          style={props.style}
-          autoFocus={props.autoFocus}
-          className={props.textClassName}
-          id={props.id}
-        />
-        {clearable && (
-          <ClearButton
-            onClick={onClear}
-          />
-        )}
-        {props.dropdownArrow}
-      </BlockDiv>
+      <WidgetText
+        ref={textRef}
+        placeholder={props.placeholder}
+        value={state.text}
+        onFocus={handleTextFocus}
+        onKeyDown={handleTextKeyDown}
+        onChange={handleTextChange}
+        disabled={props.disabled}
+        block={props.block}
+        style={props.style}
+        autoFocus={props.autoFocus}
+        className={props.textClassName}
+        id={props.id}
+        icon={props.icon}
+        onClear={clearable ? onClear : undefined}
+      />
       {state.dropdownOpen && (
         <Dropdown
           options={filtered}
@@ -387,14 +381,14 @@ Select.propTypes = {
   autoFocus: PropTypes.bool,
   className: PropTypes.string,
   textClassName: PropTypes.string,
-  dropdownArrow: PropTypes.node,
   id: PropTypes.string,
+  icon: PropTypes.node,
 }
 Select.defaultProps = {
   nullable: true,
   options: [],
   filter: true,
-  dropdownArrow: ChevronDownVector,
+  icon: ChevronDownVector,
 }
 
 export default Select

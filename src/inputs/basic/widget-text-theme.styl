@@ -1,0 +1,19 @@
+.MIRECO-widget-text
+  > input
+    padding-right: "calc(%s + 24px)" % (standard-padding / 2)
+    &.clearable
+      padding-right: "calc(%s + 48px)" % standard-padding
+  > .MIRECO-clear-button
+    background: none !important
+    border: none !important
+    right: "calc(%s + 24px)" % (standard-padding / 2)
+  > svg
+    right: (standard-padding / 4)
+  &:after
+    content: ' '
+    position: absolute
+    height: 24px
+    right: "calc(%s + 24px)" % (standard-padding / 2)
+    top: 50%
+    margin-top: -12px
+    border-right: thin-line solid content-muted

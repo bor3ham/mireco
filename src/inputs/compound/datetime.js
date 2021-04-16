@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
-import MirecoDate from '../basic/date.js'
+import DateInput from '../basic/date.js'
 import Time from '../basic/time.js'
 import BlockDiv from '../../components/block-div.js'
 import ClearButton from '../../components/clear-button.js'
@@ -192,13 +192,14 @@ export default class Datetime extends React.PureComponent {
   }
   render() {
     let date = (
-      <MirecoDate
+      <DateInput
         ref={this.dateRef}
         value={this.state.date}
         onChange={this.handleDateChange}
         disabled={this.props.disabled}
         block={this.props.block}
         rightHang={this.props.timeFirst}
+        showClearButton={false}
       />
     )
     let relativeStart = undefined

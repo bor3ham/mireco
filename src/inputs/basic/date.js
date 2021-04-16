@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
-import Text from './text.js'
 import Calendar from '../../components/calendar.js'
 import BlockDiv from '../../components/block-div.js'
 import { propTypes as mirecoPropTypes, constants } from 'utilities'
+import ChevronDownVector from '../../components/chevron-down-vector.js'
+import WidgetText from './widget-text.js'
 
 export default class MirecoDate extends React.PureComponent {
   static propTypes = {
@@ -23,6 +24,8 @@ export default class MirecoDate extends React.PureComponent {
     className: PropTypes.string,
     textClassName: PropTypes.string,
     required: PropTypes.bool,
+    icon: PropTypes.node,
+    showClearButton: PropTypes.bool,
   }
   static defaultProps = {
     block: false,
@@ -44,6 +47,8 @@ export default class MirecoDate extends React.PureComponent {
     autoErase: true,
     rightHang: false,
     required: false,
+    icon: ChevronDownVector,
+    showClearButton: true,
   }
   constructor(props) {
     super(props)
@@ -197,7 +202,11 @@ export default class MirecoDate extends React.PureComponent {
       this.textRef.current.focus()
     }
   }
+  onClear = () => {
+    this.props.onChange(null, false)
+  }
   render() {
+    const clearable = typeof this.props.value === 'string' && this.props.showClearButton
     return (
       <BlockDiv
         ref={this.containerRef}
@@ -206,13 +215,14 @@ export default class MirecoDate extends React.PureComponent {
           'MIRECO-date',
           {
             'right-hang': this.props.rightHang,
+            clearable,
           },
           this.props.className,
         )}
         tabIndex={-1}
         onBlur={this.handleContainerBlur}
       >
-        <Text
+        <WidgetText
           id={this.props.id}
           ref={this.textRef}
           placeholder={this.props.placeholder}
@@ -226,6 +236,8 @@ export default class MirecoDate extends React.PureComponent {
           style={{marginBottom: '0'}}
           required={this.props.required}
           className={this.props.textClassName}
+          icon={this.props.icon}
+          onClear={clearable ? this.onClear : undefined}
         />
         {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
           <Calendar
