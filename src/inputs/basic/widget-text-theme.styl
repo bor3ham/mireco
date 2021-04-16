@@ -1,8 +1,8 @@
 .MIRECO-widget-text
   > input
     padding-right: "calc(%s + 24px)" % (standard-padding / 2)
-    &.clearable
-      padding-right: "calc(%s + 48px)" % standard-padding
+  &.clearable > input
+    padding-right: "calc(%s + 48px)" % standard-padding
   > .MIRECO-clear-button
     background: none !important
     border: none !important

@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 import BlockDiv from '../../components/block-div.js'
 import Text from './text.js'
@@ -10,7 +11,9 @@ function WidgetText(props) {
   const { onClear, icon, ...inputProps } = props
   const clearable = typeof onClear === 'function'
   return (
-    <BlockDiv block={props.block} className="MIRECO-widget-text">
+    <BlockDiv block={props.block} className={classNames('MIRECO-widget-text', {
+      clearable,
+    })}>
       <Text
         {...inputProps}
       />
