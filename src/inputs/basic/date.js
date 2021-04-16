@@ -10,6 +10,7 @@ import { propTypes as mirecoPropTypes, constants } from 'utilities'
 
 export default class MirecoDate extends React.PureComponent {
   static propTypes = {
+    id: PropTypes.string,
     inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
@@ -20,6 +21,7 @@ export default class MirecoDate extends React.PureComponent {
     autoErase: PropTypes.bool,
     rightHang: PropTypes.bool,
     className: PropTypes.string,
+    textClassName: PropTypes.string,
     required: PropTypes.bool,
   }
   static defaultProps = {
@@ -211,6 +213,7 @@ export default class MirecoDate extends React.PureComponent {
         onBlur={this.handleContainerBlur}
       >
         <Text
+          id={this.props.id}
           ref={this.textRef}
           placeholder={this.props.placeholder}
           value={this.state.textValue}
@@ -222,6 +225,7 @@ export default class MirecoDate extends React.PureComponent {
           block={this.props.block}
           style={{marginBottom: '0'}}
           required={this.props.required}
+          className={this.props.textClassName}
         />
         {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
           <Calendar
