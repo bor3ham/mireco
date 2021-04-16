@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useReducer, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
@@ -21,6 +21,40 @@ function validChoice(value, props) {
   )
 }
 
+function selectReducer(state, action) {
+  switch (action.type) {
+    case 'close': {
+      return {
+        ...state,
+        dropdownOpen: false,
+        text: action.formatted,
+        filtering: false,
+      }
+    }
+    case 'open': {
+      return {
+        ...state,
+        dropdownOpen: true,
+        filtering: false,
+      }
+    }
+    case 'textFilter': {
+      return {
+        ...state,
+        text: action.text,
+        filtering: action.text.length > 0,
+      }
+    }
+    case 'textOverride': {
+      return {
+        ...state,
+        text: action.text,
+        filtering: false,
+      }
+    }
+  }
+}
+
 function Select(props) {
   const containerRef = useRef(null)
   const textRef = useRef(null)
@@ -39,8 +73,11 @@ function Select(props) {
     initialText = initialChoice ? initialChoice.label : `${props.value}`
   }
 
-  const [text, setText] = useState(initialText)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [state, dispatchState] = useReducer(selectReducer, {
+    text: initialText,
+    dropdownOpen: false,
+    filtering: false,
+  })
 
   const getFilteredOptions = (search) => {
     const terms = search.split(' ').map(term => {
@@ -68,15 +105,19 @@ function Select(props) {
         return option.value === props.value
       })
       const formatted = selectedOption ? selectedOption.label : `${props.value}`
-      setText(formatted)
-      setDropdownOpen(false)
+      dispatchState({
+        type: 'close',
+        formatted,
+      })
       if (typeof props.onChange === 'function') {
         props.onChange(props.value, true)
       }
     }
     else {
-      setText('')
-      setDropdownOpen(false)
+      dispatchState({
+        type: 'close',
+        formatted: '',
+      })
       if (typeof props.onChange === 'function') {
         props.onChange(props.nullable ? null : lastValidValue.current, true)
       }
@@ -96,22 +137,26 @@ function Select(props) {
     onBlur()
   }
   const handleTextFocus = (event) => {
-    setDropdownOpen(true)
+    dispatchState({type: 'open'})
   }
   const handleTextKeyDown = (event) => {
     if (event.which === ENTER ) {
-      if (dropdownOpen) {
+      if (state.dropdownOpen) {
         const current = props.options.find(option => {
           return option.value === props.value
         })
-        setDropdownOpen(false)
-        setText(current ? current.label : '')
+        dispatchState({
+          type: 'close',
+          formatted: current ? current.label : '',
+        })
         event.preventDefault()
       }
       return
     }
-    if (!dropdownOpen) {
-      setDropdownOpen(true)
+    if (!state.dropdownOpen) {
+      dispatchState({
+        type: 'open',
+      })
     }
     if (event) {
       if (event.which === ARROW_DOWN || event.which === ARROW_UP) {
@@ -120,7 +165,7 @@ function Select(props) {
           return
         }
         let currentIndex = -1
-        const filtered = getFilteredOptions(text)
+        const filtered = state.filtering ? getFilteredOptions(state.text) : props.options
         if (!filtered.length) {
           return
         }
@@ -152,7 +197,10 @@ function Select(props) {
     }
   }
   const handleTextChange = (newValue) => {
-    setText(newValue)
+    dispatchState({
+      type: 'textFilter',
+      text: newValue,
+    })
     if (typeof props.onTextChange === 'function') {
       props.onTextChange(newValue)
     }
@@ -208,8 +256,10 @@ function Select(props) {
       props.onChange(value, true)
     }
     textRef.current && textRef.current.focus()
-    setDropdownOpen(false)
-    setText(selected.label)
+    dispatchState({
+      type: 'close',
+      formatted: selected.label,
+    })
   }
 
   const setTextFromPropValue = () => {
@@ -217,10 +267,16 @@ function Select(props) {
       return (option.value === props.value)
     })
     if (current) {
-      setText(current.label)
+      dispatchState({
+        type: 'textOverride',
+        text: current.label,
+      })
     }
     else {
-      setText(`${props.value}`)
+      dispatchState({
+        type: 'textOverride',
+        text: `${props.value}`,
+      })
     }
   }
 
@@ -232,14 +288,17 @@ function Select(props) {
     }
     if (prevProps.value !== props.value ) {
       if (props.value === null) {
-        setText('')
+        dispatchState({
+          type: 'textOverride',
+          text: '',
+        })
       }
       else if (validChoice(props.value, props)) {
-        if (!dropdownOpen) {
+        if (!state.dropdownOpen) {
           setTextFromPropValue()
         }
         else {
-          const filtered = getFilteredOptions(text)
+          const filtered = getFilteredOptions(state.text)
           const current = filtered.find(option => {
             return (option.value === props.value)
           })
@@ -256,12 +315,15 @@ function Select(props) {
   const onClear = () => {
     if (typeof props.onChange === 'function') {
       props.onChange(props.nullable ? null : undefined, false)
-      setText('')
+      dispatchState({
+        type: 'textFilter',
+        text: '',
+      })
       textRef.current && textRef.current.focus()
     }
   }
 
-  const filtered = getFilteredOptions(text)
+  const filtered = state.filtering ? getFilteredOptions(state.text) : props.options
   const hasValue = !!props.value
   const clearable = hasValue
   return (
@@ -278,7 +340,7 @@ function Select(props) {
         <Text
           ref={textRef}
           placeholder={props.placeholder}
-          value={text}
+          value={state.text}
           onFocus={handleTextFocus}
           onKeyDown={handleTextKeyDown}
           onChange={handleTextChange}
@@ -296,7 +358,7 @@ function Select(props) {
         )}
         {props.dropdownArrow}
       </BlockDiv>
-      {dropdownOpen && (
+      {state.dropdownOpen && (
         <Dropdown
           options={filtered}
           value={props.value}
