@@ -2,12 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import BlockDiv from '../../components/block-div.js'
-import Text from './text.js'
-import ClearButton from '../../components/clear-button.js'
-import ChevronDownVector from '../../components/chevron-down-vector.js'
+import Text from '../inputs/basic/text.js'
+import BlockDiv from './block-div.js'
+import ClearButton from './clear-button.js'
+import ChevronDownVector from './chevron-down-vector.js'
 
-function WidgetText(props) {
+let WidgetText = (props, ref) => {
   const { onClear, icon, ...inputProps } = props
   const clearable = typeof onClear === 'function'
   return (
@@ -16,6 +16,7 @@ function WidgetText(props) {
     })}>
       <Text
         {...inputProps}
+        ref={ref}
       />
       {clearable && (
         <ClearButton
@@ -26,6 +27,7 @@ function WidgetText(props) {
     </BlockDiv>
   )
 }
+WidgetText = React.forwardRef(WidgetText)
 WidgetText.propTypes = {
   block: PropTypes.bool,
   icon: PropTypes.node,

@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
-import Calendar from '../../components/calendar.js'
-import BlockDiv from '../../components/block-div.js'
+import { Calendar, BlockDiv, ChevronDownVector, WidgetText, CalendarVector } from '../../components'
 import { propTypes as mirecoPropTypes, constants } from 'utilities'
-import ChevronDownVector from '../../components/chevron-down-vector.js'
-import WidgetText from './widget-text.js'
 
 export default class MirecoDate extends React.PureComponent {
   static propTypes = {
@@ -238,6 +235,7 @@ export default class MirecoDate extends React.PureComponent {
           className={this.props.textClassName}
           icon={this.props.icon}
           onClear={clearable ? this.onClear : undefined}
+          icon={CalendarVector}
         />
         {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
           <Calendar

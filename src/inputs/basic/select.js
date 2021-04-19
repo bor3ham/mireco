@@ -2,12 +2,8 @@ import React, { useRef, useReducer, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import BlockDiv from '../../components/block-div.js'
-import Dropdown from '../../components/dropdown.js'
-import ClearButton from '../../components/clear-button.js'
-import ChevronDownVector from '../../components/chevron-down-vector.js'
+import { BlockDiv, Dropdown, WidgetText, ChevronDownVector } from '../../components'
 import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
-import WidgetText from './widget-text.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
