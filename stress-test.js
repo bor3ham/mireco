@@ -46,7 +46,7 @@ const defaultValue = {
   date: null,
   duration: null,
   datetime: +(new Date()),
-  datetime_range: {start: null, end: null},
+  datetime_range: null,
 }
 function randomValue() {
   return {
