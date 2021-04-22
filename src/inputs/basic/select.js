@@ -8,6 +8,7 @@ import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
 const ARROW_DOWN = 40
 const ARROW_UP = 38
 const ENTER = 13
+const ESCAPE = 27
 
 function validChoice(value, props) {
   return (
@@ -149,7 +150,7 @@ function Select(props) {
       }
       return
     }
-    if (!state.dropdownOpen) {
+    if (!state.dropdownOpen && event.which !== ESCAPE) {
       dispatchState({
         type: 'open',
       })
@@ -188,6 +189,21 @@ function Select(props) {
         }
         else {
           props.onChange(props.nullable ? null : undefined)
+        }
+      }
+      if (event.which === ESCAPE) {
+        if (state.dropdownOpen) {
+          let formatted = ''
+          if (validChoice(props.value, props)) {
+            const selectedOption = props.options.find(option => {
+              return option.value === props.value
+            })
+            formatted = selectedOption ? selectedOption.label : `${props.value}`
+          }
+          dispatchState({
+            type: 'close',
+            formatted,
+          })
         }
       }
     }
