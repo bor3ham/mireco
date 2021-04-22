@@ -71,7 +71,6 @@ export default class Time extends React.PureComponent {
     this.options = this.generateOptions(props)
     this.containerRef = React.createRef()
     this.textRef = React.createRef()
-    this.dropdownRef = React.createRef()
   }
   componentDidUpdate(prevProps, prevState) {
     if (
@@ -307,7 +306,6 @@ export default class Time extends React.PureComponent {
         />
         {this.state.inFocus && this.state.dropdownOpen && !this.props.disabled && (
           <Dropdown
-            ref={this.dropdownRef}
             options={this.options}
             value={this.props.value}
             disabled={this.props.disabled}

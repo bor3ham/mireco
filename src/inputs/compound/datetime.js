@@ -133,23 +133,21 @@ export default class Datetime extends React.PureComponent {
       const containedInDate = (
         this.dateRef.current
         && this.dateRef.current.containerRef.current
-        && this.dateRef.current.containerRef.current.divRef.current
         && (
-          this.dateRef.current.containerRef.current.divRef.current.contains(
+          this.dateRef.current.containerRef.current.contains(
             event.relatedTarget
           )
-          || this.dateRef.current.containerRef.current.divRef.current == event.relatedTarget
+          || this.dateRef.current.containerRef.current == event.relatedTarget
         )
       )
       const containedInTime = (
         this.timeRef.current
         && this.timeRef.current.containerRef.current
-        && this.timeRef.current.containerRef.current.divRef.current
         && (
-          this.timeRef.current.containerRef.current.divRef.current.contains(
+          this.timeRef.current.containerRef.current.contains(
             event.relatedTarget
           )
-          || this.timeRef.current.containerRef.current.divRef.current == event.relatedTarget
+          || this.timeRef.current.containerRef.current == event.relatedTarget
         )
       )
       if (containedInDate || containedInTime) {

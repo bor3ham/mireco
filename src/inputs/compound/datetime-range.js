@@ -159,13 +159,11 @@ export default class DatetimeRange extends React.PureComponent {
         this.startRef.current
         && this.startRef.current.dateRef.current
         && this.startRef.current.dateRef.current.containerRef.current
-        && this.startRef.current.dateRef.current.containerRef.current.divRef.current
       )
       const startTimeDiv = (
         this.startRef.current
         && this.startRef.current.timeRef.current
         && this.startRef.current.timeRef.current.containerRef.current
-        && this.startRef.current.timeRef.current.containerRef.current.divRef.current
       )
       const containedInStart = (
         (startDateDiv && (
@@ -181,13 +179,11 @@ export default class DatetimeRange extends React.PureComponent {
         this.endRef.current
         && this.endRef.current.dateRef.current
         && this.endRef.current.dateRef.current.containerRef.current
-        && this.endRef.current.dateRef.current.containerRef.current.divRef.current
       )
       const endTimeDiv = (
         this.endRef.current
         && this.endRef.current.timeRef.current
         && this.endRef.current.timeRef.current.containerRef.current
-        && this.endRef.current.timeRef.current.containerRef.current.divRef.current
       )
       const containedInEnd = (
         (endDateDiv && (
