@@ -4,9 +4,7 @@ import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
 
-import Text from './text.js'
-import BlockDiv from '../../components/block-div.js'
-import Dropdown from '../../components/dropdown.js'
+import { WidgetText, BlockDiv, Dropdown, ClockVector } from '../../components'
 
 function validTime(time) {
   return typeof time === 'number' && !isNaN(time)
@@ -294,7 +292,7 @@ export default class Time extends React.PureComponent {
         onBlur={this.handleContainerBlur}
         block={this.props.block}
       >
-        <Text
+        <WidgetText
           ref={this.textRef}
           placeholder={this.props.placeholder}
           onChange={this.handleTextChange}
@@ -305,6 +303,7 @@ export default class Time extends React.PureComponent {
           block={this.props.block}
           style={{marginBottom: '0'}}
           onClick={this.handleTextClick}
+          icon={ClockVector}
         />
         {this.state.inFocus && this.state.dropdownOpen && !this.props.disabled && (
           <Dropdown

@@ -106,7 +106,7 @@ function AsyncSelect(props) {
       onChange={handleChange}
       dropdownProps={dropdownProps}
       filter={false}
-      dropdownArrow={loading ? SpinnerVector : ChevronDownVector}
+      icon={loading ? SpinnerVector : ChevronDownVector}
     />
   )
 }

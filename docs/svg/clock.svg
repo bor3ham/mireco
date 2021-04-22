@@ -7,38 +7,38 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
-   sodipodi:docname="chevron-down.svg"
-   id="svg8"
-   version="1.1"
-   viewBox="0 0 6.3499998 6.3499998"
+   width="24"
    height="24"
-   width="24">
+   viewBox="0 0 6.3499998 6.3499998"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="clock.svg"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)">
   <defs
      id="defs2" />
   <sodipodi:namedview
-     inkscape:document-rotation="0"
-     inkscape:window-maximized="1"
-     inkscape:window-y="25"
-     inkscape:window-x="1680"
-     inkscape:window-height="1302"
-     inkscape:window-width="2560"
-     units="px"
-     showgrid="true"
-     inkscape:current-layer="layer1"
-     inkscape:document-units="mm"
-     inkscape:cy="8.644219"
-     inkscape:cx="8.3547207"
-     inkscape:zoom="31.678384"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     borderopacity="1.0"
-     bordercolor="#666666"
+     id="base"
      pagecolor="#ffffff"
-     id="base">
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="25.311649"
+     inkscape:cx="19.628996"
+     inkscape:cy="16.902638"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="913"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:document-rotation="0">
     <inkscape:grid
-       id="grid815"
-       type="xygrid" />
+       type="xygrid"
+       id="grid815" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -53,21 +53,33 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(0,-290.65)"
-     id="layer1"
+     inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     inkscape:label="Layer 1">
+     id="layer1"
+     transform="translate(0,-290.65)">
+    <circle
+       r="1.8520833"
+       cy="293.82501"
+       cx="3.175"
+       id="path841"
+       style="fill:none;fill-opacity:0.271255;stroke:#333333;stroke-width:0.396875;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:5.39717;stroke-miterlimit:4;stroke-dasharray:none" />
     <path
-       sodipodi:nodetypes="ccc"
+       sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
-       id="path817"
-       d="m 4.7624938,293.03124 -1.5875,1.5875 -1.5875,-1.5875"
-       style="fill:none;stroke:#333333;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       id="path843"
+       d="m 3.175,293.825 0,-1.19063"
+       style="fill:none;stroke:#333333;stroke-width:0.396875;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
-       style="fill:none;stroke:#333333;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 4.7624938,293.03124 -1.5875,1.5875 -1.5875,-1.5875"
-       id="path977"
+       sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
+       id="path845"
+       d="m 3.175,293.825 0.79375,0.52917"
+       style="fill:none;stroke:#333333;stroke-width:0.396875;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle
+       r="0.26458332"
+       cy="293.82501"
+       cx="3.175"
+       id="path849"
+       style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.132292;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:5.39717;stroke-opacity:1" />
   </g>
 </svg>
