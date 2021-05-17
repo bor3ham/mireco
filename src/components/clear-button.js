@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 import Button from '../inputs/basic/button.js'
 import CrossVector from './cross-vector.js'
@@ -9,7 +10,7 @@ function ClearButton(props) {
     <Button
       tabIndex={-1}
       onClick={props.onClick}
-      className="MIRECO-clear-button content outline"
+      className={classNames('MIRECO-clear-button content outline', props.className)}
       disabled={props.disabled}
     >
       &nbsp;
@@ -21,6 +22,7 @@ function ClearButton(props) {
 ClearButton.propTypes = {
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
+  className: PropTypes.string,
 }
 ClearButton.defaultProps = {
   disabled: false,

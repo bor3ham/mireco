@@ -41,6 +41,8 @@ export default class Time extends React.PureComponent {
     relativeStart: PropTypes.number,
     rightHang: PropTypes.bool,
     showClearButton: PropTypes.bool,
+    textClassName: PropTypes.string,
+    id: PropTypes.string,
   }
   static defaultProps = {
     inputFormats: [
@@ -331,6 +333,8 @@ export default class Time extends React.PureComponent {
           onClick={this.handleTextClick}
           icon={ClockVector}
           onClear={!showClear ? undefined : this.handleClear}
+          className={this.props.textClassName}
+          id={this.props.id}
         />
         {this.state.inFocus && this.state.dropdownOpen && !this.props.disabled && (
           <Dropdown

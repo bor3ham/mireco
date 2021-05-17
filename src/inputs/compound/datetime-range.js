@@ -73,6 +73,12 @@ export default class DatetimeRange extends React.PureComponent {
     defaultDuration: PropTypes.number.isRequired,
     showClear: PropTypes.bool,
     className: PropTypes.string,
+    startDateTextClassName: PropTypes.string,
+    startTimeTextClassName: PropTypes.string,
+    endDateTextClassName: PropTypes.string,
+    endTimeTextClassName: PropTypes.string,
+    clearButtonClassName: PropTypes.string,
+    id: PropTypes.string,
   }
   static defaultProps = {
     block: false,
@@ -255,6 +261,9 @@ export default class DatetimeRange extends React.PureComponent {
           className="start"
           showClear={false}
           defaultDate={defaultStartDate}
+          dateTextClassName={this.props.startDateTextClassName}
+          timeTextClassName={this.props.startTimeTextClassName}
+          id={this.props.id}
         />
         <BlockDiv className="datetime-range-second" block={this.props.block}>
           <span className="to">{' - '}</span>
@@ -269,6 +278,8 @@ export default class DatetimeRange extends React.PureComponent {
             showClear={false}
             relativeTo={this.state.start}
             defaultDate={defaultEndDate}
+            dateTextClassName={this.props.endDateTextClassName}
+            timeTextClassName={this.props.endTimeTextClassName}
           />
           {!this.props.block && this.props.showClear && (
             <span>{' '}</span>
@@ -277,6 +288,7 @@ export default class DatetimeRange extends React.PureComponent {
             <ClearButton
               onClick={this.handleClearClick}
               disabled={this.props.disabled}
+              className={this.props.clearButtonClassName}
             />
           )}
         </BlockDiv>

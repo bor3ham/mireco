@@ -62,6 +62,10 @@ export default class Datetime extends React.PureComponent {
     className: PropTypes.string,
     relativeTo: PropTypes.number,
     defaultDate: mirecoPropTypes.date,
+    dateTextClassName: PropTypes.string,
+    timeTextClassName: PropTypes.string,
+    clearButtonClassName: PropTypes.string,
+    id: PropTypes.string,
   }
   static defaultProps = {
     block: false,
@@ -189,6 +193,10 @@ export default class Datetime extends React.PureComponent {
     }, 0)
   }
   render() {
+    let dateProps = {}
+    if (!this.props.timeFirst) {
+      dateProps.id = this.props.id
+    }
     let date = (
       <DateInput
         ref={this.dateRef}
@@ -198,12 +206,18 @@ export default class Datetime extends React.PureComponent {
         block={this.props.block}
         rightHang={this.props.timeFirst}
         showClearButton={false}
+        textClassName={this.props.dateTextClassName}
+        {...dateProps}
       />
     )
     let relativeStart = undefined
     const combined = this.combinedStateValue()
     if (this.props.relativeTo && !datetimeNull(combined)) {
       relativeStart = +startOfDay(new Date(combined))
+    }
+    let timeProps = {}
+    if (this.props.timeFirst) {
+      timeProps.id = this.props.id
     }
     let time = (
       <Time
@@ -215,6 +229,8 @@ export default class Datetime extends React.PureComponent {
         relativeStart={relativeStart}
         block={this.props.block}
         showClearButton={false}
+        textClassName={this.props.timeTextClassName}
+        {...timeProps}
       />
     )
 
@@ -249,6 +265,7 @@ export default class Datetime extends React.PureComponent {
             <ClearButton
               onClick={this.handleClearClick}
               disabled={this.props.disabled}
+              className={this.props.clearButtonClassName}
             />
           )}
         </BlockDiv>
