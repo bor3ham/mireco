@@ -3,8 +3,13 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
-import { Calendar, BlockDiv, ChevronDownVector, WidgetText, CalendarVector } from '../../components'
+import { Calendar, BlockDiv, WidgetText, CalendarVector } from '../../components'
 import { propTypes as mirecoPropTypes, constants } from 'utilities'
+
+const ARROW_DOWN = 40
+const ARROW_UP = 38
+const ENTER = 13
+const ESCAPE = 27
 
 export default class MirecoDate extends React.PureComponent {
   static propTypes = {
@@ -44,7 +49,7 @@ export default class MirecoDate extends React.PureComponent {
     autoErase: true,
     rightHang: false,
     required: false,
-    icon: ChevronDownVector,
+    icon: CalendarVector,
     showClearButton: true,
   }
   constructor(props) {
@@ -119,20 +124,31 @@ export default class MirecoDate extends React.PureComponent {
     this.onBlur()
   }
   handleTextKeyDown = (event) => {
+    if (event && (event.which === ENTER || event.which === ESCAPE)) {
+      if (this.state.calendarOpen) {
+        let formatted = this.format(this.props, this.props.value)
+        this.setState({
+          textValue: formatted,
+          calendarOpen: false,
+        })
+        event.preventDefault()
+      }
+      return
+    }
     this.setState({inFocus: true, calendarOpen: true})
     if (event) {
       let current = new Date()
       if (typeof this.props.value === 'string') {
         current = parse(this.props.value, constants.ISO_8601_DATE_FORMAT, new Date())
       }
-      if (event.which === 40) {
+      if (event.which === ARROW_DOWN) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(format(addDays(current, 1), constants.ISO_8601_DATE_FORMAT), false)
         }
         this.setState({calendarOpen: true})
       }
-      if (event.which === 38) {
+      if (event.which === ARROW_UP) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(format(subDays(current, 1), constants.ISO_8601_DATE_FORMAT), false)
@@ -200,10 +216,20 @@ export default class MirecoDate extends React.PureComponent {
     }
   }
   onClear = () => {
-    this.props.onChange(null, false)
+    if (this.props.disabled) {
+      return
+    }
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(null, false)
+      this.textRef.current && this.textRef.current.focus()
+    }
   }
   render() {
-    const clearable = typeof this.props.value === 'string' && this.props.showClearButton
+    const clearable = (
+      typeof this.props.value === 'string' &&
+      this.props.showClearButton &&
+      !this.props.disabled
+    )
     return (
       <BlockDiv
         ref={this.containerRef}
@@ -235,7 +261,6 @@ export default class MirecoDate extends React.PureComponent {
           className={this.props.textClassName}
           icon={this.props.icon}
           onClear={clearable ? this.onClear : undefined}
-          icon={CalendarVector}
         />
         {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
           <Calendar

@@ -214,6 +214,7 @@ export default class Datetime extends React.PureComponent {
         relativeTo={this.props.relativeTo}
         relativeStart={relativeStart}
         block={this.props.block}
+        showClearButton={false}
       />
     )
 

@@ -6,6 +6,11 @@ import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
 
 import { WidgetText, BlockDiv, Dropdown, ClockVector } from '../../components'
 
+const ARROW_DOWN = 40
+const ARROW_UP = 38
+const ENTER = 13
+const ESCAPE = 27
+
 function validTime(time) {
   return typeof time === 'number' && !isNaN(time)
 }
@@ -35,6 +40,7 @@ export default class Time extends React.PureComponent {
     relativeTo: PropTypes.number,
     relativeStart: PropTypes.number,
     rightHang: PropTypes.bool,
+    showClearButton: PropTypes.bool,
   }
   static defaultProps = {
     inputFormats: [
@@ -59,6 +65,7 @@ export default class Time extends React.PureComponent {
     autoErase: true,
     relativeStart: 0,
     rightHang: false,
+    showClearButton: true,
   }
   constructor(props) {
     super(props)
@@ -197,16 +204,27 @@ export default class Time extends React.PureComponent {
     return this.options[nextIndex].value
   }
   handleTextKeyDown = (event) => {
+    if (event && (event.which === ENTER || event.which === ESCAPE)) {
+      if (this.state.dropdownOpen) {
+        const formatted = this.format(this.props, this.props.value)
+        this.setState({
+          textValue: formatted,
+          dropdownOpen: false,
+        })
+        event.preventDefault()
+      }
+      return
+    }
     this.setState({inFocus: true, dropdownOpen: true})
     if (event) {
-      if (event.which === 40) {
+      if (event.which === ARROW_DOWN) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(this.nextOption(), false)
         }
         this.setState({dropdownOpen: true})
       }
-      if (event.which === 38) {
+      if (event.which === ARROW_UP) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
           this.props.onChange(this.previousOption(), false)
@@ -276,7 +294,16 @@ export default class Time extends React.PureComponent {
     this.textRef.current && this.textRef.current.focus()
     this.setState({dropdownOpen: false})
   }
+  handleClear = () => {
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(null, false)
+      this.textRef.current && this.textRef.current.focus()
+    }
+  }
   render() {
+    const showClear = (
+      !this.props.disabled && validTime(this.props.value) && this.props.showClearButton
+    )
     return (
       <BlockDiv
         ref={this.containerRef}
@@ -303,6 +330,7 @@ export default class Time extends React.PureComponent {
           style={{marginBottom: '0'}}
           onClick={this.handleTextClick}
           icon={ClockVector}
+          onClear={!showClear ? undefined : this.handleClear}
         />
         {this.state.inFocus && this.state.dropdownOpen && !this.props.disabled && (
           <Dropdown

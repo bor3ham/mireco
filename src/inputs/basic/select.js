@@ -340,7 +340,7 @@ function Select(props) {
 
   const filtered = state.filtering ? getFilteredOptions(state.text) : props.options
   const hasValue = !!props.value
-  const clearable = hasValue
+  const clearable = hasValue && !props.disabled
   return (
     <BlockDiv
       ref={containerRef}
