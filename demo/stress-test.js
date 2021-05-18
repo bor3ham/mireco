@@ -1,18 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
-  Date as DateInput,
-  Datetime,
-  DatetimeRange,
+  Button,
   Checkbox,
-  Text,
-  Textarea,
+  Date as DateInput,
+  Duration,
   Number as NumberInput,
   Range,
-  Button,
-  Time,
   Select,
-  Duration,
+  Text,
+  Textarea,
+  Time,
+  Datetime,
+  DatetimeRange,
+  MultiSelect,
 } from 'mireco/inputs'
 import * as mirecoConstants from 'mireco/constants'
 import casual from 'casual-browserify'
@@ -36,34 +37,37 @@ const SELECT_OPTIONS = [
 ]
 
 const defaultValue = {
-  text: 'hi there',
-  number: null,
-  range: 50,
   checked: false,
-  select: null,
-  time: null,
-  textarea: 'Wow this is two lines...\nIn this text box',
   date: null,
   duration: null,
+  number: null,
+  range: 50,
+  select: null,
+  text: 'hi there',
+  textarea: 'Wow this is two lines...\nIn this text box',
+  time: null,
+
   datetime: +(new Date()),
-  datetime_range: null,
+  datetimeRange: null,
+  multiSelect: [],
 }
 function randomValue() {
   return {
-    text: casual.title,
-    number: casual.coin_flip ? null : casual.integer(0, 100),
-    range: casual.integer(0, 100),
     checked: casual.coin_flip,
-    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
-    time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
-    textarea: casual.description,
     date: casual.coin_flip ? null : format(
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
       mirecoConstants.ISO_8601_DATE_FORMAT,
     ),
     duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
+    number: casual.coin_flip ? null : casual.integer(0, 100),
+    range: casual.integer(0, 100),
+    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
+    text: casual.title,
+    textarea: casual.description,
+    time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
+
     datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
-    datetime_range: casual.coin_flip ? null : {
+    datetimeRange: casual.coin_flip ? null : {
       start: +addHours(
         startOfHour(new Date()),
         casual.integer(-3 * 24, 3 * 24)
@@ -73,6 +77,11 @@ function randomValue() {
         casual.integer(4 * 24, 7 * 24)
       ),
     },
+    multiSelect: casual.coin_flip ? [] : [...new Set([
+      casual.random_element(SELECT_OPTIONS).value,
+      casual.random_element(SELECT_OPTIONS).value,
+      casual.random_element(SELECT_OPTIONS).value,
+    ])],
   }
 }
 
@@ -88,17 +97,19 @@ class Demo extends React.PureComponent {
       intervalRemount: !!Cookies.get('intervalRemount'),
       blockMode: !!Cookies.get('blockMode'),
 
-      showText: !!Cookies.get('showText'),
-      showNumber: !!Cookies.get('showNumber'),
-      showRange: !!Cookies.get('showRange'),
       showCheckbox: !!Cookies.get('showCheckbox'),
-      showSelect: !!Cookies.get('showSelect'),
-      showTime: !!Cookies.get('showTime'),
-      showTextarea: !!Cookies.get('showTextarea'),
       showDate: !!Cookies.get('showDate'),
       showDuration: !!Cookies.get('showDuration'),
+      showNumber: !!Cookies.get('showNumber'),
+      showRange: !!Cookies.get('showRange'),
+      showSelect: !!Cookies.get('showSelect'),
+      showText: !!Cookies.get('showText'),
+      showTextarea: !!Cookies.get('showTextarea'),
+      showTime: !!Cookies.get('showTime'),
+
       showDatetime: !!Cookies.get('showDatetime'),
       showDatetimeRange: !!Cookies.get('showDatetimeRange'),
+      showMultiSelect: !!Cookies.get('showMultiSelect'),
     },
     mountIndex: 0,
   }
@@ -252,11 +263,27 @@ class Demo extends React.PureComponent {
               <h2>Basic inputs</h2>
               <Checkbox
                 block
-                value={this.state.flags.showText}
+                value={this.state.flags.showCheckbox}
                 onChange={(newValue) => {
-                  this.setFlag('showText', newValue)
+                  this.setFlag('showCheckbox', newValue)
                 }}
-                label="Show text input"
+                label="Show checkbox input"
+              />
+              <Checkbox
+                block
+                value={this.state.flags.showDate}
+                onChange={(newValue) => {
+                  this.setFlag('showDate', newValue)
+                }}
+                label="Show date input"
+              />
+              <Checkbox
+                block
+                value={this.state.flags.showDuration}
+                onChange={(newValue) => {
+                  this.setFlag('showDuration', newValue)
+                }}
+                label="Show duration input"
               />
               <Checkbox
                 block
@@ -276,14 +303,6 @@ class Demo extends React.PureComponent {
               />
               <Checkbox
                 block
-                value={this.state.flags.showCheckbox}
-                onChange={(newValue) => {
-                  this.setFlag('showCheckbox', newValue)
-                }}
-                label="Show checkbox input"
-              />
-              <Checkbox
-                block
                 value={this.state.flags.showSelect}
                 onChange={(newValue) => {
                   this.setFlag('showSelect', newValue)
@@ -292,11 +311,11 @@ class Demo extends React.PureComponent {
               />
               <Checkbox
                 block
-                value={this.state.flags.showTime}
+                value={this.state.flags.showText}
                 onChange={(newValue) => {
-                  this.setFlag('showTime', newValue)
+                  this.setFlag('showText', newValue)
                 }}
-                label="Show time input"
+                label="Show text input"
               />
               <Checkbox
                 block
@@ -308,19 +327,11 @@ class Demo extends React.PureComponent {
               />
               <Checkbox
                 block
-                value={this.state.flags.showDate}
+                value={this.state.flags.showTime}
                 onChange={(newValue) => {
-                  this.setFlag('showDate', newValue)
+                  this.setFlag('showTime', newValue)
                 }}
-                label="Show date input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showDuration}
-                onChange={(newValue) => {
-                  this.setFlag('showDuration', newValue)
-                }}
-                label="Show duration input"
+                label="Show time input"
               />
             </div>
             <div className="flag-column">
@@ -340,6 +351,14 @@ class Demo extends React.PureComponent {
                   this.setFlag('showDatetimeRange', newValue)
                 }}
                 label="Show datetime range input"
+              />
+              <Checkbox
+                block
+                value={this.state.flags.showMultiSelect}
+                onChange={(newValue) => {
+                  this.setFlag('showMultiSelect', newValue)
+                }}
+                label="Show multi select input"
               />
             </div>
           </div>
@@ -385,41 +404,7 @@ class Demo extends React.PureComponent {
             key={`form-mount-${this.state.mountIndex}`}
             style={{margin: '20rem 1rem'}}
           >
-            {this.state.flags.showText && (
-              <Text
-                value={this.state.formValue.text}
-                onChange={(newValue) => {
-                  this.updateFormValue('text', newValue)
-                }}
-                placeholder="Single text"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showText && inlineSpace}
-            {this.state.flags.showNumber && (
-              <NumberInput
-                value={this.state.formValue.number}
-                onChange={(newValue) => {
-                  this.updateFormValue('number', newValue)
-                }}
-                placeholder="Number"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showText && inlineSpace}
-            {this.state.flags.showRange && (
-              <Range
-                value={this.state.formValue.range}
-                onChange={(newValue) => {
-                  this.updateFormValue('range', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showNumber && inlineSpace}
+            {/* basic */}
             {this.state.flags.showCheckbox && (
               <Checkbox
                 value={this.state.formValue.checked}
@@ -432,42 +417,6 @@ class Demo extends React.PureComponent {
               />
             )}
             {this.state.flags.showCheckbox && inlineSpace}
-            {this.state.flags.showSelect && (
-              <Select
-                value={this.state.formValue.select}
-                options={SELECT_OPTIONS}
-                onChange={(newValue) => {
-                  this.updateFormValue('select', newValue)
-                }}
-                placeholder="Mode of transport"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showSelect && inlineSpace}
-            {this.state.flags.showTime && (
-              <Time
-                value={this.state.formValue.time}
-                onChange={(newValue) => {
-                  this.updateFormValue('time', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showTime && inlineSpace}
-            {this.state.flags.showTextarea && (
-              <Textarea
-                value={this.state.formValue.textarea}
-                onChange={(newValue) => {
-                  this.updateFormValue('textarea', newValue)
-                }}
-                placeholder="Multiline text..."
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showTextarea && inlineSpace}
             {this.state.flags.showDate && (
               <DateInput
                 value={this.state.formValue.date}
@@ -490,6 +439,78 @@ class Demo extends React.PureComponent {
               />
             )}
             {this.state.flags.showDuration && inlineSpace}
+            {this.state.flags.showNumber && (
+              <NumberInput
+                value={this.state.formValue.number}
+                onChange={(newValue) => {
+                  this.updateFormValue('number', newValue)
+                }}
+                placeholder="Number"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showNumber && inlineSpace}
+            {this.state.flags.showRange && (
+              <Range
+                value={this.state.formValue.range}
+                onChange={(newValue) => {
+                  this.updateFormValue('range', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showRange && inlineSpace}
+            {this.state.flags.showSelect && (
+              <Select
+                value={this.state.formValue.select}
+                options={SELECT_OPTIONS}
+                onChange={(newValue) => {
+                  this.updateFormValue('select', newValue)
+                }}
+                placeholder="Select"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showSelect && inlineSpace}
+            {this.state.flags.showText && (
+              <Text
+                value={this.state.formValue.text}
+                onChange={(newValue) => {
+                  this.updateFormValue('text', newValue)
+                }}
+                placeholder="Text"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showText && inlineSpace}
+            {this.state.flags.showTextarea && (
+              <Textarea
+                value={this.state.formValue.textarea}
+                onChange={(newValue) => {
+                  this.updateFormValue('textarea', newValue)
+                }}
+                placeholder="Textarea"
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showTextarea && inlineSpace}
+            {this.state.flags.showTime && (
+              <Time
+                value={this.state.formValue.time}
+                onChange={(newValue) => {
+                  this.updateFormValue('time', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+              />
+            )}
+            {this.state.flags.showTime && inlineSpace}
+            {/* compound */}
             {this.state.flags.showDatetime && (
               <Datetime
                 value={this.state.formValue.datetime}
@@ -503,15 +524,29 @@ class Demo extends React.PureComponent {
             {this.state.flags.showDatetime && inlineSpace}
             {this.state.flags.showDatetimeRange && (
               <DatetimeRange
-                value={this.state.formValue.datetime_range}
+                value={this.state.formValue.datetimeRange}
                 onChange={(newValue) => {
-                  this.updateFormValue('datetime_range', newValue)
+                  this.updateFormValue('datetimeRange', newValue)
                 }}
                 disabled={this.state.flags.disabled}
                 block={this.state.flags.blockMode}
               />
             )}
             {this.state.flags.showDatetimeRange && inlineSpace}
+            {this.state.flags.showMultiSelect && (
+              <MultiSelect
+                value={this.state.formValue.multiSelect}
+                options={SELECT_OPTIONS}
+                onChange={(newValue) => {
+                  this.updateFormValue('multiSelect', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+                placeholder="Multi Select"
+              />
+            )}
+            {this.state.flags.showMultiSelect && inlineSpace}
+            {/* submit */}
             <Button
               type="submit"
               block={this.state.flags.blockMode}

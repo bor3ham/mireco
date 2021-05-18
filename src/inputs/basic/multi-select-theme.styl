@@ -2,6 +2,10 @@
   &.in-focus
     input-focus()
 
+  &.disabled
+    border-color: content-muted !important
+    background: content-faint !important
+
   padding-bottom: 0 !important
 
   padding-right: "calc(%s + 24px)" % (standard-padding / 2)
@@ -39,8 +43,9 @@
           position: absolute
           right: 0
           top: 50%
-          margin-top: -10px
+          margin-top: -8px
           border: none !important
+          background: none !important
           padding: 0
           vertical-align: middle
 

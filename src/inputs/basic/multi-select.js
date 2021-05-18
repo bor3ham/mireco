@@ -1,10 +1,10 @@
-import React, { useRef, useReducer } from 'react'
+import React, { useRef, useReducer, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, ChevronDownVector, ClearButton } from '../../components'
 import Text from './text.js'
-import { propTypes as mirecoPropTypes } from 'utilities'
+import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
@@ -66,13 +66,14 @@ function SelectedOption(props) {
   return (
     <li className="option">
       {props.label}
-      <ClearButton onClick={props.remove} spaced={false} />
+      <ClearButton onClick={props.remove} spaced={false} disabled={props.disabled} />
     </li>
   )
 }
 SelectedOption.propTypes = {
   label: PropTypes.string,
   remove: PropTypes.func,
+  disabled: PropTypes.bool,
 }
 
 function MultiSelect(props) {
@@ -83,6 +84,22 @@ function MultiSelect(props) {
     text: '',
     dropdownOpen: false,
     selected: null,
+  })
+  const onBlur = () => {
+    dispatchState({
+      type: 'blur',
+    })
+  }
+
+  // on component received new props
+  const prevProps = usePrevious(props)
+  useEffect(() => {
+    if (!prevProps) {
+      return
+    }
+    if (props.disabled && !prevProps.disabled) {
+      onBlur()
+    }
   })
 
   const addValue = (value) => {
@@ -138,11 +155,6 @@ function MultiSelect(props) {
         }
       })
       return match
-    })
-  }
-  const onBlur = () => {
-    dispatchState({
-      type: 'blur',
     })
   }
   const handleContainerBlur = (event) => {
@@ -297,6 +309,9 @@ function MultiSelect(props) {
     }
   }
   const handleContainerClick = (event) => {
+    if (props.disabled) {
+      return
+    }
     if (!state.dropdownOpen) {
       if (textRef.current && textRef.current.inputRef.current) {
         if (textRef.current.inputRef.current === document.activeElement) {
@@ -332,10 +347,12 @@ function MultiSelect(props) {
       className={classNames('MIRECO-multi-select', {
         'has-value': hasValue,
         'in-focus': state.inFocus,
+        disabled: props.disabled,
         clearable,
       }, props.className)}
       onBlur={handleContainerBlur}
       onClick={handleContainerClick}
+      tabIndex={-1}
     >
       <ul className="selected">
         {props.value.map((selectedValue, valueIndex) => {
@@ -349,6 +366,7 @@ function MultiSelect(props) {
               value={selectedValue}
               label={option ? option.label : selectedValue}
               remove={remove}
+              disabled={props.disabled}
             />
           )
         })}
@@ -374,7 +392,7 @@ function MultiSelect(props) {
         <ClearButton onClick={clearAll} />
       )}
       {props.icon}
-      {state.dropdownOpen && (
+      {state.dropdownOpen && !props.disabled && (
         <Dropdown
           options={filtered}
           value={state.selected}
