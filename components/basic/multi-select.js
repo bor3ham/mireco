@@ -17,7 +17,7 @@ const OPTIONS = [
   },
   {
     value: 'binoculars',
-    label: 'Binoculars',
+    label: 'Binoculars with Nightvision',
   },
 ]
 
@@ -30,7 +30,7 @@ function DemoMultiSelect(props) {
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
       <MultiSelect
-        // block
+        block
         placeholder="Select values"
         value={value}
         options={OPTIONS}
