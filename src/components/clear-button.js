@@ -13,9 +13,9 @@ function ClearButton(props) {
       className={classNames('MIRECO-clear-button content outline', props.className)}
       disabled={props.disabled}
     >
-      &nbsp;
+      {props.spaced && (<>&nbsp;</>)}
       {CrossVector}
-      &nbsp;
+      {props.spaced && (<>&nbsp;</>)}
     </Button>
   )
 }
@@ -23,9 +23,11 @@ ClearButton.propTypes = {
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
   className: PropTypes.string,
+  spaced: PropTypes.bool,
 }
 ClearButton.defaultProps = {
   disabled: false,
+  spaced: true,
 }
 
 export default ClearButton

@@ -1,0 +1,57 @@
+.MIRECO-multi-select
+  &:not(.sized)
+    width: 100%
+    max-width: 15rem
+    min-width: 0
+
+  display: inline-block
+  &.block
+    display: block
+    width: 100%
+    max-width: none
+    min-width: 0
+    margin-bottom: standard-padding
+
+  position: relative
+  box-sizing: border-box
+
+  > ul.selected
+    list-style: none
+    margin: 0
+    padding: 0
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+
+    > li
+      display: inline-block
+
+      &.option
+        margin-right: 0.5rem
+
+      &.text
+        flex-grow: 1
+        flex-basis: 8rem
+        > .MIRECO-text
+          background: none
+          border: none
+          padding: 0
+          box-shadow: none
+          margin: 0
+
+  > .MIRECO-clear-button
+    position: absolute
+    right: 0
+    top: 50%
+    transform: translateY(-50%)
+
+  > svg
+    position: absolute
+    right: 0
+    top: 50%
+    margin-top: -12px
+    pointer-events: none
+
+  > .MIRECO-dropdown
+    max-width: none
+    right: 0

@@ -1,0 +1,52 @@
+.MIRECO-multi-select
+  &.in-focus
+    input-focus()
+
+  padding-bottom: 0 !important
+
+  padding-right: "calc(%s + 24px)" % (standard-padding / 2)
+  &.clearable
+    padding-right: "calc(%s + 48px)" % standard-padding
+
+  &:after
+    content: ' '
+    position: absolute
+    height: calc(100% - 12px)
+    top: 6px
+    right: "calc(%s + 24px)" % (standard-padding / 2)
+    border-right: thin-line solid content-muted
+
+  > ul.selected
+    > li
+      margin: 0
+      margin-bottom: 0.4rem
+      padding: 0
+
+      &.option
+        position: relative
+        box-sizing: border-box
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        max-width: 60%
+        border: thin-line solid content-muted
+        border-radius: edge-rounding
+        padding-left: 0.25rem
+        line-height: 1.5em
+        padding-right: 24px
+
+        > .MIRECO-clear-button
+          position: absolute
+          right: 0
+          top: 50%
+          margin-top: -10px
+          border: none !important
+          padding: 0
+          vertical-align: middle
+
+  > .MIRECO-clear-button
+    background: none !important
+    border: none !important
+    right: "calc(%s + 24px)" % (standard-padding / 2)
+  > svg
+    right: (standard-padding / 4)

@@ -11,6 +11,9 @@ const ARROW_UP = 38
 const ENTER = 13
 const ESCAPE = 27
 const BACKSPACE = 8
+const TAB = 9
+const SHIFT = 16
+const CAPS = 20
 
 function multiSelectReducer(state, action) {
   switch (action.type) {
@@ -40,14 +43,30 @@ function multiSelectReducer(state, action) {
         selected: action.value,
       }
     }
+    case 'focus': {
+      return {
+        ...state,
+        inFocus: true,
+        dropdownOpen: true,
+      }
+    }
+    case 'blur': {
+      return {
+        ...state,
+        inFocus: false,
+        dropdownOpen: false,
+        text: '',
+        selected: null,
+      }
+    }
   }
 }
 
 function SelectedOption(props) {
   return (
-    <li>
+    <li className="option">
       {props.label}
-      <ClearButton onClick={props.remove} />
+      <ClearButton onClick={props.remove} spaced={false} />
     </li>
   )
 }
@@ -123,7 +142,7 @@ function MultiSelect(props) {
   }
   const onBlur = () => {
     dispatchState({
-      type: 'close',
+      type: 'blur',
     })
   }
   const handleContainerBlur = (event) => {
@@ -140,13 +159,13 @@ function MultiSelect(props) {
     onBlur()
   }
   const handleTextFocus = (event) => {
-    dispatchState({type: 'open'})
+    dispatchState({type: 'focus'})
   }
   const handleTextKeyDown = (event) => {
-    if (!event) {
+    if (!event || event.which === SHIFT || event.which === CAPS) {
       return
     }
-    if (event.which === ENTER ) {
+    if (event.which === ENTER || (event.which === TAB && state.selected !== null)) {
       if (state.dropdownOpen) {
         if (state.selected !== null) {
           addValue(state.selected)
@@ -279,9 +298,15 @@ function MultiSelect(props) {
   }
   const handleContainerClick = (event) => {
     if (!state.dropdownOpen) {
-      dispatchState({
-        type: 'open',
-      })
+      if (textRef.current && textRef.current.inputRef.current) {
+        if (textRef.current.inputRef.current === document.activeElement) {
+          dispatchState({
+            type: 'open',
+          })
+        } else {
+          textRef.current && textRef.current.focus()
+        }
+      }
     }
   }
   const handleDropdownSelect = (value) => {
@@ -304,8 +329,9 @@ function MultiSelect(props) {
     <BlockDiv
       ref={containerRef}
       block={props.block}
-      className={classNames('MIRECO-select', {
+      className={classNames('MIRECO-multi-select', {
         'has-value': hasValue,
+        'in-focus': state.inFocus,
         clearable,
       }, props.className)}
       onBlur={handleContainerBlur}
@@ -326,22 +352,24 @@ function MultiSelect(props) {
             />
           )
         })}
+        <li className="text">
+          <Text
+            ref={textRef}
+            placeholder={props.placeholder}
+            value={state.text}
+            onFocus={handleTextFocus}
+            onKeyDown={handleTextKeyDown}
+            onChange={handleTextChange}
+            disabled={props.disabled}
+            block={props.block}
+            style={props.style}
+            autoFocus={props.autoFocus}
+            className={props.textClassName}
+            id={props.id}
+            icon={props.icon}
+          />
+        </li>
       </ul>
-      <Text
-        ref={textRef}
-        placeholder={props.placeholder}
-        value={state.text}
-        onFocus={handleTextFocus}
-        onKeyDown={handleTextKeyDown}
-        onChange={handleTextChange}
-        disabled={props.disabled}
-        block={props.block}
-        style={props.style}
-        autoFocus={props.autoFocus}
-        className={props.textClassName}
-        id={props.id}
-        icon={props.icon}
-      />
       {clearable && (
         <ClearButton onClick={clearAll} />
       )}
