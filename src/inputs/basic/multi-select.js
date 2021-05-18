@@ -1,88 +1,113 @@
-import React, { useRef, useReducer, useEffect } from 'react'
+import React, { useRef, useReducer } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import { BlockDiv, Dropdown, WidgetText, ChevronDownVector } from '../../components'
-import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
+import { BlockDiv, Dropdown, ChevronDownVector, ClearButton } from '../../components'
+import Text from './text.js'
+import { propTypes as mirecoPropTypes } from 'utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
 const ENTER = 13
 const ESCAPE = 27
+const BACKSPACE = 8
 
-function validChoice(value, props) {
-  return (
-    typeof props.value === 'string'
-    || typeof props.value === 'number'
-    || typeof props.value === 'boolean'
-  )
-}
-
-function selectReducer(state, action) {
+function multiSelectReducer(state, action) {
   switch (action.type) {
     case 'close': {
       return {
         ...state,
         dropdownOpen: false,
-        text: action.formatted,
-        filtering: false,
+        text: '',
+        selected: null,
       }
     }
     case 'open': {
       return {
         ...state,
         dropdownOpen: true,
-        filtering: false,
       }
     }
     case 'textFilter': {
       return {
         ...state,
         text: action.text,
-        filtering: action.text.length > 0,
       }
     }
-    case 'textOverride': {
+    case 'select': {
       return {
         ...state,
-        text: action.text,
-        filtering: false,
+        selected: action.value,
       }
     }
   }
 }
 
-function Select(props) {
+function SelectedOption(props) {
+  return (
+    <li>
+      {props.label}
+      <ClearButton onClick={props.remove} />
+    </li>
+  )
+}
+SelectedOption.propTypes = {
+  label: PropTypes.string,
+  remove: PropTypes.func,
+}
+
+function MultiSelect(props) {
   const containerRef = useRef(null)
   const textRef = useRef(null)
-  const lastValidValue = useRef(props.value ? props.value : null)
-  useEffect(() => {
-    if (props.value) {
-      lastValidValue.current = props.value
-    }
-  }, [props.value])
 
-  let initialText = ''
-  if (validChoice(props.value, props)) {
-    const initialChoice = props.options.find(option => {
-      return option.value === props.value
-    })
-    initialText = initialChoice ? initialChoice.label : `${props.value}`
-  }
-
-  const [state, dispatchState] = useReducer(selectReducer, {
-    text: initialText,
+  const [state, dispatchState] = useReducer(multiSelectReducer, {
+    text: '',
     dropdownOpen: false,
-    filtering: false,
+    selected: null,
   })
 
+  const addValue = (value) => {
+    if (typeof props.onChange === 'function') {
+      props.onChange([...new Set([
+        ...props.value,
+        value,
+      ])], true)
+    }
+  }
+  const removeAt = (index) => {
+    if (props.disabled) {
+      return
+    }
+    if (typeof props.onChange === 'function') {
+      const updated = [...props.value]
+      updated.splice(index, 1)
+      props.onChange(updated, false)
+      textRef.current && textRef.current.focus()
+    }
+  }
+  const clearAll = () => {
+    if (props.disabled) {
+      return
+    }
+    if (typeof props.onChange === 'function') {
+      props.onChange([], false)
+      dispatchState({
+        type: 'textFilter',
+        text: '',
+      })
+      textRef.current && textRef.current.focus()
+    }
+  }
   const getFilteredOptions = (search) => {
     const terms = search.split(' ').map(term => {
       return term.trim().toLowerCase()
     }).filter(term => {
       return (term.length > 0)
     })
-    return props.options.filter(option => {
+    return props.options.filter((option) => {
+      if (props.value.indexOf(option.value) !== -1) {
+        return false
+      }
       if (terms.length === 0 || !props.filter) {
         return true
       }
@@ -97,28 +122,9 @@ function Select(props) {
     })
   }
   const onBlur = () => {
-    if (validChoice(props.value, props)) {
-      const selectedOption = props.options.find(option => {
-        return option.value === props.value
-      })
-      const formatted = selectedOption ? selectedOption.label : `${props.value}`
-      dispatchState({
-        type: 'close',
-        formatted,
-      })
-      if (typeof props.onChange === 'function') {
-        props.onChange(props.value, true)
-      }
-    }
-    else {
-      dispatchState({
-        type: 'close',
-        formatted: '',
-      })
-      if (typeof props.onChange === 'function') {
-        props.onChange(props.nullable ? null : lastValidValue.current, true)
-      }
-    }
+    dispatchState({
+      type: 'close',
+    })
   }
   const handleContainerBlur = (event) => {
     if (
@@ -142,12 +148,11 @@ function Select(props) {
     }
     if (event.which === ENTER ) {
       if (state.dropdownOpen) {
-        const current = props.options.find(option => {
-          return option.value === props.value
-        })
+        if (state.selected !== null) {
+          addValue(state.selected)
+        }
         dispatchState({
           type: 'close',
-          formatted: current ? current.label : '',
         })
         event.preventDefault()
       }
@@ -158,18 +163,23 @@ function Select(props) {
         type: 'open',
       })
     }
+    if (event.which === BACKSPACE && state.text === '') {
+      if (typeof props.onChange === 'function') {
+        props.onChange(props.value.splice(0, props.value.length - 1), false)
+      }
+    }
     if (event.which === ARROW_DOWN || event.which === ARROW_UP) {
       event.preventDefault()
       if (typeof props.onChange !== 'function') {
         return
       }
       let currentIndex = -1
-      const filtered = state.filtering ? getFilteredOptions(state.text) : props.options
+      const filtered = getFilteredOptions(state.text)
       if (!filtered.length) {
         return
       }
       filtered.map((option, index) => {
-        if (option.value === props.value) {
+        if (option.value === state.selected) {
           currentIndex = index
         }
       })
@@ -187,24 +197,22 @@ function Select(props) {
         }
       }
       if (filtered[nextIndex]) {
-        props.onChange(filtered[nextIndex].value)
+        dispatchState({
+          type: 'select',
+          value: filtered[nextIndex].value,
+        })
       }
       else {
-        props.onChange(props.nullable ? null : undefined)
+        dispatchState({
+          type: 'select',
+          value: filtered[nextIndex].value,
+        })
       }
     }
     if (event.which === ESCAPE) {
       if (state.dropdownOpen) {
-        let formatted = ''
-        if (validChoice(props.value, props)) {
-          const selectedOption = props.options.find(option => {
-            return option.value === props.value
-          })
-          formatted = selectedOption ? selectedOption.label : `${props.value}`
-        }
         dispatchState({
           type: 'close',
-          formatted,
         })
       }
     }
@@ -222,7 +230,10 @@ function Select(props) {
     }
     let cleaned = newValue.trim().toLowerCase()
     if (cleaned.length <= 0) {
-      props.onChange(props.nullable ? null : undefined, false)
+      dispatchState({
+        type: 'select',
+        value: null,
+      })
     }
     else {
       let valueMatch = null
@@ -233,7 +244,10 @@ function Select(props) {
         }
       })
       if (valueMatch !== null) {
-        props.onChange(valueMatch, false)
+        dispatchState({
+          type: 'select',
+          value: valueMatch,
+        })
       }
       else {
         let labelMatch = null
@@ -244,103 +258,47 @@ function Select(props) {
           }
         })
         if (labelMatch !== null) {
-          props.onChange(labelMatch, false)
+          dispatchState({
+            type: 'select',
+            value: labelMatch,
+          })
         }
         else {
           const filtered = getFilteredOptions(newValue)
           const current = filtered.find(option => {
-            return option.value === props.value
+            return option.value === state.selected
           })
           const firstFilteredValue = filtered.length > 0 ? filtered[0].value : undefined
-          props.onChange(current ? current.value : firstFilteredValue, false)
+          dispatchState({
+            type: 'select',
+            value: current ? current.value : firstFilteredValue,
+          })
         }
       }
     }
   }
+  const handleContainerClick = (event) => {
+    if (!state.dropdownOpen) {
+      dispatchState({
+        type: 'open',
+      })
+    }
+  }
   const handleDropdownSelect = (value) => {
-    const selected = props.options.find(option => {
-      return option.value === value
-    })
+    const selected = props.options.find(option => option.value === value)
     if (!selected) {
       console.warn('Could not find selected value in options', value)
       return
     }
-    if (typeof props.onChange === 'function') {
-      props.onChange(value, true)
-    }
+    addValue(value)
     textRef.current && textRef.current.focus()
     dispatchState({
       type: 'close',
-      formatted: selected.label,
     })
   }
 
-  const setTextFromPropValue = () => {
-    const current = props.options.find(option => {
-      return (option.value === props.value)
-    })
-    if (current) {
-      dispatchState({
-        type: 'textOverride',
-        text: current.label,
-      })
-    }
-    else {
-      dispatchState({
-        type: 'textOverride',
-        text: `${props.value}`,
-      })
-    }
-  }
-
-  // on component received new props
-  const prevProps = usePrevious(props)
-  useEffect(() => {
-    if (!prevProps) {
-      return
-    }
-    if (prevProps.value !== props.value ) {
-      if (props.value === null) {
-        dispatchState({
-          type: 'textOverride',
-          text: '',
-        })
-      }
-      else if (validChoice(props.value, props)) {
-        if (!state.dropdownOpen) {
-          setTextFromPropValue()
-        }
-        else {
-          const filtered = getFilteredOptions(state.text)
-          const current = filtered.find(option => {
-            return (option.value === props.value)
-          })
-          if (!current) {
-            setTextFromPropValue()
-          }
-        }
-      }
-    }
-    if (props.disabled && !prevProps.disabled) {
-      onBlur()
-    }
-  })
-  const onClear = () => {
-    if (props.disabled) {
-      return
-    }
-    if (typeof props.onChange === 'function') {
-      props.onChange(props.nullable ? null : undefined, false)
-      dispatchState({
-        type: 'textFilter',
-        text: '',
-      })
-      textRef.current && textRef.current.focus()
-    }
-  }
-
-  const filtered = state.filtering ? getFilteredOptions(state.text) : props.options
-  const hasValue = !!props.value
+  const filtered = getFilteredOptions(state.text)
+  const hasValue = props.value.length > 0
   const clearable = hasValue && !props.disabled
   return (
     <BlockDiv
@@ -351,8 +309,25 @@ function Select(props) {
         clearable,
       }, props.className)}
       onBlur={handleContainerBlur}
+      onClick={handleContainerClick}
     >
-      <WidgetText
+      <ul className="selected">
+        {props.value.map((selectedValue, valueIndex) => {
+          const option = props.options.find((option) => option.value === selectedValue)
+          const remove = () => {
+            removeAt(valueIndex)
+          }
+          return (
+            <SelectedOption
+              key={`selected-${selectedValue}`}
+              value={selectedValue}
+              label={option ? option.label : selectedValue}
+              remove={remove}
+            />
+          )
+        })}
+      </ul>
+      <Text
         ref={textRef}
         placeholder={props.placeholder}
         value={state.text}
@@ -366,12 +341,15 @@ function Select(props) {
         className={props.textClassName}
         id={props.id}
         icon={props.icon}
-        onClear={clearable ? onClear : undefined}
       />
+      {clearable && (
+        <ClearButton onClick={clearAll} />
+      )}
+      {props.icon}
       {state.dropdownOpen && (
         <Dropdown
           options={filtered}
-          value={props.value}
+          value={state.selected}
           onSelect={handleDropdownSelect}
           {...props.dropdownProps}
         />
@@ -379,9 +357,8 @@ function Select(props) {
     </BlockDiv>
   )
 }
-Select.propTypes = {
-  value: mirecoPropTypes.selectValue,
-  nullable: PropTypes.bool,
+MultiSelect.propTypes = {
+  value: PropTypes.arrayOf(mirecoPropTypes.selectValue).isRequired,
   options: PropTypes.arrayOf(mirecoPropTypes.selectOption).isRequired,
   placeholder: PropTypes.string,
   block: PropTypes.bool,
@@ -397,11 +374,10 @@ Select.propTypes = {
   id: PropTypes.string,
   icon: PropTypes.node,
 }
-Select.defaultProps = {
-  nullable: true,
+MultiSelect.defaultProps = {
   options: [],
   filter: true,
   icon: ChevronDownVector,
 }
 
-export default Select
+export default MultiSelect
