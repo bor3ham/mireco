@@ -450,6 +450,7 @@ class Demo extends React.PureComponent {
                 block={this.state.flags.blockMode}
               />
             )}
+            {this.state.flags.showNumber && inlineSpace}
             {this.state.flags.showMultiSelect && (
               <MultiSelect
                 value={this.state.formValue.multiSelect}

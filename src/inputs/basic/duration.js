@@ -115,6 +115,7 @@ function Duration(props) {
   }
   return (
     <WidgetText
+      id={props.id}
       value={textValue}
       onChange={handleTextChange}
       onBlur={handleTextBlur}
@@ -140,6 +141,7 @@ Duration.propTypes = {
   disabled: PropTypes.bool,
   className: PropTypes.string,
   value: PropTypes.number,
+  id: PropTypes.string,
 }
 Duration.defaultProps = {
   block: false,
