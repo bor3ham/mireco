@@ -100,6 +100,7 @@ class Demo extends React.PureComponent {
       showCheckbox: !!Cookies.get('showCheckbox'),
       showDate: !!Cookies.get('showDate'),
       showDuration: !!Cookies.get('showDuration'),
+      showMultiSelect: !!Cookies.get('showMultiSelect'),
       showNumber: !!Cookies.get('showNumber'),
       showRange: !!Cookies.get('showRange'),
       showSelect: !!Cookies.get('showSelect'),
@@ -109,7 +110,6 @@ class Demo extends React.PureComponent {
 
       showDatetime: !!Cookies.get('showDatetime'),
       showDatetimeRange: !!Cookies.get('showDatetimeRange'),
-      showMultiSelect: !!Cookies.get('showMultiSelect'),
     },
     mountIndex: 0,
   }
@@ -287,6 +287,14 @@ class Demo extends React.PureComponent {
               />
               <Checkbox
                 block
+                value={this.state.flags.showMultiSelect}
+                onChange={(newValue) => {
+                  this.setFlag('showMultiSelect', newValue)
+                }}
+                label="Show multi select input"
+              />
+              <Checkbox
+                block
                 value={this.state.flags.showNumber}
                 onChange={(newValue) => {
                   this.setFlag('showNumber', newValue)
@@ -351,14 +359,6 @@ class Demo extends React.PureComponent {
                   this.setFlag('showDatetimeRange', newValue)
                 }}
                 label="Show datetime range input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showMultiSelect}
-                onChange={(newValue) => {
-                  this.setFlag('showMultiSelect', newValue)
-                }}
-                label="Show multi select input"
               />
             </div>
           </div>
@@ -450,6 +450,19 @@ class Demo extends React.PureComponent {
                 block={this.state.flags.blockMode}
               />
             )}
+            {this.state.flags.showMultiSelect && (
+              <MultiSelect
+                value={this.state.formValue.multiSelect}
+                options={SELECT_OPTIONS}
+                onChange={(newValue) => {
+                  this.updateFormValue('multiSelect', newValue)
+                }}
+                disabled={this.state.flags.disabled}
+                block={this.state.flags.blockMode}
+                placeholder="Multi Select"
+              />
+            )}
+            {this.state.flags.showMultiSelect && inlineSpace}
             {this.state.flags.showNumber && inlineSpace}
             {this.state.flags.showRange && (
               <Range
@@ -533,19 +546,6 @@ class Demo extends React.PureComponent {
               />
             )}
             {this.state.flags.showDatetimeRange && inlineSpace}
-            {this.state.flags.showMultiSelect && (
-              <MultiSelect
-                value={this.state.formValue.multiSelect}
-                options={SELECT_OPTIONS}
-                onChange={(newValue) => {
-                  this.updateFormValue('multiSelect', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-                placeholder="Multi Select"
-              />
-            )}
-            {this.state.flags.showMultiSelect && inlineSpace}
             {/* submit */}
             <Button
               type="submit"
