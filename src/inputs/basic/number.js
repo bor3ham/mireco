@@ -2,18 +2,10 @@ import React, { useRef, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
+const ARROW_DOWN = 40
+const ARROW_UP = 38
+
 function Number(props) {
-  const parse = (textValue) => {
-    const trimmed = textValue.trim()
-    if (trimmed.length === 0) {
-      return null
-    }
-    const parsed = parseFloat(trimmed)
-    if (isNaN(parsed)) {
-      return undefined
-    }
-    return parsed
-  }
   const stringify = (value) => {
     if (typeof value === 'number') {
       return `${value}`
@@ -24,6 +16,43 @@ function Number(props) {
   const inputRef = useRef()
   const prevValue = useRef()
   const [textValue, setTextValue] = useState(stringify(props.value))
+  // const lastValidValue = useRef(typeof props.value === 'number' ? props.value : null)
+  // useEffect(() => {
+  //   if (typeof props.value === 'number') {
+  //     lastValidValue.current = props.value
+  //   }
+  // }, [props.value])
+
+  const parse = (textValue) => {
+    const trimmed = textValue.trim()
+    if (trimmed.length === 0) {
+      return null
+    }
+    const parsed = parseFloat(trimmed)
+    if (isNaN(parsed)) {
+      return undefined
+    }
+    if (typeof props.step === 'number') {
+      if (parsed % props.step !== 0) {
+        return undefined
+      }
+    }
+    if (typeof props.min === 'number' && parsed < props.min) {
+      // lastValidValue.current = props.min
+      // if (typeof props.step === 'number') {
+      //   lastValidValue.current -= props.min % props.step
+      // }
+      return undefined
+    }
+    if (typeof props.max === 'number' && parsed > props.max) {
+      // lastValidValue.current = props.max
+      // if (typeof props.step === 'number') {
+      //   lastValidValue.current -= props.max % props.step
+      // }
+      return undefined
+    }
+    return parsed
+  }
 
   useEffect(() => {
     if (typeof props.value !== 'undefined' && parse(textValue) != props.value) {
@@ -32,6 +61,33 @@ function Number(props) {
   }, [props.value])
   prevValue.current = props.value
 
+  const handleKeyDown = (event) => {
+    if (event) {
+      if (event.which === ARROW_DOWN || event.which === ARROW_UP) {
+        event.preventDefault()
+        if (typeof props.onChange !== 'function') {
+          return
+        }
+        const current = typeof props.value === 'number' ? props.value : 0
+        const step = typeof props.step === 'number' ? props.step : 1
+        if (event.which === ARROW_UP) {
+          const next = current + step
+          if (typeof props.max !== 'number' || next <= props.max) {
+            props.onChange(next)
+          }
+        }
+        if (event.which === ARROW_DOWN) {
+          const next = current - step
+          if (typeof props.min !== 'number' || next >= props.min) {
+            props.onChange(next)
+          }
+        }
+      }
+    }
+    if (typeof props.onKeyDown === 'function') {
+      props.onKeyDown(event)
+    }
+  }
   const handleChange = (event) => {
     if (typeof props.onChange === 'function') {
       const newValue = inputRef.current.value
@@ -39,10 +95,15 @@ function Number(props) {
       props.onChange(parse(newValue))
     }
   }
-  const handleBlur = () => {
-    setTextValue(stringify(props.value))
+  const handleBlur = (event) => {
+    // if (typeof props.value !== 'undefined') {
+    const stringified = stringify(props.value)
+    setTextValue(stringified)
+    // } else {
+    //   props.onChange(lastValidValue.current)
+    // }
     if (typeof props.onBlur === 'function') {
-      props.onBlur()
+      props.onBlur(event)
     }
   }
 
@@ -52,7 +113,7 @@ function Number(props) {
 
       value={textValue}
       onChange={handleChange}
-      type="number"
+      type="text"
       name={props.name}
       required={props.required}
       placeholder={props.placeholder || ''}
@@ -74,7 +135,7 @@ function Number(props) {
 
       onFocus={props.onFocus}
       onBlur={handleBlur}
-      onKeyDown={props.onKeyDown}
+      onKeyDown={handleKeyDown}
       onKeyUp={props.onKeyUp}
       onClick={props.onClick}
     />
@@ -90,6 +151,8 @@ Number.propTypes = {
   autoFocus: PropTypes.bool,
   tabIndex: PropTypes.number,
   step: PropTypes.number,
+  min: PropTypes.number,
+  max: PropTypes.number,
 
   block: PropTypes.bool,
   className: PropTypes.string,

@@ -302,7 +302,7 @@ function MultiSelect(props) {
           const firstFilteredValue = filtered.length > 0 ? filtered[0].value : undefined
           dispatchState({
             type: 'select',
-            value: current ? current.value : firstFilteredValue,
+            value: current ? current.value : (firstFilteredValue || null),
           })
         }
       }

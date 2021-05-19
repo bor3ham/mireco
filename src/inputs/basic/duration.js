@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import humanizeDuration from 'humanize-duration'
@@ -7,154 +7,160 @@ import parseDuration from 'parse-duration'
 parseDuration.month = parseDuration.week * 4
 parseDuration.year = parseDuration.week * 52
 
-import Text from './text.js'
+import { WidgetText, HourglassVector } from '../../components'
+import { usePrevious } from 'utilities'
 
-export default class Duration extends React.PureComponent {
-  static propTypes = {
-    block: PropTypes.bool,
-    onChange: PropTypes.func,
-    defaultTimeUnit: PropTypes.string,
-    placeholder: PropTypes.string,
-    incrementUnits: PropTypes.arrayOf(PropTypes.number),
-    humanizeUnits: PropTypes.arrayOf(PropTypes.string),
-    disabled: PropTypes.bool,
-    className: PropTypes.string,
-    value: PropTypes.number,
-  }
-  static defaultProps = {
-    block: false,
-    defaultTimeUnit: 'hours',
-    placeholder: 'Duration',
-    incrementUnits: [
-      // 1000, // seconds
-      60 * 1000, // minutes
-      60 * 60 * 1000, // hours
-      24 * 60 * 60 * 1000, // days
-      // 7 * 24 * 60 * 60 * 1000, // weeks
-      // (365.25 * 24 * 60 * 60 * 1000) / 12, // months
-    ],
-    humanizeUnits: [
-      'w',
-      'd',
-      'h',
-      'm',
-      's',
-    ],
-    disabled: false,
-  }
-  constructor(props) {
-    super(props)
-    this.state = {
-      textValue: this.formatValue(props.value),
+const ARROW_DOWN = 40
+const ARROW_UP = 38
+
+function Duration(props) {
+  const formatValue = (value) => {
+    let formatted = ''
+    if (typeof value === 'number') {
+      formatted = humanizeDuration(value, {
+        units: props.humanizeUnits,
+      })
     }
+    return formatted
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.value !== this.props.value ) {
-      if (this.props.value === null) {
-        this.setState({textValue: ''})
-      }
-      else if (typeof this.props.value === 'number') {
-        if (this.props.value !== this.parseText(this.state.textValue)) {
-          this.setState({textValue: this.formatValue(this.props.value)})
-        }
-      }
-    }
-  }
-  parseText = (value) => {
+  const parseText = (value) => {
     let trimmed = value.trim()
     if (trimmed.length === 0) {
       return null
     }
     if (trimmed.replace(/[^\d.,-]/g) === trimmed) {
-      trimmed += ` ${this.props.defaultTimeUnit}`
+      trimmed += ` ${props.defaultTimeUnit}`
     }
 
-    let parsed = Math.floor(parseDuration(trimmed))
-    return parsed
-  }
-  formatValue = (value) => {
-    let formatted = ''
-    if (typeof value === 'number') {
-      formatted = humanizeDuration(value, {
-        units: this.props.humanizeUnits,
-      })
+    const parsed = parseDuration(trimmed)
+    if (parsed === 0 && trimmed[0] !== '0') {
+      return undefined
     }
-    return formatted
+    return Math.floor(parsed)
   }
-  bestIncrement = (value, goingUp) => {
+  const [textValue, setTextValue] = useState(formatValue(props.value))
+
+  // on component received new props
+  const prevProps = usePrevious(props)
+  useEffect(() => {
+    if (!prevProps) {
+      return
+    }
+    if (prevProps.value !== props.value ) {
+      if (props.value === null) {
+        setTextValue('')
+      }
+      else if (typeof props.value === 'number') {
+        if (props.value !== parseText(textValue)) {
+          setTextValue(formatValue(props.value))
+        }
+      }
+    }
+  })
+
+  const bestIncrement = (value, goingUp) => {
     let incIndex = 0
     if (typeof value === 'number') {
       while (
         (
-          (goingUp && this.props.value >= this.props.incrementUnits[incIndex + 1])
-          || (!goingUp && this.props.value > this.props.incrementUnits[incIndex + 1])
+          (goingUp && props.value >= props.incrementUnits[incIndex + 1])
+          || (!goingUp && props.value > props.incrementUnits[incIndex + 1])
         )
-        && incIndex < this.props.incrementUnits.length
+        && incIndex < props.incrementUnits.length
       ) {
         incIndex += 1
       }
     }
-    return this.props.incrementUnits[incIndex]
+    return props.incrementUnits[incIndex]
   }
-  handleTextChange = (newText) => {
-    this.setState({textValue: newText}, () => {
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(this.parseText(this.state.textValue), false)
-      }
-    })
+  const handleTextChange = (newText) => {
+    setTextValue(newText)
+    if (typeof props.onChange === 'function') {
+      props.onChange(parseText(newText), false)
+    }
   }
-  handleTextKeyDown = (event) => {
+  const handleTextKeyDown = (event) => {
     if (event) {
-      if (event.which === 40) {
+      if (event.which === ARROW_DOWN) {
         event.preventDefault()
-        if (typeof this.props.onChange === 'function') {
-          if (typeof this.props.value === 'number') {
-            this.props.onChange(
-              Math.max(this.props.value - this.bestIncrement(this.props.value, false), 0)
+        if (typeof props.onChange === 'function') {
+          if (typeof props.value === 'number') {
+            props.onChange(
+              Math.max(props.value - bestIncrement(props.value, false), 0)
             )
           }
           else {
-            this.props.onChange(0)
+            props.onChange(0)
           }
         }
       }
-      if (event.which === 38) {
+      if (event.which === ARROW_UP) {
         event.preventDefault()
-        if (typeof this.props.onChange === 'function') {
-          if (typeof this.props.value === 'number') {
-            this.props.onChange(this.props.value + this.bestIncrement(this.props.value, true))
+        if (typeof props.onChange === 'function') {
+          if (typeof props.value === 'number') {
+            props.onChange(props.value + bestIncrement(props.value, true))
           }
           else {
-            this.props.onChange(this.parseText(`1 ${this.props.defaultTimeUnit}`))
+            props.onChange(parseText(`1 ${props.defaultTimeUnit}`))
           }
         }
       }
     }
   }
-  handleTextBlur = () => {
-    this.setState({
-      textValue: this.formatValue(this.props.value),
-    }, () => {
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(this.props.value, true)
-      }
-    })
+  const handleTextBlur = () => {
+    setTextValue(formatValue(props.value))
+    if (typeof props.onChange === 'function') {
+      props.onChange(props.value, true)
+    }
   }
-  render() {
-    return (
-      <Text
-        value={this.state.textValue}
-        onChange={this.handleTextChange}
-        onBlur={this.handleTextBlur}
-        block={this.props.block}
-        placeholder={this.props.placeholder}
-        onKeyDown={this.handleTextKeyDown}
-        disabled={this.props.disabled}
-        className={classNames(
-          'duration',
-          this.props.className,
-        )}
-      />
-    )
-  }
+  return (
+    <WidgetText
+      value={textValue}
+      onChange={handleTextChange}
+      onBlur={handleTextBlur}
+      block={props.block}
+      placeholder={props.placeholder}
+      onKeyDown={handleTextKeyDown}
+      disabled={props.disabled}
+      className={classNames(
+        'MIRECO-duration',
+        props.className,
+      )}
+      icon={HourglassVector}
+    />
+  )
 }
+Duration.propTypes = {
+  block: PropTypes.bool,
+  onChange: PropTypes.func,
+  defaultTimeUnit: PropTypes.string,
+  placeholder: PropTypes.string,
+  incrementUnits: PropTypes.arrayOf(PropTypes.number),
+  humanizeUnits: PropTypes.arrayOf(PropTypes.string),
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
+  value: PropTypes.number,
+}
+Duration.defaultProps = {
+  block: false,
+  defaultTimeUnit: 'hours',
+  placeholder: 'Duration',
+  incrementUnits: [
+    // 1000, // seconds
+    60 * 1000, // minutes
+    60 * 60 * 1000, // hours
+    24 * 60 * 60 * 1000, // days
+    // 7 * 24 * 60 * 60 * 1000, // weeks
+    // (365.25 * 24 * 60 * 60 * 1000) / 12, // months
+  ],
+  humanizeUnits: [
+    'w',
+    'd',
+    'h',
+    'm',
+    's',
+  ],
+  disabled: false,
+}
+
+export default Duration
