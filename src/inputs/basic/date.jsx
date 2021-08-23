@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { Calendar, BlockDiv, WidgetText, CalendarVector } from '../../components'
-import { propTypes as mirecoPropTypes, constants } from 'utilities'
+import { propTypes as mirecoPropTypes, constants } from '../../utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38

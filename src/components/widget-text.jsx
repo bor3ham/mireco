@@ -2,10 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Text from '../inputs/basic/text.js'
-import BlockDiv from './block-div.js'
-import ClearButton from './clear-button.js'
-import ChevronDownVector from './chevron-down-vector.js'
+import Text from '../inputs/basic/text.jsx'
+import BlockDiv from './block-div.jsx'
+import ClearButton from './clear-button.jsx'
+import ChevronDownVector from './chevron-down-vector.jsx'
 
 let WidgetText = (props, ref) => {
   const { onClear, icon, ...inputProps } = props

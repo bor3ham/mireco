@@ -12,7 +12,7 @@ import {
   parse,
 } from 'date-fns'
 
-import { constants, propTypes as mirecoPropTypes } from 'utilities'
+import { constants, propTypes as mirecoPropTypes } from '../utilities'
 
 const arrowLeft = (
   <svg

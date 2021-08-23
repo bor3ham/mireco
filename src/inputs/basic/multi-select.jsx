@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, ChevronDownVector, ClearButton } from '../../components'
-import Text from './text.js'
-import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
+import Text from './text.jsx'
+import { propTypes as mirecoPropTypes, usePrevious } from '../../utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38

@@ -60,14 +60,17 @@ typings/
 # next.js build output
 .next
 
-# build output
-dist/
+# packaged
+inputs.js*
+constants.js*
+components.js*
+prop-types.js*
+mireco-layout.css*
+mireco-theme.css*
+meta.json
 
-# packaged js
-inputs.js
-constants.js
-components.js
-prop-types.js
+# webpack build analysis
+report.html
 
 # demo build
 demo/dist/*.js
@@ -77,9 +80,6 @@ demo/_site
 demo/dist/*.js
 demo/dist/*.css
 demo/.jekyll-cache
-
-# webpack build analysis
-report.html
 
 # mac bullshit
 *.DS_Store

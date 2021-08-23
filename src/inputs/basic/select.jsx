@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, WidgetText, ChevronDownVector } from '../../components'
-import { propTypes as mirecoPropTypes, usePrevious } from 'utilities'
+import { propTypes as mirecoPropTypes, usePrevious } from '../../utilities'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38

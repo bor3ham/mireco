@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 
-import Datetime from './datetime.js'
-import ClearButton from '../../components/clear-button.js'
-import BlockDiv from '../../components/block-div.js'
-import { constants } from 'utilities'
+import Datetime from './datetime.jsx'
+import ClearButton from '../../components/clear-button.jsx'
+import BlockDiv from '../../components/block-div.jsx'
+import { constants } from '../../utilities'
 
 function datetimeNull(datetime) {
   return datetime === null

@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Label from '../../components/label.js'
-import CheckboxInput from './checkbox-input.js'
+import Label from '../../components/label.jsx'
+import CheckboxInput from './checkbox-input.jsx'
 
 const check = (
   <svg

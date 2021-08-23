@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Text from './text.js'
+import Text from './text.jsx'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38

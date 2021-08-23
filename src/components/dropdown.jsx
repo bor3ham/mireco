@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import { usePrevious } from 'utilities'
+import { usePrevious } from '../utilities'
 
 let DropdownOption = (props, ref) => {
   const handleClick = () => {

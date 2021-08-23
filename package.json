@@ -8,15 +8,7 @@
   "private": false,
   "scripts": {
     "publish:demo": "git branch -D gh-pages && git push origin --delete gh-pages; git checkout -b gh-pages && cd demo && yarn && yarn build && cd .. && git add . && git add -f demo/dist && git add -f demo/node_modules/uptick-demo-site/dist && git commit -m \"Demo site build\" && git push origin gh-pages && git checkout master && git push origin `git subtree split --prefix demo gh-pages`:gh-pages --force",
-    "build:js": "./node_modules/.bin/webpack --config webpack.build.js",
-    "watch:js": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
-    "build:layout:css": "./node_modules/.bin/stylus src/layout.styl -o dist/mireco-layout.css",
-    "build:theme:css": "./node_modules/.bin/stylus src/theme.styl -o dist/mireco-theme.css",
-    "watch:layout:css": "./node_modules/.bin/stylus src/layout.styl -o dist/mireco-layout.css --watch",
-    "watch:theme:css": "./node_modules/.bin/stylus src/theme.styl -o dist/mireco-theme.css --watch",
-    "watch": "./node_modules/.bin/concurrently \"npm run watch:js\" \"npm run watch:layout:css\" \"npm run watch:theme:css\"",
-    "build": "npm run build:js && npm run build:layout:css && npm run build:theme:css",
-    "prepare": "npm run build"
+    "prepare": "npm run esbuild-release.js"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -31,21 +23,10 @@
     "react-dom": "~16.8.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-export-default-from": "^7.5.2",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/preset-react": "^7.0.0",
-    "babel-eslint": "^10.0.3",
-    "babel-loader": "^8.0.6",
-    "circular-dependency-plugin": "^5.2.0",
     "concurrently": "^5.2.0",
+    "esbuild": "^0.12.22",
+    "esbuild-stylus-loader": "^0.3.1",
     "eslint": "^6.4.0",
-    "eslint-plugin-react": "^7.14.3",
-    "peer-deps-externals-webpack-plugin": "^1.0.4",
-    "stylus": "^0.54.7",
-    "webpack": "^4.41.6",
-    "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-cli": "^3.3.11"
+    "eslint-plugin-react": "^7.14.3"
   }
 }

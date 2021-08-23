@@ -1,3 +1,3 @@
-export AsyncSelect from './async-select.js'
-export Datetime from './datetime.js'
-export DatetimeRange from './datetime-range.js'
+export { default as AsyncSelect } from './async-select.jsx'
+export { default as Datetime } from './datetime.jsx'
+export { default as DatetimeRange } from './datetime-range.jsx'

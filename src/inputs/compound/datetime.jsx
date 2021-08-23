@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
-import DateInput from '../basic/date.js'
-import Time from '../basic/time.js'
-import BlockDiv from '../../components/block-div.js'
-import ClearButton from '../../components/clear-button.js'
-import { constants, propTypes as mirecoPropTypes } from 'utilities'
+import DateInput from '../basic/date.jsx'
+import Time from '../basic/time.jsx'
+import BlockDiv from '../../components/block-div.jsx'
+import ClearButton from '../../components/clear-button.jsx'
+import { constants, propTypes as mirecoPropTypes } from '../../utilities'
 
 function validDate(date) {
   return typeof date === 'string'
