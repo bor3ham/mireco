@@ -1,6 +1,7 @@
 const path = require('path')
-const pkg = require(path.resolve('./package.json'))
 const { stylusLoader } = require('esbuild-stylus-loader')
+
+const pkg = require(path.resolve('./package.json'))
 
 const external = [
   ...Object.keys(pkg.dependencies || {}),
@@ -12,10 +13,10 @@ exports.config = {
     stylusLoader(),
   ],
   entryPoints: [
-    './src/utilities/constants.js',
-    './src/utilities/prop-types',
+    './src/prop-types',
     './src/components',
     './src/inputs',
+    './src/constants.js',
     './src/mireco-layout.styl',
     './src/mireco-theme.styl',
   ],
@@ -23,5 +24,6 @@ exports.config = {
   metafile: true,
   bundle: true,
   format: 'esm',
+  target: ['esnext'],
   external,
 }

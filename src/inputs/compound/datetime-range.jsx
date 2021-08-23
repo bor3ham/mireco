@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import Datetime from './datetime.jsx'
 import ClearButton from '../../components/clear-button.jsx'
 import BlockDiv from '../../components/block-div.jsx'
-import { constants } from '../../utilities'
+import * as constants from '../../constants.js'
 
 function datetimeNull(datetime) {
   return datetime === null

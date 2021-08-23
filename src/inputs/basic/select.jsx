@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, WidgetText, ChevronDownVector } from '../../components'
-import { propTypes as mirecoPropTypes, usePrevious } from '../../utilities'
+import { selectValue, selectOption } from '../../prop-types/select.js'
+import { usePrevious } from '../../hooks.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
@@ -380,9 +381,9 @@ function Select(props) {
   )
 }
 Select.propTypes = {
-  value: mirecoPropTypes.selectValue,
+  value: selectValue,
   nullable: PropTypes.bool,
-  options: PropTypes.arrayOf(mirecoPropTypes.selectOption).isRequired,
+  options: PropTypes.arrayOf(selectOption).isRequired,
   placeholder: PropTypes.string,
   block: PropTypes.bool,
   disabled: PropTypes.bool,

@@ -21,7 +21,7 @@ import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
 import { startOfDay, startOfHour, addDays, addHours, addMinutes, format } from 'date-fns'
 
-import ResizeContainer from './resize-container.js'
+import ResizeContainer from './resize-container.jsx'
 
 const SELECT_OPTIONS = [
   {value: 'car', label: 'Car'},

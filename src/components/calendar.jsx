@@ -12,7 +12,8 @@ import {
   parse,
 } from 'date-fns'
 
-import { constants, propTypes as mirecoPropTypes } from '../utilities'
+import { ISO_8601_DATE_FORMAT } from '../constants.js'
+import { datePropType } from '../prop-types/date.js'
 
 const arrowLeft = (
   <svg
@@ -93,7 +94,7 @@ export default class Calendar extends React.Component {
     let valueYear = getYear(new Date())
     let valueMonth = getMonth(new Date())
     if (typeof value === 'string') {
-      let parsedValue = parse(value, constants.ISO_8601_DATE_FORMAT, new Date())
+      let parsedValue = parse(value, ISO_8601_DATE_FORMAT, new Date())
       valueYear = getYear(parsedValue)
       valueMonth = getMonth(parsedValue)
     }
@@ -137,7 +138,7 @@ export default class Calendar extends React.Component {
     })
   }
   render() {
-    let today = format(new Date(), constants.ISO_8601_DATE_FORMAT)
+    let today = format(new Date(), ISO_8601_DATE_FORMAT)
 
     let weeks = []
     let firstDay = startOfISOWeek(new Date(this.state.year, this.state.month))
@@ -146,7 +147,7 @@ export default class Calendar extends React.Component {
     while (+day < +lastDay) {
       let newWeek = []
       for (var i = 0; i < 7; i++) {
-        newWeek.push(format(addDays(day, i), constants.ISO_8601_DATE_FORMAT))
+        newWeek.push(format(addDays(day, i), ISO_8601_DATE_FORMAT))
       }
       weeks.push(newWeek)
       day = addWeeks(day, 1)
@@ -167,7 +168,7 @@ export default class Calendar extends React.Component {
           <tbody>
             <tr>
               {weeks[0].map((day, dayIndex) => {
-                const parsedDay = parse(day, constants.ISO_8601_DATE_FORMAT, new Date())
+                const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
                 return (
                   <th key={`header-${dayIndex}`}>
                     {format(parsedDay, 'EEEEEE')}
@@ -179,7 +180,7 @@ export default class Calendar extends React.Component {
               return (
                 <tr key={`week-${weekIndex}`}>
                   {week.map((day, dayIndex) => {
-                    const parsedDay = parse(day, constants.ISO_8601_DATE_FORMAT, new Date())
+                    const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
                     return (
                       <td key={`day-${dayIndex}`} className={classNames({
                         'outside-month': getMonth(parsedDay) != this.state.month,

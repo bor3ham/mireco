@@ -62,7 +62,7 @@ typings/
 
 # packaged
 inputs.js*
-constants.js*
+/constants.js*
 components.js*
 prop-types.js*
 mireco-layout.css*

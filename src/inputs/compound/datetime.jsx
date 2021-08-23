@@ -7,7 +7,8 @@ import DateInput from '../basic/date.jsx'
 import Time from '../basic/time.jsx'
 import BlockDiv from '../../components/block-div.jsx'
 import ClearButton from '../../components/clear-button.jsx'
-import { constants, propTypes as mirecoPropTypes } from '../../utilities'
+import { ISO_8601_DATE_FORMAT } from '../../constants.js'
+import { datePropType } from '../../prop-types/date.js'
 
 function validDate(date) {
   return typeof date === 'string'
@@ -61,7 +62,7 @@ export default class Datetime extends React.PureComponent {
     showClear: PropTypes.bool,
     className: PropTypes.string,
     relativeTo: PropTypes.number,
-    defaultDate: mirecoPropTypes.date,
+    defaultDate: datePropType,
     dateTextClassName: PropTypes.string,
     timeTextClassName: PropTypes.string,
     clearButtonClassName: PropTypes.string,

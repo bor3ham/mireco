@@ -4,7 +4,8 @@ import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { Calendar, BlockDiv, WidgetText, CalendarVector } from '../../components'
-import { propTypes as mirecoPropTypes, constants } from '../../utilities'
+import { datePropType } from '../../prop-types/date.js'
+import { ISO_8601_DATE_FORMAT } from '../../constants.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
@@ -82,7 +83,7 @@ export default class MirecoDate extends React.PureComponent {
     if (value === null || typeof value === 'undefined') {
       return ''
     }
-    return format(parse(value, constants.ISO_8601_DATE_FORMAT, new Date()), props.displayFormat)
+    return format(parse(value, ISO_8601_DATE_FORMAT, new Date()), props.displayFormat)
   }
   parseText = (textValue) => {
     let trimmed = textValue.trim()
@@ -99,7 +100,7 @@ export default class MirecoDate extends React.PureComponent {
       let parsed = parse(trimmed, inputFormat, new Date())
       if (isValid(parsed)) {
         // console.log(textValue, 'valid format:', format, this.format(this.props, +parsed))
-        valid = format(parsed, constants.ISO_8601_DATE_FORMAT)
+        valid = format(parsed, ISO_8601_DATE_FORMAT)
       }
     })
     return valid
@@ -139,19 +140,19 @@ export default class MirecoDate extends React.PureComponent {
     if (event) {
       let current = new Date()
       if (typeof this.props.value === 'string') {
-        current = parse(this.props.value, constants.ISO_8601_DATE_FORMAT, new Date())
+        current = parse(this.props.value, ISO_8601_DATE_FORMAT, new Date())
       }
       if (event.which === ARROW_DOWN) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(format(addDays(current, 1), constants.ISO_8601_DATE_FORMAT), false)
+          this.props.onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
         }
         this.setState({calendarOpen: true})
       }
       if (event.which === ARROW_UP) {
         event.preventDefault()
         if (typeof this.props.onChange === 'function') {
-          this.props.onChange(format(subDays(current, 1), constants.ISO_8601_DATE_FORMAT), false)
+          this.props.onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
         }
         this.setState({calendarOpen: true})
       }

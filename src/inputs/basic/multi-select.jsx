@@ -4,7 +4,8 @@ import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, ChevronDownVector, ClearButton } from '../../components'
 import Text from './text.jsx'
-import { propTypes as mirecoPropTypes, usePrevious } from '../../utilities'
+import { selectValue, selectOption } from '../../prop-types/select.js'
+import { usePrevious } from '../../hooks.js'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
@@ -404,8 +405,8 @@ function MultiSelect(props) {
   )
 }
 MultiSelect.propTypes = {
-  value: PropTypes.arrayOf(mirecoPropTypes.selectValue).isRequired,
-  options: PropTypes.arrayOf(mirecoPropTypes.selectOption).isRequired,
+  value: PropTypes.arrayOf(selectValue).isRequired,
+  options: PropTypes.arrayOf(selectOption).isRequired,
   placeholder: PropTypes.string,
   block: PropTypes.bool,
   disabled: PropTypes.bool,

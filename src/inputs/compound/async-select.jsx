@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Select from '../basic/select.jsx'
-import { propTypes as mirecoPropTypes } from '../../utilities'
+import { selectOption } from '../../prop-types/select.js'
 import ChevronDownVector from '../../components/chevron-down-vector.jsx'
 import SpinnerVector from '../../components/spinner-vector.jsx'
 
@@ -111,7 +111,7 @@ function AsyncSelect(props) {
   )
 }
 AsyncSelect.propTypes = {
-  value: mirecoPropTypes.selectOption,
+  value: selectOption,
   onChange: PropTypes.func,
   getOptions: PropTypes.func.isRequired,
   loadingPrompt: PropTypes.string,

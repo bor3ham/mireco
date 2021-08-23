@@ -38,4 +38,4 @@ const datePropType = (props, propName, componentName) => {
 }
 datePropType.isRequired = requiredDatePropType
 
-export default datePropType
+export { datePropType }
