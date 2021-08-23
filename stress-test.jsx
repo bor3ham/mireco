@@ -15,7 +15,7 @@ import {
   DatetimeRange,
   MultiSelect,
 } from 'mireco/inputs'
-import * as mirecoConstants from 'mireco/constants'
+import { ISO_8601_DATE_FORMAT } from 'mireco/constants'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
@@ -56,7 +56,7 @@ function randomValue() {
     checked: casual.coin_flip,
     date: casual.coin_flip ? null : format(
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
-      mirecoConstants.ISO_8601_DATE_FORMAT,
+      ISO_8601_DATE_FORMAT,
     ),
     duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
     number: casual.coin_flip ? null : casual.integer(0, 100),
