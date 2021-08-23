@@ -7,33 +7,21 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build:js": "./node_modules/.bin/webpack",
-    "build:css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css",
-    "watch:css": "./node_modules/stylus/bin/stylus demo.styl -o dist/demo.css --include-css --watch",
-    "watch:js": "./node_modules/.bin/webpack --watch",
-    "watch": "./node_modules/.bin/concurrently \"npm run watch:js\" \"npm run watch:css\"",
-    "start": "./node_modules/.bin/concurrently \"npm run watch\" \"jekyll serve -P 4001\"",
-    "build": "npm run build:js && npm run build:css"
+    "start": "./node_modules/.bin/concurrently \"node esbuild-dev.js\" \"jekyll serve -P 4001\"",
+    "prepare": "node esbuild-release.js"
   },
   "dependencies": {
     "casual-browserify": "^1.5.19-2",
     "date-fns": "^2.3.0",
+    "esbuild": "^0.12.22",
+    "esbuild-stylus-loader": "^0.3.1",
     "js-cookie": "^2.2.0",
     "json-beautify": "^1.0.1",
-    "mireco": "^0.0.0",
     "react": "~16.8.6",
     "react-dom": "~16.8.6",
-    "uptick-demo-site": "^1.2.2"
+    "uptick-demo-site": "^1.2.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
-    "concurrently": "^5.2.0",
-    "stylus": "^0.54.7",
-    "webpack": "^4.41.0",
-    "webpack-cli": "^3.3.9"
+    "concurrently": "^5.2.0"
   }
 }
