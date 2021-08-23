@@ -66,7 +66,7 @@ const arrowRight = (
 export default class Calendar extends React.Component {
   static propTypes = {
     selectDay: PropTypes.func,
-    current: mirecoPropTypes.date,
+    current: datePropType,
     showCurrent: PropTypes.bool,
     highlight: PropTypes.func,
   }

@@ -73,12 +73,10 @@ meta.json
 report.html
 
 # demo build
-demo/dist/*.js
+demo/dist
 
 # jekyll build
 demo/_site
-demo/dist/*.js
-demo/dist/*.css
 demo/.jekyll-cache
 
 # mac bullshit

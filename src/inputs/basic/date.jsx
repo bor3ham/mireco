@@ -18,7 +18,7 @@ export default class MirecoDate extends React.PureComponent {
     inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
     displayFormat: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
-    value: mirecoPropTypes.date,
+    value: datePropType,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     block: PropTypes.bool,
