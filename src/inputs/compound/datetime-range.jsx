@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import Datetime from './datetime.jsx'
 import ClearButton from '../../components/clear-button.jsx'
 import BlockDiv from '../../components/block-div.jsx'
-import * as constants from '../../constants.js'
+import { ISO_8601_DATE_FORMAT } from '../../constants.js'
 
 function datetimeNull(datetime) {
   return datetime === null
@@ -237,11 +237,11 @@ export default class DatetimeRange extends React.PureComponent {
   render() {
     let defaultStartDate = undefined
     if (validDatetime(this.state.end)) {
-      defaultStartDate = format(new Date(this.state.end), constants.ISO_8601_DATE_FORMAT)
+      defaultStartDate = format(new Date(this.state.end), ISO_8601_DATE_FORMAT)
     }
     let defaultEndDate = undefined
     if (validDatetime(this.state.start)) {
-      defaultEndDate = format(new Date(this.state.start), constants.ISO_8601_DATE_FORMAT)
+      defaultEndDate = format(new Date(this.state.start), ISO_8601_DATE_FORMAT)
     }
     return (
       <BlockDiv
