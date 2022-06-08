@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import Select from '../basic/select.jsx'
 import { selectOption } from '../../prop-types/select.js'
 import ChevronDownVector from '../../components/chevron-down-vector.jsx'
-import SpinnerVector from '../../components/spinner-vector.jsx'
+import { SpinnerVector } from '../../components/spinner-vector.jsx'
 
 function AsyncSelect(props) {
   const [options, setOptions] = useState([])

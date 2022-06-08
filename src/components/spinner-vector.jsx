@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default (
+const SpinnerVector = (props) => (
   <svg
     width="24"
     height="24"
@@ -15,7 +15,7 @@ export default (
         style={{
           fill: 'none',
           fillOpacity: 0.271255,
-          stroke: '#333333',
+          stroke: props.colour,
           strokeWidth: 0.529167,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
@@ -28,3 +28,8 @@ export default (
     </g>
   </svg>
 )
+SpinnerVector.defaultProps = {
+  colour: '#333333',
+}
+
+export { SpinnerVector }
