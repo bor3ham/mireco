@@ -17,7 +17,7 @@
     "esbuild-stylus-loader": "^0.3.1",
     "js-cookie": "^2.2.0",
     "json-beautify": "^1.0.1",
-    "mireco": "^0.2.1",
+    "mireco": "^0.2.2",
     "react": "~16.8.6",
     "react-dom": "~16.8.6",
     "uptick-demo-site": "^1.2.3"
