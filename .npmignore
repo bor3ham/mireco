@@ -2,7 +2,7 @@ src/**/*.js
 src/**/*.babelrc
 src/**/*.json
 demo
-esbuild-*.js
+scripts
 *.js.map
 *.css.map
 meta.json

@@ -1,7 +1,6 @@
-const path = require('path')
 const { stylusLoader } = require('esbuild-stylus-loader')
 
-const pkg = require(path.resolve('./package.json'))
+const pkg = require('../package.json')
 
 const external = [
   ...Object.keys(pkg.dependencies || {}),
