@@ -2,8 +2,8 @@ import React from 'react'
 
 const SpinnerVector = (props) => (
   <svg
-    width="24"
-    height="24"
+    width={props.size}
+    height={props.size}
     viewBox="0 0 6.3499998 6.3499998"
     className="MIRECO-spinner"
   >
@@ -30,6 +30,7 @@ const SpinnerVector = (props) => (
 )
 SpinnerVector.defaultProps = {
   colour: '#333333',
+  size: 24,
 }
 
 export { SpinnerVector }
