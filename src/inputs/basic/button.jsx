@@ -6,6 +6,14 @@ function Button(props) {
   return (
     <button
       onClick={props.onClick}
+      onDoubleClick={props.onDoubleClick}
+      onMouseDown={props.onMouseDown}
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
+      onMouseMove={props.onMouseMove}
+      onMouseOut={props.onMouseOut}
+      onMouseOver={props.onMouseOver}
+      onMouseUp={props.onMouseUp}
       type={props.type}
       name={props.name}
       value={props.value}
@@ -28,6 +36,15 @@ function Button(props) {
 }
 Button.propTypes = {
   onClick: PropTypes.func,
+  onDoubleClick: PropTypes.func,
+  onMouseDown: PropTypes.func,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
+  onMouseMove: PropTypes.func,
+  onMouseOut: PropTypes.func,
+  onMouseOver: PropTypes.func,
+  onMouseUp: PropTypes.func,
+
   type: PropTypes.oneOf(['button', 'submit']),
   name: PropTypes.string,
   value: PropTypes.string,
