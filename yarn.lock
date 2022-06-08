@@ -299,10 +299,10 @@ minimatch@^3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-mireco@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/mireco/-/mireco-0.2.1.tgz#4109d29b2c9fe391a06dd5be44c41b9190d219f9"
-  integrity sha512-VhJh4BjViWb6XuG5ZtM5QTq+zKUURTXcqs+l+ZJQB42Tpvrn8adeVgv0pBmmhgjzD9f5VDwJe6u+Q2jBskZ0NA==
+mireco@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/mireco/-/mireco-0.2.2.tgz#72822bc8586a2325785d32adfe925bc285499bd8"
+  integrity sha512-jtcXNC0NF2of89MBuJPjlMhVl387QxCTeJ5jBn9+dh/NcGlBiECfYY96ugKJVe0EwhCltaWAtqNsmeQXYkKU/Q==
   dependencies:
     classnames "^2.2.6"
     date-fns "^2.3.0"
