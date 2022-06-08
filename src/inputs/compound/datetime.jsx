@@ -26,10 +26,10 @@ function dateNull(date) {
   return (date === null)
 }
 function dateAsMs(date) {
-  return +parse(date, constants.ISO_8601_DATE_FORMAT, new Date())
+  return +parse(date, ISO_8601_DATE_FORMAT, new Date())
 }
 function combineDateTime(date, time) {
-  return +startOfDay(parse(date, constants.ISO_8601_DATE_FORMAT, new Date())) + time
+  return +startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) + time
 }
 function splitDateTime(value) {
   if (value === null) {
@@ -39,7 +39,7 @@ function splitDateTime(value) {
     }
   }
   if (validDatetime(value)) {
-    const date = format(value, constants.ISO_8601_DATE_FORMAT)
+    const date = format(value, ISO_8601_DATE_FORMAT)
     const time = value - dateAsMs(date)
     return {
       date,
@@ -103,7 +103,7 @@ export default class Datetime extends React.PureComponent {
     if (this.props.defaultDate) {
       return this.props.defaultDate
     }
-    return format(new Date(), constants.ISO_8601_DATE_FORMAT)
+    return format(new Date(), ISO_8601_DATE_FORMAT)
   }
   combinedStateValue() {
     return combineDateTime(
