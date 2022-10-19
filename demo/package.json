@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "./node_modules/.bin/concurrently \"node esbuild-dev.js\" \"jekyll serve -P 4001\"",
+    "start": ".\"/node_modules/.bin/concurrently\" \"node esbuild-dev.js\" \"jekyll serve -P 4001\"",
     "prepare": "node esbuild-release.js"
   },
   "dependencies": {
@@ -17,9 +17,9 @@
     "esbuild-stylus-loader": "^0.3.1",
     "js-cookie": "^2.2.0",
     "json-beautify": "^1.0.1",
-    "mireco": "^0.2.2",
-    "react": "~16.8.6",
-    "react-dom": "~16.8.6",
+    "mireco": "0.3.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
     "uptick-demo-site": "^1.2.3"
   },
   "devDependencies": {

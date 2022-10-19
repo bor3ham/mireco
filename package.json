@@ -1,13 +1,13 @@
 {
   "name": "mireco",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "MIcro REact COmponents - extensible library for interfaces with no heavy deps",
   "repository": "git@github.com:bor3ham/mireco.git",
   "author": "Michael Boreham <bor3ham@gmail.com>",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "publish:demo": "git branch -D gh-pages && git push origin --delete gh-pages; git checkout -b gh-pages && cd demo && yarn && yarn build && cd .. && git add . && git add -f demo/dist && git add -f demo/node_modules/uptick-demo-site/dist && git commit -m \"Demo site build\" && git push origin gh-pages && git checkout master && git push origin `git subtree split --prefix demo gh-pages`:gh-pages --force",
+    "publish:demo": "git branch -D gh-pages && git push origin --delete gh-pages; git checkout -b gh-pages && cd demo && npm install && npm run build && cd .. && git add . && git add -f demo/dist && git add -f demo/node_modules/uptick-demo-site/dist && git commit -m \"Demo site build\" && git push origin gh-pages && git checkout master && git push origin `git subtree split --prefix demo gh-pages`:gh-pages --force",
     "prepare": "node scripts/esbuild-release.js"
   },
   "dependencies": {
@@ -19,14 +19,16 @@
     "react-textarea-autosize": "^8.3.2"
   },
   "peerDependencies": {
-    "react": "~16.8.6",
-    "react-dom": "~16.8.6"
+    "react": "^16.8.5 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.5 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
     "esbuild": "^0.12.22",
     "esbuild-stylus-loader": "^0.3.1",
     "eslint": "^6.4.0",
-    "eslint-plugin-react": "^7.14.3"
+    "eslint-plugin-react": "^7.14.3",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   }
 }

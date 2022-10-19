@@ -96,8 +96,8 @@ bottom.
 Install dependencies for project itself, and watch the project for changes
 
 ```
-yarn
-yarn watch
+npm install
+npm run watch
 ```
 
 ### Accessing demo page

@@ -15,34 +15,13 @@ gem install jekyll
 And finally install the javascript dependencies:
 
 ```
-yarn
+npm install
 ```
 
 ### Using local development version of Mireco
 
-From the mireco root folder:
-
-```
-yarn link
-```
-
-Inside the demo folder:
-
-```
-yarn link mireco
-yarn
-```
+todo: replace
 
 ## Development
 
-From the Mireco root folder, build and watch the javascript/css changes:
-
-```
-yarn watch
-```
-
-From the demo folder, watch any javascript/css files and serve the html with:
-
-```
-yarn start
-```
+todo: replace
