@@ -4,8 +4,8 @@ import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { Calendar, BlockDiv, WidgetText, CalendarVector } from '../../components'
-import { datePropType } from '../../prop-types/date.js'
-import { ISO_8601_DATE_FORMAT } from '../../constants.js'
+import { datePropType } from '../../prop-types/date'
+import { ISO_8601_DATE_FORMAT } from '../../constants'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38

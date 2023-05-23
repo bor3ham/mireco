@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Select from '../basic/select.jsx'
-import { selectOption } from '../../prop-types/select.js'
-import ChevronDownVector from '../../components/chevron-down-vector.jsx'
-import { SpinnerVector } from '../../components/spinner-vector.jsx'
+import Select from '../basic/select'
+import { selectOption } from '../../prop-types/select'
+import ChevronDownVector from '../../components/chevron-down-vector'
+import { SpinnerVector } from '../../components/spinner-vector'
 
 function AsyncSelect(props) {
   const [options, setOptions] = useState([])

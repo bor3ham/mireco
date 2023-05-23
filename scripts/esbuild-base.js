@@ -15,7 +15,7 @@ exports.config = {
     './src/prop-types',
     './src/components',
     './src/inputs',
-    './src/constants.js',
+    './src/constants.ts',
     './src/mireco-layout.styl',
     './src/mireco-theme.styl',
   ],

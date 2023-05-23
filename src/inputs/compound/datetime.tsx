@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
-import DateInput from '../basic/date.jsx'
-import Time from '../basic/time.jsx'
-import BlockDiv from '../../components/block-div.jsx'
-import ClearButton from '../../components/clear-button.jsx'
-import { ISO_8601_DATE_FORMAT } from '../../constants.js'
-import { datePropType } from '../../prop-types/date.js'
+import DateInput from '../basic/date'
+import Time from '../basic/time'
+import BlockDiv from '../../components/block-div'
+import ClearButton from '../../components/clear-button'
+import { ISO_8601_DATE_FORMAT } from '../../constants'
+import { datePropType } from '../../prop-types/date'
 
 function validDate(date) {
   return typeof date === 'string'

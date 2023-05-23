@@ -12,8 +12,8 @@ import {
   parse,
 } from 'date-fns'
 
-import { ISO_8601_DATE_FORMAT } from '../constants.js'
-import { datePropType } from '../prop-types/date.js'
+import { ISO_8601_DATE_FORMAT } from '../constants'
+import { datePropType } from '../prop-types/date'
 
 const arrowLeft = (
   <svg

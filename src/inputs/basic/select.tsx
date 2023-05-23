@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, WidgetText, ChevronDownVector } from '../../components'
-import { selectValue, selectOption } from '../../prop-types/select.js'
-import { usePrevious } from '../../hooks.js'
+import { selectValue, selectOption } from '../../prop-types/select'
+import { usePrevious } from '../../hooks'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38

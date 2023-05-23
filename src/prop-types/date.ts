@@ -1,6 +1,6 @@
 import { isValid, parse } from 'date-fns'
 
-import * as constants from '../constants.js'
+import * as constants from '../constants'
 
 function isIso8601Date(string) {
   return isValid(parse(string, constants.ISO_8601_DATE_FORMAT, new Date()))
