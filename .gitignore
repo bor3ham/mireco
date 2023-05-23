@@ -56,13 +56,7 @@ typings/
 .next
 
 # packaged
-inputs.js*
-/constants.js*
-components.js*
-prop-types.js*
-mireco-layout.css*
-mireco-theme.css*
-meta.json
+dist
 
 # webpack build analysis
 report.html

@@ -19,7 +19,7 @@ exports.config = {
     './src/mireco-layout.styl',
     './src/mireco-theme.styl',
   ],
-  outdir: '.',
+  outdir: 'dist',
   metafile: true,
   bundle: true,
   format: 'esm',

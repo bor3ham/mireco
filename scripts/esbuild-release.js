@@ -9,5 +9,5 @@ build({
   minify: true,
   sourcemap: false,
 }).then(result => {
-  fs.writeFileSync('meta.json', JSON.stringify(result.metafile))
+  fs.writeFileSync('dist/meta.json', JSON.stringify(result.metafile))
 })
