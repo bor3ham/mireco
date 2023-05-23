@@ -11,8 +11,8 @@ exports.config = {
     }),
   ],
   entryPoints: [
-    './demo.ts',
-    './demo.styl',
+    './src/demo.ts',
+    './src/demo.styl',
   ],
   outdir: 'dist',
   metafile: true,

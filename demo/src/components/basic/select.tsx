@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
-import ReactDOM from 'react-dom'
+import React, { useState, useCallback } from 'react'
+import * as ReactDOM from 'react-dom/client'
 import { Select } from 'mireco/inputs'
 
+const NULLABLE = true
 const OPTIONS = [
   {
     value: 'bike',
@@ -21,13 +22,11 @@ const OPTIONS = [
   },
 ]
 
-function DemoSelect(props) {
-  // non-nullable example:
-  // const [value, setValue] = useState(OPTIONS[0].value)
-  const [value, setValue] = useState(null)
-  const handleValueChange = (newValue, wasBlur) => {
+const DemoSelect = () => {
+  const [value, setValue] = useState(NULLABLE ? null : OPTIONS[0].value)
+  const handleChange = useCallback((newValue, wasBlur) => {
     setValue(newValue)
-  }
+  }, [])
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
@@ -36,14 +35,15 @@ function DemoSelect(props) {
         placeholder="Select value"
         value={value}
         options={OPTIONS}
-        onChange={handleValueChange}
-        // nullable={false}
+        onChange={handleChange}
+        nullable={NULLABLE}
       />
     </>
   )
 }
 
-const mount = document.querySelectorAll('div.demo-mount-select')
-if (mount.length) {
-  ReactDOM.render(<DemoSelect />, mount[0])
+const container = document.querySelector('div.demo-mount-select')
+if (container) {
+  const root = ReactDOM.createRoot(container)
+  root.render(<DemoSelect />)
 }

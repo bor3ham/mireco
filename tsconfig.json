@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "jsx": "react",
+      "baseUrl": ".",
+      "paths": {
+        "react": ["demo/node_modules/react"]
+      }
+    }
+  }
+  

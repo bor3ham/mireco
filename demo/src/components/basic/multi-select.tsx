@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import ReactDOM from 'react-dom'
+import React, { useState, useCallback } from 'react'
+import * as ReactDOM from 'react-dom/client'
 import { MultiSelect } from 'mireco/inputs'
 
 const OPTIONS = [
@@ -21,11 +21,11 @@ const OPTIONS = [
   },
 ]
 
-function DemoMultiSelect(props) {
+const DemoMultiSelect = () => {
   const [value, setValue] = useState([])
-  const handleValueChange = (newValue, wasBlur) => {
+  const handleValueChange = useCallback((newValue, wasBlur) => {
     setValue(newValue)
-  }
+  }, [])
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
@@ -40,7 +40,8 @@ function DemoMultiSelect(props) {
   )
 }
 
-const mount = document.querySelectorAll('div.demo-mount-multi-select')
-if (mount.length) {
-  ReactDOM.render(<DemoMultiSelect />, mount[0])
+const container = document.querySelector('div.demo-mount-multi-select')
+if (container) {
+  const root = ReactDOM.createRoot(container)
+  root.render(<DemoMultiSelect />)
 }

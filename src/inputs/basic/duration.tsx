@@ -56,7 +56,7 @@ function Duration(props) {
         }
       }
     }
-  })
+  }, [props.value])
 
   const bestIncrement = (value, goingUp) => {
     let incIndex = 0

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import ReactDOM from 'react-dom'
+import React, { useState, useCallback } from 'react'
+import * as ReactDOM from 'react-dom/client'
 import { AsyncSelect } from 'mireco/inputs'
 
 const SIMULATED_LAG = 1000
@@ -26,11 +26,11 @@ function fakeResults(searchTerm) {
   ]
 }
 
-function DemoAsyncSelect(props) {
+const DemoAsyncSelect = () => {
   const [value, setValue] = useState(null)
-  const handleValueChange = (newValue, wasBlur) => {
+  const handleChange = useCallback((newValue, wasBlur) => {
     setValue(newValue)
-  }
+  }, [])
   const getOptions = (searchTerm) => {
     return new Promise((resolve, reject) => {
       window.setTimeout(() => {
@@ -46,13 +46,14 @@ function DemoAsyncSelect(props) {
         placeholder="Select value"
         value={value}
         getOptions={getOptions}
-        onChange={handleValueChange}
+        onChange={handleChange}
       />
     </>
   )
 }
 
-const mount = document.querySelectorAll('div.demo-mount-async-select')
-if (mount.length) {
-  ReactDOM.render(<DemoAsyncSelect />, mount[0])
+const container = document.querySelector('div.demo-mount-async-select')
+if (container) {
+  const root = ReactDOM.createRoot(container)
+  root.render(<DemoAsyncSelect />)
 }
