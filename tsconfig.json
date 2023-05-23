@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "mireco/components": ["../dist/components"],
+      "mireco/constants": ["../dist/constants"],
+      "mireco/inputs": ["../dist/inputs"],
+      "mireco/prop-types": ["../dist/prop-types"]
+    }
+  }
+}

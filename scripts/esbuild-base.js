@@ -11,7 +11,7 @@ exports.config = {
     }),
   ],
   entryPoints: [
-    './demo.js',
+    './demo.ts',
     './demo.styl',
   ],
   outdir: 'dist',
