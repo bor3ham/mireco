@@ -6,18 +6,13 @@
   "author": "Michael Boreham <bor3ham@gmail.com>",
   "license": "MIT",
   "private": false,
-  "exports": {
-    "./components": "./dist/components.js",
-    "./constants": "./dist/constants.js",
-    "./inputs": "./dist/inputs.js",
-    "./prop-types": "./dist/prop-types.js"
-  },
+  "main": "dist/index.js",
   "scripts": {
     "publish:demo": "git branch -D gh-pages && git push origin --delete gh-pages; git checkout -b gh-pages && cd demo && npm install && npm run build && cd .. && git add . && git add -f demo/dist && git add -f demo/node_modules/uptick-demo-site/dist && git commit -m \"Demo site build\" && git push origin gh-pages && git checkout master && git push origin `git subtree split --prefix demo gh-pages`:gh-pages --force",
     "prepare": "node scripts/esbuild-release.js"
   },
   "dependencies": {
-    "classnames": "^2.2.6",
+    "classnames": "^2.3.2",
     "date-fns": "^2.3.0",
     "humanize-duration": "^3.20.1",
     "parse-duration": "^0.1.1",
@@ -29,12 +24,14 @@
     "react-dom": "^16.8.5 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
+    "@types/react": "^18.2.7",
     "concurrently": "^5.2.0",
-    "esbuild": "^0.12.22",
-    "esbuild-stylus-loader": "^0.3.1",
+    "esbuild": "^0.17.19",
+    "esbuild-stylus-loader": "^0.4.2",
     "eslint": "^6.4.0",
     "eslint-plugin-react": "^7.14.3",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "typescript": "^5.0.4"
   }
 }

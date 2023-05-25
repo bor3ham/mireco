@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { DatetimeRange } from 'mireco/inputs'
+import { DatetimeRange } from 'mireco'
 
 function stringifyDate(date) {
   if (typeof date === 'number') {

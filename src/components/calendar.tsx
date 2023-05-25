@@ -13,7 +13,7 @@ import {
 } from 'date-fns'
 
 import { ISO_8601_DATE_FORMAT } from '../constants'
-import { datePropType } from '../prop-types/date'
+import { datePropType } from '../prop-types-old/date'
 
 const arrowLeft = (
   <svg

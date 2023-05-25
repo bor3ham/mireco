@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, ChevronDownVector, ClearButton } from '../../components'
 import Text from './text'
-import { selectValue, selectOption } from '../../prop-types/select'
+import { selectValue, selectOption } from '../../prop-types-old/select'
 import { usePrevious } from '../../hooks'
 
 const ARROW_DOWN = 40

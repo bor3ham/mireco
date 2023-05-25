@@ -1,4 +1,4 @@
-export { default as Button } from './button'
+export { Button } from './button'
 export { default as Checkbox } from './checkbox'
 export { default as CheckboxInput } from './checkbox-input'
 export { default as Date } from './date'

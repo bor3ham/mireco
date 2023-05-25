@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { Calendar, BlockDiv, WidgetText, CalendarVector } from '../../components'
-import { datePropType } from '../../prop-types/date'
+import { datePropType } from '../../prop-types-old/date'
 import { ISO_8601_DATE_FORMAT } from '../../constants'
 
 const ARROW_DOWN = 40

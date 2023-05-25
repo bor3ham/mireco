@@ -1,13 +1,26 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "incremental": true,
     "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "nodenext",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "esnext",
+    "types": [],
+    "baseUrl": "src",
+    "outDir": "dist",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "baseUrl": ".",
     "paths": {
-      "mireco/components": ["../dist/components"],
-      "mireco/constants": ["../dist/constants"],
-      "mireco/inputs": ["../dist/inputs"],
-      "mireco/prop-types": ["../dist/prop-types"]
+      "mireco": ["../../dist"]
     }
   }
 }

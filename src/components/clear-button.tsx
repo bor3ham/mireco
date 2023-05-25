@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Button from '../inputs/basic/button'
+import { Button } from '../inputs/basic/button'
 import CrossVector from './cross-vector'
 
 function ClearButton(props) {

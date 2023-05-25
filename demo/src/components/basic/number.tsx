@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { Number as NumberInput } from 'mireco/inputs'
+import { Number as NumberInput } from 'mireco'
 
 const STEP = 1
 const MIN = 0

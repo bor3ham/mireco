@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { Duration } from 'mireco/inputs'
+import { Duration } from 'mireco'
 
 const DemoDuration = () => {
   const [value, setValue] = useState(null)

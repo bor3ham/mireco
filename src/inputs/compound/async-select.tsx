@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Select from '../basic/select'
-import { selectOption } from '../../prop-types/select'
+import { selectOption } from '../../prop-types-old/select'
 import ChevronDownVector from '../../components/chevron-down-vector'
 import { SpinnerVector } from '../../components/spinner-vector'
 

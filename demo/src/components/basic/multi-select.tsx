@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { MultiSelect } from 'mireco/inputs'
+import { MultiSelect } from 'mireco'
 
 const OPTIONS = [
   {

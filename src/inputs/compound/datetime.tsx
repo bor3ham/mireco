@@ -8,7 +8,7 @@ import Time from '../basic/time'
 import BlockDiv from '../../components/block-div'
 import ClearButton from '../../components/clear-button'
 import { ISO_8601_DATE_FORMAT } from '../../constants'
-import { datePropType } from '../../prop-types/date'
+import { datePropType } from '../../prop-types-old/date'
 
 function validDate(date) {
   return typeof date === 'string'

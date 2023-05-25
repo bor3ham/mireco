@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { Select } from 'mireco/inputs'
+import { Select } from 'mireco'
 
 const NULLABLE = true
 const OPTIONS = [

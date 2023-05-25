@@ -14,8 +14,8 @@ import {
   Datetime,
   DatetimeRange,
   MultiSelect,
-} from 'mireco/inputs'
-import { ISO_8601_DATE_FORMAT } from 'mireco/constants'
+} from 'mireco'
+import { ISO_8601_DATE_FORMAT } from 'mireco'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { Date as DateInput } from 'mireco/inputs'
+import { Date as DateInput } from 'mireco'
 
 const DemoDate = () => {
   const [value, setValue] = useState(null)
@@ -15,6 +15,7 @@ const DemoDate = () => {
         placeholder="Date value"
         value={value}
         onChange={handleChange}
+        autoFocus
       />
     </>
   )
