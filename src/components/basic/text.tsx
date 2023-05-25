@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { Text } from 'mireco/inputs'
+import { Text } from 'mireco'
 
 const DemoText = () => {
   const [value, setValue] = useState('Example text value')

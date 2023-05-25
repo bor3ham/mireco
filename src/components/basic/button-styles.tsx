@@ -1,6 +1,6 @@
 import React from 'react'
 import * as ReactDOM from 'react-dom/client'
-import { Button } from 'mireco/inputs'
+import { Button } from 'mireco'
 
 const DemoButtonStyles = () => (
   <>
