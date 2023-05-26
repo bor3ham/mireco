@@ -20,7 +20,7 @@
     "outDir": "dist",
     "lib": ["dom", "dom.iterable", "esnext"],
     "paths": {
-      "mireco": ["../../dist"]
+      "mireco": ["../.."]
     }
   }
 }

@@ -22,7 +22,7 @@
     "baseUrl": "src",
     "outDir": "dist",
     "paths": {
-      "react": ["demo/node_modules/react"]
+      "react": ["../demo/node_modules/react"]
     }
   }
 }

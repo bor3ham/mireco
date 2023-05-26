@@ -7,13 +7,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": ".\"/node_modules/.bin/concurrently\" \"node scripts/esbuild-dev.js\" \"jekyll serve -P 4001\"",
-    "prepare": "node scripts/esbuild-release.js"
+    "start": ".\"/node_modules/.bin/concurrently\" \"node scripts/watch.js\" \"jekyll serve -P 4001\"",
+    "prepare": "node scripts/build.js"
   },
   "dependencies": {
     "casual-browserify": "^1.5.19-2",
     "date-fns": "^2.3.0",
-    "esbuild": "^0.12.22",
     "esbuild-stylus-loader": "^0.3.1",
     "js-cookie": "^2.2.0",
     "json-beautify": "^1.0.1",
@@ -23,6 +22,7 @@
   },
   "devDependencies": {
     "@types/react-dom": "^18.2.4",
-    "concurrently": "^5.2.0"
+    "concurrently": "^5.2.0",
+    "esbuild": "^0.17.19"
   }
 }

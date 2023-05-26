@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "scripts": {
     "publish:demo": "git branch -D gh-pages && git push origin --delete gh-pages; git checkout -b gh-pages && cd demo && npm install && npm run build && cd .. && git add . && git add -f demo/dist && git add -f demo/node_modules/uptick-demo-site/dist && git commit -m \"Demo site build\" && git push origin gh-pages && git checkout master && git push origin `git subtree split --prefix demo gh-pages`:gh-pages --force",
-    "prepare": "node scripts/esbuild-release.js"
+    "prepare": "node scripts/build.js"
   },
   "dependencies": {
     "classnames": "^2.3.2",
