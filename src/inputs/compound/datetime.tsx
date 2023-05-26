@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
-import DateInput from '../basic/date'
+import { Date as DateInput } from '../basic/date'
 import Time from '../basic/time'
-import BlockDiv from '../../components/block-div'
-import ClearButton from '../../components/clear-button'
+import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from '../../constants'
 import { datePropType } from '../../prop-types-old/date'
 

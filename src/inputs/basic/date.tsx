@@ -1,275 +1,299 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
-import { Calendar, BlockDiv, WidgetText, CalendarVector } from '../../components'
-import { datePropType } from '../../prop-types-old/date'
-import { ISO_8601_DATE_FORMAT } from '../../constants'
+import { DayCalendar, BlockDiv, WidgetText } from 'components'
+import { CalendarVector } from 'vectors'
+import { ISO_8601_DATE_FORMAT } from 'constants'
+import type { DateValue } from 'types'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
 const ENTER = 13
 const ESCAPE = 27
 
-export default class MirecoDate extends React.PureComponent {
-  static propTypes = {
-    id: PropTypes.string,
-    inputFormats: PropTypes.arrayOf(PropTypes.string).isRequired,
-    displayFormat: PropTypes.string.isRequired,
-    placeholder: PropTypes.string,
-    value: datePropType,
-    onChange: PropTypes.func,
-    disabled: PropTypes.bool,
-    block: PropTypes.bool,
-    autoErase: PropTypes.bool,
-    rightHang: PropTypes.bool,
-    className: PropTypes.string,
-    textClassName: PropTypes.string,
-    required: PropTypes.bool,
-    icon: PropTypes.node,
-    showClearButton: PropTypes.bool,
+function formatValue(value: DateValue, displayFormat: string): string {
+  if (value === null || typeof value === 'undefined') {
+    return ''
   }
-  static defaultProps = {
-    block: false,
-    inputFormats: [
-      'd',
-      'do',
-      'd/MM',
-      'do MMM',
-      'do MMMM',
-      'd/MM/yy',
-      'd/MM/yyyy',
-      'do MMM yy',
-      'do MMM yyyy',
-      'do MMMM yy',
-      'do MMMM yyyy',
-    ],
-    displayFormat: 'do MMM yyyy',
-    placeholder: 'dd/mm/yyyy',
-    autoErase: true,
-    rightHang: false,
-    required: false,
-    icon: CalendarVector,
-    showClearButton: true,
+  return format(parse(value, ISO_8601_DATE_FORMAT, new Date()), displayFormat)
+}
+
+function parseValue(textValue: string, inputFormats: string[]): DateValue {
+  let trimmed = textValue.trim()
+  if (trimmed.length === 0) {
+    return null
   }
-  constructor(props) {
-    super(props)
-    this.state = {
-      ...this.state,
-      textValue: this.format(props, props.value),
-      inFocus: false,
-      calendarOpen: false,
+  trimmed = trimmed.replace('\\', '/') // replace backslashes with forward
+  trimmed = trimmed.replace(/\/+$/, '') // remove trailing slashes from consideration
+
+  let valid: DateValue = undefined
+  inputFormats.map((inputFormat) => {
+    if (typeof valid !== 'undefined') {
+      return
     }
-    this.containerRef = React.createRef()
-    this.textRef = React.createRef()
-  }
-  componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.value !== this.props.value ) {
-      if (this.props.value === null) {
-        this.setState({textValue: ''})
+    let parsed = parse(trimmed, inputFormat, new Date())
+    if (isValid(parsed)) {
+      valid = format(parsed, ISO_8601_DATE_FORMAT)
+    }
+  })
+  return valid
+}
+
+interface Props {
+  // mireco
+  block?: boolean
+  // date
+  value: DateValue
+  onChange?(newValue: DateValue, wasBlur: boolean): void
+  displayFormat?: string
+  inputFormats?: string[]
+  autoErase?: boolean
+  showClearButton?: boolean
+  rightHang?: boolean
+  placeholder?: string
+  icon?: React.ReactNode
+  textClassName?: string
+  // html
+  id?: string
+  className?: string
+  tabIndex?: number
+  title?: string
+  autoFocus?: boolean
+  style?: React.CSSProperties
+  // form
+  disabled?: boolean
+  name?: string
+  required?: boolean
+}
+
+const DateInput: React.FC<Props> = ({
+  block,
+  value,
+  onChange,
+  displayFormat = 'do MMM yyyy',
+  inputFormats = [
+    'd',
+    'do',
+    'd/MM',
+    'do MMM',
+    'do MMMM',
+    'd/MM/yy',
+    'd/MM/yyyy',
+    'do MMM yy',
+    'do MMM yyyy',
+    'do MMMM yy',
+    'do MMMM yyyy',
+  ],
+  autoErase = true,
+  showClearButton = true,
+  rightHang,
+  placeholder = 'dd/mm/yyyy',
+  icon = <CalendarVector />,
+  textClassName,
+  id,
+  className,
+  tabIndex,
+  title,
+  autoFocus,
+  style,
+  disabled,
+  name,
+  required,
+}) => {
+  const [textValue, setTextValue] = useState<string>(formatValue(value, displayFormat))
+  const [inFocus, setInFocus] = useState<boolean>(false)
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
+
+  const textValueRef = useRef<string>(textValue)
+  textValueRef.current = textValue
+  useEffect(() => {
+    if (value === null) {
+      setTextValue('')
+    } else if (typeof value === 'string') {
+      const parsedCurrent = parseValue(textValueRef.current, inputFormats)
+      if (parsedCurrent !== value) {
+        setTextValue(formatValue(value, displayFormat))
       }
-      else if (typeof this.props.value === 'string') {
-        if (this.props.value !== this.parseText(this.state.textValue)) {
-          this.setState({textValue: this.format(this.props, this.props.value)})
+    }
+  }, [
+    value,
+    inputFormats,
+  ])
+
+  const handleBlur = useCallback(() => {
+    if (typeof value === 'string') {
+      const formatted = formatValue(value, displayFormat)
+      setTextValue(formatted)
+      setInFocus(false)
+      setCalendarOpen(false)
+      if (onChange) {
+        onChange(value, true)
+      }
+    } else {
+      setInFocus(false)
+      setCalendarOpen(false)
+      if (autoErase) {
+        if (onChange) {
+          onChange(null, true)
+        } else {
+          setTextValue('')
+        }
+      } else {
+        if (onChange) {
+          onChange(value, true)
         }
       }
     }
-    if (this.props.disabled && !prevProps.disabled) {
-      this.onBlur()
+  }, [
+    value,
+    displayFormat,
+    onChange,
+    autoErase,
+  ])
+  useEffect(() => {
+    if (disabled) {
+      handleBlur()
     }
-  }
-  format(props, value) {
-    if (value === null || typeof value === 'undefined') {
-      return ''
-    }
-    return format(parse(value, ISO_8601_DATE_FORMAT, new Date()), props.displayFormat)
-  }
-  parseText = (textValue) => {
-    let trimmed = textValue.trim()
-    // todo: remove superfluous spaces
-    if (trimmed.length === 0) {
-      return null
-    }
+  }, [
+    disabled,
+  ])
 
-    let valid = undefined
-    this.props.inputFormats.map((inputFormat) => {
-      if (typeof valid !== 'undefined') {
-        return
-      }
-      let parsed = parse(trimmed, inputFormat, new Date())
-      if (isValid(parsed)) {
-        // console.log(textValue, 'valid format:', format, this.format(this.props, +parsed))
-        valid = format(parsed, ISO_8601_DATE_FORMAT)
-      }
-    })
-    return valid
-  }
-  handleFocus = (event) => {
-    this.setState({
-      inFocus: true,
-      calendarOpen: true,
-    })
-  }
-  handleContainerBlur = (event) => {
+  const handleFocus = useCallback(() => {
+    setInFocus(true)
+    setCalendarOpen(true)
+  }, [])
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const handleContainerBlur = useCallback((event: React.FocusEvent) => {
     if (
-      this.containerRef.current
+      containerRef.current
       && (
-        this.containerRef.current.contains(event.relatedTarget)
-        || this.containerRef.current === event.relatedTarget
+        containerRef.current.contains(event.relatedTarget)
+        || containerRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur
       return
     }
-    this.onBlur()
-  }
-  handleTextKeyDown = (event) => {
+    handleBlur()
+  }, [handleBlur])
+  
+  const handleTextKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event && (event.which === ENTER || event.which === ESCAPE)) {
-      if (this.state.calendarOpen) {
-        let formatted = this.format(this.props, this.props.value)
-        this.setState({
-          textValue: formatted,
-          calendarOpen: false,
-        })
+      if (calendarOpen) {
+        let formatted = formatValue(value, displayFormat)
+        setTextValue(formatted)
+        setCalendarOpen(false)
         event.preventDefault()
       }
       return
     }
-    this.setState({inFocus: true, calendarOpen: true})
+    setInFocus(true)
+    setCalendarOpen(true)
     if (event) {
       let current = new Date()
-      if (typeof this.props.value === 'string') {
-        current = parse(this.props.value, ISO_8601_DATE_FORMAT, new Date())
+      if (typeof value === 'string') {
+        current = parse(value, ISO_8601_DATE_FORMAT, new Date())
       }
       if (event.which === ARROW_DOWN) {
         event.preventDefault()
-        if (typeof this.props.onChange === 'function') {
-          this.props.onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
+        if (onChange) {
+          onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
         }
-        this.setState({calendarOpen: true})
       }
       if (event.which === ARROW_UP) {
         event.preventDefault()
-        if (typeof this.props.onChange === 'function') {
-          this.props.onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
+        if (onChange) {
+          onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
         }
-        this.setState({calendarOpen: true})
       }
     }
-  }
-  handleTextChange = (newValue) => {
-    this.setState({textValue: newValue}, () => {
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(this.parseText(newValue), false)
-      }
-      this.setState({calendarOpen: true})
-    })
-  }
-  handleTextClick = () => {
-    this.setState({calendarOpen: true})
-  }
-  onSelectDay = (day) => {
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(day, false)
+  }, [value, displayFormat, onChange])
+  const handleTextChange = useCallback((newValue: string) => {
+    setTextValue(newValue)
+    if (onChange) {
+      onChange(parseValue(newValue, inputFormats), false)
     }
-    this.textRef.current && this.textRef.current.focus()
-    this.setState({calendarOpen: false})
-  }
-  onBlur = () => {
-    if (typeof this.props.value === 'string') {
-      let formatted = this.format(this.props, this.props.value)
-      this.setState({
-        textValue: formatted,
-        inFocus: false,
-        calendarOpen: false,
-      }, () => {
-        if (typeof this.props.onChange === 'function') {
-          this.props.onChange(this.props.value, true)
-        }
-      })
+    setCalendarOpen(true)
+  }, [onChange, inputFormats])
+  const handleTextClick = useCallback(() => {
+    setCalendarOpen(true)
+  }, [])
+  const textRef = useRef<HTMLInputElement>(null)
+  const handleSelectDay = useCallback((day: DateValue) => {
+    if (onChange) {
+      onChange(day, false)
     }
-    else {
-      this.setState(prevState => {
-        let updates = {
-          inFocus: false,
-          calendarOpen: false,
-        }
-        if (this.props.autoErase) {
-          updates.textValue = ''
-        }
-        return updates
-      }, () => {
-        if (typeof this.props.onChange === 'function') {
-          if (this.props.autoErase) {
-            this.props.onChange(null, true)
-          }
-          else {
-            this.props.onChange(this.props.value, true)
-          }
-        }
-      })
+    if (textRef.current) {
+      textRef.current.focus()
     }
-  }
-  focus = () => {
-    if (this.textRef.current) {
-      this.textRef.current.focus()
-    }
-  }
-  onClear = () => {
-    if (this.props.disabled) {
+    setCalendarOpen(false)
+  }, [onChange])
+  const handleClear = useCallback(() => {
+    if (disabled) {
       return
     }
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(null, false)
-      this.textRef.current && this.textRef.current.focus()
+    if (onChange) {
+      onChange(null, false)
+      if (textRef.current) {
+        textRef.current.focus()
+      }
     }
-  }
-  render() {
-    const clearable = (
-      typeof this.props.value === 'string' &&
-      this.props.showClearButton &&
-      !this.props.disabled
-    )
-    return (
-      <BlockDiv
-        ref={this.containerRef}
-        block={this.props.block}
-        className={classNames(
-          'MIRECO-date',
-          {
-            'right-hang': this.props.rightHang,
-            clearable,
-          },
-          this.props.className,
-        )}
-        tabIndex={-1}
-        onBlur={this.handleContainerBlur}
-      >
-        <WidgetText
-          id={this.props.id}
-          ref={this.textRef}
-          placeholder={this.props.placeholder}
-          value={this.state.textValue}
-          onChange={this.handleTextChange}
-          onClick={this.handleTextClick}
-          onFocus={this.handleFocus}
-          disabled={this.props.disabled}
-          onKeyDown={this.handleTextKeyDown}
-          block={this.props.block}
-          style={{marginBottom: '0'}}
-          required={this.props.required}
-          className={this.props.textClassName}
-          icon={this.props.icon}
-          onClear={clearable ? this.onClear : undefined}
+  }, [
+    disabled,
+    onChange,
+  ])
+  const clearable = (
+    typeof value === 'string' &&
+    showClearButton &&
+    !disabled
+  )
+  return (
+    <BlockDiv
+      ref={containerRef}
+      block={block}
+      className={classNames(
+        'MIRECO-date',
+        {
+          'right-hang': rightHang,
+          clearable,
+        },
+        className,
+      )}
+      tabIndex={-1}
+      onBlur={handleContainerBlur}
+      style={style}
+    >
+      <WidgetText
+        icon={icon}
+        onClear={clearable ? handleClear : undefined}
+        id={id}
+        ref={textRef}
+        placeholder={placeholder}
+        value={textValue}
+        onChange={handleTextChange}
+        onClick={handleTextClick}
+        onFocus={handleFocus}
+        disabled={disabled}
+        onKeyDown={handleTextKeyDown}
+        block={block}
+        style={{marginBottom: '0'}}
+        required={required}
+        className={textClassName}
+        title={title}
+        autoFocus={autoFocus}
+        tabIndex={tabIndex}
+        name={name}
+      />
+      {inFocus && calendarOpen && !disabled && (
+        <DayCalendar
+          selectDay={handleSelectDay}
+          current={value}
         />
-        {this.state.inFocus && this.state.calendarOpen && !this.props.disabled && (
-          <Calendar
-            selectDay={this.onSelectDay}
-            current={this.props.value}
-          />
-        )}
-      </BlockDiv>
-    )
-  }
+      )}
+    </BlockDiv>
+  )
 }
+
+export { DateInput as Date }

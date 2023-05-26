@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default (
+export const CalendarVector = () => (
   <svg
     version="1.1"
     viewBox="0 0 6.3499998 6.3499998"

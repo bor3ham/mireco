@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default (
+export const ChevronDownVector = () => (
   <svg
     viewBox="0 0 6.3499998 6.3499998"
     height="24"

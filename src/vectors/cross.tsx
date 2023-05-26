@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default (
+export const CrossVector = () => (
   <svg
     width="24"
     height="24"

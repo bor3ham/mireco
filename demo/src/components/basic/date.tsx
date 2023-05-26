@@ -1,21 +1,19 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Date as DateInput } from 'mireco'
+import type { DateValue } from 'mireco'
 
 const DemoDate = () => {
-  const [value, setValue] = useState(null)
-  const handleChange = useCallback((newValue, wasBlur) => {
+  const [value, setValue] = useState<DateValue>(null)
+  const handleChange = useCallback((newValue: DateValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
       <DateInput
-        block
-        placeholder="Date value"
         value={value}
         onChange={handleChange}
-        autoFocus
       />
     </>
   )

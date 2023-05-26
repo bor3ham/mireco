@@ -7,7 +7,8 @@ import parseDuration from 'parse-duration'
 parseDuration.month = parseDuration.week * 4
 parseDuration.year = parseDuration.week * 52
 
-import { WidgetText, HourglassVector } from '../../components'
+import { WidgetText } from 'components'
+import { HourglassVector } from 'vectors'
 import { usePrevious } from '../../hooks'
 
 const ARROW_DOWN = 40

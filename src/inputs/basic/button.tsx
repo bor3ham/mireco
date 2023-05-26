@@ -1,38 +1,54 @@
-import React, { MouseEvent } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 
-interface ButtonProps {
-  type?: 'button' | 'submit'
-  name?: string
-  value?: string
-  disabled?: boolean
-  autoFocus?: boolean
-  tabIndex?: number
+interface Props {
+  // mireco
+  block?: boolean
+  // button
+  type?: 'submit' | 'reset' | 'button'
+  // html
+  id?: string
   className?: string
+  tabIndex?: number
+  title?: string
+  autoFocus?: boolean
   style?: React.CSSProperties
   children?: React.ReactNode
-  onClick?(event: MouseEvent<HTMLButtonElement>): void
-  onDoubleClick?(event: MouseEvent<HTMLButtonElement>): void
-  onMouseDown?(event: MouseEvent<HTMLButtonElement>): void
-  onMouseEnter?(event: MouseEvent<HTMLButtonElement>): void
-  onMouseLeave?(event: MouseEvent<HTMLButtonElement>): void  
-  onMouseMove?(event: MouseEvent<HTMLButtonElement>): void
-  onMouseOut?(event: MouseEvent<HTMLButtonElement>): void
-  onMouseOver?(event: MouseEvent<HTMLButtonElement>): void
-  onMouseUp?(event: MouseEvent<HTMLButtonElement>): void
-  block?: boolean
+  // form
+  disabled?: boolean
+  name?: string
+  formValue?: string
+  // event handlers
+  onFocus?(event: React.FocusEvent<HTMLButtonElement>): void
+  onBlur?(event: React.FocusEvent<HTMLButtonElement>): void
+  onClick?(event: React.MouseEvent<HTMLButtonElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLButtonElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLButtonElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLButtonElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLButtonElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLButtonElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLButtonElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLButtonElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLButtonElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLButtonElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLButtonElement>): void
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<Props> = ({
+  block,
   type,
-  name,
-  value,
-  disabled,
-  autoFocus,
-  tabIndex,
+  id,
   className,
+  tabIndex,
+  title,
+  autoFocus,
   style,
   children,
+  disabled,
+  name,
+  formValue,
+  onFocus,
+  onBlur,
   onClick,
   onDoubleClick,
   onMouseDown,
@@ -42,15 +58,11 @@ export const Button: React.FC<ButtonProps> = ({
   onMouseOut,
   onMouseOver,
   onMouseUp,
-  block,
+  onKeyDown,
+  onKeyUp,
 }) => (
   <button
-    type={type}
-    name={name}
-    value={value}
-    disabled={disabled}
-    autoFocus={autoFocus}
-    tabIndex={tabIndex}
+    id={id}
     className={classNames(
       'MIRECO-button',
       {
@@ -58,7 +70,16 @@ export const Button: React.FC<ButtonProps> = ({
       },
       className,
     )}
+    tabIndex={tabIndex}
+    title={title}
+    autoFocus={autoFocus}
     style={style}
+    disabled={disabled}
+    name={name}
+    value={formValue}
+    type={type}
+    onFocus={onFocus}
+    onBlur={onBlur}
     onClick={onClick}
     onDoubleClick={onDoubleClick}
     onMouseDown={onMouseDown}
@@ -68,6 +89,8 @@ export const Button: React.FC<ButtonProps> = ({
     onMouseOut={onMouseOut}
     onMouseOver={onMouseOver}
     onMouseUp={onMouseUp}
+    onKeyDown={onKeyDown}
+    onKeyUp={onKeyUp}
   >
     {children}
   </button>

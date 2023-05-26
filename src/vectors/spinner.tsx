@@ -1,9 +1,17 @@
 import React from 'react'
 
-const SpinnerVector = (props) => (
+interface Props {
+  size?: number
+  colour?: string
+}
+
+export const SpinnerVector: React.FC<Props> = ({
+  size = 24,
+  colour = '#333333',
+}) => (
   <svg
-    width={props.size}
-    height={props.size}
+    width={size}
+    height={size}
     viewBox="0 0 6.3499998 6.3499998"
     className="MIRECO-spinner"
   >
@@ -15,7 +23,7 @@ const SpinnerVector = (props) => (
         style={{
           fill: 'none',
           fillOpacity: 0.271255,
-          stroke: props.colour,
+          stroke: colour,
           strokeWidth: 0.529167,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
@@ -28,9 +36,3 @@ const SpinnerVector = (props) => (
     </g>
   </svg>
 )
-SpinnerVector.defaultProps = {
-  colour: '#333333',
-  size: 24,
-}
-
-export { SpinnerVector }

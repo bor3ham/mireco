@@ -1,100 +1,129 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { forwardRef, useCallback, useEffect } from 'react'
 import classNames from 'classnames'
 
-export default class Text extends React.PureComponent {
-  static propTypes = {
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-    type: PropTypes.oneOf(['text', 'password', 'email']),
-    name: PropTypes.string,
-    required: PropTypes.bool,
-    placeholder: PropTypes.string,
-    disabled: PropTypes.bool,
-    autoFocus: PropTypes.bool,
-    tabIndex: PropTypes.number,
-    maxLength: PropTypes.number,
-    id: PropTypes.string,
-
-    block: PropTypes.bool,
-    className: PropTypes.string,
-    style: PropTypes.object,
-    size: PropTypes.number,
-
-    onFocus: PropTypes.func,
-    onBlur: PropTypes.func,
-    onKeyDown: PropTypes.func,
-    onKeyUp: PropTypes.func,
-    onClick: PropTypes.func,
-  }
-  static defaultProps = {
-    type: 'text',
-  }
-  constructor(props) {
-    super(props)
-    this.inputRef = React.createRef()
-  }
-  componentDidUpdate = (prevProps, prevState) => {
-    if (
-      this.props.disabled && !prevProps.disabled
-      && this.inputRef.current === document.activeElement
-      && typeof this.props.onBlur === 'function'
-    ) {
-      this.props.onBlur()
-    }
-    if (
-      !this.props.disabled && prevProps.disabled
-      && this.inputRef.current === document.activeElement
-      && typeof this.props.onFocus === 'function'
-    ) {
-      this.props.onFocus()
-    }
-  }
-  handleChange = (event) => {
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(this.inputRef.current.value)
-    }
-  }
-  focus() {
-    this.inputRef.current && this.inputRef.current.focus()
-  }
-  blur() {
-    this.inputRef.current && this.inputRef.current.blur()
-  }
-  render() {
-    return (
-      <input
-        ref={this.inputRef}
-
-        value={this.props.value}
-        onChange={this.handleChange}
-        type={this.props.type}
-        name={this.props.name}
-        required={this.props.required}
-        placeholder={this.props.placeholder || ''}
-        disabled={this.props.disabled}
-        autoFocus={this.props.autoFocus}
-        tabIndex={this.props.tabIndex}
-        maxLength={this.props.maxLength}
-        id={this.props.id}
-
-        className={classNames(
-          'MIRECO-text',
-          {
-            block: this.props.block,
-            sized: !!this.props.size,
-          },
-          this.props.className,
-        )}
-        style={this.props.style}
-        size={this.props.size}
-
-        onFocus={this.props.onFocus}
-        onBlur={this.props.onBlur}
-        onKeyDown={this.props.onKeyDown}
-        onKeyUp={this.props.onKeyUp}
-        onClick={this.props.onClick}
-      />
-    )
-  }
+export type TextProps = {
+  // mireco
+  block?: boolean
+  // text
+  value?: string
+  onChange?(newValue: string): void
+  type?: string
+  placeholder?: string
+  maxLength?: number
+  size?: number
+  // html
+  id?: string
+  autoFocus?: boolean
+  tabIndex?: number
+  style?: React.CSSProperties
+  className?: string
+  title?: string
+  // form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+  // event handlers
+  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
+
+export const Text = forwardRef<HTMLInputElement, TextProps>(({
+  block,
+  value,
+  onChange,
+  type = 'text',
+  placeholder,
+  maxLength,
+  size,
+  id,
+  autoFocus,
+  tabIndex,
+  style,
+  className,
+  name,
+  required,
+  disabled,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
+}, ref) => {
+  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value
+    if (onChange) {
+      onChange(newValue)
+    }
+  }, [onChange])
+
+  useEffect(() => {
+    if (disabled) {
+      if (ref === document.activeElement && onBlur) {
+        onBlur()
+      }
+    } else {
+      if (ref === document.activeElement && onFocus) {
+        onFocus()
+      }
+    }
+  }, [disabled, onBlur, onFocus])
+
+  return (
+    <input
+      ref={ref}
+      value={value}
+      onChange={handleChange}
+      type={type}
+      name={name}
+      required={required}
+      placeholder={placeholder}
+      disabled={disabled}
+      autoFocus={autoFocus}
+      tabIndex={tabIndex}
+      maxLength={maxLength}
+      id={id}
+      className={classNames(
+        'MIRECO-text',
+        {
+          block: block,
+          sized: !!size,
+        },
+        className,
+      )}
+      style={style}
+      size={size}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
+    />
+  )
+})

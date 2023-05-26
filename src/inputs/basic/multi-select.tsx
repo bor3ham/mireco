@@ -2,8 +2,9 @@ import React, { useRef, useReducer, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import { BlockDiv, Dropdown, ChevronDownVector, ClearButton } from '../../components'
-import Text from './text'
+import { BlockDiv, Dropdown, ClearButton } from 'components'
+import { ChevronDownVector } from 'vectors'
+import { Text } from './text'
 import { selectValue, selectOption } from '../../prop-types-old/select'
 import { usePrevious } from '../../hooks'
 
@@ -424,7 +425,7 @@ MultiSelect.propTypes = {
 MultiSelect.defaultProps = {
   options: [],
   filter: true,
-  icon: ChevronDownVector,
+  icon: <ChevronDownVector />,
 }
 
 export default MultiSelect

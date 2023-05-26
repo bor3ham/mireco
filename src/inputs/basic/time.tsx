@@ -4,7 +4,8 @@ import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
 
-import { WidgetText, BlockDiv, Dropdown, ClockVector } from '../../components'
+import { WidgetText, BlockDiv, Dropdown } from 'components'
+import { ClockVector } from 'vectors'
 
 const ARROW_DOWN = 40
 const ARROW_UP = 38
@@ -331,7 +332,7 @@ export default class Time extends React.PureComponent {
           block={this.props.block}
           style={{marginBottom: '0'}}
           onClick={this.handleTextClick}
-          icon={ClockVector}
+          icon={<ClockVector />}
           onClear={!showClear ? undefined : this.handleClear}
           className={this.props.textClassName}
           id={this.props.id}

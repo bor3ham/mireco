@@ -2,7 +2,8 @@ import React, { useRef, useReducer, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import { BlockDiv, Dropdown, WidgetText, ChevronDownVector } from '../../components'
+import { BlockDiv, Dropdown, WidgetText } from 'components'
+import { ChevronDownVector } from 'vectors'
 import { selectValue, selectOption } from '../../prop-types-old/select'
 import { usePrevious } from '../../hooks'
 
@@ -402,7 +403,7 @@ Select.defaultProps = {
   nullable: true,
   options: [],
   filter: true,
-  icon: ChevronDownVector,
+  icon: <ChevronDownVector />,
 }
 
 export default Select

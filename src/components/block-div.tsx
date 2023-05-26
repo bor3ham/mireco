@@ -1,48 +1,78 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
-let BlockDiv = (props, ref) => {
-  let style = {}
-  if (!props.block) {
-    style.display = props.inlineDisplay
+interface Props {
+  // mireco
+  block?: boolean
+  // block div
+  inlineDisplay?: string
+  // html
+  style?: React.CSSProperties
+  children?: React.ReactNode,
+  className?: string
+  tabIndex?: number
+  // event handlers
+  onClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLDivElement>): void
+  onBlur?(event: React.FocusEvent<HTMLDivElement>): void
+  onFocus?(event: React.FocusEvent<HTMLDivElement>): void
+}
+
+export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
+  block,
+  inlineDisplay = 'inline-block',
+  style,
+  children,
+  className,
+  tabIndex,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onBlur,
+  onFocus,
+}, ref) => {
+  let combinedStyle: React.CSSProperties = {}
+  if (!block) {
+    combinedStyle.display = inlineDisplay
   }
-  style = {
+  combinedStyle = {
+    ...combinedStyle,
     ...style,
-    ...props.style,
-  }
-  const divProps = {
-    ...props,
-  }
-  if ('block' in divProps) {
-    delete divProps['block']
-  }
-  if ('inlineDisplay' in divProps) {
-    delete divProps['inlineDisplay']
   }
   return (
     <div
-      {...divProps}
       ref={ref}
-      style={style}
-      className={classNames(props.className, {
-        block: props.block,
+      style={combinedStyle}
+      className={classNames(className, {
+        block,
       })}
+      tabIndex={tabIndex}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onBlur={onBlur}
+      onFocus={onFocus}
     >
-      {props.children}
+      {children}
     </div>
   )
-}
-BlockDiv = React.forwardRef(BlockDiv)
-BlockDiv.propTypes = {
-  style: PropTypes.object,
-  children: PropTypes.node,
-  block: PropTypes.bool,
-  className: PropTypes.string,
-  inlineDisplay: PropTypes.string,
-}
-BlockDiv.defaultProps = {
-  inlineDisplay: 'inline-block',
-}
-
-export default BlockDiv
+})

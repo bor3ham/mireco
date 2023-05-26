@@ -1,11 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Label from '../../components/label'
-import CheckboxInput from './checkbox-input'
+import { Label } from 'components/label'
+import { CheckboxInput } from './checkbox-input'
 
-const check = (
+const CHECK_SVG = (
   <svg
     width="24"
     height="24"
@@ -28,43 +27,69 @@ const check = (
   </svg>
 )
 
-function Checkbox(props) {
-  return (
-    <Label
-      className={classNames(
-        'MIRECO-checkbox',
-        {
-          disabled: props.disabled,
-        },
-        props.className,
-      )}
-      style={props.style}
-      block={props.block}
-    >
-      <CheckboxInput
-        value={props.value}
-        onChange={props.onChange}
-        disabled={props.disabled}
-        id={props.id}
-      />
-      {check}
-      {!!props.label && ' '}
-      {!!props.label && (<span>{props.label}</span>)}
-    </Label>
-  )
-}
-Checkbox.propTypes = {
-  value: PropTypes.bool,
-  onChange: PropTypes.func,
-  disabled: PropTypes.bool,
-
-  block: PropTypes.bool,
-  label: PropTypes.string,
-
-  id: PropTypes.string,
-  name: PropTypes.string,
-  style: PropTypes.object,
-  className: PropTypes.string,
+interface Props {
+  // mireco
+  block?: boolean
+  // checkbox
+  value?: boolean
+  onChange?(newValue: boolean, event: React.ChangeEvent<HTMLInputElement>): void
+  // html
+  id?: string
+  className?: string
+  tabIndex?: number
+  title?: string
+  autoFocus?: boolean
+  style?: React.CSSProperties
+  children?: React.ReactNode
+  // form
+  disabled?: boolean
+  name?: string
+  formValue?: string
+  required?: boolean
 }
 
-export default Checkbox
+export const Checkbox: React.FC<Props> = ({
+  block,
+  value,
+  onChange,
+  id,
+  className,
+  tabIndex,
+  title,
+  autoFocus,
+  style,
+  children,
+  disabled,
+  name,
+  formValue,
+  required,
+}) => (
+  <Label
+    className={classNames(
+      'MIRECO-checkbox',
+      {
+        disabled,
+      },
+      className,
+    )}
+    title={title}
+    style={style}
+    block={block}
+    htmlFor={id}
+  >
+    <CheckboxInput
+      id={id}
+      tabIndex={tabIndex}
+      autoFocus={autoFocus}
+      disabled={disabled}
+      name={name}
+      formValue={formValue}
+      required={required}
+      value={value}
+      onChange={onChange}
+    />
+    {CHECK_SVG}
+    {!!children && ' '}
+    {!!children && (<span>{children}</span>)}
+  </Label>
+)

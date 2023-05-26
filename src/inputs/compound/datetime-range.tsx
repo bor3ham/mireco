@@ -4,8 +4,7 @@ import classNames from 'classnames'
 import { format } from 'date-fns'
 
 import Datetime from './datetime'
-import ClearButton from '../../components/clear-button'
-import BlockDiv from '../../components/block-div'
+import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from '../../constants'
 
 function datetimeNull(datetime) {

@@ -1,40 +1,43 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
-import Text from '../inputs/basic/text'
-import BlockDiv from './block-div'
-import ClearButton from './clear-button'
-import ChevronDownVector from './chevron-down-vector'
+import { Text } from 'inputs'
+import type { TextProps } from 'inputs'
+import { BlockDiv } from './block-div'
+import { ClearButton } from './clear-button'
+import { ChevronDownVector } from 'vectors'
 
-let WidgetText = (props, ref) => {
-  const { onClear, icon, ...inputProps } = props
-  const clearable = typeof onClear === 'function'
+interface WidgetTextProps extends TextProps {
+  // widget text
+  onClear?(): void
+  icon?: React.ReactNode
+}
+
+export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, ref) => {
+  const {
+    block,
+    onClear,
+    icon = <ChevronDownVector />,
+    ...inputProps
+  } = props
+  const clearable = !!onClear
   return (
-    <BlockDiv block={props.block} className={classNames('MIRECO-widget-text', {
-      clearable,
-    })}>
+    <BlockDiv
+      block={block}
+      className={classNames('MIRECO-widget-text', {
+        clearable,
+      })}
+    >
       <Text
-        {...inputProps}
         ref={ref}
+        {...inputProps}
       />
       {clearable && (
         <ClearButton
-          onClick={props.onClear}
+          onClick={onClear}
         />
       )}
       {icon}
     </BlockDiv>
   )
-}
-WidgetText = React.forwardRef(WidgetText)
-WidgetText.propTypes = {
-  block: PropTypes.bool,
-  icon: PropTypes.node,
-  onClear: PropTypes.func,
-}
-WidgetText.deafultProps = {
-  icon: ChevronDownVector,
-}
-
-export default WidgetText
+})

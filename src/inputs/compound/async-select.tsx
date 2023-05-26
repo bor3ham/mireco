@@ -4,8 +4,7 @@ import classNames from 'classnames'
 
 import Select from '../basic/select'
 import { selectOption } from '../../prop-types-old/select'
-import ChevronDownVector from '../../components/chevron-down-vector'
-import { SpinnerVector } from '../../components/spinner-vector'
+import { ChevronDownVector, SpinnerVector } from 'vectors'
 
 function AsyncSelect(props) {
   const [options, setOptions] = useState([])
@@ -106,7 +105,7 @@ function AsyncSelect(props) {
       onChange={handleChange}
       dropdownProps={dropdownProps}
       filter={false}
-      icon={loading ? SpinnerVector : ChevronDownVector}
+      icon={loading ? <SpinnerVector /> : <ChevronDownVector />}
     />
   )
 }

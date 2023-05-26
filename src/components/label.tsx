@@ -1,30 +1,47 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-export default class Label extends React.PureComponent {
-  static propTypes = {
-    block: PropTypes.bool,
-    className: PropTypes.string,
-    tabIndex: PropTypes.number,
-    children: PropTypes.node,
-    style: PropTypes.object,
-  }
-  render() {
-    return (
-      <label
-        className={classNames(
-          'MIRECO-label',
-          {
-            block: this.props.block,
-          },
-          this.props.className,
-        )}
-        tabIndex={this.props.tabIndex}
-        style={this.props.style}
-      >
-        {this.props.children}
-      </label>
-    )
-  }
+interface Props {
+  // mireco
+  block?: boolean
+  // label
+  htmlFor?: string
+  // html
+  id?: string
+  className?: string
+  tabIndex?: number
+  title?: string
+  autoFocus?: boolean
+  style?: React.CSSProperties
+  children?: React.ReactNode
 }
+
+export const Label: React.FC<Props> = ({
+  block,
+  htmlFor,
+  id,
+  className,
+  tabIndex,
+  title,
+  autoFocus,
+  style,
+  children,
+}) => (
+  <label
+    htmlFor={htmlFor}
+    id={id}
+    className={classNames(
+      'MIRECO-label',
+      {
+        block,
+      },
+      className,
+    )}
+    tabIndex={tabIndex}
+    title={title}
+    autoFocus={autoFocus}
+    style={style}
+  >
+    {children}
+  </label>
+)
