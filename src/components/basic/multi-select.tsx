@@ -22,19 +22,18 @@ const OPTIONS = [
 ]
 
 const DemoMultiSelect = () => {
-  const [value, setValue] = useState([])
-  const handleValueChange = useCallback((newValue, wasBlur) => {
+  const [value, setValue] = useState<string[]>([])
+  const handleValueChange = useCallback((newValue: string[], wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
       <MultiSelect
-        block
-        placeholder="Select values"
         value={value}
         options={OPTIONS}
         onChange={handleValueChange}
+        placeholder="Select values"
       />
     </>
   )

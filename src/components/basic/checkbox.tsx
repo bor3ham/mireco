@@ -10,7 +10,9 @@ const DemoCheckbox = () => {
   return (
     <>
       <p>Checked: {value ? 'Yes' : 'No'}</p>
-      <Checkbox value={value} onChange={handleChange}>Hi there</Checkbox>
+      <Checkbox value={value} onChange={handleChange}>
+        Confirm choice
+      </Checkbox>
     </>
   )
 }

@@ -3,18 +3,17 @@ import * as ReactDOM from 'react-dom/client'
 import { Text } from 'mireco'
 
 const DemoText = () => {
-  const [value, setValue] = useState('Example text value')
-  const handleChange = useCallback((newValue) => {
+  const [value, setValue] = useState('')
+  const handleChange = useCallback((newValue: string) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {JSON.stringify(value)}</p>
       <Text
-        block
-        placeholder="Text value"
         value={value}
         onChange={handleChange}
+        placeholder="Enter text"
       />
     </>
   )
