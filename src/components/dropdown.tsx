@@ -1,51 +1,70 @@
-import React, { useRef, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React, { forwardRef, useCallback, useRef, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 
-import { usePrevious } from '../hooks'
+interface Option {
+  value: any
+  label: string
+}
 
-let DropdownOption = (props, ref) => {
-  const handleClick = () => {
-    props.onSelect(props.option.value)
-  }
+interface DropdownOptionProps {
+  option: Option
+  onSelect(value: any): void
+  current: boolean
+  disabled?: boolean
+}
+
+const DropdownOption = forwardRef<HTMLLIElement, DropdownOptionProps>(({
+  option,
+  onSelect,
+  current,
+  disabled,
+}, ref) => {
+  const handleClick = useCallback(() => {
+    onSelect(option.value)
+  }, [onSelect, option])
   return (
     <li
       className={classNames({
-        current: props.current,
+        current,
       })}
       ref={ref}
     >
       <button
         type="button"
         tabIndex={-1}
-        disabled={props.disabled}
+        disabled={disabled}
         onClick={handleClick}
       >
-        {props.option.label}
+        {option.label}
       </button>
     </li>
   )
-}
-DropdownOption = React.forwardRef(DropdownOption)
-DropdownOption.propTypes = {
-  current: PropTypes.bool,
-  disabled: PropTypes.bool,
-  option: PropTypes.shape({
-    value: PropTypes.any,
-    label: PropTypes.string.isRequired,
-  }),
-  onSelect: PropTypes.func.isRequired,
+})
+
+interface DropdownProps {
+  options: Option[]
+  value: any
+  onSelect?(value: any): void
+  disabled?: boolean
+  beforeOptions?: React.ReactNode
+  afterOptions?: React.ReactNode
+  noOptionsPrompt?: string
 }
 
-function Dropdown(props) {
-  const listRef = useRef(null)
-  const currentRef = useRef(null)
+export const Dropdown: React.FC<DropdownProps> = ({
+  options,
+  value,
+  onSelect,
+  disabled,
+  beforeOptions,
+  afterOptions,
+  noOptionsPrompt = 'No options',
+}) => {
+  const listRef = useRef<HTMLUListElement>(null)
+  const currentRef = useRef<HTMLLIElement>(null)
 
-  const focusOnCurrent = () => {
-    if (
-      listRef.current
-      && currentRef.current
-    ) {
+  const focusOnCurrent = useCallback(() => {
+    if (listRef.current && currentRef.current) {
       // don't use scroll into view because this also scrolls parent containers (the body included)
       const currentOption = currentRef.current
       const currentTop = currentOption.offsetTop
@@ -59,85 +78,61 @@ function Dropdown(props) {
         list.scrollTop = currentBottom - list.getBoundingClientRect().height
       }
     }
-  }
-
-  useEffect(() => {
-    focusOnCurrent()
   }, [])
 
-  const prevProps = usePrevious(props)
   useEffect(() => {
-    if (!prevProps) {
-      return
-    }
-    if (
-      typeof props.value !== 'undefined'
-      && props.value !== null
-      && props.value !== prevProps.value
-    ) {
+    if (typeof value !== 'undefined' && value !== null) {
       focusOnCurrent()
     }
-  })
-  const handleSelect = (value) => {
-    if (typeof props.onSelect === 'function') {
-      props.onSelect(value)
-    }
-  }
+  }, [value])
 
-  let options
-  if (props.options && props.options.length) {
-    options = props.options.map((option, index) => {
-      let extraProps = {}
-      const current = option.value === props.value
-      if (current) {
-        extraProps = {
-          ref: currentRef,
+  const handleSelect = useCallback((value: any) => {
+    if (onSelect) {
+      onSelect(value)
+    }
+  }, [onSelect])
+
+  const contents = useMemo(() => {
+    if (options.length) {
+      return options.map((option, index) => {
+        let extraProps = {}
+        const current = option.value === value
+        if (current) {
+          extraProps = {
+            ref: currentRef,
+          }
         }
-      }
-      return (
-        <DropdownOption
-          {...extraProps}
-          key={`option-${index}`}
-          option={option}
-          current={current}
-          disabled={props.disabled}
-          onSelect={handleSelect}
-        />
-      )
-    })
-  }
-  else {
-    options = (<li className="none">{props.noOptionsPrompt}</li>)
-  }
+        return (
+          <DropdownOption
+            {...extraProps}
+            key={`option-${index}`}
+            option={option}
+            current={current}
+            disabled={disabled}
+            onSelect={handleSelect}
+          />
+        )
+      })
+    }
+      return (<li className="none">{noOptionsPrompt}</li>)
+  }, [
+    options,
+    value,
+    disabled,
+    handleSelect,
+    noOptionsPrompt,
+  ])
   return (
     <ul
       className={classNames('MIRECO-dropdown', {
-        disabled: props.disabled,
+        disabled,
       })}
       tabIndex={-1}
       ref={listRef}
     >
-      {props.beforeOptions}
-      {options}
-      {props.afterOptions}
+      {beforeOptions}
+      {contents}
+      {afterOptions}
     </ul>
   )
 }
-Dropdown.propTypes = {
-  options: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.any,
-    label: PropTypes.string.isRequired,
-  })),
-  value: PropTypes.any,
-  disabled: PropTypes.bool,
-  onSelect: PropTypes.func,
-  block: PropTypes.bool,
-  noOptionsPrompt: PropTypes.string,
-  beforeOptions: PropTypes.node,
-  afterOptions: PropTypes.node,
-}
-Dropdown.defaultProps = {
-  noOptionsPrompt: 'No options',
-}
-
-export default Dropdown

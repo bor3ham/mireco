@@ -1,23 +1,37 @@
-import React, { useRef, useReducer, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React, { useRef, useReducer, useCallback, useEffect } from 'react'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, ClearButton } from 'components'
 import { ChevronDownVector } from 'vectors'
 import { Text } from './text'
-import { selectValue, selectOption } from '../../prop-types-old/select'
-import { usePrevious } from '../../hooks'
+import {
+  KEYBOARD_ARROW_DOWN,
+  KEYBOARD_ARROW_UP,
+  KEYBOARD_ENTER,
+  KEYBOARD_ESCAPE,
+  KEYBOARD_BACKSPACE,
+  KEYBOARD_TAB,
+  KEYBOARD_SHIFT,
+  KEYBOARD_CAPS,
+} from 'constants'
+import type { SelectOption } from 'types'
 
-const ARROW_DOWN = 40
-const ARROW_UP = 38
-const ENTER = 13
-const ESCAPE = 27
-const BACKSPACE = 8
-const TAB = 9
-const SHIFT = 16
-const CAPS = 20
+type MultiSelectState = {
+  dropdownOpen: boolean
+  inFocus: boolean
+  text: string
+  selected: string | null
+}
 
-function multiSelectReducer(state, action) {
+type MultiSelectAction =
+  | { type: 'close' }
+  | { type: 'open' }
+  | { type: 'textFilter', text: string }
+  | { type: 'select', value: string | null }
+  | { type: 'focus' }
+  | { type: 'blur' }
+
+function multiSelectReducer(state: MultiSelectState, action: MultiSelectAction) {
   switch (action.type) {
     case 'close': {
       return {
@@ -64,89 +78,138 @@ function multiSelectReducer(state, action) {
   }
 }
 
-function SelectedOption(props) {
-  return (
-    <li className="option">
-      {props.label}
-      <ClearButton onClick={props.remove} spaced={false} disabled={props.disabled} />
-    </li>
-  )
-}
-SelectedOption.propTypes = {
-  label: PropTypes.string,
-  remove: PropTypes.func,
-  disabled: PropTypes.bool,
+interface SelectedOptionProps {
+  value: string
+  label: string
+  remove(): void
+  disabled?: boolean
 }
 
-function MultiSelect(props) {
-  const containerRef = useRef(null)
-  const textRef = useRef(null)
+const SelectedOption: React.FC<SelectedOptionProps> = ({
+  value,
+  label,
+  remove,
+  disabled,
+}) => (
+  <li className="option">
+    {label}
+    <ClearButton onClick={remove} spaced={false} disabled={disabled} />
+  </li>
+)
+
+export interface MultiSelectProps {
+  // mireco
+  block?: boolean
+  // multi select
+  value?: string[]
+  options: SelectOption[]
+  onChange?(newValue: string[], wasBlur: boolean): void
+  filter?: boolean
+  icon?: React.ReactNode
+  placeholder?: string
+  textClassName?: string
+  onTextChange?(newValue: string): string
+  dropdownProps?: any
+  // html
+  id?: string
+  style?: React.CSSProperties
+  className?: string
+  autoFocus?: boolean
+  // form
+  disabled?: boolean
+  required?: boolean
+  name?: string
+}
+
+export const MultiSelect: React.FC<MultiSelectProps> = ({
+  block,
+  value,
+  options = [],
+  onChange,
+  filter = true,
+  icon = <ChevronDownVector />,
+  placeholder,
+  textClassName,
+  onTextChange,
+  dropdownProps,
+  id,
+  style,
+  className,
+  autoFocus,
+  disabled,
+  required,
+  name,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLInputElement>(null)
 
   const [state, dispatchState] = useReducer(multiSelectReducer, {
-    text: '',
     dropdownOpen: false,
+    inFocus: false,
+    text: '',
     selected: null,
   })
-  const onBlur = () => {
+  const onBlur = useCallback(() => {
     dispatchState({
       type: 'blur',
     })
-  }
-
-  // on component received new props
-  const prevProps = usePrevious(props)
+  }, [])
   useEffect(() => {
-    if (!prevProps) {
-      return
-    }
-    if (props.disabled && !prevProps.disabled) {
+    if (disabled) {
       onBlur()
     }
-  })
+  }, [disabled])
 
-  const addValue = (value) => {
-    if (typeof props.onChange === 'function') {
-      props.onChange([...new Set([
-        ...props.value,
-        value,
+  const addValue = useCallback((adding: string) => {
+    if (onChange) {
+      onChange([...new Set([
+        ...value || [],
+        adding,
       ])], true)
     }
-  }
-  const removeAt = (index) => {
-    if (props.disabled) {
+  }, [
+    onChange,
+    value,
+  ])
+  const removeAt = useCallback((index: number) => {
+    if (disabled) {
       return
     }
-    if (typeof props.onChange === 'function') {
-      const updated = [...props.value]
+    if (onChange) {
+      const updated = [...value || []]
       updated.splice(index, 1)
-      props.onChange(updated, false)
+      onChange(updated, false)
       textRef.current && textRef.current.focus()
     }
-  }
-  const clearAll = () => {
-    if (props.disabled) {
+  }, [
+    disabled,
+    onChange,
+    value,
+  ])
+  const clearAll = useCallback(() => {
+    if (disabled) {
       return
     }
-    if (typeof props.onChange === 'function') {
-      props.onChange([], false)
+    if (onChange) {
+      onChange([], false)
       dispatchState({
         type: 'textFilter',
         text: '',
       })
       textRef.current && textRef.current.focus()
     }
-  }
-  const getFilteredOptions = (search) => {
-    const terms = search.split(' ').map(term => {
+  }, [disabled, onChange])
+  const getFilteredOptions = useCallback((search: string) => {
+    const terms = search.split(' ').map((term: string) => {
       return term.trim().toLowerCase()
-    }).filter(term => {
+    }).filter((term: string) => {
       return (term.length > 0)
     })
-    return props.options.filter((option) => {
-      if (props.value.indexOf(option.value) !== -1) {
+    return (options || []).filter((option) => {
+      if ((value || []).indexOf(option.value) !== -1) {
         return false
       }
-      if (terms.length === 0 || !props.filter) {
+      if (terms.length === 0 || !filter) {
         return true
       }
       const searchable = `${option.label}${option.value}`.toLowerCase()
@@ -158,8 +221,8 @@ function MultiSelect(props) {
       })
       return match
     })
-  }
-  const handleContainerBlur = (event) => {
+  }, [options, value])
+  const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current
       && (
@@ -171,15 +234,15 @@ function MultiSelect(props) {
       return
     }
     onBlur()
-  }
-  const handleTextFocus = (event) => {
+  }, [onBlur])
+  const handleTextFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     dispatchState({type: 'focus'})
-  }
-  const handleTextKeyDown = (event) => {
-    if (!event || event.which === SHIFT || event.which === CAPS) {
+  }, [])
+  const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!event || event.which === KEYBOARD_SHIFT || event.which === KEYBOARD_CAPS) {
       return
     }
-    if (event.which === ENTER || (event.which === TAB && state.selected !== null)) {
+    if (event.which === KEYBOARD_ENTER || (event.which === KEYBOARD_TAB && state.selected !== null)) {
       if (state.dropdownOpen) {
         if (state.selected !== null) {
           addValue(state.selected)
@@ -191,19 +254,19 @@ function MultiSelect(props) {
       }
       return
     }
-    if (!state.dropdownOpen && event.which !== ESCAPE) {
+    if (!state.dropdownOpen && event.which !== KEYBOARD_ESCAPE) {
       dispatchState({
         type: 'open',
       })
     }
-    if (event.which === BACKSPACE && state.text === '') {
-      if (typeof props.onChange === 'function') {
-        props.onChange(props.value.splice(0, props.value.length - 1), false)
+    if (event.which === KEYBOARD_BACKSPACE && state.text === '') {
+      if (onChange) {
+        onChange((value || []).splice(0, (value || []).length - 1), false)
       }
     }
-    if (event.which === ARROW_DOWN || event.which === ARROW_UP) {
+    if (event.which === KEYBOARD_ARROW_DOWN || event.which === KEYBOARD_ARROW_UP) {
       event.preventDefault()
-      if (typeof props.onChange !== 'function') {
+      if (!onChange) {
         return
       }
       let currentIndex = -1
@@ -217,13 +280,13 @@ function MultiSelect(props) {
         }
       })
       let nextIndex = currentIndex
-      if (event.which === ARROW_DOWN) {
+      if (event.which === KEYBOARD_ARROW_DOWN) {
         nextIndex++
         if (nextIndex >= filtered.length) {
           nextIndex = 0
         }
       }
-      if (event.which === ARROW_UP) {
+      if (event.which === KEYBOARD_ARROW_UP) {
         nextIndex--
         if (nextIndex < 0) {
           nextIndex = filtered.length - 1
@@ -242,23 +305,28 @@ function MultiSelect(props) {
         })
       }
     }
-    if (event.which === ESCAPE) {
+    if (event.which === KEYBOARD_ESCAPE) {
       if (state.dropdownOpen) {
         dispatchState({
           type: 'close',
         })
       }
     }
-  }
-  const handleTextChange = (newValue) => {
+  }, [
+    addValue,
+    value,
+    onChange,
+    state,
+  ])
+  const handleTextChange = useCallback((newValue: string) => {
     dispatchState({
       type: 'textFilter',
       text: newValue,
     })
-    if (typeof props.onTextChange === 'function') {
-      props.onTextChange(newValue)
+    if (onTextChange) {
+      onTextChange(newValue)
     }
-    if (typeof props.onChange !== 'function') {
+    if (!onChange) {
       return
     }
     let cleaned = newValue.trim().toLowerCase()
@@ -269,8 +337,8 @@ function MultiSelect(props) {
       })
     }
     else {
-      let valueMatch = null
-      props.options.map(option => {
+      let valueMatch: string | null = null
+      options.map(option => {
         const optionValue = `${option.value}`.trim().toLowerCase()
         if (valueMatch === null && optionValue === cleaned) {
           valueMatch = option.value
@@ -283,8 +351,8 @@ function MultiSelect(props) {
         })
       }
       else {
-        let labelMatch = null
-        props.options.map(option => {
+        let labelMatch: string | null = null
+        options.map(option => {
           const optionLabel = `${option.label}`.trim().toLowerCase()
           if (labelMatch === null && optionLabel === cleaned) {
             labelMatch = option.value
@@ -309,25 +377,35 @@ function MultiSelect(props) {
         }
       }
     }
-  }
-  const handleContainerClick = (event) => {
-    if (props.disabled) {
+  }, [
+    onTextChange,
+    onChange,
+    options,
+    getFilteredOptions,
+  ])
+  const handleContainerClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    if (disabled) {
       return
     }
     if (!state.dropdownOpen) {
-      if (textRef.current && textRef.current.inputRef.current) {
-        if (textRef.current.inputRef.current === document.activeElement) {
+      if (textRef.current) {
+        if (textRef.current === document.activeElement) {
           dispatchState({
             type: 'open',
           })
         } else {
-          textRef.current && textRef.current.focus()
+          if (textRef.current) {
+            textRef.current.focus()
+          }
         }
       }
     }
-  }
-  const handleDropdownSelect = (value) => {
-    const selected = props.options.find(option => option.value === value)
+  }, [
+    disabled,
+    state,
+  ])
+  const handleDropdownSelect = useCallback((value: string) => {
+    const selected = options.find(option => option.value === value)
     if (!selected) {
       console.warn('Could not find selected value in options', value)
       return
@@ -337,28 +415,31 @@ function MultiSelect(props) {
     dispatchState({
       type: 'close',
     })
-  }
+  }, [
+    options,
+    addValue,
+  ])
 
   const filtered = getFilteredOptions(state.text)
-  const hasValue = props.value.length > 0
-  const clearable = hasValue && !props.disabled
+  const hasValue = (value || []).length > 0
+  const clearable = hasValue && !disabled
   return (
     <BlockDiv
       ref={containerRef}
-      block={props.block}
+      block={block}
       className={classNames('MIRECO-multi-select', {
         'has-value': hasValue,
         'in-focus': state.inFocus,
-        disabled: props.disabled,
+        disabled: disabled,
         clearable,
-      }, props.className)}
+      }, className)}
       onBlur={handleContainerBlur}
       onClick={handleContainerClick}
       tabIndex={-1}
     >
       <ul className="selected">
-        {props.value.map((selectedValue, valueIndex) => {
-          const option = props.options.find((option) => option.value === selectedValue)
+        {(value || []).map((selectedValue, valueIndex) => {
+          const option = options.find((option) => option.value === selectedValue)
           const remove = () => {
             removeAt(valueIndex)
           }
@@ -368,64 +449,40 @@ function MultiSelect(props) {
               value={selectedValue}
               label={option ? option.label : selectedValue}
               remove={remove}
-              disabled={props.disabled}
+              disabled={disabled}
             />
           )
         })}
         <li className="text">
           <Text
             ref={textRef}
-            placeholder={props.placeholder}
+            placeholder={placeholder}
             value={state.text}
             onFocus={handleTextFocus}
             onKeyDown={handleTextKeyDown}
             onChange={handleTextChange}
-            disabled={props.disabled}
-            block={props.block}
-            style={props.style}
-            autoFocus={props.autoFocus}
-            className={props.textClassName}
-            id={props.id}
-            icon={props.icon}
+            disabled={disabled}
+            block={block}
+            style={style}
+            autoFocus={autoFocus}
+            className={textClassName}
+            id={id}
+            required={required}
           />
         </li>
       </ul>
       {clearable && (
         <ClearButton onClick={clearAll} />
       )}
-      {props.icon}
-      {state.dropdownOpen && !props.disabled && (
+      {icon}
+      {state.dropdownOpen && !disabled && (
         <Dropdown
           options={filtered}
           value={state.selected}
           onSelect={handleDropdownSelect}
-          {...props.dropdownProps}
+          {...dropdownProps}
         />
       )}
     </BlockDiv>
   )
 }
-MultiSelect.propTypes = {
-  value: PropTypes.arrayOf(selectValue).isRequired,
-  options: PropTypes.arrayOf(selectOption).isRequired,
-  placeholder: PropTypes.string,
-  block: PropTypes.bool,
-  disabled: PropTypes.bool,
-  onChange: PropTypes.func,
-  onTextChange: PropTypes.func,
-  style: PropTypes.object,
-  dropdownProps: PropTypes.object,
-  filter: PropTypes.bool,
-  autoFocus: PropTypes.bool,
-  className: PropTypes.string,
-  textClassName: PropTypes.string,
-  id: PropTypes.string,
-  icon: PropTypes.node,
-}
-MultiSelect.defaultProps = {
-  options: [],
-  filter: true,
-  icon: <ChevronDownVector />,
-}
-
-export default MultiSelect

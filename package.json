@@ -15,8 +15,8 @@
   "dependencies": {
     "classnames": "^2.3.2",
     "date-fns": "^2.3.0",
-    "humanize-duration": "^3.20.1",
-    "parse-duration": "^0.1.1",
+    "humanize-duration": "^3.28.0",
+    "parse-duration": "^1.0.3",
     "prop-types": "^15.7.2",
     "react-textarea-autosize": "^8.3.2"
   },
@@ -25,6 +25,7 @@
     "react-dom": "^16.8.5 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
+    "@types/humanize-duration": "^3.27.1",
     "@types/react": "^18.2.7",
     "concurrently": "^5.2.0",
     "esbuild": "^0.17.19",

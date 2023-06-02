@@ -31,6 +31,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
       <Text
         ref={ref}
         {...inputProps}
+        block={block}
       />
       {clearable && (
         <ClearButton

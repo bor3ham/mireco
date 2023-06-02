@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import classNames from 'classnames'
 
-interface Props {
+export interface CheckboxInputProps {
   // checkbox
   value?: boolean
   onChange?(newValue: boolean, event: React.ChangeEvent<HTMLInputElement>): void
@@ -20,7 +20,7 @@ interface Props {
   required?: boolean
 }
 
-export const CheckboxInput: React.FC<Props> = ({
+export const CheckboxInput: React.FC<CheckboxInputProps> = ({
   value,
   onChange,
   id,

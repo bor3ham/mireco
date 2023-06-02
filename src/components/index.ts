@@ -1,6 +1,6 @@
 export { BlockDiv } from './block-div'
 export { DayCalendar } from './day-calendar'
 export { ClearButton } from './clear-button'
-export { default as Dropdown } from './dropdown'
+export { Dropdown } from './dropdown'
 export { Label } from './label'
 export { WidgetText } from './widget-text'

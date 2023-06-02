@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 
-interface Props {
+export interface ButtonProps {
   // mireco
   block?: boolean
   // button
@@ -34,7 +34,7 @@ interface Props {
   onKeyUp?(event: React.KeyboardEvent<HTMLButtonElement>): void
 }
 
-export const Button: React.FC<Props> = ({
+export const Button: React.FC<ButtonProps> = ({
   block,
   type,
   id,

@@ -4,13 +4,14 @@ import { parse, format, isValid, addDays, subDays } from 'date-fns'
 
 import { DayCalendar, BlockDiv, WidgetText } from 'components'
 import { CalendarVector } from 'vectors'
-import { ISO_8601_DATE_FORMAT } from 'constants'
+import {
+  ISO_8601_DATE_FORMAT,
+  KEYBOARD_ARROW_DOWN,
+  KEYBOARD_ARROW_UP,
+  KEYBOARD_ENTER,
+  KEYBOARD_ESCAPE,
+} from 'constants'
 import type { DateValue } from 'types'
-
-const ARROW_DOWN = 40
-const ARROW_UP = 38
-const ENTER = 13
-const ESCAPE = 27
 
 function formatValue(value: DateValue, displayFormat: string): string {
   if (value === null || typeof value === 'undefined') {
@@ -40,7 +41,7 @@ function parseValue(textValue: string, inputFormats: string[]): DateValue {
   return valid
 }
 
-interface Props {
+export interface DateProps {
   // mireco
   block?: boolean
   // date
@@ -67,7 +68,7 @@ interface Props {
   required?: boolean
 }
 
-const DateInput: React.FC<Props> = ({
+const DateInput: React.FC<DateProps> = ({
   block,
   value,
   onChange,
@@ -102,9 +103,6 @@ const DateInput: React.FC<Props> = ({
   required,
 }) => {
   const [textValue, setTextValue] = useState<string>(formatValue(value, displayFormat))
-  const [inFocus, setInFocus] = useState<boolean>(false)
-  const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
-
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
   useEffect(() => {
@@ -120,7 +118,16 @@ const DateInput: React.FC<Props> = ({
     value,
     inputFormats,
   ])
-
+  const handleTextChange = useCallback((newValue: string) => {
+    setTextValue(newValue)
+    if (onChange) {
+      onChange(parseValue(newValue, inputFormats), false)
+    }
+    setCalendarOpen(true)
+  }, [onChange, inputFormats])
+  
+  const [inFocus, setInFocus] = useState<boolean>(false)
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
   const handleBlur = useCallback(() => {
     if (typeof value === 'string') {
       const formatted = formatValue(value, displayFormat)
@@ -180,7 +187,7 @@ const DateInput: React.FC<Props> = ({
   }, [handleBlur])
   
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (event && (event.which === ENTER || event.which === ESCAPE)) {
+    if (event && (event.which === KEYBOARD_ENTER || event.which === KEYBOARD_ESCAPE)) {
       if (calendarOpen) {
         let formatted = formatValue(value, displayFormat)
         setTextValue(formatted)
@@ -196,13 +203,13 @@ const DateInput: React.FC<Props> = ({
       if (typeof value === 'string') {
         current = parse(value, ISO_8601_DATE_FORMAT, new Date())
       }
-      if (event.which === ARROW_DOWN) {
+      if (event.which === KEYBOARD_ARROW_DOWN) {
         event.preventDefault()
         if (onChange) {
           onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
         }
       }
-      if (event.which === ARROW_UP) {
+      if (event.which === KEYBOARD_ARROW_UP) {
         event.preventDefault()
         if (onChange) {
           onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
@@ -210,13 +217,6 @@ const DateInput: React.FC<Props> = ({
       }
     }
   }, [value, displayFormat, onChange])
-  const handleTextChange = useCallback((newValue: string) => {
-    setTextValue(newValue)
-    if (onChange) {
-      onChange(parseValue(newValue, inputFormats), false)
-    }
-    setCalendarOpen(true)
-  }, [onChange, inputFormats])
   const handleTextClick = useCallback(() => {
     setCalendarOpen(true)
   }, [])

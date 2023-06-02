@@ -1,33 +1,11 @@
 import React from 'react'
 import classNames from 'classnames'
 
-import { Label } from 'components/label'
+import { Label } from 'components'
 import { CheckboxInput } from './checkbox-input'
+import { CheckVector } from 'vectors'
 
-const CHECK_SVG = (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 6.35 6.35"
-    style={{display: 'none'}}
-  >
-    <g transform="translate(0,-290.65)">
-      <path
-        style={{
-          fill: 'none',
-          strokeWidth: '1.0583',
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          strokeMiterlimit: '4',
-          strokeDasharray: 'none',
-        }}
-        d="M 1.588,294.090 2.646,295.148 4.763,292.237"
-      />
-    </g>
-  </svg>
-)
-
-interface Props {
+export interface CheckboxProps {
   // mireco
   block?: boolean
   // checkbox
@@ -48,7 +26,7 @@ interface Props {
   required?: boolean
 }
 
-export const Checkbox: React.FC<Props> = ({
+export const Checkbox: React.FC<CheckboxProps> = ({
   block,
   value,
   onChange,
@@ -88,7 +66,7 @@ export const Checkbox: React.FC<Props> = ({
       value={value}
       onChange={onChange}
     />
-    {CHECK_SVG}
+    <CheckVector />
     {!!children && ' '}
     {!!children && (<span>{children}</span>)}
   </Label>
