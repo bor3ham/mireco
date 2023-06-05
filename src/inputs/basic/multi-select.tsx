@@ -31,7 +31,7 @@ type MultiSelectAction =
   | { type: 'focus' }
   | { type: 'blur' }
 
-function multiSelectReducer(state: MultiSelectState, action: MultiSelectAction) {
+function multiSelectReducer(state: MultiSelectState, action: MultiSelectAction): MultiSelectState {
   switch (action.type) {
     case 'close': {
       return {

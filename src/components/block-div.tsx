@@ -12,6 +12,8 @@ interface Props {
   className?: string
   tabIndex?: number
   // event handlers
+  onFocus?(event: React.FocusEvent<HTMLDivElement>): void
+  onBlur?(event: React.FocusEvent<HTMLDivElement>): void
   onClick?(event: React.MouseEvent<HTMLDivElement>): void
   onDoubleClick?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseDown?(event: React.MouseEvent<HTMLDivElement>): void
@@ -21,8 +23,8 @@ interface Props {
   onMouseOut?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseOver?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseUp?(event: React.MouseEvent<HTMLDivElement>): void
-  onBlur?(event: React.FocusEvent<HTMLDivElement>): void
-  onFocus?(event: React.FocusEvent<HTMLDivElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLDivElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
 export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
@@ -32,6 +34,8 @@ export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
   children,
   className,
   tabIndex,
+  onFocus,
+  onBlur,
   onClick,
   onDoubleClick,
   onMouseDown,
@@ -41,8 +45,8 @@ export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
   onMouseOut,
   onMouseOver,
   onMouseUp,
-  onBlur,
-  onFocus,
+  onKeyDown,
+  onKeyUp,
 }, ref) => {
   let combinedStyle: React.CSSProperties = {}
   if (!block) {
@@ -60,6 +64,8 @@ export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
         block,
       })}
       tabIndex={tabIndex}
+      onFocus={onFocus}
+      onBlur={onBlur}
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       onMouseDown={onMouseDown}
@@ -69,8 +75,8 @@ export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
       onMouseOut={onMouseOut}
       onMouseOver={onMouseOver}
       onMouseUp={onMouseUp}
-      onBlur={onBlur}
-      onFocus={onFocus}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     >
       {children}
     </div>

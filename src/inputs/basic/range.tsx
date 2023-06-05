@@ -41,7 +41,7 @@ interface RangeProps {
 
 export const Range: React.FC<RangeProps> = ({
   block,
-  value = null,
+  value,
   onChange,
   min = 0,
   max = 100,

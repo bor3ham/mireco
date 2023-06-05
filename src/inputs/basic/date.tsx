@@ -25,7 +25,9 @@ function parseValue(textValue: string, inputFormats: string[]): DateValue {
   if (trimmed.length === 0) {
     return null
   }
-  trimmed = trimmed.replace('\\', '/') // replace backslashes with forward
+  trimmed = trimmed.replace(/\\/g, '/') // replace backslashes with forward
+  trimmed = trimmed.replace(/\ /g, '/') // replace spaces with slashes
+  trimmed = trimmed.replace(/\/+/g, '/') // merge several slashes into one
   trimmed = trimmed.replace(/\/+$/, '') // remove trailing slashes from consideration
 
   let valid: DateValue = undefined
@@ -48,13 +50,20 @@ export interface DateProps {
   value?: DateValue
   onChange?(newValue: DateValue, wasBlur: boolean): void
   displayFormat?: string
+  /**
+   * Ordered list of input formats, when parsing text will accept the first valid
+   * result.
+   * 
+   * Note that input spaces are automatically replaced with slashes.
+  */
   inputFormats?: string[]
   autoErase?: boolean
-  showClearButton?: boolean
+  clearable?: boolean
   rightHang?: boolean
   placeholder?: string
   icon?: React.ReactNode
   textClassName?: string
+  size?: number
   // html
   id?: string
   className?: string
@@ -84,28 +93,29 @@ export interface DateProps {
 
 const DateInput: React.FC<DateProps> = ({
   block,
-  value = null,
+  value,
   onChange,
   displayFormat = 'do MMM yyyy',
   inputFormats = [
     'd',
     'do',
     'd/MM',
-    'do MMM',
-    'do MMMM',
+    'do/MMM',
+    'do/MMMM',
     'd/MM/yy',
     'd/MM/yyyy',
-    'do MMM yy',
-    'do MMM yyyy',
-    'do MMMM yy',
-    'do MMMM yyyy',
+    'do/MMM/yy',
+    'do/MMM/yyyy',
+    'do/MMMM/yy',
+    'do/MMMM/yyyy',
   ],
   autoErase = true,
-  showClearButton = true,
+  clearable = true,
   rightHang,
-  placeholder = 'dd/mm/yyyy',
+  placeholder = 'dd / mm / yyyy',
   icon = <CalendarVector />,
   textClassName,
+  size,
   id,
   className,
   tabIndex,
@@ -284,9 +294,9 @@ const DateInput: React.FC<DateProps> = ({
     disabled,
     onChange,
   ])
-  const clearable = (
+  const canClear = (
     typeof value === 'string' &&
-    showClearButton &&
+    clearable &&
     !disabled
   )
   return (
@@ -307,7 +317,7 @@ const DateInput: React.FC<DateProps> = ({
     >
       <WidgetText
         icon={icon}
-        onClear={clearable ? handleClear : undefined}
+        onClear={canClear ? handleClear : undefined}
         id={id}
         ref={textRef}
         placeholder={placeholder}
@@ -321,6 +331,7 @@ const DateInput: React.FC<DateProps> = ({
         autoFocus={autoFocus}
         tabIndex={tabIndex}
         name={name}
+        size={size}
         onChange={handleTextChange}
         onFocus={handleFocus}
         onBlur={onBlur}

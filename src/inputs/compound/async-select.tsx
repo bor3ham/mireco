@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import Select from '../basic/select'
+import { Select } from '../basic/select'
 import { selectOption } from '../../prop-types-old/select'
 import { ChevronDownVector, SpinnerVector } from 'vectors'
 

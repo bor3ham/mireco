@@ -6,7 +6,7 @@ export type TextProps = {
   block?: boolean
   // text
   value?: string
-  onChange?(newValue: string): void
+  onChange?(newValue: string, event: React.ChangeEvent<HTMLInputElement>): void
   type?: string
   placeholder?: string
   maxLength?: number
@@ -29,7 +29,7 @@ export type TextProps = {
   onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
@@ -71,7 +71,7 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value
     if (onChange) {
-      onChange(newValue)
+      onChange(newValue, event)
     }
   }, [onChange])
 

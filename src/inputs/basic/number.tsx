@@ -45,6 +45,7 @@ interface NumberProps {
   max?: number
   step?: number
   placeholder?: string
+  size?: number
   // html
   id?: string
   autoFocus?: boolean
@@ -73,12 +74,14 @@ interface NumberProps {
 }
 
 const NumberInput: React.FC<NumberProps> = ({
-  value = null,
+  block,
+  value,
   onChange,
   min,
   max,
   step = 1,
   placeholder,
+  size,
   id,
   autoFocus,
   tabIndex,
@@ -163,6 +166,7 @@ const NumberInput: React.FC<NumberProps> = ({
 
   return (
     <Text
+      block={block}
       value={textValue}
       onChange={handleTextChange}
       placeholder={placeholder}
@@ -178,6 +182,7 @@ const NumberInput: React.FC<NumberProps> = ({
       name={name}
       required={required}
       disabled={disabled}
+      size={size}
       onFocus={onFocus}
       onBlur={handleBlur}
       onClick={onClick}

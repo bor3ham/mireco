@@ -11,6 +11,7 @@ interface WidgetTextProps extends TextProps {
   // widget text
   onClear?(): void
   icon?: React.ReactNode
+  everClearable?: boolean
   // event handlers
   onFocus?(event: React.FocusEvent<HTMLInputElement>): void
   onBlur?(event: React.FocusEvent<HTMLInputElement>): void
@@ -32,6 +33,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     block,
     onClear,
     icon = <ChevronDownVector />,
+    everClearable = true,
     ...inputProps
   } = props
   const clearable = !!onClear
@@ -39,7 +41,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     <BlockDiv
       block={block}
       className={classNames('MIRECO-widget-text', {
-        clearable,
+        'ever-clearable': everClearable,
       })}
     >
       <Text

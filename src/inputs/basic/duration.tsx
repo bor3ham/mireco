@@ -49,6 +49,7 @@ export interface DurationProps {
   incrementUnits?: number[]
   defaultTimeUnit?: string
   placeholder?: string
+  size?: number
   // html
   id?: string
   className?: string
@@ -93,6 +94,7 @@ export const Duration: React.FC<DurationProps> = ({
   ],
   defaultTimeUnit = 'hours',
   placeholder,
+  size,
   id,
   className,
   style,
@@ -189,6 +191,7 @@ export const Duration: React.FC<DurationProps> = ({
       value={textValue}
       block={block}
       placeholder={placeholder}
+      size={size}
       disabled={disabled}
       className={classNames(
         'MIRECO-duration',
