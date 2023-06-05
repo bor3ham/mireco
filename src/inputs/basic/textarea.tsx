@@ -1,95 +1,148 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { forwardRef, useRef, useCallback, useEffect } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 import classNames from 'classnames'
 
-export default class Textarea extends React.PureComponent {
-  static propTypes = {
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-    required: PropTypes.bool,
-    placeholder: PropTypes.string,
-    disabled: PropTypes.bool,
-    autoFocus: PropTypes.bool,
-    tabIndex: PropTypes.number,
-    maxLength: PropTypes.number,
-    id: PropTypes.string,
-
-    block: PropTypes.bool,
-    className: PropTypes.string,
-    style: PropTypes.object,
-    minRows: PropTypes.number,
-    maxRows: PropTypes.number,
-
-    onFocus: PropTypes.func,
-    onBlur: PropTypes.func,
-    onKeyDown: PropTypes.func,
-    onKeyUp: PropTypes.func,
-  }
-  static defaultProps = {
-    minRows: 2,
-    maxRows: 5,
-  }
-  constructor(props) {
-    super(props)
-    this.inputRef = React.createRef()
-  }
-  componentDidUpdate = (prevProps, prevState) => {
-    if (
-      this.props.disabled && !prevProps.disabled
-      && this.inputRef.current
-      && this.inputRef.current._ref === document.activeElement
-      && typeof this.props.onBlur === 'function'
-    ) {
-      this.props.onBlur()
-    }
-    if (
-      !this.props.disabled && prevProps.disabled
-      && this.inputRef.current
-      && this.inputRef.current._ref === document.activeElement
-      && typeof this.props.onFocus === 'function'
-    ) {
-      this.props.onFocus()
-    }
-  }
-  handleChange = (event) => {
-    if (event && typeof this.props.onChange === 'function') {
-      this.props.onChange(event.target.value)
-    }
-  }
-  render() {
-    return (
-      <TextareaAutosize
-        ref={this.inputRef}
-
-        value={this.props.value || ''}
-        onChange={this.handleChange}
-        name={this.props.name}
-        required={this.props.required}
-        placeholder={this.props.placeholder}
-        disabled={this.props.disabled}
-        autoFocus={this.props.autoFocus}
-        tabIndex={this.props.tabIndex}
-        maxLength={this.props.maxLength}
-        id={this.props.id}
-
-        className={classNames(
-          'MIRECO-textarea',
-          {
-            block: this.props.block,
-          },
-          this.props.className,
-        )}
-        style={this.props.style}
-        minRows={this.props.minRows || 1}
-        maxRows={this.props.maxRows}
-
-        onFocus={this.props.onFocus}
-        onBlur={this.props.onBlur}
-        onKeyDown={this.props.onKeyDown}
-        onKeyUp={this.props.onKeyUp}
-      />
-    )
-  }
+// style taken from react-textarea-autosize (not exported)
+declare type Style = Omit<NonNullable<React.TextareaHTMLAttributes<HTMLTextAreaElement>['style']>, 'maxHeight' | 'minHeight'> & {
+  height?: number;
 }
+
+interface TextareaProps {
+  // mireco
+  block?: boolean
+  // textarea
+  value?: string
+  onChange(newValue?: string): void
+  minRows?: number
+  maxRows?: number
+  placeholder?: string
+  maxLength?: number
+  // html
+  id?: string
+  autoFocus?: boolean
+  tabIndex?: number
+  style?: Style
+  className?: string
+  title?: string
+  // form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+  // event handlers
+  onFocus?(event?: React.FocusEvent<HTMLTextAreaElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLTextAreaElement>): void
+  onClick?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLTextAreaElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLTextAreaElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLTextAreaElement>): void
+}
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
+  block,
+  value,
+  onChange,
+  minRows = 2,
+  maxRows = 5,
+  placeholder,
+  maxLength,
+  id,
+  autoFocus,
+  tabIndex,
+  style,
+  className,
+  title,
+  name,
+  required,
+  disabled,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
+}, forwardedRef) => {
+  const innerRef = useRef<HTMLTextAreaElement>()
+  useEffect(() => {
+    if (!innerRef.current) {
+      return
+    }
+    if (disabled) {
+      if (innerRef.current === document.activeElement) {
+        if (onBlur) {
+          onBlur()
+        }
+      }
+    } else {
+      if (innerRef.current === document.activeElement) {
+        if (onFocus) {
+          onFocus()
+        }
+      }
+    }
+  }, [disabled])
+  const handleChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (onChange) {
+      onChange(event.target.value)
+    }
+  }, [onChange])
+  return (
+    <TextareaAutosize
+      ref={(instance: HTMLTextAreaElement) => {
+        innerRef.current = instance;
+        if (typeof forwardedRef === "function") {
+          forwardedRef(instance)
+        } else if (forwardedRef !== null) {
+          forwardedRef.current = instance
+        }
+      }}
+      value={value || ''}
+      onChange={handleChange}
+      name={name}
+      required={required}
+      placeholder={placeholder}
+      disabled={disabled}
+      autoFocus={autoFocus}
+      tabIndex={tabIndex}
+      maxLength={maxLength}
+      id={id}
+      className={classNames(
+        'MIRECO-textarea',
+        {
+          block,
+        },
+        className,
+      )}
+      title={title}
+      style={style}
+      minRows={minRows}
+      maxRows={maxRows}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
+    />
+  )
+})

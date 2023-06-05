@@ -3,18 +3,17 @@ import * as ReactDOM from 'react-dom/client'
 import { Textarea } from 'mireco'
 
 const DemoTextarea = () => {
-  const [value, setValue] = useState('Example text value...\nWith multiple lines.')
-  const handleChange = useCallback((newValue) => {
+  const [value, setValue] = useState<string>('')
+  const handleChange = useCallback((newValue: string) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {JSON.stringify(value)}</p>
       <Textarea
-        block
-        placeholder="Textarea value"
         value={value}
         onChange={handleChange}
+        placeholder="Enter multiple lines of text"
       />
     </>
   )
