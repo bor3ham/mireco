@@ -45,7 +45,7 @@ export interface DateProps {
   // mireco
   block?: boolean
   // date
-  value: DateValue
+  value?: DateValue
   onChange?(newValue: DateValue, wasBlur: boolean): void
   displayFormat?: string
   inputFormats?: string[]
@@ -66,11 +66,25 @@ export interface DateProps {
   disabled?: boolean
   name?: string
   required?: boolean
+  // event handlers
+  onFocus?(event: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
 const DateInput: React.FC<DateProps> = ({
   block,
-  value,
+  value = null,
   onChange,
   displayFormat = 'do MMM yyyy',
   inputFormats = [
@@ -101,6 +115,19 @@ const DateInput: React.FC<DateProps> = ({
   disabled,
   name,
   required,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
 }) => {
   const [textValue, setTextValue] = useState<string>(formatValue(value, displayFormat))
   const textValueRef = useRef<string>(textValue)
@@ -128,7 +155,7 @@ const DateInput: React.FC<DateProps> = ({
   
   const [inFocus, setInFocus] = useState<boolean>(false)
   const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
-  const handleBlur = useCallback(() => {
+  const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
     if (typeof value === 'string') {
       const formatted = formatValue(value, displayFormat)
       setTextValue(formatted)
@@ -152,11 +179,15 @@ const DateInput: React.FC<DateProps> = ({
         }
       }
     }
+    if (onBlur) {
+      onBlur(event)
+    }
   }, [
     value,
     displayFormat,
     onChange,
     autoErase,
+    onBlur,
   ])
   useEffect(() => {
     if (disabled) {
@@ -166,10 +197,13 @@ const DateInput: React.FC<DateProps> = ({
     disabled,
   ])
 
-  const handleFocus = useCallback(() => {
+  const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInFocus(true)
     setCalendarOpen(true)
-  }, [])
+    if (onFocus) {
+      onFocus(event)
+    }
+  }, [onFocus])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
@@ -186,7 +220,7 @@ const DateInput: React.FC<DateProps> = ({
     handleBlur()
   }, [handleBlur])
   
-  const handleTextKeyDown = useCallback((event: React.KeyboardEvent) => {
+  const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event && (event.which === KEYBOARD_ENTER || event.which === KEYBOARD_ESCAPE)) {
       if (calendarOpen) {
         let formatted = formatValue(value, displayFormat)
@@ -215,11 +249,17 @@ const DateInput: React.FC<DateProps> = ({
           onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
         }
       }
+      if (onKeyDown) {
+        onKeyDown(event)
+      }
     }
-  }, [value, displayFormat, onChange])
-  const handleTextClick = useCallback(() => {
+  }, [value, displayFormat, onChange, onKeyDown])
+  const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
     setCalendarOpen(true)
-  }, [])
+    if (onClick) {
+      onClick(event)
+    }
+  }, [onClick])
   const textRef = useRef<HTMLInputElement>(null)
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {
@@ -272,11 +312,7 @@ const DateInput: React.FC<DateProps> = ({
         ref={textRef}
         placeholder={placeholder}
         value={textValue}
-        onChange={handleTextChange}
-        onClick={handleTextClick}
-        onFocus={handleFocus}
         disabled={disabled}
-        onKeyDown={handleTextKeyDown}
         block={block}
         style={{marginBottom: '0'}}
         required={required}
@@ -285,6 +321,20 @@ const DateInput: React.FC<DateProps> = ({
         autoFocus={autoFocus}
         tabIndex={tabIndex}
         name={name}
+        onChange={handleTextChange}
+        onFocus={handleFocus}
+        onBlur={onBlur}
+        onClick={handleTextClick}
+        onDoubleClick={onDoubleClick}
+        onMouseDown={onMouseDown}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onMouseMove={onMouseMove}
+        onMouseOut={onMouseOut}
+        onMouseOver={onMouseOver}
+        onMouseUp={onMouseUp}
+        onKeyDown={handleTextKeyDown}
+        onKeyUp={onKeyUp}
       />
       {inFocus && calendarOpen && !disabled && (
         <DayCalendar

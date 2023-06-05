@@ -14,20 +14,20 @@ import {
   KEYBOARD_SHIFT,
   KEYBOARD_CAPS,
 } from 'constants'
-import type { SelectOption } from 'types'
+import type { SelectValue, SelectOption } from 'types'
 
 type MultiSelectState = {
   dropdownOpen: boolean
   inFocus: boolean
   text: string
-  selected: string | null
+  selected: SelectValue
 }
 
 type MultiSelectAction =
   | { type: 'close' }
   | { type: 'open' }
   | { type: 'textFilter', text: string }
-  | { type: 'select', value: string | null }
+  | { type: 'select', value: SelectValue }
   | { type: 'focus' }
   | { type: 'blur' }
 
@@ -79,7 +79,7 @@ function multiSelectReducer(state: MultiSelectState, action: MultiSelectAction) 
 }
 
 interface SelectedOptionProps {
-  value: string
+  value: SelectValue
   label: string
   remove(): void
   disabled?: boolean
@@ -101,9 +101,9 @@ export interface MultiSelectProps {
   // mireco
   block?: boolean
   // multi select
-  value?: string[]
-  options: SelectOption[]
-  onChange?(newValue: string[], wasBlur: boolean): void
+  value?: SelectValue[]
+  options?: SelectOption[]
+  onChange?(newValue: SelectValue[], wasBlur: boolean): void
   filter?: boolean
   icon?: React.ReactNode
   placeholder?: string
@@ -123,7 +123,7 @@ export interface MultiSelectProps {
 
 export const MultiSelect: React.FC<MultiSelectProps> = ({
   block,
-  value,
+  value = [],
   options = [],
   onChange,
   filter = true,
@@ -160,7 +160,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
   }, [disabled])
 
-  const addValue = useCallback((adding: string) => {
+  const addValue = useCallback((adding: SelectValue) => {
     if (onChange) {
       onChange([...new Set([
         ...value || [],
@@ -337,7 +337,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       })
     }
     else {
-      let valueMatch: string | null = null
+      let valueMatch: SelectValue | null = null
       options.map(option => {
         const optionValue = `${option.value}`.trim().toLowerCase()
         if (valueMatch === null && optionValue === cleaned) {
@@ -351,7 +351,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         })
       }
       else {
-        let labelMatch: string | null = null
+        let labelMatch: SelectValue | null = null
         options.map(option => {
           const optionLabel = `${option.label}`.trim().toLowerCase()
           if (labelMatch === null && optionLabel === cleaned) {
@@ -447,7 +447,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             <SelectedOption
               key={`selected-${selectedValue}`}
               value={selectedValue}
-              label={option ? option.label : selectedValue}
+              label={option ? option.label : `${selectedValue}`}
               remove={remove}
               disabled={disabled}
             />

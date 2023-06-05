@@ -11,6 +11,20 @@ interface WidgetTextProps extends TextProps {
   // widget text
   onClear?(): void
   icon?: React.ReactNode
+  // event handlers
+  onFocus?(event: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
 export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, ref) => {

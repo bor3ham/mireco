@@ -10,7 +10,6 @@ parseDuration.year = parseDuration.week * 52
 
 import { WidgetText } from 'components'
 import { HourglassVector } from 'vectors'
-// import { usePrevious } from '../../hooks'
 import type { DurationValue } from 'types'
 import { KEYBOARD_ARROW_UP, KEYBOARD_ARROW_DOWN } from 'constants'
 
@@ -57,11 +56,25 @@ export interface DurationProps {
   // form
   disabled?: boolean
   required?: boolean
+  // event handlers
+  onFocus?(event: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
 export const Duration: React.FC<DurationProps> = ({
   block,
-  value,
+  value = null,
   onChange,
   humaniseUnits = [
     'w',
@@ -85,6 +98,19 @@ export const Duration: React.FC<DurationProps> = ({
   style,
   disabled,
   required,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
 }) => {
   const [textValue, setTextValue] = useState(formatValue(value, humaniseUnits))
   const textValueRef = useRef<string>(textValue)
@@ -122,46 +148,47 @@ export const Duration: React.FC<DurationProps> = ({
     return incrementUnits[incIndex]
   }, [value, incrementUnits])
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event) {
-      if (event.which === KEYBOARD_ARROW_DOWN) {
-        event.preventDefault()
-        if (onChange) {
-          if (typeof value === 'number') {
-            onChange(Math.max(value - bestIncrement(false), 0), false)
-          }
-          else {
-            onChange(0, false)
-          }
+    if (event.which === KEYBOARD_ARROW_DOWN) {
+      event.preventDefault()
+      if (onChange) {
+        if (typeof value === 'number') {
+          onChange(Math.max(value - bestIncrement(false), 0), false)
         }
-      }
-      if (event.which === KEYBOARD_ARROW_UP) {
-        event.preventDefault()
-        if (onChange) {
-          if (typeof value === 'number') {
-            onChange(value + bestIncrement(true), false)
-          }
-          else {
-            onChange(parseValue(`1 ${defaultTimeUnit}`, defaultTimeUnit), false)
-          }
+        else {
+          onChange(0, false)
         }
       }
     }
-  }, [onChange, value, bestIncrement])
-  const handleTextBlur = useCallback(() => {
+    if (event.which === KEYBOARD_ARROW_UP) {
+      event.preventDefault()
+      if (onChange) {
+        if (typeof value === 'number') {
+          onChange(value + bestIncrement(true), false)
+        }
+        else {
+          onChange(parseValue(`1 ${defaultTimeUnit}`, defaultTimeUnit), false)
+        }
+      }
+    }
+    if (onKeyDown) {
+      onKeyDown(event)
+    }
+  }, [onChange, value, bestIncrement, onKeyDown])
+  const handleTextBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setTextValue(formatValue(value, humaniseUnits))
     if (onChange) {
       onChange(value, true)
     }
-  }, [value, onChange])
+    if (onBlur) {
+      onBlur(event)
+    }
+  }, [value, onChange, onBlur])
   return (
     <WidgetText
       id={id}
       value={textValue}
-      onChange={handleTextChange}
-      onBlur={handleTextBlur}
       block={block}
       placeholder={placeholder}
-      onKeyDown={handleTextKeyDown}
       disabled={disabled}
       className={classNames(
         'MIRECO-duration',
@@ -170,6 +197,20 @@ export const Duration: React.FC<DurationProps> = ({
       style={style}
       icon={<HourglassVector />}
       required={required}
+      onChange={handleTextChange}
+      onFocus={onFocus}
+      onBlur={handleTextBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={handleTextKeyDown}
+      onKeyUp={onKeyUp}
     />
   )
 }

@@ -18,10 +18,24 @@ export interface CheckboxInputProps {
   name?: string
   formValue?: string
   required?: boolean
+  // event handlers
+  onFocus?(event: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
 export const CheckboxInput: React.FC<CheckboxInputProps> = ({
-  value,
+  value = false,
   onChange,
   id,
   className,
@@ -34,6 +48,19 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
   name,
   formValue,
   required,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
 }) => {
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked
@@ -56,6 +83,19 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
       required={required}
       checked={!!value}
       onChange={handleChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     >
       {children}
     </input>

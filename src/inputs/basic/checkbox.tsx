@@ -24,11 +24,25 @@ export interface CheckboxProps {
   name?: string
   formValue?: string
   required?: boolean
+  // event handlers
+  onFocus?(event: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
   block,
-  value,
+  value = false,
   onChange,
   id,
   className,
@@ -41,6 +55,19 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   name,
   formValue,
   required,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
 }) => (
   <Label
     className={classNames(
@@ -65,6 +92,19 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       required={required}
       value={value}
       onChange={onChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     />
     <CheckVector />
     {!!children && ' '}

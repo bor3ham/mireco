@@ -1,71 +1,117 @@
-import React, { useRef } from 'react'
-import PropTypes from 'prop-types'
+import React, { useCallback } from 'react'
 import classNames from 'classnames'
 
-function Range(props) {
-  const inputRef = useRef()
-  const handleChange = (event) => {
-    if (!inputRef.current) {
-      return
+import type { RangeValue } from 'types'
+
+interface RangeProps {
+  // mireco
+  block?: boolean
+  // number
+  value?: RangeValue
+  onChange?(newValue: RangeValue, event: React.ChangeEvent<HTMLInputElement>): void
+  min?: number
+  max?: number
+  step?: number
+  // html
+  id?: string
+  autoFocus?: boolean
+  tabIndex?: number
+  style?: React.CSSProperties
+  className?: string
+  title?: string
+  // form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+  // event handlers
+  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
+}
+
+export const Range: React.FC<RangeProps> = ({
+  block,
+  value = null,
+  onChange,
+  min = 0,
+  max = 100,
+  step = 1,
+  id,
+  autoFocus,
+  tabIndex,
+  style,
+  className,
+  title,
+  name,
+  required,
+  disabled,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
+}) => {
+  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(+event.target.value, event)
     }
-    if (typeof props.onChange === 'function') {
-      props.onChange(+inputRef.current.value)
-    }
-  }
+  }, [
+    onChange,
+  ])
   return (
     <input
-      ref={inputRef}
       type="range"
-
-      value={props.value}
+      value={value || ''}
       onChange={handleChange}
-      min={props.min}
-      max={props.max}
-      step={props.step}
-      name={props.name}
-      required={props.required}
-      disabled={props.disabled}
-      autoFocus={props.autoFocus}
-      tabIndex={props.tabIndex}
-
+      min={min}
+      max={max}
+      step={step}
+      id={id}
+      autoFocus={autoFocus}
+      tabIndex={tabIndex}
+      style={style}
       className={classNames(
         'MIRECO-range',
         {
-          block: props.block,
+          block,
         },
-        props.className,
+        className,
       )}
-      style={props.style}
-
-      onFocus={props.onFocus}
-      onBlur={props.onBlur}
-      onClick={props.onClick}
+      title={title}
+      name={name}
+      required={required}
+      disabled={disabled}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     />
   )
 }
-Range.propTypes = {
-  value: PropTypes.number.isRequired,
-  onChange: PropTypes.func,
-  min: PropTypes.number.isRequired,
-  max: PropTypes.number.isRequired,
-  step: PropTypes.number,
-  name: PropTypes.string,
-  required: PropTypes.bool,
-  disabled: PropTypes.bool,
-  autoFocus: PropTypes.bool,
-  tabIndex: PropTypes.number,
-
-  block: PropTypes.bool,
-  className: PropTypes.string,
-  style: PropTypes.object,
-
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
-  onClick: PropTypes.func,
-}
-Range.defaultProps = {
-  min: 0,
-  max: 100,
-}
-
-export default Range

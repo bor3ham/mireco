@@ -22,8 +22,8 @@ const OPTIONS = [
 ]
 
 const DemoMultiSelect = () => {
-  const [value, setValue] = useState<string[]>([])
-  const handleValueChange = useCallback((newValue: string[], wasBlur: boolean) => {
+  const [value, setValue] = useState<any[]>([])
+  const handleValueChange = useCallback((newValue: any[], wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
