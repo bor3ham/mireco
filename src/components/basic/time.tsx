@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Time } from 'mireco'
+import type { TimeValue } from 'mireco'
 
-function stringifyTime(time) {
+function stringifyTime(time: TimeValue) {
   if (typeof time === 'undefined') {
     return 'undefined'
   }
@@ -10,17 +11,17 @@ function stringifyTime(time) {
 }
 
 const DemoTime = () => {
-  const [value, setValue] = useState(null)
-  const handleChange = useCallback((newValue, wasBlur) => {
+  const [value, setValue] = useState<TimeValue>(null)
+  const handleChange = useCallback((newValue: TimeValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {stringifyTime(value)}</p>
       <Time
-        block
         value={value}
         onChange={handleChange}
+        block
       />
     </>
   )
