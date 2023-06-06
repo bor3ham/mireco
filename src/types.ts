@@ -12,3 +12,7 @@ export interface SelectOption {
   value: SelectValue
   label: string
 }
+
+export type TimeValue = number | null | undefined
+
+export type DatetimeValue = number | null | undefined

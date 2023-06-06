@@ -4,7 +4,7 @@ import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
 import { Date as DateInput } from '../basic/date'
-import Time from '../basic/time'
+import { Time } from '../basic/time'
 import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from '../../constants'
 import { datePropType } from '../../prop-types-old/date'
