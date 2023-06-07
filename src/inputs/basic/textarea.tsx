@@ -7,7 +7,7 @@ declare type Style = Omit<NonNullable<React.TextareaHTMLAttributes<HTMLTextAreaE
   height?: number;
 }
 
-interface TextareaProps {
+export interface TextareaProps {
   // mireco
   block?: boolean
   // textarea

@@ -111,7 +111,7 @@ const shortHumanizeDur = humanizeDuration.humanizer({
   },
 })
 
-interface TimeProps {
+export interface TimeProps {
   // mireco
   block?: boolean
   // time

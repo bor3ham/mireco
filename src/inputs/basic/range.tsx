@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import type { RangeValue } from 'types'
 
-interface RangeProps {
+export interface RangeProps {
   // mireco
   block?: boolean
   // number

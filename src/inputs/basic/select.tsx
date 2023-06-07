@@ -60,7 +60,7 @@ function selectReducer(state: SelectState, action: SelectAction): SelectState {
   }
 }
 
-interface SelectProps {
+export interface SelectProps {
   // mireco
   block?: boolean
   // select
@@ -74,6 +74,7 @@ interface SelectProps {
   dropdownProps?: any
   placeholder?: string
   size?: number
+  clearable?: boolean
   // children specific
   textClassName?: string
   // html
@@ -115,6 +116,7 @@ export const Select: React.FC<SelectProps> = ({
   dropdownProps,
   placeholder,
   size,
+  clearable = true,
   textClassName,
   id,
   autoFocus,
@@ -139,13 +141,6 @@ export const Select: React.FC<SelectProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const lastNonEmptyValue = useRef<SelectValue>(value ? value : null)
-  useEffect(() => {
-    if (nonEmptyValue(value)) {
-      lastNonEmptyValue.current = value
-    }
-  }, [value])
-
   const findOption = useCallback((choiceValue: SelectValue) => {
     return options.find((option) => (option.value === choiceValue))
   }, [
@@ -173,8 +168,39 @@ export const Select: React.FC<SelectProps> = ({
   }, [
     options,
   ])
+  const findMatchingValue = useCallback((stringValue: string) => {
+    let valueMatch: SelectValue = null
+    options.forEach((option) => {
+      const optionValue = `${option.value}`.trim().toLowerCase()
+      if (valueMatch === null && optionValue === stringValue) {
+        valueMatch = option.value
+      }
+    })
+    if (valueMatch !== null) {
+      return valueMatch
+    }
+    let labelMatch: SelectValue = null
+    options.forEach((option) => {
+      const optionLabel = `${option.label}`.trim().toLowerCase()
+      if (labelMatch === null && optionLabel === stringValue) {
+        labelMatch = option.value
+      }
+    })
+    if (labelMatch !== null) {
+      return labelMatch
+    }
+    const filtered = filter ? getFilteredOptions(stringValue) : options
+    const current = filtered.find(option => (option.value === value))
+    const firstFilteredValue = filtered.length > 0 ? filtered[0].value : undefined
+    return current ? current.value : firstFilteredValue
+  }, [
+    options,
+    value,
+    filter,
+    getFilteredOptions,
+  ])
 
-  const valueOption = findOption(value)
+  const valueOption = useMemo(() => (findOption(value)), [value])
   let initialText = ''
   if (nonEmptyValue(value)) {
     initialText = valueOption ? valueOption.label : `${value}`
@@ -184,6 +210,51 @@ export const Select: React.FC<SelectProps> = ({
     dropdownOpen: false,
     filtering: false,
   })
+
+  const lastNonEmptyValue = useRef<SelectValue>(value ? value : null)
+  // when value changes
+  useEffect(() => {
+    if (value === null) {
+      dispatchState({
+        type: 'textOverride',
+        text: '',
+      })
+    } else if (nonEmptyValue(value)) {
+      const overrideWithValueText = () => {
+        dispatchState({
+          type: 'textOverride',
+          text: valueOption ? valueOption.label : `${value}`,
+        })
+      }
+      if (!state.dropdownOpen) {
+        overrideWithValueText()
+      } else if (!filter) {
+        const current = findMatchingValue(`${value}`.trim().toLowerCase())
+        if (!current) {
+          overrideWithValueText()
+        }
+      }
+    }
+    // record last valid value for non-nullable reset
+    if (nonEmptyValue(value)) {
+      lastNonEmptyValue.current = value
+    }
+  }, [
+    value,
+  ])
+  const optionsStr = useMemo(() => (options.map((option) => (`${option.value}`)).join(',')), [options])
+  // when options change
+  useEffect(() => {
+    if (state.text === '') {
+      return
+    }
+    const matching = findMatchingValue(state.text.trim().toLowerCase())
+    if (onChange) {
+      onChange(matching, false)
+    }
+  }, [
+    optionsStr,
+  ])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLInputElement>(null)
@@ -325,45 +396,17 @@ export const Select: React.FC<SelectProps> = ({
       if (cleaned.length <= 0) {
         onChange(nullable ? null : undefined, false)
       } else {
-        let valueMatch: SelectValue = null
-        options.forEach((option) => {
-          const optionValue = `${option.value}`.trim().toLowerCase()
-          if (valueMatch === null && optionValue === cleaned) {
-            valueMatch = option.value
-          }
-        })
-        if (valueMatch !== null) {
-          onChange(valueMatch, false)
-        } else {
-          let labelMatch: SelectValue = null
-          options.forEach((option) => {
-            const optionLabel = `${option.label}`.trim().toLowerCase()
-            if (labelMatch === null && optionLabel === cleaned) {
-              labelMatch = option.value
-            }
-          })
-          if (labelMatch !== null) {
-            onChange(labelMatch, false)
-          } else {
-            const filtered = filter ? getFilteredOptions(newValue) : options
-            const current = filtered.find(option => {
-              return option.value === value
-            })
-            const firstFilteredValue = filtered.length > 0 ? filtered[0].value : undefined
-            onChange(current ? current.value : firstFilteredValue, false)
-          }
-        }
+        const matching = findMatchingValue(cleaned)
+        onChange(matching, false)
       }
-      if (onTextChange) {
-        onTextChange(newValue, event)
-      }
+    }
+    if (onTextChange) {
+      onTextChange(newValue, event)
     }
   }, [
     onChange,
     nullable,
-    options,
-    filter,
-    getFilteredOptions,
+    findMatchingValue,
     onTextChange,
   ])
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
@@ -394,45 +437,6 @@ export const Select: React.FC<SelectProps> = ({
     onChange,
   ])
 
-  const setTextFromPropValue = useCallback(() => {
-    if (valueOption) {
-      dispatchState({
-        type: 'textOverride',
-        text: valueOption.label,
-      })
-    }
-    else {
-      dispatchState({
-        type: 'textOverride',
-        text: `${value}`,
-      })
-    }
-  }, [
-    valueOption,
-    value,
-  ])
-  useEffect(() => {
-    if (value === null) {
-      dispatchState({
-        type: 'textOverride',
-        text: '',
-      })
-    } else if (nonEmptyValue(value)) {
-      if (!state.dropdownOpen) {
-        setTextFromPropValue()
-      } else {
-        const filtered = filter ? getFilteredOptions(state.text) : options
-        const current = filtered.find(option => {
-          return (option.value === value)
-        })
-        if (!current) {
-          setTextFromPropValue()
-        }
-      }
-    }
-  }, [
-    value,
-  ])
   useEffect(() => {
     if (disabled) {
       handleBlur()
@@ -447,11 +451,12 @@ export const Select: React.FC<SelectProps> = ({
     }
     if (onChange) {
       onChange(nullable ? null : undefined, false)
+    } else {
+      dispatchState({
+        type: 'textFilter',
+        text: '',
+      })
     }
-    dispatchState({
-      type: 'textFilter',
-      text: '',
-    })
     if (textRef.current) {
       textRef.current.focus()
     }
@@ -471,7 +476,7 @@ export const Select: React.FC<SelectProps> = ({
     options,
   ])
   const hasValue = nonEmptyValue(value)
-  const clearable = hasValue && !disabled && nullable
+  const canClear = clearable && hasValue && !disabled && nullable
 
   const handleFormElementChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     const newTextValue = event.target.value
@@ -514,7 +519,7 @@ export const Select: React.FC<SelectProps> = ({
       block={block}
       className={classNames('MIRECO-select', {
         'has-value': hasValue,
-        clearable,
+        clearable: canClear,
       }, className)}
       onBlur={handleContainerBlur}
       onClick={onClick}
@@ -543,7 +548,8 @@ export const Select: React.FC<SelectProps> = ({
         className={textClassName}
         id={id}
         icon={icon}
-        onClear={clearable ? handleClear : undefined}
+        onClear={canClear ? handleClear : undefined}
+        everClearable={clearable}
         tabIndex={tabIndex}
         title={title}
         required={required}

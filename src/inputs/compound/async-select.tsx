@@ -1,127 +1,261 @@
-import React, { useState, useRef, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 
 import { Select } from '../basic/select'
-import { selectOption } from '../../prop-types-old/select'
 import { ChevronDownVector, SpinnerVector } from 'vectors'
+import type { SelectOption, SelectValue, SelectOptionValue, Empty } from 'types'
 
-function AsyncSelect(props) {
-  const [options, setOptions] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [searchedTerm, setSearchedTerm] = useState('')
-  const stateRef = useRef()
-  const debounce = useRef()
+function nonEmptyValue(value: SelectOptionValue | SelectValue) {
+  return value !== null && typeof value !== 'undefined'
+}
 
-  stateRef.current = searchedTerm
+// todo: merge loading and inFocus state into reducer
+// todo: double render flicker on using clear button
+
+export interface AsyncSelectProps {
+  // mireco
+  block?: boolean
+  // async select
+  value?: SelectOptionValue
+  getOptions(searchTerm: string): Promise<SelectOption[]>
+  onChange?(newValue: SelectOptionValue, wasBlur: boolean): void
+  loadingPrompt?: string
+  searchPrompt?: string
+  debounce?: number
+  placeholder?: string
+  size?: number
+  clearable?: boolean
+  // html
+  id?: string
+  autoFocus?: boolean
+  tabIndex?: number
+  style?: React.CSSProperties
+  className?: string
+  title?: string
+  // form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+  // event handlers
+  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLDivElement>): void
+  onClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLDivElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
+}
+
+export const AsyncSelect: React.FC<AsyncSelectProps> = ({
+  block,
+  value,
+  getOptions,
+  onChange,
+  loadingPrompt = 'Loading ...',
+  searchPrompt = 'Type to search',
+  debounce = 500,
+  placeholder,
+  size,
+  clearable,
+  id,
+  autoFocus,
+  tabIndex,
+  style,
+  className,
+  title,
+  name,
+  required,
+  disabled,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
+}) => {
+  const [options, setOptions] = useState<SelectOption[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const debounceRef = useRef<number>()
+  const searchedRef = useRef<string>('')
+
+  // keep track of focus
+  const [inFocus, setInFocus] = useState(false)
+  const focusRef = useRef<boolean>(false)
+  focusRef.current = inFocus
+  const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    setInFocus(true)
+    if (onFocus) {
+      onFocus(event)
+    }
+  }, [onFocus])
+  const handleBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    setInFocus(false)
+    setLoading(false)
+    searchedRef.current = ''
+    if (onBlur) {
+      onBlur(event)
+    }
+  }, [onBlur])
 
   useEffect(() => {
-    if (props.value === null && (options.length > 0 || loading)) {
+    if (value === null) {
       setOptions([])
-      setLoading(false)
     }
-  })
+  }, [
+    value,
+  ])
 
-  let basicOptions = []
-  if (!loading) {
-    basicOptions = [...options]
-  }
-  let basicValue = props.value
-  if (props.value !== null && typeof props.value !== 'undefined') {
-    basicValue = props.value.value
-    const valueOption = basicOptions.find(option => {
-      return option.value === basicValue
-    })
-    if (!valueOption) {
-      basicOptions = [...basicOptions, props.value]
+  const basicValue = useMemo(() => {
+    if (nonEmptyValue(value)) {
+      return value!.value
     }
-  }
-  const handleTextChange = (newText) => {
+    return value as Empty
+  }, [
+    value,
+  ])
+  const basicOptions = useMemo(() => {
+    let b: SelectOption[] = []
+    if (!loading) {
+      b = [...options]
+    }
+    if (nonEmptyValue(basicValue)) {
+      const valueOption = b.find(option => {
+        return option.value === basicValue
+      })
+      if (!valueOption) {
+        b = [...b, value!]
+      }
+    }
+    return b
+  }, [
+    loading,
+    options,
+    value,
+    basicValue,
+  ])
+
+  const handleTextChange = useCallback((newText: string) => {
     const cleaned = newText.trim()
-    setSearchedTerm(cleaned)
     if (cleaned.length > 0) {
-      if (typeof props.getOptions === 'function') {
+      if (getOptions) {
+        searchedRef.current = cleaned
         setLoading(true)
-        if (debounce.current) {
-          window.clearTimeout(debounce.current)
+        if (debounceRef.current) {
+          window.clearTimeout(debounceRef.current)
         }
-        debounce.current = window.setTimeout(() => {
-          props.getOptions(cleaned).then(newOptions => {
-            if (cleaned != stateRef.current) {
+        debounceRef.current = window.setTimeout(() => {
+          getOptions(cleaned).then((newOptions) => {
+            if (cleaned != searchedRef.current || !focusRef.current) {
               return
             }
             setOptions(newOptions)
             setLoading(false)
           })
-        }, props.debounce)
+        }, debounce)
       }
-    }
-    else {
+    } else {
+      searchedRef.current = ''
       setOptions([])
       setLoading(false)
     }
-  }
-  const handleChange = (newValue) => {
-    if (typeof props.onChange !== 'function') {
+  }, [
+    getOptions,
+    debounce,
+  ])
+  const handleChange = useCallback((newValue: SelectValue, wasBlur: boolean) => {
+    if (!onChange) {
       return
     }
-    if (newValue !== null && typeof newValue !== 'undefined') {
+    let newOption: SelectOptionValue = newValue as Empty
+    if (nonEmptyValue(newValue)) {
       const selected = basicOptions.find(option => {
         return option.value === newValue
       })
       if (selected) {
-        newValue = selected
-      }
-      else {
-        newValue = {
-          value: newValue,
+        newOption = selected
+      } else {
+        newOption = {
+          value: newValue!,
           label: `${newValue}`,
         }
       }
     }
-    props.onChange(newValue)
-  }
-  const dropdownProps = {
-    noOptionsPrompt: 'No options',
-  }
-  if (loading) {
-    if (basicOptions.length > 0) {
-      dropdownProps.afterOptions = (<li className="none">{props.loadingPrompt}</li>)
+    onChange(newOption, wasBlur)
+  }, [
+    onChange,
+    basicOptions,
+  ])
+  const dropdownProps = useMemo(() => {
+    const props: {
+      noOptionsPrompt: string
+      afterOptions?: React.ReactNode
+    } = {
+      noOptionsPrompt: 'No options',
     }
-    else {
-      dropdownProps.noOptionsPrompt = props.loadingPrompt
+    if (loading) {
+      if (basicOptions.length > 0) {
+        props.afterOptions = (<li className="none">{loadingPrompt}</li>)
+      } else {
+        props.noOptionsPrompt = loadingPrompt
+      }
+    } else if (value === null) {
+      props.noOptionsPrompt = searchPrompt
     }
-  }
-  else if (props.value === null) {
-    dropdownProps.noOptionsPrompt = props.searchPrompt
-  }
+    return props
+  }, [
+    loading,
+    basicOptions,
+    value,
+  ])
+  
   return (
     <Select
-      {...props}
-      className={classNames(props.className, 'MIRECO-async-select')}
+      block={block}
+      className={classNames(className, 'MIRECO-async-select')}
       options={basicOptions}
       value={basicValue}
       onTextChange={handleTextChange}
       onChange={handleChange}
       dropdownProps={dropdownProps}
       filter={false}
-      icon={loading ? <SpinnerVector /> : <ChevronDownVector />}
+      icon={(loading && inFocus) ? <SpinnerVector /> : <ChevronDownVector />}
+      id={id}
+      autoFocus={autoFocus}
+      tabIndex={tabIndex}
+      style={style}
+      title={title}
+      name={name}
+      required={required}
+      disabled={disabled}
+      placeholder={placeholder}
+      size={size}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
+      clearable={clearable}
     />
   )
 }
-AsyncSelect.propTypes = {
-  value: selectOption,
-  onChange: PropTypes.func,
-  getOptions: PropTypes.func.isRequired,
-  loadingPrompt: PropTypes.string,
-  searchPrompt: PropTypes.string,
-  debounce: PropTypes.number,
-  className: PropTypes.string,
-}
-AsyncSelect.defaultProps = {
-  loadingPrompt: 'Loading...',
-  searchPrompt: 'Type to search',
-  debounce: 500,
-}
-
-export default AsyncSelect

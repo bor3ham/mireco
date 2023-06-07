@@ -35,7 +35,7 @@ function parseValue(textValue: string, min?: number, max?: number, step?: number
   return parsed
 }
 
-interface NumberProps {
+export interface NumberProps {
   // mireco
   block?: boolean
   // number

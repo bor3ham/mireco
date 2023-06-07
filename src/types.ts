@@ -1,18 +1,34 @@
-export type DateValue = string | null | undefined
+export type Empty = null | undefined
 
-export type DurationValue = number | null | undefined
+export type Date = string
 
-export type NumberValue = number | null | undefined
+export type DateValue = Date | Empty
 
-export type RangeValue = number | null
+export type Duration = number
 
-export type SelectValue = string | number | boolean | null | undefined
+export type DurationValue = Duration | Empty
+
+export type NumberValue = number | Empty
+
+export type Range = number
+
+export type RangeValue = Range | null
+
+export type Select = string | number | boolean
+
+export type SelectValue = Select | Empty
 
 export interface SelectOption {
-  value: SelectValue
+  value: Select
   label: string
 }
 
-export type TimeValue = number | null | undefined
+export type SelectOptionValue = SelectOption | Empty
 
-export type DatetimeValue = number | null | undefined
+export type Time = number
+
+export type TimeValue = Time | Empty
+
+export type Datetime = number
+
+export type DatetimeValue = Datetime | Empty
