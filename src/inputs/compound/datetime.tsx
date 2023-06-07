@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react'
+import React, { useMemo, useState, useRef, useCallback, useEffect, forwardRef } from 'react'
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
@@ -72,7 +72,7 @@ interface DatetimeProps {
   onChange?(newValue: DatetimeInputValue, wasBlur: boolean): void
   relativeTo?: DatetimeValue
   defaultDate?: DateValue
-  showClear?: boolean
+  clearable?: boolean
   timeFirst?: boolean
   // children specific
   dateTextClassName?: string
@@ -105,13 +105,13 @@ interface DatetimeProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Datetime: React.FC<DatetimeProps> = ({
+export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   block,
   value,
   onChange,
   relativeTo,
   defaultDate,
-  showClear = true,
+  clearable = true,
   timeFirst,
   dateTextClassName,
   timeTextClassName,
@@ -138,7 +138,7 @@ export const Datetime: React.FC<DatetimeProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, forwardedRef) => {
   const splitValue = useMemo(() => (splitDatetime(value)), [value])
   const [date, setDate] = useState(splitValue.date)
   const [time, setTime] = useState(splitValue.time)
@@ -223,7 +223,7 @@ export const Datetime: React.FC<DatetimeProps> = ({
     date,
     time,
   ])
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>()
   const dateRef = useRef<HTMLInputElement>(null)
   const timeRef = useRef<HTMLInputElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
@@ -255,7 +255,7 @@ export const Datetime: React.FC<DatetimeProps> = ({
   ])
   const handleClear = useCallback(() => {
     if (onChange) {
-      onChange(null, true)
+      onChange(null, false)
     }
   }, [
     onChange,
@@ -314,10 +314,17 @@ export const Datetime: React.FC<DatetimeProps> = ({
 
   return (
     <BlockDiv
-      ref={containerRef}
+      ref={(instance: HTMLDivElement) => {
+        containerRef.current = instance;
+        if (typeof forwardedRef === "function") {
+          forwardedRef(instance)
+        } else if (forwardedRef !== null) {
+          forwardedRef.current = instance
+        }
+      }}
       block={block}
       className={classNames('MIRECO-datetime', className, {
-        clearable: showClear,
+        clearable,
       })}
       tabIndex={-1}
       onBlur={handleContainerBlur}
@@ -329,10 +336,10 @@ export const Datetime: React.FC<DatetimeProps> = ({
         date: timeFirst,
       })}>
         {second}
-        {showClear && (
+        {clearable && (
           <span>{' '}</span>
         )}
-        {showClear && (
+        {clearable && (
           <ClearButton
             onClick={handleClear}
             disabled={disabled}
@@ -342,4 +349,4 @@ export const Datetime: React.FC<DatetimeProps> = ({
       </BlockDiv>
     </BlockDiv>
   )
-}
+})

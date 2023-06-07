@@ -1,22 +1,29 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 
 import { Datetime } from './datetime'
 import { BlockDiv, ClearButton } from 'components'
-import { ISO_8601_DATE_FORMAT } from '../../constants'
+import { ISO_8601_DATE_FORMAT } from 'constants'
+import type { DatetimeInputValue, DatetimeRangeInputValue, DurationValue } from 'types'
+import { isDatetimeValue, isDatetimeRangeValue } from 'types'
 
-function datetimeNull(datetime) {
+// todo: combine start/end state into reducer
+
+function datetimeNull(datetime: DatetimeInputValue): boolean {
   return datetime === null
 }
-function validDatetime(datetime) {
-  return (typeof datetime === 'number' && !isNaN(datetime))
-}
-function validRange(range) {
-  return (range && validDatetime(range.start) && validDatetime(range.end))
-}
-function splitRange(range) {
+
+function splitRange(range: DatetimeRangeInputValue): {
+  start: DatetimeInputValue,
+  end: DatetimeInputValue,
+} {
+  if (range === null) {
+    return {
+      start: null,
+      end: null,
+    }
+  }
   if (range) {
     return {
       start: range.start,
@@ -28,8 +35,9 @@ function splitRange(range) {
     end: undefined,
   }
 }
-function combineRange(start, end) {
-  if (validDatetime(start) && validDatetime(end) && start > end) {
+
+function combineRange(start: DatetimeInputValue, end: DatetimeInputValue): DatetimeRangeInputValue {
+  if (isDatetimeValue(start) && isDatetimeValue(end) && start! > end!) {
     let tempStart = start
     start = end
     end = tempStart
@@ -39,259 +47,303 @@ function combineRange(start, end) {
     end,
   }
 }
-function rangeNull(range) {
-  return range === null || (range && range.start === null && range.end === null)
+
+function rangeNull(range: DatetimeRangeInputValue): boolean {
+  return range === null || (!!range && range.start === null && range.end === null)
 }
-function rangesEqual(range1, range2) {
+
+function rangesEqual(range1: DatetimeRangeInputValue, range2: DatetimeRangeInputValue): boolean {
   if (typeof range1 === 'undefined' && typeof range2 === 'undefined') {
     return true
   }
   if (range1 === null && range2 === null) {
     return true
   }
-  if (
-    range1
-    && range2
-    && range1.start === range2.start
-    && range1.end === range2.end
-  ) {
-    return true
-  }
-  return false
+  return (
+    !!range1 &&
+    !!range2 &&
+    range1.start === range2.start &&
+    range1.end === range2.end
+  )
 }
 
-export default class DatetimeRange extends React.PureComponent {
-  static propTypes = {
-    block: PropTypes.bool,
-    onChange: PropTypes.func,
-    value: PropTypes.shape({
-      start: PropTypes.number,
-      end: PropTypes.number,
-    }),
-    disabled: PropTypes.bool,
-    defaultDuration: PropTypes.number.isRequired,
-    showClear: PropTypes.bool,
-    className: PropTypes.string,
-    startDateTextClassName: PropTypes.string,
-    startTimeTextClassName: PropTypes.string,
-    endDateTextClassName: PropTypes.string,
-    endTimeTextClassName: PropTypes.string,
-    clearButtonClassName: PropTypes.string,
-    id: PropTypes.string,
-  }
-  static defaultProps = {
-    block: false,
-    disabled: false,
-    defaultDuration: 60 * 60 * 1000,
-    showClear: true,
-  }
-  constructor(props) {
-    super(props)
-    this.containerRef = React.createRef()
-    this.startRef = React.createRef()
-    this.endRef = React.createRef()
-    this.state = {
-      ...this.state,
-      ...splitRange(props.value),
+interface DatetimeRangeProps {
+  // mireco
+  block?: boolean
+  // datetime range
+  value?: DatetimeRangeInputValue
+  onChange?(newValue: DatetimeRangeInputValue, wasBlur: boolean): void
+  defaultDuration?: DurationValue
+  clearable?: boolean,
+  // children specific
+  startDateTextClassName?: string
+  startTimeTextClassName?: string
+  endDateTextClassName?: string
+  endTimeTextClassName?: string
+  clearButtonClassName?: string
+  // html
+  id?: string
+  autoFocus?: boolean
+  tabIndex?: number
+  style?: React.CSSProperties
+  className?: string
+  title?: string
+  // form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+  // event handlers
+  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
+}
+
+export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
+  block,
+  value,
+  onChange,
+  defaultDuration = 60 * 60 * 1000,
+  clearable = true,
+  startDateTextClassName,
+  startTimeTextClassName,
+  endDateTextClassName,
+  endTimeTextClassName,
+  clearButtonClassName,
+  id,
+  autoFocus,
+  tabIndex,
+  style,
+  className,
+  title,
+  name,
+  required,
+  disabled,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const startRef = useRef<HTMLDivElement>(null)
+  const endRef = useRef<HTMLDivElement>(null)
+
+  const splitValue = useMemo(() => (splitRange(value)), [value])
+  const [start, setStart] = useState(splitValue.start)
+  const [end, setEnd] = useState(splitValue.end)
+
+  const combinedState = useMemo(() => {
+    if (!isDatetimeValue(start) && !isDatetimeValue(end)) {
+      return combineRange(start, end)
     }
-  }
-  componentDidUpdate = (prevProps, prevState) => {
-    if (!rangesEqual(prevProps.value, this.props.value)) {
-      if (rangeNull(this.props.value)) {
-        this.setState({
-          start: null,
-          end: null,
-        })
-      }
-      else if (validRange(this.props.value)) {
-        if (!rangesEqual(this.props.value, this.combinedStateValue())) {
-          this.setState({
-            ...splitRange(this.props.value),
-          })
-        }
-      }
-    }
-  }
-  combinedStateValue() {
-    let start = this.state.start
-    let end = this.state.end
-    if (validDatetime(start) && !validDatetime(end)) {
-      end = start + this.props.defaultDuration
-    }
-    if (validDatetime(end) && !validDatetime(start)) {
-      start = end - this.props.defaultDuration
-    }
+    const fallbackStart = isDatetimeValue(start) ? start : end! - defaultDuration
+    const fallbackEnd = isDatetimeValue(end) ? end : start! + defaultDuration
     return combineRange(
-      start,
-      end
+      fallbackStart,
+      fallbackEnd
     )
-  }
-  handleStartChange = (newStart, wasBlur) => {
-    let newEnd = this.state.end
-    if (validDatetime(newStart) && validDatetime(this.state.start) && validDatetime(newEnd)) {
-      let oldDuration = newEnd - this.state.start
-      newEnd = newStart + oldDuration
-    }
-    this.setState({start: newStart, end: newEnd}, this.updateParentValue)
-  }
-  handleEndChange = (newEnd, wasBlur) => {
-    this.setState({end: newEnd}, this.updateParentValue)
-  }
-  updateParentValue = () => {
-    if (typeof this.props.onChange === 'function') {
-      if (datetimeNull(this.state.start) && datetimeNull(this.state.end)) {
-        this.props.onChange(null, false)
-      }
-      else if (
-        validDatetime(this.state.start)
-        || validDatetime(this.state.end)
-      ) {
-        this.props.onChange(this.combinedStateValue(), false)
-      }
-      else {
-        this.props.onChange(undefined, false)
+  }, [
+    start,
+    end,
+    defaultDuration,
+  ])
+
+  useEffect(() => {
+    if (!rangesEqual(value, combinedState)) {
+      if (rangeNull(value)) {
+        setStart(null)
+        setEnd(null)
+      } else if (isDatetimeRangeValue(value)) {
+        const split = splitRange(value)
+        setStart(split.start)
+        setEnd(split.end)
       }
     }
-  }
-  handleClearClick = () => {
-    if (typeof this.props.onChange == 'function') {
-      this.props.onChange(null)
-    }
-  }
-  handleContainerBlur = (event) => {
-    if (event.relatedTarget) {
-      const startDateDiv = (
-        this.startRef.current
-        && this.startRef.current.dateRef.current
-        && this.startRef.current.dateRef.current.containerRef.current
-      )
-      const startTimeDiv = (
-        this.startRef.current
-        && this.startRef.current.timeRef.current
-        && this.startRef.current.timeRef.current.containerRef.current
-      )
-      const containedInStart = (
-        (startDateDiv && (
-          startDateDiv.contains(event.relatedTarget)
-          || event.relatedTarget === startDateDiv
-        ))
-        || (startTimeDiv && (
-          startTimeDiv.contains(event.relatedTarget)
-          || event.relatedTarget === startTimeDiv
-        ))
-      )
-      const endDateDiv = (
-        this.endRef.current
-        && this.endRef.current.dateRef.current
-        && this.endRef.current.dateRef.current.containerRef.current
-      )
-      const endTimeDiv = (
-        this.endRef.current
-        && this.endRef.current.timeRef.current
-        && this.endRef.current.timeRef.current.containerRef.current
-      )
-      const containedInEnd = (
-        (endDateDiv && (
-          endDateDiv.contains(event.relatedTarget)
-          || event.relatedTarget === endDateDiv
-        ))
-        || (endTimeDiv && (
-          endTimeDiv.contains(event.relatedTarget)
-          || event.relatedTarget === endTimeDiv
-        ))
-      )
-      if (containedInStart || containedInEnd) {
-        // ignore internal blur
-        return
+  }, [
+    value,
+  ])
+
+  const updateParentValue = useCallback((newStart: DatetimeInputValue, newEnd: DatetimeInputValue) => {
+    if (onChange) {
+      if (datetimeNull(newStart) && datetimeNull(newEnd)) {
+        onChange(null, false)
+      } else if (isDatetimeValue(newStart) || isDatetimeValue(newEnd)) {
+        // todo: not right fallbacks
+        onChange(combineRange(
+          newStart || 0,
+          newEnd || 0
+        ), false)
+      } else {
+        onChange(undefined, false)
       }
     }
-    this.onBlur()
-  }
-  onBlur = () => {
-    // delay to ensure ALL child onBlur has finished (ugly)
-    window.setTimeout(() => {
-      if (
-        validDatetime(this.state.start)
-        || validDatetime(this.state.end)
-      ) {
-        const combined = this.combinedStateValue()
-        this.setState({
-          ...splitRange(combined)
-        }, () => {
-          if (typeof this.props.onChange === 'function') {
-            this.props.onChange(combined, true)
-          }
-        })
-      }
-      else {
-        this.setState({
-          start: null,
-          end: null,
-        }, () => {
-          this.props.onChange(null, true)
-        })
-      }
-    }, 1)
-  }
-  render() {
-    let defaultStartDate = undefined
-    if (validDatetime(this.state.end)) {
-      defaultStartDate = format(new Date(this.state.end), ISO_8601_DATE_FORMAT)
+  }, [
+    onChange,
+  ])
+  const handleStartChange = useCallback((newStart: DatetimeInputValue) => {
+    let adjustedEnd = end
+    if (isDatetimeValue(newStart) && isDatetimeValue(start) && isDatetimeValue(end)) {
+      const prevDuration = Math.abs(+start! - +end!)
+      adjustedEnd = newStart! + prevDuration
     }
-    let defaultEndDate = undefined
-    if (validDatetime(this.state.start)) {
-      defaultEndDate = format(new Date(this.state.start), ISO_8601_DATE_FORMAT)
+    setStart(newStart)
+    updateParentValue(newStart, adjustedEnd)
+  }, [
+    start,
+    end,
+    updateParentValue,
+  ])
+  const handleEndChange = useCallback((newEnd: DatetimeInputValue) => {
+    setEnd(newEnd)
+    updateParentValue(start, newEnd)
+  }, [
+    start,
+    updateParentValue,
+  ])
+
+  const handleClear = useCallback(() => {
+    if (onChange) {
+      onChange(null, false)
     }
-    return (
-      <BlockDiv
-        block={this.props.block}
-        ref={this.containerRef}
-        className={classNames('MIRECO-datetime-range', this.props.className, {
-          clearable: this.props.showClear,
-        })}
-        onBlur={this.handleContainerBlur}
-      >
+  }, [])
+
+  const handleBlur = useCallback(() => {
+    if (combinedState) {
+      setStart(combinedState.start)
+      setEnd(combinedState.end)
+      if (onChange) {
+        onChange(combinedState, true)
+      }
+    } else {
+      setStart(null)
+      setEnd(null)
+      if (onChange) {
+        onChange(null, true)
+      }
+    }
+  }, [
+    combinedState,
+    onChange,
+  ])
+  const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+  //   if (event.relatedTarget) {
+  //     const startDateDiv = (
+  //       this.startRef.current
+  //       && this.startRef.current.dateRef.current
+  //       && this.startRef.current.dateRef.current.containerRef.current
+  //     )
+  //     const startTimeDiv = (
+  //       this.startRef.current
+  //       && this.startRef.current.timeRef.current
+  //       && this.startRef.current.timeRef.current.containerRef.current
+  //     )
+  //     const containedInStart = (
+  //       (startDateDiv && (
+  //         startDateDiv.contains(event.relatedTarget)
+  //         || event.relatedTarget === startDateDiv
+  //       ))
+  //       || (startTimeDiv && (
+  //         startTimeDiv.contains(event.relatedTarget)
+  //         || event.relatedTarget === startTimeDiv
+  //       ))
+  //     )
+  //     const endDateDiv = (
+  //       this.endRef.current
+  //       && this.endRef.current.dateRef.current
+  //       && this.endRef.current.dateRef.current.containerRef.current
+  //     )
+  //     const endTimeDiv = (
+  //       this.endRef.current
+  //       && this.endRef.current.timeRef.current
+  //       && this.endRef.current.timeRef.current.containerRef.current
+  //     )
+  //     const containedInEnd = (
+  //       (endDateDiv && (
+  //         endDateDiv.contains(event.relatedTarget)
+  //         || event.relatedTarget === endDateDiv
+  //       ))
+  //       || (endTimeDiv && (
+  //         endTimeDiv.contains(event.relatedTarget)
+  //         || event.relatedTarget === endTimeDiv
+  //       ))
+  //     )
+  //     if (containedInStart || containedInEnd) {
+  //       // ignore internal blur
+  //       return
+  //     }
+  //   }
+  //   handleBlur()
+  }, [
+    handleBlur,
+  ])
+  
+  return (
+    <BlockDiv
+      block={block}
+      ref={containerRef}
+      className={classNames('MIRECO-datetime-range', className, {
+        clearable,
+      })}
+      onBlur={handleContainerBlur}
+    >
+      <Datetime
+        ref={startRef}
+        value={start}
+        onChange={handleStartChange}
+        disabled={disabled}
+        block={block}
+        className="start"
+        clearable={false}
+        defaultDate={isDatetimeValue(end) ? format(new Date(end!), ISO_8601_DATE_FORMAT) : undefined}
+        dateTextClassName={startDateTextClassName}
+        timeTextClassName={startTimeTextClassName}
+        id={id}
+      />
+      <BlockDiv className="datetime-range-second" block={block}>
+        <span className="to">{' - '}</span>
         <Datetime
-          ref={this.startRef}
-          value={this.state.start}
-          onChange={this.handleStartChange}
-          disabled={this.props.disabled}
-          block={this.props.block}
-          className="start"
-          showClear={false}
-          defaultDate={defaultStartDate}
-          dateTextClassName={this.props.startDateTextClassName}
-          timeTextClassName={this.props.startTimeTextClassName}
-          id={this.props.id}
+          ref={endRef}
+          value={end}
+          onChange={handleEndChange}
+          disabled={disabled}
+          timeFirst={true}
+          block={block}
+          className="end"
+          clearable={false}
+          relativeTo={start ? start : undefined}
+          defaultDate={isDatetimeValue(start) ? format(new Date(start!), ISO_8601_DATE_FORMAT) : undefined}
+          dateTextClassName={endDateTextClassName}
+          timeTextClassName={endTimeTextClassName}
         />
-        <BlockDiv className="datetime-range-second" block={this.props.block}>
-          <span className="to">{' - '}</span>
-          <Datetime
-            ref={this.endRef}
-            value={this.state.end}
-            onChange={this.handleEndChange}
-            disabled={this.props.disabled}
-            timeFirst={true}
-            block={this.props.block}
-            className="end"
-            showClear={false}
-            relativeTo={this.state.start}
-            defaultDate={defaultEndDate}
-            dateTextClassName={this.props.endDateTextClassName}
-            timeTextClassName={this.props.endTimeTextClassName}
+        {!block && clearable && (
+          <span>{' '}</span>
+        )}
+        {clearable && (
+          <ClearButton
+            onClick={handleClear}
+            disabled={disabled}
+            className={clearButtonClassName}
           />
-          {!this.props.block && this.props.showClear && (
-            <span>{' '}</span>
-          )}
-          {this.props.showClear && (
-            <ClearButton
-              onClick={this.handleClearClick}
-              disabled={this.props.disabled}
-              className={this.props.clearButtonClassName}
-            />
-          )}
-        </BlockDiv>
+        )}
       </BlockDiv>
-    )
-  }
+    </BlockDiv>
+  )
 }

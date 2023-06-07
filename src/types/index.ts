@@ -1,5 +1,6 @@
 export * from './date'
 export * from './datetime'
+export * from './datetime-range'
 export * from './duration'
 export * from './empty'
 export * from './number'
