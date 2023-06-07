@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Date as DateInput } from 'mireco'
-import type { DateValue } from 'mireco'
+import type { DateInputValue } from 'mireco'
 
 const DemoDate = () => {
-  const [value, setValue] = useState<DateValue>(null)
-  const handleChange = useCallback((newValue: DateValue, wasBlur: boolean) => {
+  const [value, setValue] = useState<DateInputValue>(null)
+  const handleChange = useCallback((newValue: DateInputValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (

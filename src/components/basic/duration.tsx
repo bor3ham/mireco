@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Duration } from 'mireco'
-import type { DurationValue } from 'mireco'
+import type { DurationInputValue } from 'mireco'
 
 const DemoDuration = () => {
-  const [value, setValue] = useState<DurationValue>(null)
-  const handleChange = useCallback((newValue: DurationValue, wasBlur: boolean) => {
+  const [value, setValue] = useState<DurationInputValue>(null)
+  const handleChange = useCallback((newValue: DurationInputValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (

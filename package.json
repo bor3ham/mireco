@@ -13,13 +13,14 @@
   "dependencies": {
     "casual-browserify": "^1.5.19-2",
     "date-fns": "^2.3.0",
-    "js-cookie": "^2.2.0",
-    "json-beautify": "^1.0.1",
+    "js-cookie": "^3.0.5",
+    "json-beautify": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "uptick-demo-site": "^1.2.3"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
     "@types/react-dom": "^18.2.4",
     "concurrently": "^5.2.0",
     "esbuild": "^0.17.19",

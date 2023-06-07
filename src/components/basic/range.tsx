@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Range } from 'mireco'
-import type { RangeValue } from 'mireco'
+import type { RangeInputValue } from 'mireco'
 
 const DemoRange = () => {
-  const [value, setValue] = useState<RangeValue>(1)
-  const handleChange = useCallback((newValue: RangeValue) => {
+  const [value, setValue] = useState<RangeInputValue>(1)
+  const handleChange = useCallback((newValue: RangeInputValue) => {
     setValue(newValue)
   }, [])
   return (

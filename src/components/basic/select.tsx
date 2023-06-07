@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Select } from 'mireco'
-import type { SelectValue } from 'mireco'
+import type { SelectInputValue } from 'mireco'
 
 const NULLABLE = true
 const OPTIONS = [
@@ -24,8 +24,8 @@ const OPTIONS = [
 ]
 
 const DemoSelect = () => {
-  const [value, setValue] = useState<SelectValue>(NULLABLE ? null : OPTIONS[0].value)
-  const handleChange = useCallback((newValue: SelectValue) => {
+  const [value, setValue] = useState<SelectInputValue>(NULLABLE ? null : OPTIONS[0].value)
+  const handleChange = useCallback((newValue: SelectInputValue) => {
     setValue(newValue)
   }, [])
   return (
