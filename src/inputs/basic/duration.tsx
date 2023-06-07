@@ -1,50 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
-import humanizeDuration from 'humanize-duration'
-import parseDuration from 'parse-duration'
 import type { Unit } from 'humanize-duration'
-
-// simplify large units rather than exact
-parseDuration.month = parseDuration.week * 4
-parseDuration.year = parseDuration.week * 52
 
 import { WidgetText } from 'components'
 import { HourglassVector } from 'vectors'
-import type { DurationValue } from 'types'
 import { KEYBOARD_ARROW_UP, KEYBOARD_ARROW_DOWN } from 'constants'
-
-function formatValue(value: DurationValue, humaniseUnits: Unit[]): string {
-  let formatted = ''
-  if (typeof value === 'number') {
-    formatted = humanizeDuration(value, {
-      units: humaniseUnits,
-    })
-  }
-  return formatted
-}
-
-function parseValue(value: string, defaultTimeUnit: string): DurationValue {
-  let trimmed = value.trim()
-  if (trimmed.length === 0) {
-    return null
-  }
-  if (trimmed.replace(/[^\d.,-]/g, '') === trimmed) {
-    trimmed += ` ${defaultTimeUnit}`
-  }
-
-  const parsed = parseDuration(trimmed)
-  if (parsed === 0 && trimmed[0] !== '0') {
-    return undefined
-  }
-  return Math.floor(parsed)
-}
+import { formatDuration, parseDuration } from 'types'
+import type { DurationInputValue } from 'types'
 
 export interface DurationProps {
   // mireco
   block?: boolean
   // duration
-  value?: DurationValue
-  onChange?(newValue: DurationValue, wasBlur: boolean): void
+  value?: DurationInputValue
+  onChange?(newValue: DurationInputValue, wasBlur: boolean): void
   humaniseUnits?: Unit[]
   incrementUnits?: number[]
   defaultTimeUnit?: string
@@ -114,23 +83,23 @@ export const Duration: React.FC<DurationProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const [textValue, setTextValue] = useState(formatValue(value, humaniseUnits))
+  const [textValue, setTextValue] = useState(formatDuration(value, humaniseUnits))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
   useEffect(() => {
     if (value === null) {
       setTextValue('')
     } else if (typeof value === 'number') {
-      const parsedCurrent = parseValue(textValueRef.current, defaultTimeUnit)
+      const parsedCurrent = parseDuration(textValueRef.current, defaultTimeUnit)
       if (parsedCurrent !== value) {
-        setTextValue(formatValue(value, humaniseUnits))
+        setTextValue(formatDuration(value, humaniseUnits))
       }
     }
   }, [value, defaultTimeUnit])
   const handleTextChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
-      onChange(parseValue(newValue, defaultTimeUnit), false)
+      onChange(parseDuration(newValue, defaultTimeUnit), false)
     }
   }, [])
 
@@ -168,7 +137,7 @@ export const Duration: React.FC<DurationProps> = ({
           onChange(value + bestIncrement(true), false)
         }
         else {
-          onChange(parseValue(`1 ${defaultTimeUnit}`, defaultTimeUnit), false)
+          onChange(parseDuration(`1 ${defaultTimeUnit}`, defaultTimeUnit), false)
         }
       }
     }
@@ -177,7 +146,7 @@ export const Duration: React.FC<DurationProps> = ({
     }
   }, [onChange, value, bestIncrement, onKeyDown])
   const handleTextBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    setTextValue(formatValue(value, humaniseUnits))
+    setTextValue(formatDuration(value, humaniseUnits))
     if (onChange) {
       onChange(value, true)
     }

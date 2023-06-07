@@ -1,54 +1,13 @@
 import React, { useReducer, useMemo, useEffect, useRef, useCallback } from 'react'
 import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
-import { format, addMilliseconds, startOfDay, isValid, parse } from 'date-fns'
+import { format, addMilliseconds, startOfDay } from 'date-fns'
 
 import { WidgetText, BlockDiv, Dropdown } from 'components'
 import { ClockVector } from 'vectors'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP, KEYBOARD_ENTER, KEYBOARD_ESCAPE } from 'constants'
-import type { TimeValue, DatetimeValue } from 'types'
-
-function nonEmptyValue(value: TimeValue) {
-  return typeof value === 'number' && !isNaN(value)
-}
-
-function formatValue(value: TimeValue, inputFormats: string[], longFormat: string, displayFormat: string): string {
-  if (!nonEmptyValue(value)) {
-    return ''
-  }
-  let adjustedValue = value as number
-  adjustedValue = +addMilliseconds(startOfDay(new Date()), adjustedValue)
-  let longFormatted = format(adjustedValue, longFormat)
-  let displayFormatted = format(adjustedValue, displayFormat)
-  let longParsed = parseValue(longFormatted, inputFormats)
-  let shortParsed = parseValue(displayFormatted, inputFormats)
-  if (longParsed === shortParsed) {
-    return displayFormatted
-  }
-  else {
-    return longFormatted
-  }
-}
-
-function parseValue(textValue: string, inputFormats: string[]): TimeValue {
-  let trimmed = textValue.trim()
-  // todo: remove superfluous spaces
-  if (trimmed.length === 0) {
-    return null
-  }
-  let valid: TimeValue = undefined
-  inputFormats.map((format) => {
-    if (nonEmptyValue(valid)) {
-      return
-    }
-    let parsed = parse(trimmed, format, startOfDay(new Date()))
-    if (isValid(parsed)) {
-      valid = +parsed
-      valid -= +startOfDay(new Date())
-    }
-  })
-  return valid
-}
+import type { TimeInputValue, DatetimeInputValue } from 'types'
+import { formatTime, parseTime, isTimeValue } from 'types'
 
 type TimeState = {
   text: string
@@ -115,16 +74,16 @@ export interface TimeProps {
   // mireco
   block?: boolean
   // time
-  value?: TimeValue
-  onChange?(newValue: TimeValue, wasBlur: boolean): void
+  value?: TimeInputValue
+  onChange?(newValue: TimeInputValue, wasBlur: boolean): void
   inputFormats?: string[]
   longFormat?: string
   displayFormat?: string
   placeholder?: string
   autoErase?: boolean
   step?: number
-  relativeTo?: DatetimeValue
-  relativeStart?: TimeValue
+  relativeTo?: DatetimeInputValue
+  relativeStart?: TimeInputValue
   rightHang?: boolean
   clearable?: boolean
   textClassName?: string
@@ -210,7 +169,7 @@ export const Time: React.FC<TimeProps> = ({
   onKeyUp,
 }) => {
   const formattedValue = useMemo(() => {
-    return formatValue(value, inputFormats, longFormat, displayFormat)
+    return formatTime(value, inputFormats, longFormat, displayFormat)
   }, [
     value,
     inputFormats,
@@ -262,8 +221,8 @@ export const Time: React.FC<TimeProps> = ({
         type: 'textOverride',
         text: '',
       })
-    } else if (nonEmptyValue(value)) {
-      if (value !== parseValue(state.text, inputFormats)) {
+    } else if (isTimeValue(value)) {
+      if (value !== parseTime(state.text, inputFormats)) {
         dispatchState({
           type: 'textOverride',
           text: formattedValue,
@@ -276,7 +235,7 @@ export const Time: React.FC<TimeProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null)
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
-    if (nonEmptyValue(value)) {
+    if (isTimeValue(value)) {
       dispatchState({
         type: 'close',
         formatted: formattedValue,
@@ -356,14 +315,14 @@ export const Time: React.FC<TimeProps> = ({
       text: newValue,
     })
     if (onChange) {
-      onChange(parseValue(newValue, inputFormats), false)
+      onChange(parseTime(newValue, inputFormats), false)
     }
   }, [
     onChange,
     inputFormats,
   ])
   const nextOption = useMemo(() => {
-    if (!nonEmptyValue(value)) {
+    if (!isTimeValue(value)) {
       return options[0].value
     }
     let nextIndex = 0
@@ -382,7 +341,7 @@ export const Time: React.FC<TimeProps> = ({
     options,
   ])
   const prevOption = useMemo(() => {
-    if (!nonEmptyValue(value)) {
+    if (!isTimeValue(value)) {
       return nextOption
     }
     if (value === options[0].value) {
@@ -458,7 +417,7 @@ export const Time: React.FC<TimeProps> = ({
     }
     dispatchState({
       type: 'close',
-      formatted: formatValue(newValue, inputFormats, longFormat, displayFormat),
+      formatted: formatTime(newValue, inputFormats, longFormat, displayFormat),
     })
   }, [
     onChange,
@@ -475,7 +434,7 @@ export const Time: React.FC<TimeProps> = ({
     }
   }, [])
   const showClear = (
-    !disabled && nonEmptyValue(value) && clearable
+    !disabled && isTimeValue(value) && clearable
   )
   return (
     <BlockDiv

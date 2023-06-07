@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Number as NumberInput } from 'mireco'
-import type { NumberValue } from 'mireco'
+import type { NumberInputValue } from 'mireco'
 
 const STEP = 1
 const MIN = 0
 const MAX = 100
 
 const DemoNumber = () => {
-  const [value, setValue] = useState<NumberValue>(5)
-  const handleChange = useCallback((newValue: NumberValue) => {
+  const [value, setValue] = useState<NumberInputValue>(5)
+  const handleChange = useCallback((newValue: NumberInputValue) => {
     setValue(newValue)
   }, [])
   const stringified = typeof value === 'undefined' ? 'undefined' : JSON.stringify(value)

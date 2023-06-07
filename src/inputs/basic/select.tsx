@@ -3,16 +3,10 @@ import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, WidgetText } from 'components'
 import { ChevronDownVector } from 'vectors'
-import { SelectValue, SelectOption } from 'types'
+import { SelectInputValue, SelectOption, isEmpty } from 'types'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP, KEYBOARD_ENTER, KEYBOARD_ESCAPE } from 'constants'
 
-function nonEmptyValue(value: SelectValue) {
-  return (
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean'
-  )
-}
+// todo: differentiate between text filtering and keyboard nav
 
 type SelectState = {
   dropdownOpen: boolean
@@ -64,9 +58,9 @@ export interface SelectProps {
   // mireco
   block?: boolean
   // select
-  value?: SelectValue
+  value?: SelectInputValue
   options?: SelectOption[]
-  onChange?(newValue: SelectValue, wasBlur: boolean): void
+  onChange?(newValue: SelectInputValue, wasBlur: boolean): void
   nullable?: boolean
   filter?: boolean
   onTextChange?(newValue: string, event: React.ChangeEvent<HTMLInputElement>): void
@@ -141,7 +135,7 @@ export const Select: React.FC<SelectProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const findOption = useCallback((choiceValue: SelectValue) => {
+  const findOption = useCallback((choiceValue: SelectInputValue) => {
     return options.find((option) => (option.value === choiceValue))
   }, [
     options,
@@ -169,7 +163,7 @@ export const Select: React.FC<SelectProps> = ({
     options,
   ])
   const findMatchingValue = useCallback((stringValue: string) => {
-    let valueMatch: SelectValue = null
+    let valueMatch: SelectInputValue = null
     options.forEach((option) => {
       const optionValue = `${option.value}`.trim().toLowerCase()
       if (valueMatch === null && optionValue === stringValue) {
@@ -179,7 +173,7 @@ export const Select: React.FC<SelectProps> = ({
     if (valueMatch !== null) {
       return valueMatch
     }
-    let labelMatch: SelectValue = null
+    let labelMatch: SelectInputValue = null
     options.forEach((option) => {
       const optionLabel = `${option.label}`.trim().toLowerCase()
       if (labelMatch === null && optionLabel === stringValue) {
@@ -202,7 +196,7 @@ export const Select: React.FC<SelectProps> = ({
 
   const valueOption = useMemo(() => (findOption(value)), [value])
   let initialText = ''
-  if (nonEmptyValue(value)) {
+  if (!isEmpty(value)) {
     initialText = valueOption ? valueOption.label : `${value}`
   }
   const [state, dispatchState] = useReducer(selectReducer, {
@@ -211,7 +205,7 @@ export const Select: React.FC<SelectProps> = ({
     filtering: false,
   })
 
-  const lastNonEmptyValue = useRef<SelectValue>(value ? value : null)
+  const lastNonEmptyValue = useRef<SelectInputValue>(value ? value : null)
   // when value changes
   useEffect(() => {
     if (value === null) {
@@ -219,7 +213,7 @@ export const Select: React.FC<SelectProps> = ({
         type: 'textOverride',
         text: '',
       })
-    } else if (nonEmptyValue(value)) {
+    } else if (!isEmpty(value)) {
       const overrideWithValueText = () => {
         dispatchState({
           type: 'textOverride',
@@ -236,7 +230,7 @@ export const Select: React.FC<SelectProps> = ({
       }
     }
     // record last valid value for non-nullable reset
-    if (nonEmptyValue(value)) {
+    if (!isEmpty(value)) {
       lastNonEmptyValue.current = value
     }
   }, [
@@ -414,7 +408,7 @@ export const Select: React.FC<SelectProps> = ({
       type: 'open',
     })
   }, [])
-  const handleDropdownSelect = useCallback((newValue: SelectValue) => {
+  const handleDropdownSelect = useCallback((newValue: SelectInputValue) => {
     const selected = options.find((option) => {
       return option.value === newValue
     })
@@ -475,7 +469,7 @@ export const Select: React.FC<SelectProps> = ({
     state.text,
     options,
   ])
-  const hasValue = nonEmptyValue(value)
+  const hasValue = !isEmpty(value)
   const canClear = clearable && hasValue && !disabled && nullable
 
   const handleFormElementChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {

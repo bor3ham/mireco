@@ -24,6 +24,7 @@ export const ClearButton: React.FC<Props> = ({
     onClick={onClick}
     className={classNames('MIRECO-clear-button content outline', className)}
     disabled={disabled}
+    type="button"
   >
     {spaced && (<>&nbsp;</>)}
     <CrossVector />

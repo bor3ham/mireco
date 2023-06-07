@@ -12,11 +12,11 @@ import {
 
 import { ISO_8601_DATE_FORMAT } from 'constants'
 import { ArrowRightVector, ArrowLeftVector } from 'vectors'
-import type { DateValue } from 'types'
+import type { DateValue, DateInputValue } from 'types'
 
 interface Props {
   selectDay?(day: DateValue): void
-  current?: DateValue
+  current?: DateInputValue
   showCurrent?: boolean
   highlight?(day: DateValue): void
 }

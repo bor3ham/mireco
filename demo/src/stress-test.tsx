@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React, { useState, useCallback, useEffect } from 'react'
+import * as ReactDOM from 'react-dom/client'
 import {
   Button,
   Checkbox,
@@ -14,14 +14,27 @@ import {
   Datetime,
   DatetimeRange,
   MultiSelect,
+  ISO_8601_DATE_FORMAT,
 } from 'mireco'
-import { ISO_8601_DATE_FORMAT } from 'mireco'
+import type {
+  DateInputValue,
+  DurationInputValue,
+  NumberInputValue,
+  RangeInputValue,
+  SelectInputValue,
+  TimeInputValue,
+  DatetimeInputValue,
+  // DatetimeRangeInputValue,
+  SelectOption,
+} from 'mireco'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
 import Cookies from 'js-cookie'
 import { startOfDay, startOfHour, addDays, addHours, addMinutes, format } from 'date-fns'
 
 import ResizeContainer from './resize-container'
+
+const replacer: any = null // json-beautify bad typing workaround
 
 const SELECT_OPTIONS = [
   {value: 'car', label: 'Car'},
@@ -36,7 +49,23 @@ const SELECT_OPTIONS = [
   {value: 'bouncing', label: 'Bouncing Off the Walls'},
 ]
 
-const defaultValue = {
+interface FormValue {
+  checked: boolean
+  date: DateInputValue
+  duration: DurationInputValue
+  number: NumberInputValue
+  range: RangeInputValue
+  select: SelectInputValue
+  text: string
+  textarea: string
+  time: TimeInputValue
+
+  datetime: DatetimeInputValue
+  datetimeRange: any // DatetimeRangeValue
+  multiSelect: SelectOption[]
+}
+
+const defaultValue: FormValue = {
   checked: false,
   date: null,
   duration: null,
@@ -51,9 +80,10 @@ const defaultValue = {
   datetimeRange: null,
   multiSelect: [],
 }
-function randomValue() {
+
+function randomValue(): FormValue {
   return {
-    checked: casual.coin_flip,
+    checked: !!casual.coin_flip,
     date: casual.coin_flip ? null : format(
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
       ISO_8601_DATE_FORMAT,
@@ -85,484 +115,429 @@ function randomValue() {
   }
 }
 
-class Demo extends React.PureComponent {
-  state = {
-    formValue: {
-      ...defaultValue,
-    },
-    flags: {
-      disabled: !!Cookies.get('disabled'),
-      intervalDisable: !!Cookies.get('intervalDisable'),
-      intervalRandomise: !!Cookies.get('intervalRandomise'),
-      intervalRemount: !!Cookies.get('intervalRemount'),
-      blockMode: !!Cookies.get('blockMode'),
-
-      showCheckbox: !!Cookies.get('showCheckbox'),
-      showDate: !!Cookies.get('showDate'),
-      showDuration: !!Cookies.get('showDuration'),
-      showMultiSelect: !!Cookies.get('showMultiSelect'),
-      showNumber: !!Cookies.get('showNumber'),
-      showRange: !!Cookies.get('showRange'),
-      showSelect: !!Cookies.get('showSelect'),
-      showText: !!Cookies.get('showText'),
-      showTextarea: !!Cookies.get('showTextarea'),
-      showTime: !!Cookies.get('showTime'),
-
-      showDatetime: !!Cookies.get('showDatetime'),
-      showDatetimeRange: !!Cookies.get('showDatetimeRange'),
-    },
-    mountIndex: 0,
-  }
-  componentDidMount() {
-    this.interval = window.setInterval(this.onInterval, 3000)
-  }
-  componentWillUnmount() {
-    window.clearInterval(this.interval)
-  }
-  onInterval = () => {
-    if (this.state.flags.intervalDisable) {
-      this.toggleFlag('disabled')
+const useFlag = (key: string): [boolean, (newValue: boolean) => void, () => void] => {
+  const [value, setValue] = useState(!!Cookies.get(key))
+  const handleChange = useCallback((newValue: boolean) => {
+    setValue(newValue)
+    if (newValue) {
+      Cookies.set(key, 'true')
+    } else {
+      Cookies.remove(key)
     }
-    if (this.state.flags.intervalRandomise) {
-      this.randomise()
-    }
-    if (this.state.flags.intervalRemount) {
-      this.setState(prevState => {
-        return {
-          mountIndex: prevState.mountIndex + 1,
-        }
-      })
-    }
-  }
-  setFlag = (key, value) => {
-    this.setState(prevState => {
-      let updates = {
-        flags: {
-          ...prevState.flags,
-        },
-      }
-      updates.flags[key] = value
-      return updates
-    }, () => {
-      if (this.state.flags[key]) {
-        Cookies.set(key, true)
-      }
-      else {
-        Cookies.remove(key)
-      }
-    })
-  }
-  toggleFlag = (key) => {
-    this.setFlag(key, !this.state.flags[key])
-  }
-  reset = () => {
-    this.setState({formValue: {
-      ...defaultValue,
-    }})
-  }
-  randomise = () => {
-    const newValue = randomValue()
-    this.setState({formValue: newValue})
-  }
-  remount = () => {
-    this.setState(prevState => {
-      let updates ={
-        mountIndex: prevState.mountIndex + 1,
-      }
-      return updates
-    })
-  }
-  updateFormValue = (key, value) => {
-    this.setState(prevState => {
-      let updates = {
-        formValue: {
-          ...prevState.formValue,
-        },
-      }
-      updates.formValue[key] = value
-      return updates
-    })
-  }
-  handleSubmit = (event) => {
-    if (event) {
-      event.preventDefault()
-    }
-    alert('submitting value!')
-  }
-  render() {
-    let inlineSpace
-    if (!this.state.flags.blockMode) {
-      inlineSpace = (<span>{' '}</span>)
-    }
-    return (
-      <div>
-        <style>{`
-          body {
-            padding: 0;
-            margin: 0;
-          }
-          div.flag-column {
-            flex: 1;
-            min-width: 10rem;
-          }
-        `}</style>
-        <div style={{
-          background: '#464656',
-          color: '#fff',
-          padding: '3rem',
-        }}>
-          <h1>Mireco demo form</h1>
-          <div style={{display: 'flex', flexWrap: 'wrap'}}>
-            <div className="flag-column">
-              <h2>Form settings</h2>
-              <Checkbox
-                block
-                value={this.state.flags.blockMode}
-                onChange={(newValue) => {
-                  this.setFlag('blockMode', newValue)
-                }}
-                label="Block mode"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.disabled}
-                onChange={(newValue) => {
-                  this.setFlag('disabled', newValue)
-                }}
-                label="Disabled"
-              />
-            </div>
-            <div className="flag-column">
-              <h2>Interval changes</h2>
-              <Checkbox
-                block
-                value={this.state.flags.intervalDisable}
-                onChange={(newValue) => {
-                  this.setFlag('intervalDisable', newValue)
-                }}
-                label="Periodically disable"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.intervalRandomise}
-                onChange={(newValue) => {
-                  this.setFlag('intervalRandomise', newValue)
-                }}
-                label="Periodically randomise"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.intervalRemount}
-                onChange={(newValue) => {
-                  this.setFlag('intervalRemount', newValue)
-                }}
-                label="Periodically remount"
-              />
-            </div>
-            <div className="flag-column">
-              <h2>Basic inputs</h2>
-              <Checkbox
-                block
-                value={this.state.flags.showCheckbox}
-                onChange={(newValue) => {
-                  this.setFlag('showCheckbox', newValue)
-                }}
-                label="Show checkbox input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showDate}
-                onChange={(newValue) => {
-                  this.setFlag('showDate', newValue)
-                }}
-                label="Show date input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showDuration}
-                onChange={(newValue) => {
-                  this.setFlag('showDuration', newValue)
-                }}
-                label="Show duration input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showMultiSelect}
-                onChange={(newValue) => {
-                  this.setFlag('showMultiSelect', newValue)
-                }}
-                label="Show multi select input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showNumber}
-                onChange={(newValue) => {
-                  this.setFlag('showNumber', newValue)
-                }}
-                label="Show number input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showRange}
-                onChange={(newValue) => {
-                  this.setFlag('showRange', newValue)
-                }}
-                label="Show range input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showSelect}
-                onChange={(newValue) => {
-                  this.setFlag('showSelect', newValue)
-                }}
-                label="Show select input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showText}
-                onChange={(newValue) => {
-                  this.setFlag('showText', newValue)
-                }}
-                label="Show text input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showTextarea}
-                onChange={(newValue) => {
-                  this.setFlag('showTextarea', newValue)
-                }}
-                label="Show textarea input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showTime}
-                onChange={(newValue) => {
-                  this.setFlag('showTime', newValue)
-                }}
-                label="Show time input"
-              />
-            </div>
-            <div className="flag-column">
-              <h2>Compound inputs</h2>
-              <Checkbox
-                block
-                value={this.state.flags.showDatetime}
-                onChange={(newValue) => {
-                  this.setFlag('showDatetime', newValue)
-                }}
-                label="Show datetime input"
-              />
-              <Checkbox
-                block
-                value={this.state.flags.showDatetimeRange}
-                onChange={(newValue) => {
-                  this.setFlag('showDatetimeRange', newValue)
-                }}
-                label="Show datetime range input"
-              />
-            </div>
-          </div>
-          <div style={{marginBottom: '1rem'}}>
-            <Button
-              onClick={this.randomise}
-              className="secondary"
-            >
-              Randomise
-            </Button>
-            {' '}
-            <Button
-              onClick={this.remount}
-              className="secondary"
-            >
-              Remount
-            </Button>
-            {' '}
-            <Button
-              onClick={this.reset}
-              className="secondary"
-            >
-              Reset
-            </Button>
-          </div>
-        </div>
-        <div style={{
-          background: '#f5f5f5',
-          padding: '3rem',
-          margin: '0',
-        }}>
-          <h2>Form state value</h2>
-          <pre style={{
-            whiteSpace: 'pre-wrap',
-            fontFamily: 'monospace',
-          }}>
-            {beautify(this.state.formValue, null, 2, 80)}
-          </pre>
-        </div>
-        <ResizeContainer>
-          <form
-            onSubmit={this.handleSubmit}
-            key={`form-mount-${this.state.mountIndex}`}
-            style={{margin: '20rem 1rem'}}
-          >
-            {/* basic */}
-            {this.state.flags.showCheckbox && (
-              <Checkbox
-                value={this.state.formValue.checked}
-                onChange={(newValue) => {
-                  this.updateFormValue('checked', newValue)
-                }}
-                label="Checked or not?"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showCheckbox && inlineSpace}
-            {this.state.flags.showDate && (
-              <DateInput
-                value={this.state.formValue.date}
-                onChange={(newValue) => {
-                  this.updateFormValue('date', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showDate && inlineSpace}
-            {this.state.flags.showDuration && (
-              <Duration
-                value={this.state.formValue.duration}
-                onChange={(newValue) => {
-                  this.updateFormValue('duration', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showDuration && inlineSpace}
-            {this.state.flags.showNumber && (
-              <NumberInput
-                value={this.state.formValue.number}
-                onChange={(newValue) => {
-                  this.updateFormValue('number', newValue)
-                }}
-                placeholder="Number"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showNumber && inlineSpace}
-            {this.state.flags.showMultiSelect && (
-              <MultiSelect
-                value={this.state.formValue.multiSelect}
-                options={SELECT_OPTIONS}
-                onChange={(newValue) => {
-                  this.updateFormValue('multiSelect', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-                placeholder="Multi Select"
-              />
-            )}
-            {this.state.flags.showMultiSelect && inlineSpace}
-            {this.state.flags.showNumber && inlineSpace}
-            {this.state.flags.showRange && (
-              <Range
-                value={this.state.formValue.range}
-                onChange={(newValue) => {
-                  this.updateFormValue('range', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showRange && inlineSpace}
-            {this.state.flags.showSelect && (
-              <Select
-                value={this.state.formValue.select}
-                options={SELECT_OPTIONS}
-                onChange={(newValue) => {
-                  this.updateFormValue('select', newValue)
-                }}
-                placeholder="Select"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showSelect && inlineSpace}
-            {this.state.flags.showText && (
-              <Text
-                value={this.state.formValue.text}
-                onChange={(newValue) => {
-                  this.updateFormValue('text', newValue)
-                }}
-                placeholder="Text"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showText && inlineSpace}
-            {this.state.flags.showTextarea && (
-              <Textarea
-                value={this.state.formValue.textarea}
-                onChange={(newValue) => {
-                  this.updateFormValue('textarea', newValue)
-                }}
-                placeholder="Textarea"
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showTextarea && inlineSpace}
-            {this.state.flags.showTime && (
-              <Time
-                value={this.state.formValue.time}
-                onChange={(newValue) => {
-                  this.updateFormValue('time', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showTime && inlineSpace}
-            {/* compound */}
-            {this.state.flags.showDatetime && (
-              <Datetime
-                value={this.state.formValue.datetime}
-                onChange={(newValue) => {
-                  this.updateFormValue('datetime', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showDatetime && inlineSpace}
-            {this.state.flags.showDatetimeRange && (
-              <DatetimeRange
-                value={this.state.formValue.datetimeRange}
-                onChange={(newValue) => {
-                  this.updateFormValue('datetimeRange', newValue)
-                }}
-                disabled={this.state.flags.disabled}
-                block={this.state.flags.blockMode}
-              />
-            )}
-            {this.state.flags.showDatetimeRange && inlineSpace}
-            {/* submit */}
-            <Button
-              type="submit"
-              block={this.state.flags.blockMode}
-              disabled={this.state.flags.disabled}
-            >
-              Submit Results
-            </Button>
-          </form>
-        </ResizeContainer>
-      </div>
-    )
-  }
+  }, [key])
+  const toggle = useCallback(() => {
+    setValue((prevValue) => (!prevValue))
+  }, [])
+  return [value, handleChange, toggle]
 }
 
-const mount = document.querySelectorAll('div.demo-mount-stress-test')
-if (mount.length) {
-  ReactDOM.render(<Demo />, mount[0])
+const StressTest = () => {
+  const [disabled, handleDisabledChange, toggleDisabled] = useFlag('disabled')
+  const [intervalDisable, handleIntervalDisableChange] = useFlag('intervalDisable')
+  const [intervalRandomise, handleIntervalRandomiseChange] = useFlag('intervalRandomise')
+  const [intervalRemount, handleIntervalRemountChange] = useFlag('intervalRemount')
+  const [blockMode, handleBlockModeChange] = useFlag('blockMode')
+
+  const [showCheckbox, handleShowCheckboxChange] = useFlag('showCheckbox')
+  const [showDate, handleShowDateChange] = useFlag('showDate')
+  const [showDuration, handleShowDurationChange] = useFlag('showDuration')
+  const [showMultiSelect, handleShowMultiSelectChange] = useFlag('showMultiSelect')
+  const [showNumber, handleShowNumberChange] = useFlag('showNumber')
+  const [showRange, handleShowRangeChange] = useFlag('showRange')
+  const [showSelect, handleShowSelectChange] = useFlag('showSelect')
+  const [showText, handleShowTextChange] = useFlag('showText')
+  const [showTextarea, handleShowTextareaChange] = useFlag('showTextarea')
+  const [showTime, handleShowTimeChange] = useFlag('showTime')
+
+  const [showDatetime, handleShowDatetimeChange] = useFlag('showDatetime')
+  const [showDatetimeRange, handleShowDatetimeRangeChange] = useFlag('showDatetimeRange')
+
+  const [mountIndex, setMountIndex] = useState<number>(0)
+  const remount = useCallback(() => {
+    setMountIndex((prevIndex) => (prevIndex + 1))
+  }, [])
+
+  const [formValue, setFormValue] = useState({...defaultValue})
+  const handleFieldChange = useCallback((fieldKey: string) => {
+    return (newValue: any) => {
+      setFormValue((prevValue) => ({
+        ...prevValue,
+        [fieldKey]: newValue,
+      }))
+    }
+  }, [])
+  const randomise = useCallback(() => {
+    setFormValue(randomValue())
+  }, [])
+  const reset = useCallback(() => {
+    setFormValue({...defaultValue})
+  }, [])
+
+  const handleInterval = useCallback(() => {
+    if (intervalDisable) {
+      toggleDisabled()
+    }
+    if (intervalRandomise) {
+      randomise()
+    }
+    if (intervalRemount) {
+      remount()
+    }
+  }, [
+    intervalDisable,
+    toggleDisabled,
+    intervalRandomise,
+    randomise,
+    intervalRemount,
+    remount,
+  ])
+  useEffect(() => {
+    const interval = window.setInterval(handleInterval, 3000)
+    return () => {
+      window.clearInterval(interval)
+    }
+  }, [handleInterval])
+
+  const handleSubmit = useCallback((event: React.FormEvent) => {
+    event.preventDefault()
+    alert('submitting value!')
+  }, [])
+  
+  let inlineSpace
+  if (!blockMode) {
+    inlineSpace = (<span>{' '}</span>)
+  }
+
+  return (
+    <div>
+      <style>{`
+        body {
+          padding: 0;
+          margin: 0;
+        }
+        div.flag-column {
+          flex: 1;
+          min-width: 10rem;
+        }
+      `}</style>
+      <div style={{
+        background: '#464656',
+        color: '#fff',
+        padding: '3rem',
+      }}>
+        <h1>Mireco demo form</h1>
+        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+          <div className="flag-column">
+            <h2>Form settings</h2>
+            <Checkbox
+              block
+              value={blockMode}
+              onChange={handleBlockModeChange}
+            >
+              Block mode
+            </Checkbox>
+            <Checkbox
+              block
+              value={disabled}
+              onChange={handleDisabledChange}
+            >
+              Disabled
+            </Checkbox>
+          </div>
+          <div className="flag-column">
+            <h2>Interval changes</h2>
+            <Checkbox
+              block
+              value={intervalDisable}
+              onChange={handleIntervalDisableChange}
+            >
+              Periodically disable
+            </Checkbox>
+            <Checkbox
+              block
+              value={intervalRandomise}
+              onChange={handleIntervalRandomiseChange}
+            >
+              Periodically randomise
+            </Checkbox>
+            <Checkbox
+              block
+              value={intervalRemount}
+              onChange={handleIntervalRemountChange}
+            >
+              Periodically remount
+            </Checkbox>
+          </div>
+          <div className="flag-column">
+            <h2>Basic inputs</h2>
+            <Checkbox
+              block
+              value={showCheckbox}
+              onChange={handleShowCheckboxChange}
+            >
+              Show checkbox input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showDate}
+              onChange={handleShowDateChange}
+            >
+              Show date input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showDuration}
+              onChange={handleShowDurationChange}
+            >
+              Show duration input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showMultiSelect}
+              onChange={handleShowMultiSelectChange}
+            >
+              Show multi select input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showNumber}
+              onChange={handleShowNumberChange}
+            >
+              Show number input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showRange}
+              onChange={handleShowRangeChange}
+            >
+              Show range input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showSelect}
+              onChange={handleShowSelectChange}
+            >
+              Show select input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showText}
+              onChange={handleShowTextChange}
+            >
+              Show text input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showTextarea}
+              onChange={handleShowTextareaChange}
+            >
+              Show textarea input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showTime}
+              onChange={handleShowTimeChange}
+            >
+              Show time input
+            </Checkbox>
+          </div>
+          <div className="flag-column">
+            <h2>Compound inputs</h2>
+            <Checkbox
+              block
+              value={showDatetime}
+              onChange={handleShowDatetimeChange}
+            >
+              Show datetime input
+            </Checkbox>
+            <Checkbox
+              block
+              value={showDatetimeRange}
+              onChange={handleShowDatetimeRangeChange}
+            >
+              Show datetime range input
+            </Checkbox>
+          </div>
+        </div>
+        <div style={{marginBottom: '1rem'}}>
+          <Button
+            onClick={randomise}
+            className="secondary"
+          >
+            Randomise
+          </Button>
+          {' '}
+          <Button
+            onClick={remount}
+            className="secondary"
+          >
+            Remount
+          </Button>
+          {' '}
+          <Button
+            onClick={reset}
+            className="secondary"
+          >
+            Reset
+          </Button>
+        </div>
+      </div>
+      <div style={{
+        background: '#f5f5f5',
+        padding: '3rem',
+        margin: '0',
+      }}>
+        <h2>Form state value</h2>
+        <pre style={{
+          whiteSpace: 'pre-wrap',
+          fontFamily: 'monospace',
+        }}>
+          {beautify(formValue, replacer, 2, 80)}
+        </pre>
+      </div>
+      <ResizeContainer>
+        <form
+          onSubmit={handleSubmit}
+          key={`form-mount-${mountIndex}`}
+          style={{margin: '20rem 1rem'}}
+        >
+          {/* basic */}
+          {showCheckbox && (
+            <Checkbox
+              value={formValue.checked}
+              onChange={handleFieldChange('checked')}
+              disabled={disabled}
+              block={blockMode}
+            >
+              Checked or not?
+            </Checkbox>
+          )}
+          {showCheckbox && inlineSpace}
+          {showDate && (
+            <DateInput
+              value={formValue.date}
+              onChange={handleFieldChange('date')}
+              disabled={disabled}
+              block={blockMode}
+            />
+          )}
+          {showDate && inlineSpace}
+          {showDuration && (
+            <Duration
+              value={formValue.duration}
+              onChange={handleFieldChange('duration')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Enter a duration"
+            />
+          )}
+          {showDuration && inlineSpace}
+          {showNumber && (
+            <NumberInput
+              value={formValue.number}
+              onChange={handleFieldChange('number')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Enter a number"
+            />
+          )}
+          {showNumber && inlineSpace}
+          {showMultiSelect && (
+            <MultiSelect
+              value={formValue.multiSelect}
+              options={SELECT_OPTIONS}
+              onChange={handleFieldChange('multiSelect')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Select multiple values"
+            />
+          )}
+          {showMultiSelect && inlineSpace}
+          {showNumber && inlineSpace}
+          {showRange && (
+            <Range
+              value={formValue.range}
+              onChange={handleFieldChange('range')}
+              disabled={disabled}
+              block={blockMode}
+            />
+          )}
+          {showRange && inlineSpace}
+          {showSelect && (
+            <Select
+              value={formValue.select}
+              options={SELECT_OPTIONS}
+              onChange={handleFieldChange('select')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Select value"
+            />
+          )}
+          {showSelect && inlineSpace}
+          {showText && (
+            <Text
+              value={formValue.text}
+              onChange={handleFieldChange('text')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Text"
+            />
+          )}
+          {showText && inlineSpace}
+          {showTextarea && (
+            <Textarea
+              value={formValue.textarea}
+              onChange={handleFieldChange('textarea')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Multiple lines of text"
+            />
+          )}
+          {showTextarea && inlineSpace}
+          {showTime && (
+            <Time
+              value={formValue.time}
+              onChange={handleFieldChange('time')}
+              disabled={disabled}
+              block={blockMode}
+            />
+          )}
+          {showTime && inlineSpace}
+          {/* compound */}
+          {showDatetime && (
+            <Datetime
+              value={formValue.datetime}
+              onChange={handleFieldChange('datetime')}
+              disabled={disabled}
+              block={blockMode}
+            />
+          )}
+          {showDatetime && inlineSpace}
+          {showDatetimeRange && (
+            <DatetimeRange
+              value={formValue.datetimeRange}
+              onChange={handleFieldChange('datetimeRange')}
+              disabled={disabled}
+              block={blockMode}
+            />
+          )}
+          {showDatetimeRange && inlineSpace}
+          {/* submit */}
+          <Button
+            type="submit"
+            block={blockMode}
+            disabled={disabled}
+          >
+            Submit Results
+          </Button>
+        </form>
+      </ResizeContainer>
+    </div>
+  )
+}
+
+const container = document.querySelector('div.demo-mount-stress-test')
+if (container) {
+  const root = ReactDOM.createRoot(container)
+  root.render(<StressTest />)
 }

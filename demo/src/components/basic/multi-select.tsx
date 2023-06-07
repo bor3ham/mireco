@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { MultiSelect } from 'mireco'
+import type { SelectValue } from 'mireco'
 
 const OPTIONS = [
   {
@@ -22,8 +23,8 @@ const OPTIONS = [
 ]
 
 const DemoMultiSelect = () => {
-  const [value, setValue] = useState<any[]>([])
-  const handleValueChange = useCallback((newValue: any[], wasBlur: boolean) => {
+  const [value, setValue] = useState<SelectValue[]>([])
+  const handleValueChange = useCallback((newValue: SelectValue[], wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (

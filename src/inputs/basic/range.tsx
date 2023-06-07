@@ -1,14 +1,14 @@
 import React, { useCallback } from 'react'
 import classNames from 'classnames'
 
-import type { RangeValue } from 'types'
+import type { RangeInputValue } from 'types'
 
 export interface RangeProps {
   // mireco
   block?: boolean
   // number
-  value?: RangeValue
-  onChange?(newValue: RangeValue, event: React.ChangeEvent<HTMLInputElement>): void
+  value?: RangeInputValue
+  onChange?(newValue: RangeInputValue, event: React.ChangeEvent<HTMLInputElement>): void
   min?: number
   max?: number
   step?: number

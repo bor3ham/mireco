@@ -1,46 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
-import type { NumberValue } from 'types'
 
 import { Text } from './text'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP } from 'constants'
-
-function formatValue(value: NumberValue): string {
-  if (typeof value === 'number') {
-    return `${value}`
-  }
-  return ''
-}
-
-function parseValue(textValue: string, min?: number, max?: number, step?: number): NumberValue {
-  const trimmed = textValue.trim()
-  if (trimmed.length === 0) {
-    return null
-  }
-  const parsed = parseFloat(trimmed)
-  if (isNaN(parsed)) {
-    return undefined
-  }
-  if (typeof step === 'number') {
-    if (parsed % step !== 0) {
-      return undefined
-    }
-  }
-  if (typeof min === 'number' && parsed < min) {
-    return undefined
-  }
-  if (typeof max === 'number' && parsed > max) {
-    return undefined
-  }
-  return parsed
-}
+import type { NumberInputValue } from 'types'
+import { formatNumber, parseNumber } from 'types'
 
 export interface NumberProps {
   // mireco
   block?: boolean
   // number
-  value?: NumberValue
-  onChange?(value: NumberValue): void
+  value?: NumberInputValue
+  onChange?(value: NumberInputValue): void
   min?: number
   max?: number
   step?: number
@@ -105,19 +76,19 @@ const NumberInput: React.FC<NumberProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const [textValue, setTextValue] = useState(formatValue(value))
+  const [textValue, setTextValue] = useState(formatNumber(value))
   useEffect(() => {
     if (
       typeof value !== 'undefined' &&
-      parseValue(textValue, min, max, step) != value
+      parseNumber(textValue, min, max, step) != value
     ) {
-      setTextValue(formatValue(value))
+      setTextValue(formatNumber(value))
     }
   }, [value, textValue, min, max, step])
   const handleTextChange = useCallback((newValue: string) => {
     if (typeof onChange === 'function') {
       setTextValue(newValue)
-      onChange(parseValue(newValue, min, max, step))
+      onChange(parseNumber(newValue, min, max, step))
     }
   }, [onChange, min, max, step])
 
@@ -154,7 +125,7 @@ const NumberInput: React.FC<NumberProps> = ({
     onKeyDown,
   ])
   const handleBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    const stringified = formatValue(value)
+    const stringified = formatNumber(value)
     setTextValue(stringified)
     if (typeof onBlur === 'function') {
       onBlur(event)
