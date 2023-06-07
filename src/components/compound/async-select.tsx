@@ -1,52 +1,45 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { AsyncSelect } from 'mireco'
+import type { SelectOption, SelectOptionValue } from 'mireco'
 
 const SIMULATED_LAG = 1000
 
-function fakeResults(searchTerm) {
+function fakeResults(searchTerm: string): Promise<SelectOption[]> {
   const keyedTerm = searchTerm.toLowerCase().trim().replace(' ', '_')
-  return [
-    {
-      value: `${keyedTerm}_rusted`,
-      label: `${searchTerm} Rusted`,
-    },
-    {
-      value: `${keyedTerm}`,
-      label: `${searchTerm} (500)`,
-    },
-    {
-      value: `new_${keyedTerm}`,
-      label: `New ${searchTerm}`,
-    },
-    {
-      value: 'unfiltered_result',
-      label: 'Result to test filtering is not happening',
-    },
-  ]
+  return new Promise((resolve, reject) => {
+    window.setTimeout(() => {
+      resolve([
+        {
+          value: `${keyedTerm}`,
+          label: `Basic ${searchTerm}`,
+        },
+        {
+          value: `new_${keyedTerm}`,
+          label: `New ${searchTerm}`,
+        },
+        {
+          value: 'other_item',
+          label: 'Other Item',
+        },
+      ])
+    }, SIMULATED_LAG)
+  })
 }
 
 const DemoAsyncSelect = () => {
-  const [value, setValue] = useState(null)
-  const handleChange = useCallback((newValue, wasBlur) => {
+  const [value, setValue] = useState<SelectOptionValue>(null)
+  const handleChange = useCallback((newValue: SelectOptionValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
-  const getOptions = (searchTerm) => {
-    return new Promise((resolve, reject) => {
-      window.setTimeout(() => {
-        resolve(fakeResults(searchTerm))
-      }, SIMULATED_LAG)
-    })
-  }
   return (
     <>
       <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
       <AsyncSelect
-        block
-        placeholder="Select value"
         value={value}
-        getOptions={getOptions}
+        getOptions={fakeResults}
         onChange={handleChange}
+        placeholder="Select value"
       />
     </>
   )

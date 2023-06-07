@@ -21,7 +21,6 @@ const DemoTime = () => {
       <Time
         value={value}
         onChange={handleChange}
-        block
       />
     </>
   )
