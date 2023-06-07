@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { Datetime } from 'mireco'
+import type { DatetimeInputValue } from 'mireco'
 
-function stringifyDate(date) {
+function stringifyDate(date: DatetimeInputValue) {
   if (typeof date === 'number') {
     return JSON.stringify(new Date(date))
   }
@@ -13,8 +14,8 @@ function stringifyDate(date) {
 }
 
 const DemoDatetime = () => {
-  const [value, setValue] = useState(null)
-  const handleChange = useCallback((newValue, wasBlur) => {
+  const [value, setValue] = useState<DatetimeInputValue>(null)
+  const handleChange = useCallback((newValue: DatetimeInputValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
