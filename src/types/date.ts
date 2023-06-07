@@ -8,8 +8,12 @@ export type DateValue = string // ISO8601 formatted date eg: '2023-02-18'
 
 export type DateInputValue = DateValue | Empty
 
+export function isDateValue(value: DateInputValue): boolean {
+  return !isEmpty(value)
+}
+
 export function formatDate(value: DateInputValue, displayFormat: string): string {
-  if (isEmpty(value)) {
+  if (!isDateValue(value)) {
     return ''
   }
   return format(parse(value as DateValue, ISO_8601_DATE_FORMAT, new Date()), displayFormat)

@@ -1,45 +1,58 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react'
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
 import { Date as DateInput } from '../basic/date'
 import { Time } from '../basic/time'
 import { BlockDiv, ClearButton } from 'components'
-import { ISO_8601_DATE_FORMAT } from '../../constants'
-import { datePropType } from '../../prop-types-old/date'
+import { ISO_8601_DATE_FORMAT } from 'constants'
+import { isDateValue, isDatetimeValue, isTimeValue } from 'types'
+import type {
+  DatetimeValue,
+  DatetimeInputValue,
+  DateValue,
+  DateInputValue,
+  TimeValue,
+  TimeInputValue,
+} from 'types'
 
-function validDate(date) {
-  return typeof date === 'string'
-}
-function validDatetime(datetime) {
-  return (typeof datetime === 'number' && !isNaN(datetime))
-}
-function datetimesEqual(datetime1, datetime2) {
+// todo: combine state into reducer
+
+function datetimesEqual(datetime1: DatetimeInputValue, datetime2: DatetimeInputValue): boolean {
   return (datetime1 === datetime2)
 }
-function datetimeNull(datetime) {
+
+function datetimeNull(datetime: DatetimeInputValue): boolean {
   return (datetime === null)
 }
-function dateNull(date) {
+
+function dateNull(date: DateInputValue): boolean {
   return (date === null)
 }
-function dateAsMs(date) {
+
+function dateAsMs(date: DateValue): number {
   return +parse(date, ISO_8601_DATE_FORMAT, new Date())
 }
-function combineDateTime(date, time) {
+
+function combineDateTime(date: DateValue, time: TimeValue): DatetimeValue {
   return +startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) + time
 }
-function splitDateTime(value) {
+
+interface SplitDatetime {
+  date: DateInputValue
+  time: TimeInputValue
+}
+
+function splitDatetime(value: DatetimeInputValue): SplitDatetime {
   if (value === null) {
     return {
       date: null,
       time: null,
     }
   }
-  if (validDatetime(value)) {
-    const date = format(value, ISO_8601_DATE_FORMAT)
-    const time = value - dateAsMs(date)
+  if (isDatetimeValue(value)) {
+    const date = format(value!, ISO_8601_DATE_FORMAT)
+    const time = value! - dateAsMs(date)
     return {
       date,
       time,
@@ -51,107 +64,184 @@ function splitDateTime(value) {
   }
 }
 
-export default class Datetime extends React.PureComponent {
-  static propTypes = {
-    value: PropTypes.number,
-    onChange: PropTypes.func,
-    disabled: PropTypes.bool,
-    block: PropTypes.bool,
-    timeFirst: PropTypes.bool,
-    showClear: PropTypes.bool,
-    className: PropTypes.string,
-    relativeTo: PropTypes.number,
-    defaultDate: datePropType,
-    dateTextClassName: PropTypes.string,
-    timeTextClassName: PropTypes.string,
-    clearButtonClassName: PropTypes.string,
-    id: PropTypes.string,
-  }
-  static defaultProps = {
-    block: false,
-    timeFirst: false,
-    showClear: true,
-  }
-  constructor(props) {
-    super(props)
-    this.state = {
-      ...splitDateTime(props.value),
-    }
-    this.containerRef = React.createRef()
-    this.dateRef = React.createRef()
-    this.timeRef = React.createRef()
-  }
-  componentDidUpdate = (prevProps, prevState) => {
-    if (!datetimesEqual(prevProps.value, this.props.value)) {
-      if (datetimeNull(this.props.value)) {
-        this.setState({
-          date: null,
-          time: null,
-        })
+interface DatetimeProps {
+  // mireco
+  block?: boolean
+  // datetime
+  value?: DatetimeInputValue
+  onChange?(newValue: DatetimeInputValue, wasBlur: boolean): void
+  relativeTo?: DatetimeValue
+  defaultDate?: DateValue
+  showClear?: boolean
+  timeFirst?: boolean
+  // children specific
+  dateTextClassName?: string
+  timeTextClassName?: string
+  clearButtonClassName?: string
+  // html
+  id?: string
+  autoFocus?: boolean
+  tabIndex?: number
+  style?: React.CSSProperties
+  className?: string
+  title?: string
+  // form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+  // event handlers
+  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
+}
+
+export const Datetime: React.FC<DatetimeProps> = ({
+  block,
+  value,
+  onChange,
+  relativeTo,
+  defaultDate,
+  showClear = true,
+  timeFirst,
+  dateTextClassName,
+  timeTextClassName,
+  clearButtonClassName,
+  id,
+  autoFocus,
+  tabIndex,
+  style,
+  className,
+  title,
+  name,
+  required,
+  disabled,
+  onFocus,
+  onBlur,
+  onClick,
+  onDoubleClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onMouseUp,
+  onKeyDown,
+  onKeyUp,
+}) => {
+  const splitValue = useMemo(() => (splitDatetime(value)), [value])
+  const [date, setDate] = useState(splitValue.date)
+  const [time, setTime] = useState(splitValue.time)
+
+  const fallbackDefault: DateValue = defaultDate || format(new Date(), ISO_8601_DATE_FORMAT)
+  const combinedState = useMemo(() => (combineDateTime(
+    date || fallbackDefault,
+    time || 0
+  )), [
+    fallbackDefault,
+    date,
+    time,
+  ])
+
+  useEffect(() => {
+    if (!datetimesEqual(value, combinedState)) {
+      if (datetimeNull(value)) {
+        setDate(null)
+        setTime(null)
+      } else if (isDatetimeValue(value)) {
+        const split = splitDatetime(value)
+        setDate(split.date)
+        setTime(split.time)
       }
-      else if (validDatetime(this.props.value)) {
-        if (!datetimesEqual(this.props.value, this.combinedStateValue())) {
-          this.setState({
-            ...splitDateTime(this.props.value),
-          })
-        }
+    }
+  }, [value])
+
+  const updateParentValue = useCallback((newDate: DateInputValue, newTime: TimeInputValue) => {
+    if (onChange) {
+      if (dateNull(newDate) && datetimeNull(newTime)) {
+        onChange(null, false)
+      } else if (isDateValue(newDate) || isTimeValue(newTime)) {
+        onChange(combineDateTime(
+          newDate || fallbackDefault,
+          newTime || 0
+        ), false)
+      } else {
+        onChange(undefined, false)
       }
     }
-  }
-  getDefaultDate() {
-    if (this.props.defaultDate) {
-      return this.props.defaultDate
-    }
-    return format(new Date(), ISO_8601_DATE_FORMAT)
-  }
-  combinedStateValue() {
-    return combineDateTime(
-      this.state.date || this.getDefaultDate(),
-      this.state.time || 0
+  }, [
+    onChange,
+    fallbackDefault,
+  ])
+  const handleDateChange = useCallback((newValue: DateInputValue, wasBlur: boolean) => {
+    setDate(newValue)
+    updateParentValue(
+      newValue,
+      time
     )
-  }
-  handleDateChange = (newDate, wasBlur) => {
-    this.setState({date: newDate}, this.updateParentValue)
-  }
-  handleTimeChange = (newTime, wasBlur) => {
-    this.setState({time: newTime}, this.updateParentValue)
-  }
-  updateParentValue = () => {
-    if (typeof this.props.onChange === 'function') {
-      if (dateNull(this.state.date) && datetimeNull(this.state.time)) {
-        this.props.onChange(null, false)
+  }, [
+    updateParentValue,
+    time,
+  ])
+  const handleTimeChange = useCallback((newValue: TimeInputValue, wasBlur: boolean) => {
+    setTime(newValue)
+    updateParentValue(
+      date,
+      newValue
+    )
+  }, [
+    updateParentValue,
+    date,
+  ])
+  
+  const handleBlur = useCallback(() => {
+    if (isDateValue(date) || isTimeValue(time)) {
+      setDate(date || fallbackDefault)
+      setTime(time || 0)
+      if (onChange) {
+        onChange(combinedState, true)
       }
-      else if (
-        validDate(this.state.date)
-        || validDatetime(this.state.time)
-      ) {
-        this.props.onChange(this.combinedStateValue(), false)
-      }
-      else {
-        this.props.onChange(undefined, false)
+    } else {
+      setDate(null)
+      setTime(null)
+      if (onChange) {
+        onChange(null, true)
       }
     }
-  }
-  handleContainerBlur = (event) => {
+  }, [
+    combinedState,
+    date,
+    time,
+  ])
+  const containerRef = useRef<HTMLDivElement>(null)
+  const dateRef = useRef<HTMLInputElement>(null)
+  const timeRef = useRef<HTMLInputElement>(null)
+  const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (event.relatedTarget) {
+      const dateContainer = dateRef.current ? dateRef.current.closest('.MIRECO-date') : null
       const containedInDate = (
-        this.dateRef.current
-        && this.dateRef.current.containerRef.current
-        && (
-          this.dateRef.current.containerRef.current.contains(
-            event.relatedTarget
-          )
-          || this.dateRef.current.containerRef.current == event.relatedTarget
+        dateContainer &&
+        (
+          dateContainer.contains(event.relatedTarget) ||
+          dateContainer == event.relatedTarget
         )
       )
+      const timeContainer = timeRef.current ? timeRef.current.closest('.MIRECO-time') : null
       const containedInTime = (
-        this.timeRef.current
-        && this.timeRef.current.containerRef.current
-        && (
-          this.timeRef.current.containerRef.current.contains(
-            event.relatedTarget
-          )
-          || this.timeRef.current.containerRef.current == event.relatedTarget
+        timeContainer &&
+        (
+          timeContainer.contains(event.relatedTarget) ||
+          timeContainer == event.relatedTarget
         )
       )
       if (containedInDate || containedInTime) {
@@ -159,117 +249,97 @@ export default class Datetime extends React.PureComponent {
         return
       }
     }
-    this.onBlur()
-  }
-  handleClearClick = (event) => {
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(null, true)
+    handleBlur()
+  }, [
+    handleBlur,
+  ])
+  const handleClear = useCallback(() => {
+    if (onChange) {
+      onChange(null, true)
     }
-  }
-  onBlur = () => {
-    // delay to ensure child onBlur has finished (ugly)
-    window.setTimeout(() => {
-      if (
-        validDate(this.state.date)
-        || validDatetime(this.state.time)
-      ) {
-        const combined = this.combinedStateValue()
-        this.setState({
-          ...splitDateTime(combined)
-        }, () => {
-          if (typeof this.props.onChange === 'function') {
-            this.props.onChange(combined, true)
-          }
-        })
-      }
-      else {
-        this.setState({
-          date: null,
-          time: null,
-        }, () => {
-          this.props.onChange(null, true)
-        })
-      }
-    }, 0)
-  }
-  render() {
-    let dateProps = {}
-    if (!this.props.timeFirst) {
-      dateProps.id = this.props.id
-    }
-    let date = (
-      <DateInput
-        ref={this.dateRef}
-        value={this.state.date}
-        onChange={this.handleDateChange}
-        disabled={this.props.disabled}
-        block={this.props.block}
-        rightHang={this.props.timeFirst}
-        showClearButton={false}
-        textClassName={this.props.dateTextClassName}
-        {...dateProps}
-      />
-    )
-    let relativeStart = undefined
-    const combined = this.combinedStateValue()
-    if (this.props.relativeTo && !datetimeNull(combined)) {
-      relativeStart = +startOfDay(new Date(combined))
-    }
-    let timeProps = {}
-    if (this.props.timeFirst) {
-      timeProps.id = this.props.id
-    }
-    let time = (
-      <Time
-        ref={this.timeRef}
-        value={this.state.time}
-        onChange={this.handleTimeChange}
-        disabled={this.props.disabled}
-        relativeTo={this.props.relativeTo}
-        relativeStart={relativeStart}
-        block={this.props.block}
-        showClearButton={false}
-        textClassName={this.props.timeTextClassName}
-        {...timeProps}
-      />
-    )
+  }, [
+    onChange,
+  ])
 
-    let first = date
-    let second = time
-    if (this.props.timeFirst) {
-      first = time
-      second = date
-    }
+  const dateProps: {
+    id?: string
+  } = {}
+  if (!timeFirst) {
+    dateProps.id = id
+  }
+  const dateInput = (
+    <DateInput
+      ref={dateRef}
+      value={date}
+      onChange={handleDateChange}
+      disabled={disabled}
+      block={block}
+      rightHang={timeFirst}
+      clearable={false}
+      textClassName={dateTextClassName}
+      {...dateProps}
+    />
+  )
+  let relativeStart = undefined
+  if (relativeTo && !datetimeNull(combinedState)) {
+    relativeStart = +startOfDay(new Date(combinedState))
+  }
+  const timeProps: {
+    id?: string
+  } = {}
+  if (timeFirst) {
+    timeProps.id = id
+  }
+  const timeInput = (
+    <Time
+      ref={timeRef}
+      value={time}
+      onChange={handleTimeChange}
+      disabled={disabled}
+      relativeTo={relativeTo}
+      relativeStart={relativeStart}
+      block={block}
+      clearable={false}
+      textClassName={timeTextClassName}
+      {...timeProps}
+    />
+  )
 
-    return (
-      <BlockDiv
-        ref={this.containerRef}
-        block={this.props.block}
-        className={classNames('MIRECO-datetime', this.props.className, {
-          clearable: this.props.showClear,
-        })}
-        tabIndex={-1}
-        onBlur={this.handleContainerBlur}
-      >
-        {first}
-        {!this.props.block && <span>{' '}</span>}
-        <BlockDiv block={this.props.block} className={classNames('second', {
-          time: !this.props.timeFirst,
-          date: this.props.timeFirst,
-        })}>
-          {second}
-          {this.props.showClear && (
-            <span>{' '}</span>
-          )}
-          {this.props.showClear && (
-            <ClearButton
-              onClick={this.handleClearClick}
-              disabled={this.props.disabled}
-              className={this.props.clearButtonClassName}
-            />
-          )}
-        </BlockDiv>
+  let first = dateInput
+  let second = timeInput
+  if (timeFirst) {
+    first = timeInput
+    second = dateInput
+  }
+
+  return (
+    <BlockDiv
+      ref={containerRef}
+      block={block}
+      className={classNames('MIRECO-datetime', className, {
+        clearable: showClear,
+      })}
+      tabIndex={-1}
+      onBlur={handleContainerBlur}
+    >
+      {first}
+      {!block && <span>{' '}</span>}
+      <BlockDiv block={block} className={classNames('second', {
+        time: !timeFirst,
+        date: timeFirst,
+      })}>
+        {second}
+        {showClear && (
+          <span>{' '}</span>
+        )}
+        {showClear && (
+          <ClearButton
+            onClick={handleClear}
+            disabled={disabled}
+            className={clearButtonClassName}
+          />
+        )}
       </BlockDiv>
-    )
-  }
+    </BlockDiv>
+  )
 }

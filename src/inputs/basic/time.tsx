@@ -1,4 +1,4 @@
-import React, { useReducer, useMemo, useEffect, useRef, useCallback } from 'react'
+import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef } from 'react'
 import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 import { format, addMilliseconds, startOfDay } from 'date-fns'
@@ -115,7 +115,7 @@ export interface TimeProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Time: React.FC<TimeProps> = ({
+export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   block,
   value,
   onChange,
@@ -167,7 +167,7 @@ export const Time: React.FC<TimeProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, forwardedRef) => {
   const formattedValue = useMemo(() => {
     return formatTime(value, inputFormats, longFormat, displayFormat)
   }, [
@@ -407,7 +407,7 @@ export const Time: React.FC<TimeProps> = ({
   }, [
     onClick,
   ])
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLInputElement>()
   const handleDropdownSelect = useCallback((newValue: number) => {
     if (onChange) {
       onChange(newValue, false)
@@ -452,7 +452,14 @@ export const Time: React.FC<TimeProps> = ({
       style={style}
     >
       <WidgetText
-        ref={textRef}
+        ref={(instance: HTMLInputElement) => {
+          textRef.current = instance;
+          if (typeof forwardedRef === "function") {
+            forwardedRef(instance)
+          } else if (forwardedRef !== null) {
+            forwardedRef.current = instance
+          }
+        }}
         placeholder={placeholder}
         onChange={handleTextChange}
         value={state.text}
@@ -493,4 +500,4 @@ export const Time: React.FC<TimeProps> = ({
       )}
     </BlockDiv>
   )
-}
+})

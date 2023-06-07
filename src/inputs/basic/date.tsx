@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'react'
 import classNames from 'classnames'
 import { parse, format, addDays, subDays } from 'date-fns'
 
@@ -65,7 +65,7 @@ export interface DateProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-const DateInput: React.FC<DateProps> = ({
+const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   block,
   value,
   onChange,
@@ -112,7 +112,7 @@ const DateInput: React.FC<DateProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, forwardedRef) => {
   const [textValue, setTextValue] = useState<string>(formatDate(value, displayFormat))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
@@ -244,7 +244,7 @@ const DateInput: React.FC<DateProps> = ({
       onClick(event)
     }
   }, [onClick])
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLInputElement>()
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {
       onChange(day, false)
@@ -293,7 +293,14 @@ const DateInput: React.FC<DateProps> = ({
         icon={icon}
         onClear={canClear ? handleClear : undefined}
         id={id}
-        ref={textRef}
+        ref={(instance: HTMLInputElement) => {
+          textRef.current = instance;
+          if (typeof forwardedRef === "function") {
+            forwardedRef(instance)
+          } else if (forwardedRef !== null) {
+            forwardedRef.current = instance
+          }
+        }}
         placeholder={placeholder}
         value={textValue}
         disabled={disabled}
@@ -329,6 +336,6 @@ const DateInput: React.FC<DateProps> = ({
       )}
     </BlockDiv>
   )
-}
+})
 
 export { DateInput as Date }

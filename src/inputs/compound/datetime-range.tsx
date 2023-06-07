@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 
-import Datetime from './datetime'
+import { Datetime } from './datetime'
 import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from '../../constants'
 
