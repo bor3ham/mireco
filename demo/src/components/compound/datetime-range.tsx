@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { DatetimeRange } from 'mireco'
+import type { DatetimeRangeInputValue, DatetimeValue } from 'mireco'
 
-function stringifyDate(date) {
+function stringifyDate(date: DatetimeValue) {
   if (typeof date === 'number') {
     return JSON.stringify(new Date(date))
   }
@@ -12,7 +13,7 @@ function stringifyDate(date) {
   return JSON.stringify(date)
 }
 
-function stringifyValue(value) {
+function stringifyValue(value: DatetimeRangeInputValue) {
   if (value) {
     return JSON.stringify({
       start: stringifyDate(value.start),
@@ -26,15 +27,14 @@ function stringifyValue(value) {
 }
 
 const DemoDatetimeRange = () => {
-  const [value, setValue] = useState(null)
-  const handleChange = useCallback((newValue, wasBlur) => {
+  const [value, setValue] = useState<DatetimeRangeInputValue>(null)
+  const handleChange = useCallback((newValue: DatetimeRangeInputValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {stringifyValue(value)}</p>
       <DatetimeRange
-        block
         value={value}
         onChange={handleChange}
       />

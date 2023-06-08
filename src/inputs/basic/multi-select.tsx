@@ -20,14 +20,14 @@ type MultiSelectState = {
   dropdownOpen: boolean
   inFocus: boolean
   text: string
-  selected: SelectValue
+  selected: SelectValue | null
 }
 
 type MultiSelectAction =
   | { type: 'close' }
   | { type: 'open' }
   | { type: 'textFilter', text: string }
-  | { type: 'select', value: SelectValue }
+  | { type: 'select', value: SelectValue | null }
   | { type: 'focus' }
   | { type: 'blur' }
 

@@ -3,11 +3,8 @@ import classNames from 'classnames'
 
 import { Select } from '../basic/select'
 import { ChevronDownVector, SpinnerVector } from 'vectors'
-import type { SelectOption, SelectValue, SelectOptionValue, Empty } from 'types'
-
-function nonEmptyValue(value: SelectOptionValue | SelectValue) {
-  return value !== null && typeof value !== 'undefined'
-}
+import { isEmpty } from 'types'
+import type { SelectOption, SelectValue, SelectOptionInputValue, Empty } from 'types'
 
 // todo: merge loading and inFocus state into reducer
 // todo: double render flicker on using clear button
@@ -16,9 +13,9 @@ export interface AsyncSelectProps {
   // mireco
   block?: boolean
   // async select
-  value?: SelectOptionValue
+  value?: SelectOptionInputValue
   getOptions(searchTerm: string): Promise<SelectOption[]>
-  onChange?(newValue: SelectOptionValue, wasBlur: boolean): void
+  onChange?(newValue: SelectOptionInputValue, wasBlur: boolean): void
   loadingPrompt?: string
   searchPrompt?: string
   debounce?: number
@@ -119,7 +116,7 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
   ])
 
   const basicValue = useMemo(() => {
-    if (nonEmptyValue(value)) {
+    if (!isEmpty(value)) {
       return value!.value
     }
     return value as Empty
@@ -131,7 +128,7 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
     if (!loading) {
       b = [...options]
     }
-    if (nonEmptyValue(basicValue)) {
+    if (!isEmpty(basicValue)) {
       const valueOption = b.find(option => {
         return option.value === basicValue
       })
@@ -179,8 +176,8 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
     if (!onChange) {
       return
     }
-    let newOption: SelectOptionValue = newValue as Empty
-    if (nonEmptyValue(newValue)) {
+    let newOption: SelectOptionInputValue = null
+    if (!isEmpty(newValue)) {
       const selected = basicOptions.find(option => {
         return option.value === newValue
       })
