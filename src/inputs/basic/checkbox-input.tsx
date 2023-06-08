@@ -12,7 +12,6 @@ export interface CheckboxInputProps {
   title?: string
   autoFocus?: boolean
   style?: React.CSSProperties
-  children?: React.ReactNode
   // form
   disabled?: boolean
   name?: string
@@ -43,7 +42,6 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
   title,
   autoFocus,
   style,
-  children,
   disabled,
   name,
   formValue,
@@ -67,7 +65,9 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
     if (onChange) {
       onChange(newValue, event)
     }
-  }, [])
+  }, [
+    onChange,
+  ])
   return (
     <input
       type="checkbox"
@@ -96,8 +96,6 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
       onMouseUp={onMouseUp}
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
-    >
-      {children}
-    </input>
+    />
   )
 }

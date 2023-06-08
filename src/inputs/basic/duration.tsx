@@ -86,6 +86,8 @@ export const Duration: React.FC<DurationProps> = ({
   const [textValue, setTextValue] = useState(formatDuration(value, humaniseUnits))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
+
+  // respond to value changes
   useEffect(() => {
     if (value === null) {
       setTextValue('')
@@ -95,13 +97,18 @@ export const Duration: React.FC<DurationProps> = ({
         setTextValue(formatDuration(value, humaniseUnits))
       }
     }
-  }, [value, defaultTimeUnit])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+
   const handleTextChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
       onChange(parseDuration(newValue, defaultTimeUnit), false)
     }
-  }, [])
+  }, [
+    onChange,
+    defaultTimeUnit,
+  ])
 
   const bestIncrement = useCallback((goingUp: boolean) => {
     let incIndex = 0
@@ -144,7 +151,13 @@ export const Duration: React.FC<DurationProps> = ({
     if (onKeyDown) {
       onKeyDown(event)
     }
-  }, [onChange, value, bestIncrement, onKeyDown])
+  }, [
+    onChange,
+    value,
+    bestIncrement,
+    onKeyDown,
+    defaultTimeUnit,
+  ])
   const handleTextBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setTextValue(formatDuration(value, humaniseUnits))
     if (onChange) {
@@ -153,7 +166,12 @@ export const Duration: React.FC<DurationProps> = ({
     if (onBlur) {
       onBlur(event)
     }
-  }, [value, onChange, onBlur])
+  }, [
+    value,
+    onChange,
+    onBlur,
+    humaniseUnits,
+  ])
   return (
     <WidgetText
       id={id}

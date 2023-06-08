@@ -76,6 +76,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   onKeyUp,
 }, forwardedRef) => {
   const innerRef = useRef<HTMLTextAreaElement>()
+  // respond to disabled change
   useEffect(() => {
     if (!innerRef.current) {
       return
@@ -86,13 +87,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
           onBlur()
         }
       }
-    } else {
-      if (innerRef.current === document.activeElement) {
-        if (onFocus) {
-          onFocus()
-        }
+    } else if (innerRef.current === document.activeElement) {
+      if (onFocus) {
+        onFocus()
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disabled])
   const handleChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
@@ -102,10 +102,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   return (
     <TextareaAutosize
       ref={(instance: HTMLTextAreaElement) => {
-        innerRef.current = instance;
+        innerRef.current = instance
         if (typeof forwardedRef === "function") {
           forwardedRef(instance)
         } else if (forwardedRef !== null) {
+          // eslint-disable-next-line no-param-reassign
           forwardedRef.current = instance
         }
       }}

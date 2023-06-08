@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 
-import { Select } from '../basic/select'
 import { ChevronDownVector, SpinnerVector } from 'vectors'
 import { isEmpty } from 'types'
 import type { SelectOption, SelectValue, SelectOptionInputValue, Empty } from 'types'
+import { Select } from '../basic/select'
 
 // todo: merge loading and inFocus state into reducer
 // todo: double render flicker on using clear button
@@ -129,9 +129,9 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
       b = [...options]
     }
     if (!isEmpty(basicValue)) {
-      const valueOption = b.find(option => {
-        return option.value === basicValue
-      })
+      const valueOption = b.find(option => (
+        option.value === basicValue
+      ))
       if (!valueOption) {
         b = [...b, value!]
       }
@@ -155,7 +155,7 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
         }
         debounceRef.current = window.setTimeout(() => {
           getOptions(cleaned).then((newOptions) => {
-            if (cleaned != searchedRef.current || !focusRef.current) {
+            if (cleaned !== searchedRef.current || !focusRef.current) {
               return
             }
             setOptions(newOptions)
@@ -178,9 +178,9 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
     }
     let newOption: SelectOptionInputValue = null
     if (!isEmpty(newValue)) {
-      const selected = basicOptions.find(option => {
-        return option.value === newValue
-      })
+      const selected = basicOptions.find((option) => (
+        option.value === newValue
+      ))
       if (selected) {
         newOption = selected
       } else {
@@ -216,6 +216,8 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
     loading,
     basicOptions,
     value,
+    loadingPrompt,
+    searchPrompt,
   ])
   
   return (

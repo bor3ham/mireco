@@ -51,6 +51,9 @@ function selectReducer(state: SelectState, action: SelectAction): SelectState {
         filtering: false,
       }
     }
+    default: {
+      return state
+    }
   }
 }
 
@@ -135,24 +138,24 @@ export const Select: React.FC<SelectProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const findOption = useCallback((choiceValue: SelectInputValue) => {
-    return options.find((option) => (option.value === choiceValue))
-  }, [
+  const findOption = useCallback((choiceValue: SelectInputValue) => (
+    options.find((option) => (option.value === choiceValue))
+  ), [
     options,
   ])
   const getFilteredOptions = useCallback((search: string) => {
-    const terms = search.split(' ').map((term: string) => {
-      return term.trim().toLowerCase()
-    }).filter((term: string) => {
-      return (term.length > 0)
-    })
+    const terms = search.split(' ').map((term: string) => (
+      term.trim().toLowerCase()
+    )).filter((term: string) => (
+      (term.length > 0)
+    ))
     return options.filter((option: SelectOption) => {
       if (terms.length === 0) {
         return true
       }
       const searchable = `${option.label}${option.value}`.toLowerCase()
       let match = false
-      terms.map(term => {
+      terms.forEach((term) => {
         if (searchable.indexOf(term) !== -1) {
           match = true
         }
@@ -194,7 +197,7 @@ export const Select: React.FC<SelectProps> = ({
     getFilteredOptions,
   ])
 
-  const valueOption = useMemo(() => (findOption(value)), [value])
+  const valueOption = useMemo(() => (findOption(value)), [findOption, value])
   let initialText = ''
   if (!isEmpty(value)) {
     initialText = valueOption ? valueOption.label : `${value}`
@@ -205,8 +208,8 @@ export const Select: React.FC<SelectProps> = ({
     filtering: false,
   })
 
-  const lastNonEmptyValue = useRef<SelectInputValue>(value ? value : null)
-  // when value changes
+  const lastNonEmptyValue = useRef<SelectInputValue>(value || null)
+  // respond to value change
   useEffect(() => {
     if (value === null) {
       dispatchState({
@@ -233,11 +236,12 @@ export const Select: React.FC<SelectProps> = ({
     if (!isEmpty(value)) {
       lastNonEmptyValue.current = value
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     value,
   ])
+  // respond to options change
   const optionsStr = useMemo(() => (options.map((option) => (`${option.value}`)).join(',')), [options])
-  // when options change
   useEffect(() => {
     if (state.text === '') {
       return
@@ -246,6 +250,7 @@ export const Select: React.FC<SelectProps> = ({
     if (onChange) {
       onChange(matching, false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     optionsStr,
   ])
@@ -328,7 +333,7 @@ export const Select: React.FC<SelectProps> = ({
         let currentIndex = -1
         const filtered = (state.filtering && filter) ? getFilteredOptions(state.text) : options
         if (filtered.length) {
-          filtered.map((option, index) => {
+          filtered.forEach((option, index) => {
             if (option.value === value) {
               currentIndex = index
             }
@@ -371,6 +376,7 @@ export const Select: React.FC<SelectProps> = ({
       onKeyDown(event)
     }
   }, [
+    value,
     state,
     valueOption,
     onChange,
@@ -386,7 +392,7 @@ export const Select: React.FC<SelectProps> = ({
       text: newValue,
     })
     if (onChange) {
-      let cleaned = newValue.trim().toLowerCase()
+      const cleaned = newValue.trim().toLowerCase()
       if (cleaned.length <= 0) {
         onChange(nullable ? null : undefined, false)
       } else {
@@ -403,17 +409,16 @@ export const Select: React.FC<SelectProps> = ({
     findMatchingValue,
     onTextChange,
   ])
-  const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
+  const handleTextClick = useCallback(() => {
     dispatchState({
       type: 'open',
     })
   }, [])
   const handleDropdownSelect = useCallback((newValue: SelectInputValue) => {
-    const selected = options.find((option) => {
-      return option.value === newValue
-    })
+    const selected = options.find((option) => (
+      option.value === newValue
+    ))
     if (!selected) {
-      console.warn('Could not find selected value in options', newValue)
       return
     }
     if (onChange) {
@@ -431,10 +436,12 @@ export const Select: React.FC<SelectProps> = ({
     onChange,
   ])
 
+  // respond to disabled change
   useEffect(() => {
     if (disabled) {
       handleBlur()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     disabled,
   ])
@@ -479,32 +486,31 @@ export const Select: React.FC<SelectProps> = ({
       onChange(newValue ? newValue.value : undefined, false)
     }
   }, [options, onChange])
-  const formElement = useMemo(() => {
-    return (
-      <select
-        name={name}
-        value={`${value}`}
-        onChange={handleFormElementChange}
-        hidden
-      >
-        {nullable && (
-          <option key={`option-null`} value="">-</option>
-        )}
-        {options.map((option) => (
-          <option
-            value={`${option.value}`}
-            key={`option-${option.value}`}
-          >
-            {option.label}
-          </option>
-        ))}
-      </select>
-    )
-  }, [
+  const formElement = useMemo(() => (
+    <select
+      name={name}
+      value={`${value}`}
+      onChange={handleFormElementChange}
+      hidden
+    >
+      {nullable && (
+        <option key="option-null" value="">-</option>
+      )}
+      {options.map((option) => (
+        <option
+          value={`${option.value}`}
+          key={`option-${option.value}`}
+        >
+          {option.label}
+        </option>
+      ))}
+    </select>
+  ), [
     name,
     value,
     handleFormElementChange,
     options,
+    nullable,
   ])
 
   return (

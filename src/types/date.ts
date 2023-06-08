@@ -25,16 +25,16 @@ export function parseDate(textValue: string, inputFormats: string[]): DateInputV
     return null
   }
   trimmed = trimmed.replace(/\\/g, '/') // replace backslashes with forward
-  trimmed = trimmed.replace(/\ /g, '/') // replace spaces with slashes
+  trimmed = trimmed.replace(/ /g, '/') // replace spaces with slashes
   trimmed = trimmed.replace(/\/+/g, '/') // merge several slashes into one
   trimmed = trimmed.replace(/\/+$/, '') // remove trailing slashes from consideration
 
-  let valid: DateInputValue = undefined
-  inputFormats.map((inputFormat) => {
+  let valid: DateInputValue
+  inputFormats.forEach((inputFormat) => {
     if (typeof valid !== 'undefined') {
       return
     }
-    let parsed = parse(trimmed, inputFormat, new Date())
+    const parsed = parse(trimmed, inputFormat, new Date())
     if (isValid(parsed)) {
       valid = format(parsed, ISO_8601_DATE_FORMAT)
     }

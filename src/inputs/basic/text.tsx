@@ -75,17 +75,17 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
     }
   }, [onChange])
 
+  // respond to disabled change
   useEffect(() => {
     if (disabled) {
       if (ref === document.activeElement && onBlur) {
         onBlur()
       }
-    } else {
-      if (ref === document.activeElement && onFocus) {
-        onFocus()
-      }
+    } else if (ref === document.activeElement && onFocus) {
+      onFocus()
     }
-  }, [disabled, onBlur, onFocus])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [disabled])
 
   return (
     <input
@@ -104,7 +104,7 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
       className={classNames(
         'MIRECO-text',
         {
-          block: block,
+          block,
           sized: !!size,
         },
         className,

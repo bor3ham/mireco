@@ -128,14 +128,8 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   }, [
     value,
     inputFormats,
+    displayFormat,
   ])
-  const handleTextChange = useCallback((newValue: string) => {
-    setTextValue(newValue)
-    if (onChange) {
-      onChange(parseDate(newValue, inputFormats), false)
-    }
-    setCalendarOpen(true)
-  }, [onChange, inputFormats])
   
   const [inFocus, setInFocus] = useState<boolean>(false)
   const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
@@ -157,10 +151,8 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         } else {
           setTextValue('')
         }
-      } else {
-        if (onChange) {
-          onChange(value, true)
-        }
+      } else if (onChange) {
+        onChange(value, true)
       }
     }
     if (onBlur) {
@@ -173,13 +165,24 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     autoErase,
     onBlur,
   ])
+
+  // respond to disabled change
   useEffect(() => {
     if (disabled) {
       handleBlur()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     disabled,
   ])
+
+  const handleTextChange = useCallback((newValue: string) => {
+    setTextValue(newValue)
+    if (onChange) {
+      onChange(parseDate(newValue, inputFormats), false)
+    }
+    setCalendarOpen(true)
+  }, [onChange, inputFormats])
 
   const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInFocus(true)
@@ -194,8 +197,8 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     if (
       containerRef.current
       && (
-        containerRef.current.contains(event.relatedTarget)
-        || containerRef.current === event.relatedTarget
+        containerRef.current.contains(event.relatedTarget) ||
+        containerRef.current === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -207,7 +210,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event && (event.which === KEYBOARD_ENTER || event.which === KEYBOARD_ESCAPE)) {
       if (calendarOpen) {
-        let formatted = formatDate(value, displayFormat)
+        const formatted = formatDate(value, displayFormat)
         setTextValue(formatted)
         setCalendarOpen(false)
         event.preventDefault()
@@ -295,10 +298,11 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         everClearable={clearable}
         id={id}
         ref={(instance: HTMLInputElement) => {
-          textRef.current = instance;
+          textRef.current = instance
           if (typeof forwardedRef === "function") {
             forwardedRef(instance)
           } else if (forwardedRef !== null) {
+            // eslint-disable-next-line no-param-reassign
             forwardedRef.current = instance
           }
         }}

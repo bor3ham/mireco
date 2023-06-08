@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 
-import { Text } from './text'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP } from 'constants'
 import type { NumberInputValue } from 'types'
 import { formatNumber, parseNumber } from 'types'
+import { Text } from './text'
 
 export interface NumberProps {
   // mireco
@@ -80,7 +80,7 @@ const NumberInput: React.FC<NumberProps> = ({
   useEffect(() => {
     if (
       typeof value !== 'undefined' &&
-      parseNumber(textValue, min, max, step) != value
+      parseNumber(textValue, min, max, step) !== value
     ) {
       setTextValue(formatNumber(value))
     }

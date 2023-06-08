@@ -36,7 +36,7 @@ export interface ButtonProps {
 
 export const Button: React.FC<ButtonProps> = ({
   block,
-  type,
+  type = 'submit',
   id,
   className,
   tabIndex,
@@ -66,7 +66,7 @@ export const Button: React.FC<ButtonProps> = ({
     className={classNames(
       'MIRECO-button',
       {
-        block: block,
+        block,
       },
       className,
     )}
@@ -77,6 +77,7 @@ export const Button: React.FC<ButtonProps> = ({
     disabled={disabled}
     name={name}
     value={formValue}
+    // eslint-disable-next-line react/button-has-type
     type={type}
     onFocus={onFocus}
     onBlur={onBlur}

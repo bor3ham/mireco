@@ -2,14 +2,15 @@ import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 
-import { Datetime } from './datetime'
 import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
 import { isDatetimeValue, cleanDatetimeRange } from 'types'
 import type { DatetimeInputValue, DatetimeRangeInputValue, DurationValue } from 'types'
+import { Datetime } from './datetime'
 
 // todo: combine start/end state into reducer
 // todo: use keypress instead of keydown
+// todo: use form name/required with hidden value
 
 function splitRange(range: DatetimeRangeInputValue): {
   start: DatetimeInputValue,
@@ -52,25 +53,24 @@ interface DatetimeRangeProps {
   autoFocus?: boolean
   style?: React.CSSProperties
   className?: string
-  title?: string
   // form
-  name?: string
-  required?: boolean
+  // name?: string
+  // required?: boolean
   disabled?: boolean
   // event handlers
-  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
+  onFocus?(event?: React.FocusEvent<HTMLDivElement>): void
   onBlur?(event?: React.FocusEvent<HTMLDivElement>): void
-  onClick?(event: React.MouseEvent<HTMLInputElement>): void
-  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
-  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
-  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLDivElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLDivElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
 export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
@@ -88,8 +88,8 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   autoFocus,
   style,
   className,
-  name,
-  required,
+  // name,
+  // required,
   disabled,
   onFocus,
   onBlur,
@@ -148,6 +148,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     defaultDuration,
   ])
 
+  // respond to value change
   useEffect(() => {
     if (splitValue.start !== fallbackStart) {
       if (splitValue.start === null) {
@@ -163,6 +164,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         setEnd(splitValue.end)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     value,
   ])
@@ -318,8 +320,20 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       className={classNames('MIRECO-datetime-range', className, {
         clearable,
       })}
-      onBlur={handleContainerBlur}
       style={style}
+      onFocus={onFocus}
+      onBlur={handleContainerBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     >
       <Datetime
         ref={startRef}
@@ -342,11 +356,11 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           value={end}
           onChange={handleEndChange}
           disabled={disabled}
-          timeFirst={true}
+          timeFirst
           block={block}
           className="end"
           clearable={false}
-          relativeTo={start ? start : undefined}
+          relativeTo={start || undefined}
           defaultDate={isDatetimeValue(start) ? format(new Date(start!), ISO_8601_DATE_FORMAT) : undefined}
           dateTextClassName={endDateTextClassName}
           timeTextClassName={endTimeTextClassName}

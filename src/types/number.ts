@@ -15,7 +15,7 @@ export function parseNumber(textValue: string, min?: number, max?: number, step?
     return null
   }
   const parsed = parseFloat(trimmed)
-  if (isNaN(parsed)) {
+  if (Number.isNaN(parsed)) {
     return undefined
   }
   if (typeof step === 'number') {

@@ -2,8 +2,6 @@ import React, { useMemo, useState, useRef, useCallback, useEffect, forwardRef } 
 import { startOfDay, format, parse } from 'date-fns'
 import classNames from 'classnames'
 
-import { Date as DateInput } from '../basic/date'
-import { Time } from '../basic/time'
 import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
 import { isDateValue, isDatetimeValue, isTimeValue } from 'types'
@@ -15,8 +13,11 @@ import type {
   TimeValue,
   TimeInputValue,
 } from 'types'
+import { Date as DateInput } from '../basic/date'
+import { Time } from '../basic/time'
 
 // todo: combine state into reducer
+// todo: use name/required form with hidden input
 
 function datetimesEqual(datetime1: DatetimeInputValue, datetime2: DatetimeInputValue): boolean {
   return (datetime1 === datetime2)
@@ -81,28 +82,26 @@ interface DatetimeProps {
   // html
   id?: string
   autoFocus?: boolean
-  tabIndex?: number
   style?: React.CSSProperties
   className?: string
-  title?: string
   // form
-  name?: string
-  required?: boolean
+  // name?: string
+  // required?: boolean
   disabled?: boolean
   // event handlers
-  onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
-  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
-  onClick?(event: React.MouseEvent<HTMLInputElement>): void
-  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
-  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
-  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onFocus?(event?: React.FocusEvent<HTMLDivElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLDivElement>): void
+  onClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onDoubleClick?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseDown?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseEnter?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseMove?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOut?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseOver?(event: React.MouseEvent<HTMLDivElement>): void
+  onMouseUp?(event: React.MouseEvent<HTMLDivElement>): void
+  onKeyDown?(event: React.KeyboardEvent<HTMLDivElement>): void
+  onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
 export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
@@ -118,12 +117,10 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   clearButtonClassName,
   id,
   autoFocus,
-  tabIndex,
   style,
   className,
-  title,
-  name,
-  required,
+  // name,
+  // required,
   disabled,
   onFocus,
   onBlur,
@@ -153,6 +150,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     time,
   ])
 
+  // respond to value change
   useEffect(() => {
     if (!datetimesEqual(value, combinedState)) {
       if (datetimeNull(value)) {
@@ -164,6 +162,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         setTime(split.time)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   const updateParentValue = useCallback((newDate: DateInputValue, newTime: TimeInputValue) => {
@@ -183,7 +182,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     onChange,
     fallbackDefault,
   ])
-  const handleDateChange = useCallback((newValue: DateInputValue, wasBlur: boolean) => {
+  const handleDateChange = useCallback((newValue: DateInputValue) => {
     setDate(newValue)
     updateParentValue(
       newValue,
@@ -193,7 +192,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     updateParentValue,
     time,
   ])
-  const handleTimeChange = useCallback((newValue: TimeInputValue, wasBlur: boolean) => {
+  const handleTimeChange = useCallback((newValue: TimeInputValue) => {
     setTime(newValue)
     updateParentValue(
       date,
@@ -218,12 +217,16 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         onChange(null, true)
       }
     }
+    if (onBlur) {
+      onBlur()
+    }
   }, [
     combinedState,
     date,
     fallbackDefault,
     time,
     onChange,
+    onBlur,
   ])
   const containerRef = useRef<HTMLDivElement>()
   const dateRef = useRef<HTMLInputElement>(null)
@@ -235,7 +238,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         dateContainer &&
         (
           dateContainer.contains(event.relatedTarget) ||
-          dateContainer == event.relatedTarget
+          dateContainer === event.relatedTarget
         )
       )
       const timeContainer = timeRef.current ? timeRef.current.closest('.MIRECO-time') : null
@@ -243,7 +246,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         timeContainer &&
         (
           timeContainer.contains(event.relatedTarget) ||
-          timeContainer == event.relatedTarget
+          timeContainer === event.relatedTarget
         )
       )
       if (containedInDate || containedInTime) {
@@ -265,9 +268,11 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
 
   const dateProps: {
     id?: string
+    autoFocus?: boolean
   } = {}
   if (!timeFirst) {
     dateProps.id = id
+    dateProps.autoFocus = autoFocus
   }
   const dateInput = (
     <DateInput
@@ -282,15 +287,17 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       {...dateProps}
     />
   )
-  let relativeStart = undefined
+  let relativeStart
   if (relativeTo && !datetimeNull(combinedState)) {
     relativeStart = +startOfDay(new Date(combinedState))
   }
   const timeProps: {
     id?: string
+    autoFocus?: boolean
   } = {}
   if (timeFirst) {
     timeProps.id = id
+    timeProps.autoFocus = autoFocus
   }
   const timeInput = (
     <Time
@@ -317,10 +324,11 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   return (
     <BlockDiv
       ref={(instance: HTMLDivElement) => {
-        containerRef.current = instance;
+        containerRef.current = instance
         if (typeof forwardedRef === "function") {
           forwardedRef(instance)
         } else if (forwardedRef !== null) {
+          // eslint-disable-next-line no-param-reassign
           forwardedRef.current = instance
         }
       }}
@@ -329,7 +337,20 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         clearable,
       })}
       tabIndex={-1}
+      style={style}
+      onFocus={onFocus}
       onBlur={handleContainerBlur}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     >
       {first}
       {!block && <span>{' '}</span>}

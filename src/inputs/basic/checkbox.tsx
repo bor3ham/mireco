@@ -2,8 +2,8 @@ import React from 'react'
 import classNames from 'classnames'
 
 import { Label } from 'components'
-import { CheckboxInput } from './checkbox-input'
 import { CheckVector } from 'vectors'
+import { CheckboxInput } from './checkbox-input'
 
 export interface CheckboxProps {
   // mireco
