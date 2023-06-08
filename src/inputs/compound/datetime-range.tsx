@@ -10,7 +10,6 @@ import type { DatetimeInputValue, DatetimeRangeInputValue, DurationValue } from 
 
 // todo: combine start/end state into reducer
 // todo: use keypress instead of keydown
-// todo: correct flipped start/end when reporting value rather than onblur
 
 function splitRange(range: DatetimeRangeInputValue): {
   start: DatetimeInputValue,
@@ -112,30 +111,40 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   const [start, setStart] = useState<DatetimeInputValue>(splitValue.start)
   const [end, setEnd] = useState<DatetimeInputValue>(splitValue.end)
 
-  const fallbackStart = useMemo(() => {
-    if (isDatetimeValue(start)) {
-      return start
+  const [cleanedStart, cleanedEnd] = useMemo(() => {
+    if (isDatetimeValue(start) && isDatetimeValue(end) && start! > end!) {
+      return [end, start]
     }
-    if (isDatetimeValue(end)) {
-      return end! - defaultDuration
-    }
-    return null
+    return [start, end]
   }, [
     start,
     end,
+  ])
+
+  const fallbackStart = useMemo(() => {
+    if (isDatetimeValue(cleanedStart)) {
+      return cleanedStart
+    }
+    if (isDatetimeValue(cleanedEnd)) {
+      return cleanedEnd! - defaultDuration
+    }
+    return null
+  }, [
+    cleanedStart,
+    cleanedEnd,
     defaultDuration,
   ])
   const fallbackEnd = useMemo(() => {
-    if (isDatetimeValue(end)) {
-      return end
+    if (isDatetimeValue(cleanedEnd)) {
+      return cleanedEnd
     }
-    if (isDatetimeValue(start)) {
-      return start! + defaultDuration
+    if (isDatetimeValue(cleanedStart)) {
+      return cleanedStart! + defaultDuration
     }
     return null
   }, [
-    start,
-    end,
+    cleanedStart,
+    cleanedEnd,
     defaultDuration,
   ])
 
@@ -167,19 +176,19 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       if (end === null) {
         onChange(null, false)
       } else if (isDatetimeValue(end)) {
-        onChange({
+        onChange(cleanDatetimeRange({
           start: end! - defaultDuration,
           end: end!,
-        }, false)
+        }), false)
       } else {
         onChange(undefined, false)
       }
     } else if (isDatetimeValue(newValue)) {
       if (end === null) {
-        onChange({
+        onChange(cleanDatetimeRange({
           start: newValue!,
           end: newValue! + defaultDuration,
-        }, false)
+        }), false)
       } else if (isDatetimeValue(end)) {
         let adjustedEnd = end!
         // if had a previous duration, shift end too
@@ -187,10 +196,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           const prevDuration = Math.abs(start! - end!)
           adjustedEnd = newValue! + prevDuration
         }
-        onChange({
+        onChange(cleanDatetimeRange({
           start: newValue!,
           end: adjustedEnd,
-        }, false)
+        }), false)
       } else {
         onChange(undefined, false)
       }
@@ -212,24 +221,24 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       if (start === null) {
         onChange(null, false)
       } else if (isDatetimeValue(start)) {
-        onChange({
+        onChange(cleanDatetimeRange({
           start: start!,
           end: start! + defaultDuration,
-        }, false)
+        }), false)
       } else {
         onChange(undefined, false)
       }
     } else if (isDatetimeValue(newValue)) {
       if (start === null) {
-        onChange({
+        onChange(cleanDatetimeRange({
           start: newValue! - defaultDuration,
           end: newValue!,
-        }, false)
+        }), false)
       } else if (isDatetimeValue(start)) {
-        onChange({
+        onChange(cleanDatetimeRange({
           start: start!,
           end: newValue!,
-        }, false)
+        }), false)
       } else {
         onChange(undefined, false)
       }
@@ -250,7 +259,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   ])
 
   const handleBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
-    if (isDatetimeValue(start) || isDatetimeValue(end)) {
+    if (isDatetimeValue(cleanedStart) || isDatetimeValue(cleanedEnd)) {
       setStart(fallbackStart)
       setEnd(fallbackEnd)
       if (onChange) {
@@ -270,8 +279,8 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       onBlur(event)
     }
   }, [
-    start,
-    end,
+    cleanedStart,
+    cleanedEnd,
     fallbackStart,
     fallbackEnd,
     onChange,
