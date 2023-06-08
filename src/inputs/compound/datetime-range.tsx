@@ -5,14 +5,11 @@ import { format } from 'date-fns'
 import { Datetime } from './datetime'
 import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
+import { isDatetimeValue } from 'types'
 import type { DatetimeInputValue, DatetimeRangeInputValue, DurationValue } from 'types'
-import { isDatetimeValue, isDatetimeRangeValue } from 'types'
 
 // todo: combine start/end state into reducer
-
-function datetimeNull(datetime: DatetimeInputValue): boolean {
-  return datetime === null
-}
+// todo: use keypress instead of keydown
 
 function splitRange(range: DatetimeRangeInputValue): {
   start: DatetimeInputValue,
@@ -36,37 +33,6 @@ function splitRange(range: DatetimeRangeInputValue): {
   }
 }
 
-function combineRange(start: DatetimeInputValue, end: DatetimeInputValue): DatetimeRangeInputValue {
-  if (isDatetimeValue(start) && isDatetimeValue(end) && start! > end!) {
-    let tempStart = start
-    start = end
-    end = tempStart
-  }
-  return {
-    start,
-    end,
-  }
-}
-
-function rangeNull(range: DatetimeRangeInputValue): boolean {
-  return range === null || (!!range && range.start === null && range.end === null)
-}
-
-function rangesEqual(range1: DatetimeRangeInputValue, range2: DatetimeRangeInputValue): boolean {
-  if (typeof range1 === 'undefined' && typeof range2 === 'undefined') {
-    return true
-  }
-  if (range1 === null && range2 === null) {
-    return true
-  }
-  return (
-    !!range1 &&
-    !!range2 &&
-    range1.start === range2.start &&
-    range1.end === range2.end
-  )
-}
-
 interface DatetimeRangeProps {
   // mireco
   block?: boolean
@@ -84,7 +50,6 @@ interface DatetimeRangeProps {
   // html
   id?: string
   autoFocus?: boolean
-  tabIndex?: number
   style?: React.CSSProperties
   className?: string
   title?: string
@@ -94,7 +59,7 @@ interface DatetimeRangeProps {
   disabled?: boolean
   // event handlers
   onFocus?(event?: React.FocusEvent<HTMLInputElement>): void
-  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLDivElement>): void
   onClick?(event: React.MouseEvent<HTMLInputElement>): void
   onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
@@ -121,10 +86,8 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   clearButtonClassName,
   id,
   autoFocus,
-  tabIndex,
   style,
   className,
-  title,
   name,
   required,
   disabled,
@@ -142,24 +105,33 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const startRef = useRef<HTMLDivElement>(null)
-  const endRef = useRef<HTMLDivElement>(null)
+  const splitValue = useMemo(() => (splitRange(value)), [
+    value,
+  ])
+  const [start, setStart] = useState<DatetimeInputValue>(splitValue.start)
+  const [end, setEnd] = useState<DatetimeInputValue>(splitValue.end)
 
-  const splitValue = useMemo(() => (splitRange(value)), [value])
-  const [start, setStart] = useState(splitValue.start)
-  const [end, setEnd] = useState(splitValue.end)
-
-  const combinedState = useMemo(() => {
-    if (!isDatetimeValue(start) && !isDatetimeValue(end)) {
-      return combineRange(start, end)
+  const fallbackStart = useMemo(() => {
+    if (isDatetimeValue(start)) {
+      return start
     }
-    const fallbackStart = isDatetimeValue(start) ? start : end! - defaultDuration
-    const fallbackEnd = isDatetimeValue(end) ? end : start! + defaultDuration
-    return combineRange(
-      fallbackStart,
-      fallbackEnd
-    )
+    if (isDatetimeValue(end)) {
+      return end! - defaultDuration
+    }
+    return null
+  }, [
+    start,
+    end,
+    defaultDuration,
+  ])
+  const fallbackEnd = useMemo(() => {
+    if (isDatetimeValue(end)) {
+      return end
+    }
+    if (isDatetimeValue(start)) {
+      return start! + defaultDuration
+    }
+    return null
   }, [
     start,
     end,
@@ -167,70 +139,124 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   ])
 
   useEffect(() => {
-    if (!rangesEqual(value, combinedState)) {
-      if (rangeNull(value)) {
+    if (splitValue.start !== fallbackStart) {
+      if (splitValue.start === null) {
         setStart(null)
+      } else if (isDatetimeValue(splitValue.start)) {
+        setStart(splitValue.start)
+      }
+    }
+    if (splitValue.end !== fallbackEnd) {
+      if (splitValue.end === null) {
         setEnd(null)
-      } else if (isDatetimeRangeValue(value)) {
-        const split = splitRange(value)
-        setStart(split.start)
-        setEnd(split.end)
+      } else if (isDatetimeValue(splitValue.end)) {
+        setEnd(splitValue.end)
       }
     }
   }, [
     value,
   ])
 
-  const updateParentValue = useCallback((newStart: DatetimeInputValue, newEnd: DatetimeInputValue) => {
-    if (onChange) {
-      if (datetimeNull(newStart) && datetimeNull(newEnd)) {
+  const handleStartChange = useCallback((newValue: DatetimeInputValue) => {
+    setStart(newValue)
+    if (!onChange) {
+      return
+    }
+    if (newValue === null) {
+      if (end === null) {
         onChange(null, false)
-      } else if (isDatetimeValue(newStart) || isDatetimeValue(newEnd)) {
-        // todo: not right fallbacks
-        onChange(combineRange(
-          newStart || 0,
-          newEnd || 0
-        ), false)
+      } else if (isDatetimeValue(end)) {
+        onChange({
+          start: end! - defaultDuration,
+          end: end!,
+        }, false)
       } else {
         onChange(undefined, false)
       }
+    } else if (isDatetimeValue(newValue)) {
+      if (end === null) {
+        onChange({
+          start: newValue!,
+          end: newValue! + defaultDuration,
+        }, false)
+      } else if (isDatetimeValue(end)) {
+        let adjustedEnd = end!
+        // if had a previous duration, shift end too
+        if (isDatetimeValue(start) && start! < end!) {
+          const prevDuration = Math.abs(start! - end!)
+          adjustedEnd = newValue! + prevDuration
+        }
+        onChange({
+          start: newValue!,
+          end: adjustedEnd,
+        }, false)
+      } else {
+        onChange(undefined, false)
+      }
+    } else {
+      onChange(undefined, false)
     }
   }, [
     onChange,
-  ])
-  const handleStartChange = useCallback((newStart: DatetimeInputValue) => {
-    let adjustedEnd = end
-    if (isDatetimeValue(newStart) && isDatetimeValue(start) && isDatetimeValue(end)) {
-      const prevDuration = Math.abs(+start! - +end!)
-      adjustedEnd = newStart! + prevDuration
-    }
-    setStart(newStart)
-    updateParentValue(newStart, adjustedEnd)
-  }, [
     start,
     end,
-    updateParentValue,
+    defaultDuration,
   ])
-  const handleEndChange = useCallback((newEnd: DatetimeInputValue) => {
-    setEnd(newEnd)
-    updateParentValue(start, newEnd)
+  const handleEndChange = useCallback((newValue: DatetimeInputValue) => {
+    setEnd(newValue)
+    if (!onChange) {
+      return
+    }
+    if (newValue === null) {
+      if (start === null) {
+        onChange(null, false)
+      } else if (isDatetimeValue(start)) {
+        onChange({
+          start: start!,
+          end: start! + defaultDuration,
+        }, false)
+      } else {
+        onChange(undefined, false)
+      }
+    } else if (isDatetimeValue(newValue)) {
+      if (start === null) {
+        onChange({
+          start: newValue! - defaultDuration,
+          end: newValue!,
+        }, false)
+      } else if (isDatetimeValue(start)) {
+        onChange({
+          start: start!,
+          end: newValue!,
+        }, false)
+      } else {
+        onChange(undefined, false)
+      }
+    } else {
+      onChange(undefined, false)
+    }
   }, [
+    onChange,
     start,
-    updateParentValue,
+    defaultDuration,
   ])
-
   const handleClear = useCallback(() => {
     if (onChange) {
       onChange(null, false)
     }
-  }, [])
+  }, [
+    onChange,
+  ])
 
-  const handleBlur = useCallback(() => {
-    if (combinedState) {
-      setStart(combinedState.start)
-      setEnd(combinedState.end)
+  const handleBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+    if (isDatetimeValue(start) || isDatetimeValue(end)) {
+      setStart(fallbackStart)
+      setEnd(fallbackEnd)
       if (onChange) {
-        onChange(combinedState, true)
+        onChange({
+          start: fallbackStart!,
+          end: fallbackEnd!,
+        }, true)
       }
     } else {
       setStart(null)
@@ -239,58 +265,39 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         onChange(null, true)
       }
     }
+    if (onBlur) {
+      onBlur(event)
+    }
   }, [
-    combinedState,
+    start,
+    end,
+    fallbackStart,
+    fallbackEnd,
     onChange,
+    onBlur,
   ])
+  const startRef = useRef<HTMLDivElement>(null)
+  const endRef = useRef<HTMLDivElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
-  //   if (event.relatedTarget) {
-  //     const startDateDiv = (
-  //       this.startRef.current
-  //       && this.startRef.current.dateRef.current
-  //       && this.startRef.current.dateRef.current.containerRef.current
-  //     )
-  //     const startTimeDiv = (
-  //       this.startRef.current
-  //       && this.startRef.current.timeRef.current
-  //       && this.startRef.current.timeRef.current.containerRef.current
-  //     )
-  //     const containedInStart = (
-  //       (startDateDiv && (
-  //         startDateDiv.contains(event.relatedTarget)
-  //         || event.relatedTarget === startDateDiv
-  //       ))
-  //       || (startTimeDiv && (
-  //         startTimeDiv.contains(event.relatedTarget)
-  //         || event.relatedTarget === startTimeDiv
-  //       ))
-  //     )
-  //     const endDateDiv = (
-  //       this.endRef.current
-  //       && this.endRef.current.dateRef.current
-  //       && this.endRef.current.dateRef.current.containerRef.current
-  //     )
-  //     const endTimeDiv = (
-  //       this.endRef.current
-  //       && this.endRef.current.timeRef.current
-  //       && this.endRef.current.timeRef.current.containerRef.current
-  //     )
-  //     const containedInEnd = (
-  //       (endDateDiv && (
-  //         endDateDiv.contains(event.relatedTarget)
-  //         || event.relatedTarget === endDateDiv
-  //       ))
-  //       || (endTimeDiv && (
-  //         endTimeDiv.contains(event.relatedTarget)
-  //         || event.relatedTarget === endTimeDiv
-  //       ))
-  //     )
-  //     if (containedInStart || containedInEnd) {
-  //       // ignore internal blur
-  //       return
-  //     }
-  //   }
-  //   handleBlur()
+    if (event.relatedTarget) {
+      const startContainer = startRef.current ? startRef.current.closest('.MIRECO-datetime') : null
+      const containedInStart = startContainer && (
+        event.relatedTarget === startContainer ||
+        startContainer.contains(event.relatedTarget)
+      )
+        
+      const endContainer = endRef.current ? endRef.current.closest('.MIRECO-datetime') : null
+      const containedInEnd = endContainer && (
+        event.relatedTarget === endContainer ||
+        endContainer.contains(event.relatedTarget)
+      )
+
+      if (containedInStart || containedInEnd) {
+        // ignore internal blur
+        return
+      }
+    }
+    handleBlur(event)
   }, [
     handleBlur,
   ])
@@ -298,11 +305,11 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   return (
     <BlockDiv
       block={block}
-      ref={containerRef}
       className={classNames('MIRECO-datetime-range', className, {
         clearable,
       })}
       onBlur={handleContainerBlur}
+      style={style}
     >
       <Datetime
         ref={startRef}
@@ -316,6 +323,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         dateTextClassName={startDateTextClassName}
         timeTextClassName={startTimeTextClassName}
         id={id}
+        autoFocus={autoFocus}
       />
       <BlockDiv className="datetime-range-second" block={block}>
         <span className="to">{' - '}</span>

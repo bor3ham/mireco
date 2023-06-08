@@ -221,7 +221,9 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   }, [
     combinedState,
     date,
+    fallbackDefault,
     time,
+    onChange,
   ])
   const containerRef = useRef<HTMLDivElement>()
   const dateRef = useRef<HTMLInputElement>(null)

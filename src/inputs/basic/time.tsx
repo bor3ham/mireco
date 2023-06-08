@@ -395,6 +395,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     formattedValue,
     nextOption,
     prevOption,
+    onChange,
     onKeyDown,
   ])
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
@@ -470,8 +471,8 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         style={{marginBottom: '0'}}
         onClick={handleTextClick}
         icon={<ClockVector />}
-        everClearable={clearable}
         onClear={!showClear ? undefined : handleClear}
+        everClearable={clearable}
         className={textClassName}
         id={id}
         autoFocus={autoFocus}

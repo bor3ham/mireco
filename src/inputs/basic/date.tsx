@@ -292,6 +292,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       <WidgetText
         icon={icon}
         onClear={canClear ? handleClear : undefined}
+        everClearable={clearable}
         id={id}
         ref={(instance: HTMLInputElement) => {
           textRef.current = instance;

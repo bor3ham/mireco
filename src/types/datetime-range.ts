@@ -1,19 +1,14 @@
 import { isEmpty } from './empty'
 import type { Empty } from './empty'
 import { isDatetimeValue } from './datetime'
-import type { DatetimeValue, DatetimeInputValue } from './datetime'
+import type { DatetimeValue } from './datetime'
 
 export interface DatetimeRangeValue {
   start: DatetimeValue
   end: DatetimeValue
 }
 
-interface DatetimeRangeInput {
-  start: DatetimeInputValue
-  end: DatetimeInputValue
-}
-
-export type DatetimeRangeInputValue = DatetimeRangeInput | Empty
+export type DatetimeRangeInputValue = DatetimeRangeValue | Empty
 
 export function isDatetimeRangeValue(value: DatetimeRangeInputValue): boolean {
   return (
