@@ -5,11 +5,12 @@ import { format } from 'date-fns'
 import { Datetime } from './datetime'
 import { BlockDiv, ClearButton } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
-import { isDatetimeValue } from 'types'
+import { isDatetimeValue, cleanDatetimeRange } from 'types'
 import type { DatetimeInputValue, DatetimeRangeInputValue, DurationValue } from 'types'
 
 // todo: combine start/end state into reducer
 // todo: use keypress instead of keydown
+// todo: correct flipped start/end when reporting value rather than onblur
 
 function splitRange(range: DatetimeRangeInputValue): {
   start: DatetimeInputValue,
@@ -253,10 +254,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       setStart(fallbackStart)
       setEnd(fallbackEnd)
       if (onChange) {
-        onChange({
+        onChange(cleanDatetimeRange({
           start: fallbackStart!,
           end: fallbackEnd!,
-        }, true)
+        }), true)
       }
     } else {
       setStart(null)

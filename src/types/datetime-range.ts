@@ -17,3 +17,13 @@ export function isDatetimeRangeValue(value: DatetimeRangeInputValue): boolean {
     isDatetimeValue(value!.end)
   )
 }
+
+export function cleanDatetimeRange(value: DatetimeRangeValue): DatetimeRangeValue {
+  if (value.start > value.end) {
+    return {
+      start: value.end,
+      end: value.start,
+    }
+  }
+  return value
+}
