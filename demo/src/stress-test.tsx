@@ -15,7 +15,9 @@ import {
   DatetimeRange,
   MultiSelect,
   CalendarMonth,
+  Month,
   ISO_8601_DATE_FORMAT,
+  dateAsMonth,
 } from 'mireco'
 import type {
   DateInputValue,
@@ -27,6 +29,7 @@ import type {
   DatetimeInputValue,
   // DatetimeRangeInputValue,
   SelectOption,
+  MonthInputValue,
   CalendarMonthInputValue,
 } from 'mireco'
 import casual from 'casual-browserify'
@@ -55,34 +58,34 @@ interface FormValue {
   calendarMonth: CalendarMonthInputValue
   checked: boolean
   date: DateInputValue
+  datetime: DatetimeInputValue
+  datetimeRange: any // DatetimeRangeValue
   duration: DurationInputValue
+  month: MonthInputValue
+  multiSelect: SelectOption[]
   number: NumberInputValue
   range: RangeInputValue
   select: SelectInputValue
   text: string
   textarea: string
   time: TimeInputValue
-
-  datetime: DatetimeInputValue
-  datetimeRange: any // DatetimeRangeValue
-  multiSelect: SelectOption[]
 }
 
 const defaultValue: FormValue = {
   calendarMonth: null,
   checked: false,
   date: null,
+  datetime: +(new Date()),
+  datetimeRange: null,
   duration: null,
+  month: null,
+  multiSelect: [],
   number: null,
   range: 50,
   select: null,
   text: 'hi there',
   textarea: 'Wow this is two lines...\nIn this text box',
   time: null,
-
-  datetime: +(new Date()),
-  datetimeRange: null,
-  multiSelect: [],
 }
 
 function randomValue(): FormValue {
@@ -93,14 +96,6 @@ function randomValue(): FormValue {
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
       ISO_8601_DATE_FORMAT,
     ),
-    duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
-    number: casual.coin_flip ? null : casual.integer(0, 100),
-    range: casual.integer(0, 100),
-    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
-    text: casual.title,
-    textarea: casual.description,
-    time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
-
     datetime: casual.coin_flip ? null : +addDays(new Date(), casual.integer(-10, 10)),
     datetimeRange: casual.coin_flip ? null : {
       start: +addHours(
@@ -112,11 +107,19 @@ function randomValue(): FormValue {
         casual.integer(4 * 24, 7 * 24)
       ),
     },
+    duration: casual.coin_flip ? null : +addMinutes(0, casual.integer(0, 400) * 30),
+    month: casual.coin_flip ? null : dateAsMonth(addDays(startOfDay(new Date()), casual.integer(-30, 30))),
     multiSelect: casual.coin_flip ? [] : [...new Set([
       casual.random_element(SELECT_OPTIONS).value,
       casual.random_element(SELECT_OPTIONS).value,
       casual.random_element(SELECT_OPTIONS).value,
     ])],
+    number: casual.coin_flip ? null : casual.integer(0, 100),
+    range: casual.integer(0, 100),
+    select: casual.coin_flip ? null : casual.random_element(SELECT_OPTIONS).value,
+    text: casual.title,
+    textarea: casual.description,
+    time: casual.coin_flip ? null : casual.integer(0, 24 * 60) * 60 * 1000,
   }
 }
 
@@ -147,6 +150,7 @@ const StressTest = () => {
   const [showCheckbox, handleShowCheckboxChange] = useFlag('showCheckbox')
   const [showDate, handleShowDateChange] = useFlag('showDate')
   const [showDuration, handleShowDurationChange] = useFlag('showDuration')
+  const [showMonth, handleShowMonthChange] = useFlag('showMonth')
   const [showMultiSelect, handleShowMultiSelectChange] = useFlag('showMultiSelect')
   const [showNumber, handleShowNumberChange] = useFlag('showNumber')
   const [showRange, handleShowRangeChange] = useFlag('showRange')
@@ -306,6 +310,13 @@ const StressTest = () => {
             </Checkbox>
             <Checkbox
               block
+              value={showMonth}
+              onChange={handleShowMonthChange}
+            >
+              Show month input
+            </Checkbox>
+            <Checkbox
+              block
               value={showMultiSelect}
               onChange={handleShowMultiSelectChange}
             >
@@ -421,9 +432,10 @@ const StressTest = () => {
               onChange={handleFieldChange('calendarMonth')}
               disabled={disabled}
               block={blockMode}
-              placeholder="Enter a month"
+              placeholder="Select calendar month"
             />
           )}
+          {showCalendarMonth && inlineSpace}
           {showCheckbox && (
             <Checkbox
               value={formValue.checked}
@@ -454,16 +466,16 @@ const StressTest = () => {
             />
           )}
           {showDuration && inlineSpace}
-          {showNumber && (
-            <NumberInput
-              value={formValue.number}
-              onChange={handleFieldChange('number')}
+          {showMonth && (
+            <Month
+              value={formValue.month}
+              onChange={handleFieldChange('month')}
               disabled={disabled}
               block={blockMode}
-              placeholder="Enter a number"
+              placeholder="Select month"
             />
           )}
-          {showNumber && inlineSpace}
+          {showMonth && inlineSpace}
           {showMultiSelect && (
             <MultiSelect
               value={formValue.multiSelect}
@@ -475,6 +487,15 @@ const StressTest = () => {
             />
           )}
           {showMultiSelect && inlineSpace}
+          {showNumber && (
+            <NumberInput
+              value={formValue.number}
+              onChange={handleFieldChange('number')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Enter a number"
+            />
+          )}
           {showNumber && inlineSpace}
           {showRange && (
             <Range

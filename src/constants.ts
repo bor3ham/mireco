@@ -1,4 +1,5 @@
 export const ISO_8601_DATE_FORMAT = 'yyyy-MM-dd'
+export const ISO_8601_MONTH_FORMAT = 'yyyy-MM'
 
 export const KEYBOARD_ARROW_DOWN = 40
 export const KEYBOARD_ARROW_UP = 38

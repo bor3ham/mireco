@@ -3,20 +3,21 @@ import classNames from 'classnames'
 
 import { WidgetText, BlockDiv, MonthCalendar } from 'components'
 import { CalendarVector } from 'vectors'
-import { parseCalendarMonth, formatCalendarMonth, isCalendarMonthValue, CalendarMonthValue, calendarMonthInYear } from 'types'
-import type { CalendarMonthInputValue } from 'types'
+import { parseMonth, formatMonth, isMonthValue, calendarMonthInYear, prevMonth, nextMonth, dateAsMonth } from 'types'
+import type { MonthInputValue, CalendarMonthValue } from 'types'
 
 // todo: name / required with hidden form field
 // todo: combine state into reducer
 
-export interface CalendarMonthProps {
+export interface MonthProps {
   // mireco
   block?: boolean
   // calendar month
-  value?: CalendarMonthInputValue
-  onChange?(newValue: CalendarMonthInputValue, wasBlur: boolean): void
+  value?: MonthInputValue
+  onChange?(newValue: MonthInputValue, wasBlur: boolean): void
   displayFormat?: string
-  inputFormats?: string[]
+  yearInputFormats?: string[]
+  monthInputFormats?: string[]
   icon?: React.ReactNode
   placeholder?: string
   rightHang?: boolean
@@ -47,12 +48,16 @@ export interface CalendarMonthProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const CalendarMonth: React.FC<CalendarMonthProps> = ({
+export const Month: React.FC<MonthProps> = ({
   block,
   value,
   onChange,
-  displayFormat = 'MMMM',
-  inputFormats = [
+  displayFormat = 'MMMM yyyy',
+  yearInputFormats = [
+    'yy',
+    'yyyy',
+  ],
+  monthInputFormats = [
     'M',
     'MM',
     'MMM',
@@ -84,7 +89,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   onKeyDown,
   onKeyUp,
 }) => {
-  const [textValue, setTextValue] = useState(formatCalendarMonth(value, displayFormat))
+  const [textValue, setTextValue] = useState(formatMonth(value, displayFormat))
 
   const [inFocus, setInFocus] = useState<boolean>(false)
   const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
@@ -93,27 +98,30 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   useEffect(() => {
     if (value === null) {
       setTextValue('')
-    } else if (isCalendarMonthValue(value)) {
-
-      const parsedCurrent = parseCalendarMonth(textValue, inputFormats)
+    } else if (isMonthValue(value)) {
+      const parsedCurrent = parseMonth(textValue, yearInputFormats, monthInputFormats)
       if (parsedCurrent !== value) {
-        setTextValue(formatCalendarMonth(value, displayFormat))
+        setTextValue(formatMonth(value, displayFormat))
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   const handleBlur = useCallback(() => {
-    setTextValue(formatCalendarMonth(value, displayFormat))
+    setTextValue(formatMonth(value, displayFormat))
     if (onChange) {
       onChange(value, true)
     }
     setInFocus(false)
     setCalendarOpen(false)
+    if (onBlur) {
+      onBlur()
+    }
   }, [
     value,
     displayFormat,
     onChange,
+    onBlur,
   ])
 
   // respond to disabled change
@@ -144,11 +152,12 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   const handleTextChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
-      onChange(parseCalendarMonth(newValue, inputFormats), false)
+      onChange(parseMonth(newValue, yearInputFormats, monthInputFormats), false)
     }
   }, [
     onChange,
-    inputFormats,
+    yearInputFormats,
+    monthInputFormats,
   ])
   const handleTextFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInFocus(true)
@@ -162,7 +171,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event && (event.key === 'Enter' || event.key === 'Escape')) {
       if (calendarOpen) {
-        const formatted = formatCalendarMonth(value, displayFormat)
+        const formatted = formatMonth(value, displayFormat)
         setTextValue(formatted)
         setCalendarOpen(false)
         event.preventDefault()
@@ -174,29 +183,23 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
     if (event.key === 'ArrowUp') {
       event.preventDefault()
       if (onChange) {
-        if (isCalendarMonthValue(value)) {
-          let prev = value! - 1
-          if (prev < 0) {
-            prev = 11
-          }
-          onChange(prev, false)
+        if (isMonthValue(value)) {
+          onChange(prevMonth(value!), false)
         }
         else {
-          onChange(11, false)
+          const now = new Date()
+          onChange(dateAsMonth(new Date(now.getFullYear(), 11)), false)
         }
       }
     } else if (event.key === 'ArrowDown') {
       event.preventDefault()
       if (onChange) {
-        if (isCalendarMonthValue(value)) {
-          let next = value! + 1
-          if (next > 11) {
-            next = 0
-          }
-          onChange(next, false)
+        if (isMonthValue(value)) {
+          onChange(nextMonth(value!), false)
         }
         else {
-          onChange(0, false)
+          const now = new Date()
+          onChange(dateAsMonth(new Date(now.getFullYear(), 0)), false)
         }
       }
     }
@@ -212,9 +215,10 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   ])
 
   const textRef = useRef<HTMLInputElement>(null)
-  const handleCalendarSelect = useCallback((newValue: CalendarMonthValue) => {
+  const handleCalendarSelect = useCallback((month: CalendarMonthValue, year?: number) => {
+    const useYear = typeof year !== 'undefined' ? year : (new Date()).getFullYear()
     if (onChange) {
-      onChange(newValue, false)
+      onChange(calendarMonthInYear(month, useYear), false)
     }
     if (textRef.current) {
       textRef.current.focus()
@@ -244,7 +248,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   ])
 
   const canClear = (
-    isCalendarMonthValue(value) &&
+    isMonthValue(value) &&
     clearable &&
     !disabled
   )
@@ -264,6 +268,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
       )}
       style={style}
       id={id}
+      tabIndex={-1}
     >
       <WidgetText
         ref={textRef}
@@ -277,7 +282,6 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
         onClear={canClear ? handleTextClear : undefined}
         onChange={handleTextChange}
         onFocus={handleTextFocus}
-        onBlur={onBlur}
         onClick={handleTextClick}
         onDoubleClick={onDoubleClick}
         onMouseDown={onMouseDown}
@@ -292,8 +296,9 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
       />
       {inFocus && calendarOpen && !disabled && (
         <MonthCalendar
-          current={calendarMonthInYear(value)}
+          current={value}
           onSelect={handleCalendarSelect}
+          showYears
         />
       )}
     </BlockDiv>

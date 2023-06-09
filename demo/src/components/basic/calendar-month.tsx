@@ -21,9 +21,7 @@ const DemoCalendarMonth = () => {
       <CalendarMonth
         value={value}
         onChange={handleChange}
-        placeholder="Enter a month"
-        clearable
-        block
+        placeholder="Select calendar month"
       />
     </>
   )

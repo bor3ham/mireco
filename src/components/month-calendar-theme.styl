@@ -6,6 +6,30 @@
   margin-top: -(thin-line)
   popover-shadow()
 
+  >.calendar-header
+    margin-bottom: (standard-padding / 2)
+    h5
+      margin: 0
+      margin-left: (standard-padding / 2)
+      font-weight: standard-font-weight
+      font-size: (standard-font-size * 0.9)
+      color: content-muted
+    button
+      background: none
+      outline: none
+      border: none
+      padding: (standard-padding / 2) 0
+      margin: 0
+      cursor: pointer
+      svg
+        width: (standard-padding * 2)
+        path
+          // important to override inline style for no css fallback
+          stroke: content-muted !important
+      &:hover svg path
+        // important to override inline style for no css fallback
+        stroke: primary-colour !important
+
   ol.months li
     button
       font-size: (standard-font-size * 0.8)

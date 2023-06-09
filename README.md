@@ -112,10 +112,10 @@ Basic form inputs:
 
 - [ ] Abstract Duration (understands months, years)
 - [x] Button
-- [ ] CalendarMonth
+- [x] CalendarMonth
 - [x] Date
 - [x] Duration
-- [ ] Month
+- [x] Month
 - [x] Select
 - [x] Text
 - [x] Time
