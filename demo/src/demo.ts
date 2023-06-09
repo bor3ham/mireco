@@ -2,6 +2,7 @@ import { init } from 'uptick-demo-site'
 
 import './components/basic/button'
 import './components/basic/button-styles'
+import './components/basic/calendar-month'
 import './components/basic/checkbox'
 import './components/basic/date'
 import './components/basic/duration'

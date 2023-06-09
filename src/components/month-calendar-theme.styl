@@ -1,0 +1,29 @@
+.MIRECO-month-calendar
+  width: 15rem
+  border-radius: edge-rounding
+  border: thin-line solid content-muted
+  color: content-foreground
+  margin-top: -(thin-line)
+  popover-shadow()
+
+  ol.months li
+    button
+      font-size: (standard-font-size * 0.8)
+      color: content-foreground
+      background: none
+      border: none
+      border-radius: edge-rounding
+      &:focus
+        outline: none
+        border: none
+      &:not(:disabled)
+        cursor: pointer
+        &:hover
+          color: primary-colour
+    
+    &.current
+      button
+        background: primary-colour
+        color: primary-content-colour
+        &:not(:disabled):hover
+          color: primary-content-colour

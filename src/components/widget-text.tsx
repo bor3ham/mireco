@@ -3,9 +3,9 @@ import classNames from 'classnames'
 
 import { Text } from 'inputs'
 import type { TextProps } from 'inputs'
+import { ChevronDownVector } from 'vectors'
 import { BlockDiv } from './block-div'
 import { ClearButton } from './clear-button'
-import { ChevronDownVector } from 'vectors'
 
 interface WidgetTextProps extends TextProps {
   // widget text

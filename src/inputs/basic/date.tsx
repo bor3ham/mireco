@@ -116,6 +116,8 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   const [textValue, setTextValue] = useState<string>(formatDate(value, displayFormat))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
+
+  // respond to value change
   useEffect(() => {
     if (value === null) {
       setTextValue('')
@@ -125,10 +127,9 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         setTextValue(formatDate(value, displayFormat))
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     value,
-    inputFormats,
-    displayFormat,
   ])
   
   const [inFocus, setInFocus] = useState<boolean>(false)
@@ -184,7 +185,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     setCalendarOpen(true)
   }, [onChange, inputFormats])
 
-  const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+  const handleTextFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInFocus(true)
     setCalendarOpen(true)
     if (onFocus) {
@@ -319,7 +320,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         name={name}
         size={size}
         onChange={handleTextChange}
-        onFocus={handleFocus}
+        onFocus={handleTextFocus}
         onBlur={onBlur}
         onClick={handleTextClick}
         onDoubleClick={onDoubleClick}

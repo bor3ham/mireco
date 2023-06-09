@@ -1,5 +1,6 @@
 export { Button } from './button'
 export type { ButtonProps } from './button'
+export { CalendarMonth } from './calendar-month'
 export { Checkbox } from './checkbox'
 export type { CheckboxProps } from './checkbox'
 export { CheckboxInput } from './checkbox-input'

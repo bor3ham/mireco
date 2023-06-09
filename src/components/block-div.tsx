@@ -7,10 +7,11 @@ interface Props {
   // block div
   inlineDisplay?: string
   // html
-  style?: React.CSSProperties
-  children?: React.ReactNode,
+  id?: string
   className?: string
   tabIndex?: number
+  style?: React.CSSProperties
+  children?: React.ReactNode,
   // event handlers
   onFocus?(event: React.FocusEvent<HTMLDivElement>): void
   onBlur?(event: React.FocusEvent<HTMLDivElement>): void
@@ -30,10 +31,11 @@ interface Props {
 export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
   block,
   inlineDisplay = 'inline-block',
-  style,
-  children,
+  id,
   className,
   tabIndex,
+  style,
+  children,
   onFocus,
   onBlur,
   onClick,
@@ -63,6 +65,7 @@ export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
       className={classNames(className, {
         block,
       })}
+      id={id}
       tabIndex={tabIndex}
       onFocus={onFocus}
       onBlur={onBlur}

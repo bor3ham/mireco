@@ -36,6 +36,7 @@ export type TextProps = {
   onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
   onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyPress?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
 export const Text = forwardRef<HTMLInputElement, TextProps>(({
@@ -67,6 +68,7 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
   onMouseUp,
   onKeyDown,
   onKeyUp,
+  onKeyPress,
 }, ref) => {
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value

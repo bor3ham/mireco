@@ -14,6 +14,7 @@ import {
   Datetime,
   DatetimeRange,
   MultiSelect,
+  CalendarMonth,
   ISO_8601_DATE_FORMAT,
 } from 'mireco'
 import type {
@@ -26,6 +27,7 @@ import type {
   DatetimeInputValue,
   // DatetimeRangeInputValue,
   SelectOption,
+  CalendarMonthInputValue,
 } from 'mireco'
 import casual from 'casual-browserify'
 import beautify from 'json-beautify'
@@ -50,6 +52,7 @@ const SELECT_OPTIONS = [
 ]
 
 interface FormValue {
+  calendarMonth: CalendarMonthInputValue
   checked: boolean
   date: DateInputValue
   duration: DurationInputValue
@@ -66,6 +69,7 @@ interface FormValue {
 }
 
 const defaultValue: FormValue = {
+  calendarMonth: null,
   checked: false,
   date: null,
   duration: null,
@@ -83,6 +87,7 @@ const defaultValue: FormValue = {
 
 function randomValue(): FormValue {
   return {
+    calendarMonth: casual.coin_flip ? null : casual.integer(0, 11),
     checked: !!casual.coin_flip,
     date: casual.coin_flip ? null : format(
       addDays(startOfDay(new Date()), casual.integer(-30, 30)),
@@ -138,6 +143,7 @@ const StressTest = () => {
   const [intervalRemount, handleIntervalRemountChange] = useFlag('intervalRemount')
   const [blockMode, handleBlockModeChange] = useFlag('blockMode')
 
+  const [showCalendarMonth, handleShowCalendarMonthChange] = useFlag('showCalendarMonth')
   const [showCheckbox, handleShowCheckboxChange] = useFlag('showCheckbox')
   const [showDate, handleShowDateChange] = useFlag('showDate')
   const [showDuration, handleShowDurationChange] = useFlag('showDuration')
@@ -272,6 +278,13 @@ const StressTest = () => {
             <h2>Basic inputs</h2>
             <Checkbox
               block
+              value={showCalendarMonth}
+              onChange={handleShowCalendarMonthChange}
+            >
+              Show calendar month input
+            </Checkbox>
+            <Checkbox
+              block
               value={showCheckbox}
               onChange={handleShowCheckboxChange}
             >
@@ -402,6 +415,15 @@ const StressTest = () => {
           style={{margin: '20rem 1rem'}}
         >
           {/* basic */}
+          {showCalendarMonth && (
+            <CalendarMonth
+              value={formValue.calendarMonth}
+              onChange={handleFieldChange('calendarMonth')}
+              disabled={disabled}
+              block={blockMode}
+              placeholder="Enter a month"
+            />
+          )}
           {showCheckbox && (
             <Checkbox
               value={formValue.checked}

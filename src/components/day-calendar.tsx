@@ -144,7 +144,7 @@ export const DayCalendar: React.FC<Props> = ({
   }, [month, selectDay, showCurrent, highlight])
 
   return (
-    <div className="MIRECO-calendar">
+    <div className="MIRECO-day-calendar">
       <div className="calendar-header">
         <h5>{format(new Date(month.year, month.month), 'MMMM yyyy')}</h5>
         <button type="button" tabIndex={-1} onClick={prevMonth}>
