@@ -1,0 +1,1010 @@
+/* stylus:/Users/borchael/Projects/mireco/demo/src/demo.styl */
+.MIRECO-day-calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #fff;
+}
+.MIRECO-day-calendar > .calendar-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.MIRECO-day-calendar > .calendar-header h5 {
+  flex: 1;
+}
+.MIRECO-day-calendar > table {
+  flex: 1;
+  display: flex;
+}
+.MIRECO-day-calendar > table tbody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.MIRECO-day-calendar > table tbody tr {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+.MIRECO-day-calendar > table tbody tr td,
+.MIRECO-day-calendar > table tbody tr th {
+  flex: 1;
+}
+.MIRECO-day-calendar > table tbody tr td {
+  display: flex;
+}
+.MIRECO-day-calendar > table tbody tr td button {
+  flex: 1;
+}
+.MIRECO-dropdown {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  top: 100%;
+  background: #fff;
+}
+.MIRECO-label {
+  display: inline;
+}
+.MIRECO-label.block {
+  display: block;
+  margin-bottom: 1rem;
+}
+.MIRECO-month-calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #fff;
+}
+.MIRECO-month-calendar > .calendar-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.MIRECO-month-calendar > .calendar-header h5 {
+  flex: 1;
+}
+.MIRECO-month-calendar ol.months {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.MIRECO-month-calendar ol.months li {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+.MIRECO-month-calendar ol.months li button {
+  flex: 1;
+  padding: .5rem 0;
+}
+.MIRECO-spinner {
+  animation: rotate 1.5s linear infinite;
+}
+@-moz-keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.MIRECO-widget-text {
+  position: relative;
+}
+.MIRECO-widget-text > .MIRECO-clear-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.MIRECO-widget-text > svg {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-top: -12px;
+  pointer-events: none;
+}
+.MIRECO-button {
+  display: inline-block;
+}
+.MIRECO-button.block {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.MIRECO-calendar-month {
+  position: relative;
+}
+.MIRECO-calendar-month.block {
+  margin-bottom: 1rem;
+}
+.MIRECO-calendar-month > .MIRECO-month-calendar {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  top: 100%;
+}
+.MIRECO-calendar-month.right-hang > .MIRECO-month-calendar {
+  left: auto;
+  right: 0;
+}
+.MIRECO-calendar-month:not(.block) > .MIRECO-text {
+  max-width: 8rem;
+}
+.MIRECO-checkbox {
+  white-space: pre;
+}
+.MIRECO-checkbox span {
+  white-space: normal;
+}
+.MIRECO-date {
+  position: relative;
+}
+.MIRECO-date.block {
+  margin-bottom: 1rem;
+}
+.MIRECO-date > .MIRECO-day-calendar {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  top: 100%;
+}
+.MIRECO-date.right-hang > .MIRECO-day-calendar {
+  left: auto;
+  right: 0;
+}
+.MIRECO-date:not(.block) > .MIRECO-text {
+  max-width: 8rem;
+}
+.MIRECO-multi-select {
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+}
+.MIRECO-multi-select:not(.sized) {
+  width: 100%;
+  max-width: 15rem;
+  min-width: 0;
+}
+.MIRECO-multi-select.block {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+.MIRECO-multi-select > ul.selected {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.MIRECO-multi-select > ul.selected > li {
+  display: inline-block;
+}
+.MIRECO-multi-select > ul.selected > li.option {
+  margin-right: .5rem;
+}
+.MIRECO-multi-select > ul.selected > li.text {
+  flex-grow: 1;
+  flex-basis: 8rem;
+}
+.MIRECO-multi-select > ul.selected > li.text > .MIRECO-text {
+  background: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  margin: 0;
+}
+.MIRECO-multi-select > .MIRECO-clear-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.MIRECO-multi-select > svg {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-top: -12px;
+  pointer-events: none;
+}
+.MIRECO-multi-select > .MIRECO-dropdown {
+  max-width: none;
+  right: 0;
+}
+.MIRECO-number {
+  display: inline-block;
+}
+.MIRECO-number.block {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+.MIRECO-range {
+  display: inline-block;
+}
+.MIRECO-range.block {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+.MIRECO-select {
+  display: inline-block;
+  position: relative;
+}
+.MIRECO-select.block {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+.MIRECO-select > .MIRECO-widget-text {
+  width: 100%;
+}
+.MIRECO-select > .MIRECO-dropdown {
+  max-width: none;
+  right: 0;
+}
+.MIRECO-text {
+  box-sizing: border-box;
+  display: inline-block;
+}
+.MIRECO-text:not(.sized) {
+  width: 100%;
+  max-width: 15rem;
+  min-width: 0;
+}
+.MIRECO-text.block {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+.MIRECO-textarea {
+  max-width: 15rem;
+  width: 100%;
+  resize: none;
+  box-sizing: border-box;
+  display: inline-block;
+}
+.MIRECO-textarea.block {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin-bottom: 1rem;
+}
+.MIRECO-time {
+  position: relative;
+}
+.MIRECO-time.block {
+  margin-bottom: 1rem;
+}
+.MIRECO-time:not(.block) > .MIRECO-text {
+  max-width: 7rem;
+}
+.MIRECO-time.right-hang > .MIRECO-dropdown {
+  left: auto;
+  right: 0;
+}
+.MIRECO-datetime-range span.to {
+  margin-top: .35rem;
+  white-space: pre-wrap;
+}
+.MIRECO-datetime-range div.duration-inner {
+  display: flex;
+  align-items: flex-start;
+}
+.MIRECO-datetime-range div.duration-inner input.MIRECO-text {
+  flex: 1;
+  margin-right: .35rem;
+}
+.MIRECO-datetime-range.block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.MIRECO-datetime-range.block div.MIRECO-time,
+.MIRECO-datetime-range.block div.MIRECO-date {
+  margin-bottom: 0;
+}
+.MIRECO-datetime-range.block > div.MIRECO-datetime,
+.MIRECO-datetime-range.block div.datetime-range-second {
+  margin-bottom: 1rem;
+}
+.MIRECO-datetime-range.block button.MIRECO-clear-button {
+  margin-left: .35rem;
+}
+.MIRECO-datetime-range.block div.MIRECO-datetime {
+  flex-wrap: nowrap;
+}
+.MIRECO-datetime-range.block > div.MIRECO-datetime {
+  flex-basis: 16rem;
+  flex-grow: 1;
+}
+.MIRECO-datetime-range.block div.datetime-range-second {
+  flex-basis: 16rem;
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+}
+.MIRECO-datetime-range.block div.datetime-range-second div.MIRECO-datetime {
+  flex: 1;
+}
+.MIRECO-datetime-range.block.clearable div.datetime-range-second {
+  flex-basis: 19rem;
+}
+.MIRECO-datetime.block {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -.35rem;
+}
+.MIRECO-datetime.block > :first-child {
+  flex-grow: 1;
+  margin-right: .35rem;
+}
+.MIRECO-datetime.block > :first-child.MIRECO-date {
+  flex-basis: 8rem;
+}
+.MIRECO-datetime.block > :first-child.MIRECO-time {
+  flex-basis: 8rem;
+}
+.MIRECO-datetime.block div.second {
+  margin-right: .35rem;
+  white-space: pre;
+  flex-grow: 1;
+  align-items: flex-start;
+  display: flex;
+}
+.MIRECO-datetime.block div.second.date,
+.MIRECO-datetime.block div.second.time {
+  flex-basis: 8rem;
+}
+.MIRECO-datetime.block div.second .MIRECO-time,
+.MIRECO-datetime.block div.second .MIRECO-date {
+  flex: 1;
+}
+.MIRECO-datetime.block.clearable div.second.date,
+.MIRECO-datetime.block.clearable div.second.time {
+  flex-basis: 11rem;
+}
+.MIRECO-datetime:focus {
+  outline: none;
+}
+.MIRECO-day-calendar {
+  width: 15rem;
+  height: 15rem;
+  border-radius: .15rem;
+  border: .05rem solid #666;
+  color: #333;
+  margin-top: -.05rem;
+  box-shadow: 0 .2rem .5rem #0000004d;
+}
+.MIRECO-day-calendar > .calendar-header {
+  margin-bottom: .5rem;
+}
+.MIRECO-day-calendar > .calendar-header h5 {
+  margin: 0;
+  margin-left: .5rem;
+  font-weight: 500;
+  font-size: .9rem;
+  color: #666;
+}
+.MIRECO-day-calendar > .calendar-header button {
+  background: none;
+  outline: none;
+  border: none;
+  padding: .5rem 0;
+  margin: 0;
+  cursor: pointer;
+}
+.MIRECO-day-calendar > .calendar-header button svg {
+  width: 2rem;
+}
+.MIRECO-day-calendar > .calendar-header button svg path {
+  stroke: #666 !important;
+}
+.MIRECO-day-calendar > .calendar-header button:hover svg path {
+  stroke: #007bff !important;
+}
+.MIRECO-day-calendar > table tbody tr td,
+.MIRECO-day-calendar > table tbody tr th {
+  text-align: center;
+  font-weight: 500;
+}
+.MIRECO-day-calendar > table tbody tr th {
+  color: #666;
+  font-size: .7rem;
+}
+.MIRECO-day-calendar > table tbody tr td button {
+  font-size: .8rem;
+  color: #333;
+  background: none;
+  border: none;
+  border-radius: .15rem;
+}
+.MIRECO-day-calendar > table tbody tr td button:focus {
+  outline: none;
+  border: none;
+}
+.MIRECO-day-calendar > table tbody tr td button:not(:disabled) {
+  cursor: pointer;
+}
+.MIRECO-day-calendar > table tbody tr td button:not(:disabled):hover {
+  color: #007bff;
+}
+.MIRECO-day-calendar > table tbody tr td.outside-month button {
+  opacity: .7;
+}
+.MIRECO-day-calendar > table tbody tr td.highlight button {
+  background: #eee;
+}
+.MIRECO-day-calendar > table tbody tr td.current button {
+  background: #007bff;
+  color: #fff;
+}
+.MIRECO-day-calendar > table tbody tr td.current button:not(:disabled):hover {
+  color: #fff;
+}
+.MIRECO-clear-button.MIRECO-button {
+  vertical-align: top;
+  padding-right: 0;
+  padding-left: 0;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+.MIRECO-clear-button svg {
+  vertical-align: middle;
+  height: 1rem;
+}
+.MIRECO-clear-button svg path {
+  stroke: #333 !important;
+}
+.MIRECO-clear-button:disabled svg path {
+  stroke: #666 !important;
+}
+.MIRECO-clear-button:not(:disabled):hover svg path,
+.MIRECO-clear-button:not(:disabled):active svg path {
+  stroke: #007bff !important;
+}
+.MIRECO-dropdown {
+  color: #333;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: .15rem;
+  border: .05rem solid #666;
+  min-width: 5rem;
+  max-width: 15rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: -.05rem;
+  box-shadow: 0 .2rem .5rem #0000004d;
+}
+.MIRECO-dropdown:focus {
+  outline: none;
+}
+.MIRECO-dropdown.disabled {
+  background: #eee;
+}
+.MIRECO-dropdown li {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+.MIRECO-dropdown li button,
+.MIRECO-dropdown li.none {
+  padding: .5rem 1rem;
+  background: none;
+  color: #333;
+  margin: 0;
+  display: block;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  border: none;
+  font-size: .8rem;
+  line-height: 1.2em;
+  white-space: nowrap;
+}
+.MIRECO-dropdown li button:not(:disabled) {
+  cursor: pointer;
+}
+.MIRECO-dropdown li button:not(:disabled):hover {
+  color: #007bff;
+}
+.MIRECO-dropdown li.current button {
+  background: #007bff;
+  color: #fff;
+}
+.MIRECO-dropdown li.current button:not(:disabled):hover {
+  color: #fff;
+}
+.MIRECO-label {
+  font-family:
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-weight: 500;
+  line-height: 1.2em;
+}
+.MIRECO-month-calendar {
+  width: 15rem;
+  border-radius: .15rem;
+  border: .05rem solid #666;
+  color: #333;
+  margin-top: -.05rem;
+  box-shadow: 0 .2rem .5rem #0000004d;
+}
+.MIRECO-month-calendar > .calendar-header {
+  margin-bottom: .5rem;
+}
+.MIRECO-month-calendar > .calendar-header h5 {
+  margin: 0;
+  margin-left: .5rem;
+  font-weight: 500;
+  font-size: .9rem;
+  color: #666;
+}
+.MIRECO-month-calendar > .calendar-header button {
+  background: none;
+  outline: none;
+  border: none;
+  padding: .5rem 0;
+  margin: 0;
+  cursor: pointer;
+}
+.MIRECO-month-calendar > .calendar-header button svg {
+  width: 2rem;
+}
+.MIRECO-month-calendar > .calendar-header button svg path {
+  stroke: #666 !important;
+}
+.MIRECO-month-calendar > .calendar-header button:hover svg path {
+  stroke: #007bff !important;
+}
+.MIRECO-month-calendar ol.months li button {
+  font-size: .8rem;
+  color: #333;
+  background: none;
+  border: none;
+  border-radius: .15rem;
+}
+.MIRECO-month-calendar ol.months li button:focus {
+  outline: none;
+  border: none;
+}
+.MIRECO-month-calendar ol.months li button:not(:disabled) {
+  cursor: pointer;
+}
+.MIRECO-month-calendar ol.months li button:not(:disabled):hover {
+  color: #007bff;
+}
+.MIRECO-month-calendar ol.months li.current button {
+  background: #007bff;
+  color: #fff;
+}
+.MIRECO-month-calendar ol.months li.current button:not(:disabled):hover {
+  color: #fff;
+}
+.MIRECO-spinner path {
+  stroke: #007bff !important;
+}
+.MIRECO-widget-text > input {
+  padding-right: calc(.5rem + 24px);
+}
+.MIRECO-widget-text.ever-clearable > input {
+  padding-right: calc(1rem + 48px);
+}
+.MIRECO-widget-text > .MIRECO-clear-button {
+  background: none !important;
+  border: none !important;
+  right: calc(.5rem + 24px);
+}
+.MIRECO-widget-text > svg {
+  right: .25rem;
+}
+.MIRECO-widget-text:after {
+  content: " ";
+  position: absolute;
+  right: calc(.5rem + 24px);
+  height: calc(100% - 12px);
+  top: 6px;
+  border-right: .05rem solid #666;
+}
+.MIRECO-button {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  border-radius: .15rem;
+  padding: .6rem .5rem .4rem;
+  outline: none;
+  font-family:
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.2em;
+  user-select: none;
+  text-align: center;
+  text-decoration: none;
+}
+.MIRECO-button:not(:disabled):not(.disabled) {
+  cursor: pointer;
+}
+.MIRECO-button:focus {
+  box-shadow: 0 0 0 .1rem transparent, 0 0 0 .1rem #0003;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline) {
+  background: #007bff;
+  color: #fff;
+  border: .05rem solid #006fe6;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline):hover {
+  background: #1a88ff;
+  border-color: #007bff;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline):active {
+  background: #268fff;
+  border-color: #007bff;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline).secondary {
+  background: #17a2b8;
+  color: secondary-content-colour;
+  border: .05rem solid #1592a6;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline).secondary:hover {
+  background: #1abad3;
+  border-color: #17a2b8;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline).secondary:active {
+  background: #1cc6e0;
+  border-color: #17a2b8;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline).content {
+  background: #333;
+  color: #fff;
+  border: .05rem solid #2e2e2e;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline).content:hover {
+  background: #474747;
+  border-color: #333;
+}
+.MIRECO-button:not(:disabled):not(.disabled):not(.outline).content:active {
+  background: #525252;
+  border-color: #333;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline {
+  background: #fff;
+  color: #007bff;
+  border: .05rem solid #007bff;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline:hover {
+  background: #fff;
+  color: #0062cc;
+  border-color: #0071eb;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline:active {
+  background: #fff;
+  color: #0062cc;
+  border-color: #0078fa;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline.secondary {
+  background: #fff;
+  color: #17a2b8;
+  border: .05rem solid #17a2b8;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline.secondary:hover {
+  background: #fff;
+  color: #128293;
+  border-color: #169db2;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline.secondary:active {
+  background: #fff;
+  color: #128293;
+  border-color: #18abc1;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline.content {
+  background: #fff;
+  color: #333;
+  border: .05rem solid #333;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline.content:hover {
+  background: #fff;
+  color: #007bff;
+  border-color: #1a88ff;
+}
+.MIRECO-button:not(:disabled):not(.disabled).outline.content:active {
+  background: #fff;
+  color: #007bff;
+  border-color: #268fff;
+}
+.MIRECO-button:disabled,
+.MIRECO-button.disabled {
+  background: #eee;
+  color: #666;
+  border: .05rem solid #333;
+}
+.MIRECO-checkbox:not(.disabled) {
+  cursor: pointer;
+}
+.MIRECO-checkbox:not(.disabled) .MIRECO-checkbox-input {
+  cursor: pointer;
+}
+.MIRECO-checkbox-input {
+  width: 0;
+  height: 0;
+  margin: 0;
+  position: absolute;
+  opacity: 0;
+}
+.MIRECO-checkbox-input + svg {
+  background: #fff;
+  display: inline-block !important;
+  vertical-align: middle;
+  border: .05rem solid #666;
+  border-radius: .15rem;
+  width: 1rem;
+  height: 1rem;
+  margin-bottom: .2rem;
+}
+.MIRECO-checkbox-input:disabled + svg {
+  background: #eee;
+  filter: grayscale(100%);
+}
+.MIRECO-checkbox-input + svg path {
+  stroke: #9a9a9a;
+  stroke-opacity: .25;
+}
+.MIRECO-checkbox-input:not(:disabled):hover + svg {
+  border-color: #1a88ff;
+}
+.MIRECO-checkbox-input:not(:disabled):hover + svg path {
+  stroke: #1a88ff;
+}
+.MIRECO-checkbox-input:checked + svg path {
+  stroke: #007bff;
+  stroke-opacity: 1;
+}
+.MIRECO-checkbox-input:focus + svg {
+  box-shadow: 0 0 0 .1rem transparent, 0 0 0 .1rem #0003;
+}
+.MIRECO-date:focus {
+  outline: none;
+}
+.MIRECO-multi-select {
+  padding-bottom: 0 !important;
+  padding-right: calc(.5rem + 24px);
+}
+.MIRECO-multi-select.in-focus {
+  box-shadow: 0 0 0 .1rem transparent, 0 0 0 .1rem #0003;
+}
+.MIRECO-multi-select.disabled {
+  border-color: #666 !important;
+  background: #eee !important;
+}
+.MIRECO-multi-select.clearable {
+  padding-right: calc(1rem + 48px);
+}
+.MIRECO-multi-select:after {
+  content: " ";
+  position: absolute;
+  height: calc(100% - 12px);
+  top: 6px;
+  right: calc(.5rem + 24px);
+  border-right: .05rem solid #666;
+}
+.MIRECO-multi-select > ul.selected > li {
+  margin: 0;
+  margin-bottom: .4rem;
+  padding: 0;
+}
+.MIRECO-multi-select > ul.selected > li.option {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+  border: .05rem solid #666;
+  border-radius: .15rem;
+  padding-left: .25rem;
+  line-height: 1.5em;
+  padding-right: 24px;
+}
+.MIRECO-multi-select > ul.selected > li.option > .MIRECO-clear-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none !important;
+  background: none !important;
+  padding: 0;
+  vertical-align: middle;
+}
+.MIRECO-multi-select > .MIRECO-clear-button {
+  background: none !important;
+  border: none !important;
+  right: calc(.5rem + 24px);
+}
+.MIRECO-multi-select > svg {
+  right: .25rem;
+}
+.MIRECO-range:focus {
+  outline: none;
+  box-shadow: 0 0 0 .1rem transparent, 0 0 0 .1rem #0003;
+}
+.MIRECO-select.has-value input::placeholder {
+  color: #333;
+  opacity: 1;
+}
+.MIRECO-text,
+.MIRECO-number,
+.MIRECO-multi-select {
+  -webkit-appearance: none;
+  font-family:
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.2em;
+  border: .05rem solid #666;
+  border-radius: .15rem;
+  padding: .6rem .5rem .4rem;
+  outline: none;
+  background: #fff;
+}
+.MIRECO-text:disabled,
+.MIRECO-number:disabled,
+.MIRECO-multi-select:disabled {
+  background: #eee;
+  color: #666;
+}
+.MIRECO-text:not(:disabled):hover,
+.MIRECO-number:not(:disabled):hover,
+.MIRECO-multi-select:not(:disabled):hover {
+  border-color: #007bff;
+}
+.MIRECO-text:focus,
+.MIRECO-number:focus,
+.MIRECO-multi-select:focus {
+  box-shadow: 0 0 0 .1rem transparent, 0 0 0 .1rem #0003;
+}
+.MIRECO-textarea {
+  vertical-align: middle;
+  padding: .6rem .5rem .4rem;
+  font-family:
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.2em;
+  border: .05rem solid #666;
+  border-radius: .15rem;
+  outline: none;
+}
+.MIRECO-textarea:disabled {
+  background: #eee;
+}
+.MIRECO-textarea:not(:disabled):hover {
+  border-color: #007bff;
+}
+.MIRECO-textarea:focus {
+  box-shadow: 0 0 0 .1rem transparent, 0 0 0 .1rem #0003;
+}
+.MIRECO-time:focus {
+  outline: none;
+}
+body {
+  background: #323232;
+  font-size: 1.2rem;
+  line-height: 1.8rem;
+  padding: 0;
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+h1,
+h2,
+h3 {
+  margin-top: 6rem;
+}
+h4,
+h5,
+h6 {
+  margin-top: 3rem;
+}
+a {
+  color: #ff431f;
+  text-decoration: none;
+}
+a:hover {
+  color: #e52500;
+  text-decoration: none;
+}
+ul li,
+ol li {
+  margin: 0.5rem 0;
+}
+code {
+  max-height: 25vh;
+  white-space: pre;
+  display: block;
+  background: #eee;
+  padding: 1rem;
+  overflow-y: auto;
+  color: #000;
+}
+div.content-container {
+  max-width: 50rem;
+  margin: 0 auto;
+}
+div.header {
+  padding: 2rem;
+  background: #fff;
+  color: #333;
+}
+div.header a {
+  color: #333;
+}
+div.header a.title {
+  font-weight: 400;
+  font-size: 1.6rem;
+  color: #ff431f;
+}
+div.content {
+  background: #fafafa;
+  padding: 4rem 1rem;
+}
+a.source-link {
+  display: block;
+  color: #000;
+  text-align: right;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  line-height: 1em;
+  margin: 0.5rem 0;
+}
+div.footer {
+  padding: 3rem 1rem;
+  color: #fff;
+}
+hr {
+  margin: 5rem 0;
+}
