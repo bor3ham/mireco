@@ -34,29 +34,29 @@ export const DayCalendar: React.FC<Props> = ({
   })
   const prevMonth = useCallback(() => {
     setMonth((prev) => {
-      let month = prev.month - 1
-      let year = prev.year
-      if (month < 0) {
-        year -= 1
-        month = 11
+      let newMonth = prev.month - 1
+      let newYear = prev.year
+      if (newMonth < 0) {
+        newYear -= 1
+        newMonth = 11
       }
       return {
-        month,
-        year,
+        month: newMonth,
+        year: newYear,
       }
     })
   }, [])
   const nextMonth = useCallback(() => {
     setMonth((prev) => {
-      let month = prev.month + 1
-      let year = prev.year
-      if (month > 11) {
-        year += 1
-        month = 0
+      let newMonth = prev.month + 1
+      let newYear = prev.year
+      if (newMonth > 11) {
+        newYear += 1
+        newMonth = 0
       }
       return {
-        month,
-        year,
+        month: newMonth,
+        year: newYear,
       }
     })
   }, [])
@@ -73,13 +73,7 @@ export const DayCalendar: React.FC<Props> = ({
     current,
   ])
 
-  const handleDaySelected = useCallback((day: string) => {
-    if (selectDay) {
-      selectDay(day)
-    }
-  }, [selectDay])
-
-  let today = format(new Date(), ISO_8601_DATE_FORMAT)
+  const today = format(new Date(), ISO_8601_DATE_FORMAT)
 
   const table = useMemo(() => {
     const weeks: string[][] = []
@@ -88,7 +82,7 @@ export const DayCalendar: React.FC<Props> = ({
     let day = firstDay
     while (+day < +lastDay) {
       const newWeek: string[] = []
-      for (var i = 0; i < 7; i++) {
+      for (let i = 0; i < 7; i++) {
         newWeek.push(format(addDays(day, i), ISO_8601_DATE_FORMAT))
       }
       weeks.push(newWeek)
@@ -99,49 +93,47 @@ export const DayCalendar: React.FC<Props> = ({
       <table>
         <tbody>
           <tr>
-            {weeks[0].map((day, dayIndex) => {
-              const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
+            {weeks[0].map((weekDay) => {
+              const parsedDay = parse(weekDay, ISO_8601_DATE_FORMAT, new Date())
               return (
-                <th key={`header-${dayIndex}`}>
+                <th key={`header-${weekDay}`}>
                   {format(parsedDay, 'EEEEEE')}
                 </th>
               )
             })}
           </tr>
-          {weeks.map((week, weekIndex) => {
-            return (
-              <tr key={`week-${weekIndex}`}>
-                {week.map((day, dayIndex) => {
-                  const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
-                  return (
-                    <td key={`day-${dayIndex}`} className={classNames({
-                      'outside-month': getMonth(parsedDay) != month.month,
-                      'current': showCurrent && (current === day),
-                      'highlight': (
-                        highlight && highlight(day, today)
-                      ),
-                    })}>
-                      <button
-                        type="button"
-                        tabIndex={-1}
-                        onClick={() => {
-                          if (selectDay) {
-                            selectDay(day)
-                          }
-                        }}
-                      >
-                        {format(parsedDay, 'd')}
-                      </button>
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          })}
+          {weeks.map((week) => (
+            <tr key={`week-${week[0]}`}>
+              {week.map((dayInWeek) => {
+                const parsedDay = parse(dayInWeek, ISO_8601_DATE_FORMAT, new Date())
+                return (
+                  <td key={`day-${dayInWeek}`} className={classNames({
+                    'outside-month': getMonth(parsedDay) !== month.month,
+                    'current': showCurrent && (current === dayInWeek),
+                    'highlight': (
+                      highlight && highlight(dayInWeek, today)
+                    ),
+                  })}>
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => {
+                        if (selectDay) {
+                          selectDay(dayInWeek)
+                        }
+                      }}
+                    >
+                      {format(parsedDay, 'd')}
+                    </button>
+                  </td>
+                )
+              })}
+            </tr>
+          ))}
         </tbody>
       </table>
     )
-  }, [month, selectDay, showCurrent, highlight])
+  }, [month, selectDay, showCurrent, highlight, current, today])
 
   return (
     <div className="MIRECO-day-calendar">

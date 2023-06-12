@@ -84,17 +84,17 @@ export const Dropdown: React.FC<DropdownProps> = ({
     if (typeof value !== 'undefined' && value !== null) {
       focusOnCurrent()
     }
-  }, [value])
+  }, [value, focusOnCurrent])
 
-  const handleSelect = useCallback((value: any) => {
+  const handleSelect = useCallback((selected: any) => {
     if (onSelect) {
-      onSelect(value)
+      onSelect(selected)
     }
   }, [onSelect])
 
   const contents = useMemo(() => {
     if (options.length) {
-      return options.map((option, index) => {
+      return options.map((option) => {
         let extraProps = {}
         const current = option.value === value
         if (current) {
@@ -105,7 +105,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         return (
           <DropdownOption
             {...extraProps}
-            key={`option-${index}`}
+            key={`option-${option.value}`}
             option={option}
             current={current}
             disabled={disabled}
