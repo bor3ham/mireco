@@ -96,7 +96,9 @@ const SelectedOption: React.FC<SelectedOptionProps> = ({
 }) => (
   <li className="option">
     {label}
-    <ClearButton onClick={remove} spaced={false} disabled={disabled} />
+    {!disabled && (
+      <ClearButton onClick={remove} spaced={false} disabled={disabled} />
+    )}
   </li>
 )
 
