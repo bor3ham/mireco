@@ -272,7 +272,6 @@ export const Month: React.FC<MonthProps> = ({
         className,
       )}
       style={style}
-      id={id}
       tabIndex={-1}
     >
       <WidgetText
@@ -285,6 +284,7 @@ export const Month: React.FC<MonthProps> = ({
         autoFocus={autoFocus}
         disabled={disabled}
         className={textClassName}
+        id={id}
         style={textStyle}
         onClear={canClear ? handleTextClear : undefined}
         onChange={handleTextChange}

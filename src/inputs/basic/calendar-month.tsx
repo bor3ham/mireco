@@ -268,7 +268,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
         className,
       )}
       style={style}
-      id={id}
+      tabIndex={-1}
     >
       <WidgetText
         ref={textRef}
@@ -281,6 +281,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
         disabled={disabled}
         className={textClassName}
         style={textStyle}
+        id={id}
         onClear={canClear ? handleTextClear : undefined}
         onChange={handleTextChange}
         onFocus={handleTextFocus}

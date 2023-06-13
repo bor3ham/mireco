@@ -19,6 +19,7 @@ export interface DurationProps {
   defaultTimeUnit?: string
   placeholder?: string
   size?: number
+  autoFocus?: boolean
   // html
   id?: string
   className?: string
@@ -64,6 +65,7 @@ export const Duration: React.FC<DurationProps> = ({
   defaultTimeUnit = 'hours',
   placeholder,
   size,
+  autoFocus,
   id,
   className,
   style,
@@ -187,6 +189,7 @@ export const Duration: React.FC<DurationProps> = ({
       style={style}
       icon={<HourglassVector />}
       required={required}
+      autoFocus={autoFocus}
       onChange={handleTextChange}
       onFocus={onFocus}
       onBlur={handleTextBlur}
