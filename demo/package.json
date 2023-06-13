@@ -7,8 +7,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": ".\"/node_modules/.bin/concurrently\" \"node scripts/watch.js\" \"jekyll serve -P 4001\"",
     "build": "node scripts/build.js",
+    "watch": "node scripts/watch.js",
+    "start": ".\"/node_modules/.bin/concurrently\" \"npm run watch\" \"jekyll serve -P 4001\"",
     "prepare": "npm run build"
   },
   "dependencies": {
