@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint src/**/*.ts*",
+    "lint": "./node_modules/.bin/eslint \"src/**/*.ts*\"",
     "build": "node scripts/build.js",
     "watch": "node scripts/watch.js",
     "publish:demo": "git branch -D gh-pages && git push origin --delete gh-pages; git checkout -b gh-pages && cd demo && npm install && npm run build && cd .. && git add . && git add -f demo/dist && git add -f demo/node_modules/uptick-demo-site/dist && git commit -m \"Demo site build\" && git push origin gh-pages && git checkout master && git push origin `git subtree split --prefix demo gh-pages`:gh-pages --force",
@@ -44,6 +44,6 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.3"
   }
 }
