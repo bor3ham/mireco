@@ -57,6 +57,9 @@ function timeReducer(state: TimeState, action: TimeAction): TimeState {
         text: action.text,
       }
     }
+    default: {
+      return state
+    }
   }
 }
 
@@ -168,9 +171,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   onKeyDown,
   onKeyUp,
 }, forwardedRef) => {
-  const formattedValue = useMemo(() => {
-    return formatTime(value, inputFormats, longFormat, displayFormat)
-  }, [
+  const formattedValue = useMemo(() => formatTime(value, inputFormats, longFormat, displayFormat), [
     value,
     inputFormats,
     longFormat,
@@ -184,16 +185,16 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
 
   const options = useMemo(() => {
     const o = []
-    for (var min = 0; min < 24 * 60; min += step) {
-      let ms = min * 60 * 1000
-      let newOption = {
+    for (let min = 0; min < 24 * 60; min += step) {
+      const ms = min * 60 * 1000
+      const newOption = {
         value: ms,
         label: format(addMilliseconds(startOfDay(new Date()), ms), displayFormat),
       }
       if (typeof relativeTo === 'number' && typeof relativeStart === 'number') {
-        let msAbsolute = relativeStart + newOption.value
+        const msAbsolute = relativeStart + newOption.value
         if (msAbsolute > relativeTo) {
-          let duration = msAbsolute - relativeTo
+          const duration = msAbsolute - relativeTo
           if (
             duration <= (24 * 60 * 60 * 1000) &&
             duration % (5 * 60 * 1000) === 0
@@ -215,6 +216,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     relativeStart,
   ])
 
+  // respond to value change
   useEffect(() => {
     if (value === null) {
       dispatchState({
@@ -229,6 +231,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         })
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     value,
   ])
@@ -244,24 +247,22 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       if (onChange) { 
         onChange(value, true)
       }
+    } else if (autoErase) {
+      dispatchState({
+        type: 'close',
+        formatted: '',
+        blur: true,
+      })
+      if (onChange) { 
+        onChange(null, true)
+      }
     } else {
-      if (autoErase) {
-        dispatchState({
-          type: 'close',
-          formatted: '',
-          blur: true,
-        })
-        if (onChange) { 
-          onChange(null, true)
-        }
-      } else {
-        dispatchState({
-          type: 'close',
-          blur: true,
-        })
-        if (onChange) { 
-          onChange(value, true)
-        }
+      dispatchState({
+        type: 'close',
+        blur: true,
+      })
+      if (onChange) { 
+        onChange(value, true)
       }
     }
     if (onBlur) {
@@ -326,7 +327,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       return options[0].value
     }
     let nextIndex = 0
-    options.map((option, index) => {
+    options.forEach((option, index) => {
       if (option.value <= value!) {
         nextIndex = index
       }
@@ -348,7 +349,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       return options[options.length - 1].value
     }
     let nextIndex = 0
-    options.map((option, index) => {
+    options.forEach((option, index) => {
       if (option.value < value!) {
         nextIndex = index
       }
@@ -397,6 +398,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     prevOption,
     onChange,
     onKeyDown,
+    state.dropdownOpen,
   ])
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
     dispatchState({
@@ -433,7 +435,9 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         textRef.current.focus()
       }
     }
-  }, [])
+  }, [
+    onChange,
+  ])
   const showClear = (
     !disabled && isTimeValue(value) && clearable
   )
@@ -454,10 +458,11 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     >
       <WidgetText
         ref={(instance: HTMLInputElement) => {
-          textRef.current = instance;
+          textRef.current = instance
           if (typeof forwardedRef === "function") {
             forwardedRef(instance)
           } else if (forwardedRef !== null) {
+            // eslint-disable-next-line no-param-reassign
             forwardedRef.current = instance
           }
         }}
