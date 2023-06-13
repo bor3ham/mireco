@@ -12,7 +12,7 @@ export interface TextareaProps {
   block?: boolean
   // textarea
   value?: string
-  onChange(newValue?: string): void
+  onChange(newValue: string): void
   minRows?: number
   maxRows?: number
   placeholder?: string
