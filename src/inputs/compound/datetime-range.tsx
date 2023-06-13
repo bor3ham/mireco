@@ -34,7 +34,7 @@ function splitRange(range: DatetimeRangeInputValue): {
   }
 }
 
-interface DatetimeRangeProps {
+export interface DatetimeRangeProps {
   // mireco
   block?: boolean
   // datetime range

@@ -65,7 +65,7 @@ function splitDatetime(value: DatetimeInputValue): SplitDatetime {
   }
 }
 
-interface DatetimeProps {
+export interface DatetimeProps {
   // mireco
   block?: boolean
   // datetime
