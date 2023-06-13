@@ -22,6 +22,9 @@ export interface AsyncSelectProps {
   placeholder?: string
   size?: number
   clearable?: boolean
+  // children specific
+  textClassName?: string
+  textStyle?: React.CSSProperties
   // html
   id?: string
   autoFocus?: boolean
@@ -60,6 +63,8 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
   placeholder,
   size,
   clearable,
+  textClassName,
+  textStyle,
   id,
   autoFocus,
   tabIndex,
@@ -255,6 +260,8 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
       clearable={clearable}
+      textClassName={textClassName}
+      textStyle={textStyle}
     />
   )
 }

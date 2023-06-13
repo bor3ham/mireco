@@ -21,6 +21,9 @@ export interface CalendarMonthProps {
   placeholder?: string
   rightHang?: boolean
   clearable?: boolean
+  // children specific
+  textClassName?: string
+  textStyle?: React.CSSProperties
   // html
   id?: string
   className?: string
@@ -62,6 +65,8 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   placeholder,
   rightHang,
   clearable = true,
+  textClassName,
+  textStyle,
   id,
   className,
   tabIndex,
@@ -274,6 +279,8 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
         tabIndex={tabIndex}
         autoFocus={autoFocus}
         disabled={disabled}
+        className={textClassName}
+        style={textStyle}
         onClear={canClear ? handleTextClear : undefined}
         onChange={handleTextChange}
         onFocus={handleTextFocus}

@@ -68,7 +68,6 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-  onKeyPress,
 }, ref) => {
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value

@@ -74,6 +74,7 @@ export interface SelectProps {
   clearable?: boolean
   // children specific
   textClassName?: string
+  textStyle?: React.CSSProperties
   // html
   id?: string
   autoFocus?: boolean
@@ -115,6 +116,7 @@ export const Select: React.FC<SelectProps> = ({
   size,
   clearable = true,
   textClassName,
+  textStyle,
   id,
   autoFocus,
   tabIndex,
@@ -521,6 +523,7 @@ export const Select: React.FC<SelectProps> = ({
         'has-value': hasValue,
         clearable: canClear,
       }, className)}
+      style={style}
       onBlur={handleContainerBlur}
       onClick={onClick}
       onDoubleClick={onDoubleClick}
@@ -543,7 +546,7 @@ export const Select: React.FC<SelectProps> = ({
         onClick={handleTextClick}
         disabled={disabled}
         block={block}
-        style={style}
+        style={textStyle}
         autoFocus={autoFocus}
         className={textClassName}
         id={id}
