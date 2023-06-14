@@ -2,6 +2,7 @@ import React from 'react'
 
 export const CalendarVector = () => (
   <svg
+    className="MIRECO-calendar"
     version="1.1"
     viewBox="0 0 6.3499998 6.3499998"
     height="24"

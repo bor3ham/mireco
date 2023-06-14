@@ -10,10 +10,10 @@ export const SpinnerVector: React.FC<Props> = ({
   colour = '#333333',
 }) => (
   <svg
+    className="MIRECO-spinner"
     width={size}
     height={size}
     viewBox="0 0 6.3499998 6.3499998"
-    className="MIRECO-spinner"
   >
     <g
       transform="translate(0,-290.65)"

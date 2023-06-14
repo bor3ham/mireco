@@ -2,6 +2,7 @@ import React from 'react'
 
 export const ClockVector = () => (
   <svg
+    className="MIRECO-clock"
     width="24"
     height="24"
     viewBox="0 0 6.3499998 6.3499998"

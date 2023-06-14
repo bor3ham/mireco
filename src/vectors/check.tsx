@@ -2,6 +2,7 @@ import React from 'react'
 
 export const CheckVector = () => (
   <svg
+    className="MIRECO-check"
     width="24"
     height="24"
     viewBox="0 0 6.35 6.35"
