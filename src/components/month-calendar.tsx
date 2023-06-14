@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import React, { forwardRef, useState, useCallback, useEffect, useMemo } from 'react'
 import { format } from 'date-fns'
 import classNames from 'classnames'
 
@@ -6,17 +6,17 @@ import type { MonthInputValue, CalendarMonthValue } from 'types'
 import { dateAsMonth, monthAsDate, isMonthValue } from 'types'
 import { ArrowRightVector, ArrowLeftVector } from 'vectors'
 
-interface MonthCalendarProps {
+export interface MonthCalendarProps {
   current?: MonthInputValue
   onSelect?(month: CalendarMonthValue, year: number): void
   showYears?: boolean
 }
 
-export const MonthCalendar: React.FC<MonthCalendarProps> = ({
+export const MonthCalendar = forwardRef<HTMLDivElement, MonthCalendarProps>(({
   current,
   onSelect,
   showYears,
-}) => {
+}, ref) => {
   const [year, setYear] = useState<number>((new Date()).getFullYear())
   const prevYear = useCallback(() => {
     setYear((prev) => (prev - 1))
@@ -64,7 +64,7 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({
     onSelect,
   ])
   return (
-    <div className="MIRECO-month-calendar">
+    <div className="MIRECO-month-calendar" ref={ref}>
       {showYears && (
         <div className="calendar-header">
           <h5>{year}</h5>
@@ -81,4 +81,4 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({
       </ol>
     </div>
   )
-}
+})

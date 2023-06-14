@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { forwardRef, useState, useCallback, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 
 import { WidgetText, BlockDiv, MonthCalendar } from 'components'
@@ -8,6 +8,7 @@ import type { CalendarMonthInputValue } from 'types'
 
 // todo: name / required with hidden form field
 // todo: combine state into reducer
+// todo: start up/down on current value same as date
 
 export interface CalendarMonthProps {
   // mireco
@@ -50,7 +51,7 @@ export interface CalendarMonthProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const CalendarMonth: React.FC<CalendarMonthProps> = ({
+export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
   block,
   value,
   onChange,
@@ -88,7 +89,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, forwardedRef) => {
   const [textValue, setTextValue] = useState(formatCalendarMonth(value, displayFormat))
 
   const [inFocus, setInFocus] = useState<boolean>(false)
@@ -216,7 +217,7 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
     onKeyDown,
   ])
 
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLInputElement>()
   const handleCalendarSelect = useCallback((newValue: CalendarMonthValue) => {
     if (onChange) {
       onChange(newValue, false)
@@ -271,7 +272,15 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
       tabIndex={-1}
     >
       <WidgetText
-        ref={textRef}
+        ref={(instance: HTMLInputElement) => {
+          textRef.current = instance
+          if (typeof forwardedRef === "function") {
+            forwardedRef(instance)
+          } else if (forwardedRef !== null) {
+            // eslint-disable-next-line no-param-reassign
+            forwardedRef.current = instance
+          }
+        }}
         block={block}
         value={textValue}
         icon={icon}
@@ -306,4 +315,4 @@ export const CalendarMonth: React.FC<CalendarMonthProps> = ({
       )}
     </BlockDiv>
   )
-}
+})

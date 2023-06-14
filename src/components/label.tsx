@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
-interface Props {
+export interface LabelProps {
   // mireco
   block?: boolean
   // label
@@ -16,7 +16,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-export const Label: React.FC<Props> = ({
+export const Label = forwardRef<HTMLLabelElement, LabelProps>(({
   block,
   htmlFor,
   id,
@@ -26,8 +26,9 @@ export const Label: React.FC<Props> = ({
   autoFocus,
   style,
   children,
-}) => (
+}, ref) => (
   <label
+    ref={ref}
     htmlFor={htmlFor}
     id={id}
     className={classNames(
@@ -44,4 +45,4 @@ export const Label: React.FC<Props> = ({
   >
     {children}
   </label>
-)
+))

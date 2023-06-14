@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
 import { Button } from 'inputs'
 import { CrossVector } from 'vectors'
 
-interface Props {
+export interface ClearButtonProps {
   onClick?(): void
   tabIndex?: number
   disabled?: boolean
@@ -12,14 +12,15 @@ interface Props {
   spaced?: boolean
 }
 
-export const ClearButton: React.FC<Props> = ({
+export const ClearButton = forwardRef<HTMLButtonElement, ClearButtonProps>(({
   onClick,
   tabIndex = -1,
   disabled,
   className,
   spaced = true,
-}) => (
+}, ref) => (
   <Button
+    ref={ref}
     tabIndex={tabIndex}
     onClick={onClick}
     className={classNames('MIRECO-clear-button content outline', className)}
@@ -30,4 +31,4 @@ export const ClearButton: React.FC<Props> = ({
     <CrossVector />
     {spaced && (<>&nbsp;</>)}
   </Button>
-)
+))

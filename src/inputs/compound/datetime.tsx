@@ -18,6 +18,7 @@ import { Time } from '../basic/time'
 
 // todo: combine state into reducer
 // todo: use name/required form with hidden input
+// todo: up/down rollover on time to next day
 
 function datetimesEqual(datetime1: DatetimeInputValue, datetime2: DatetimeInputValue): boolean {
   return (datetime1 === datetime2)

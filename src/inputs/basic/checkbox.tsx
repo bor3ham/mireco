@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
 import { Label } from 'components'
@@ -40,7 +40,7 @@ export interface CheckboxProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({
   block,
   value = false,
   onChange,
@@ -68,7 +68,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => (
+}, ref) => (
   <Label
     className={classNames(
       'MIRECO-checkbox',
@@ -83,6 +83,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     htmlFor={id}
   >
     <CheckboxInput
+      ref={ref}
       id={id}
       tabIndex={tabIndex}
       autoFocus={autoFocus}
@@ -110,4 +111,4 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     {!!children && ' '}
     {!!children && (<span>{children}</span>)}
   </Label>
-)
+))

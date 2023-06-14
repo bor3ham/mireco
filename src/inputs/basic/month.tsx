@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { forwardRef, useState, useCallback, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 
 import { WidgetText, BlockDiv, MonthCalendar } from 'components'
@@ -8,6 +8,7 @@ import type { MonthInputValue, CalendarMonthValue } from 'types'
 
 // todo: name / required with hidden form field
 // todo: combine state into reducer
+// todo: start up/down on current value same as date
 
 export interface MonthProps {
   // mireco
@@ -51,7 +52,7 @@ export interface MonthProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Month: React.FC<MonthProps> = ({
+export const Month = forwardRef<HTMLInputElement, MonthProps>(({
   block,
   value,
   onChange,
@@ -93,7 +94,7 @@ export const Month: React.FC<MonthProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, forwardedRef) => {
   const [textValue, setTextValue] = useState(formatMonth(value, displayFormat))
 
   const [inFocus, setInFocus] = useState<boolean>(false)
@@ -219,7 +220,7 @@ export const Month: React.FC<MonthProps> = ({
     onKeyDown,
   ])
 
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLInputElement>()
   const handleCalendarSelect = useCallback((month: CalendarMonthValue, year?: number) => {
     const useYear = typeof year !== 'undefined' ? year : (new Date()).getFullYear()
     if (onChange) {
@@ -275,7 +276,15 @@ export const Month: React.FC<MonthProps> = ({
       tabIndex={-1}
     >
       <WidgetText
-        ref={textRef}
+        ref={(instance: HTMLInputElement) => {
+          textRef.current = instance
+          if (typeof forwardedRef === "function") {
+            forwardedRef(instance)
+          } else if (forwardedRef !== null) {
+            // eslint-disable-next-line no-param-reassign
+            forwardedRef.current = instance
+          }
+        }}
         block={block}
         value={textValue}
         icon={icon}
@@ -310,4 +319,4 @@ export const Month: React.FC<MonthProps> = ({
       )}
     </BlockDiv>
   )
-}
+})

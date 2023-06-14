@@ -1,4 +1,4 @@
-import React, { useRef, useReducer, useCallback, useEffect } from 'react'
+import React, { forwardRef, useRef, useReducer, useCallback, useEffect } from 'react'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, ClearButton } from 'components'
@@ -17,6 +17,7 @@ import type { SelectValue, SelectOption } from 'types'
 import { Text } from './text'
 
 // todo: add hidden form element using name
+// todo: remove text selection from items
 
 type MultiSelectState = {
   dropdownOpen: boolean
@@ -126,7 +127,7 @@ export interface MultiSelectProps {
   // name?: string
 }
 
-export const MultiSelect: React.FC<MultiSelectProps> = ({
+export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   block,
   value = [],
   options = [],
@@ -144,9 +145,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   disabled,
   required,
   // name,
-}) => {
+}, forwardedRef) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLInputElement>()
 
   const [state, dispatchState] = useReducer(multiSelectReducer, {
     dropdownOpen: false,
@@ -467,7 +468,15 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         })}
         <li className="text">
           <Text
-            ref={textRef}
+            ref={(instance: HTMLInputElement) => {
+              textRef.current = instance
+              if (typeof forwardedRef === "function") {
+                forwardedRef(instance)
+              } else if (forwardedRef !== null) {
+                // eslint-disable-next-line no-param-reassign
+                forwardedRef.current = instance
+              }
+            }}
             placeholder={placeholder}
             value={state.text}
             onFocus={handleTextFocus}
@@ -497,4 +506,4 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       )}
     </BlockDiv>
   )
-}
+})

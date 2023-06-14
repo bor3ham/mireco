@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { forwardRef, useCallback } from 'react'
 import classNames from 'classnames'
 
 export interface CheckboxInputProps {
@@ -33,7 +33,7 @@ export interface CheckboxInputProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const CheckboxInput: React.FC<CheckboxInputProps> = ({
+export const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>(({
   value = false,
   onChange,
   id,
@@ -59,7 +59,7 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, ref) => {
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked
     if (onChange) {
@@ -70,6 +70,7 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
   ])
   return (
     <input
+      ref={ref}
       type="checkbox"
       id={id}
       className={classNames('MIRECO-checkbox-input', className)}
@@ -98,4 +99,4 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
       onKeyUp={onKeyUp}
     />
   )
-}
+})

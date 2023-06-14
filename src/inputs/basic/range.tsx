@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { forwardRef, useCallback } from 'react'
 import classNames from 'classnames'
 
 import type { RangeInputValue } from 'types'
@@ -39,7 +39,7 @@ export interface RangeProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Range: React.FC<RangeProps> = ({
+export const Range = forwardRef<HTMLInputElement, RangeProps>(({
   block,
   value,
   onChange,
@@ -68,7 +68,7 @@ export const Range: React.FC<RangeProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, ref) => {
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
       onChange(+event.target.value, event)
@@ -78,6 +78,7 @@ export const Range: React.FC<RangeProps> = ({
   ])
   return (
     <input
+      ref={ref}
       type="range"
       value={value || ''}
       onChange={handleChange}
@@ -114,4 +115,4 @@ export const Range: React.FC<RangeProps> = ({
       onKeyUp={onKeyUp}
     />
   )
-}
+})

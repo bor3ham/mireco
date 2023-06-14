@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
 export interface ButtonProps {
@@ -34,7 +34,7 @@ export interface ButtonProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLButtonElement>): void
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   block,
   type = 'submit',
   id,
@@ -60,8 +60,9 @@ export const Button: React.FC<ButtonProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => (
+}, ref) => (
   <button
+    ref={ref}
     id={id}
     className={classNames(
       'MIRECO-button',
@@ -95,4 +96,4 @@ export const Button: React.FC<ButtonProps> = ({
   >
     {children}
   </button>
-)
+))

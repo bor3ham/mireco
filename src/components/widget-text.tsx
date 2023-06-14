@@ -7,7 +7,7 @@ import { ChevronDownVector } from 'vectors'
 import { BlockDiv } from './block-div'
 import { ClearButton } from './clear-button'
 
-interface WidgetTextProps extends TextProps {
+export interface WidgetTextProps extends TextProps {
   // widget text
   onClear?(): void
   icon?: React.ReactNode

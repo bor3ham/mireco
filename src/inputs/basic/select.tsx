@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useReducer, useEffect, useMemo } from 'react'
+import React, { forwardRef, useRef, useCallback, useReducer, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, WidgetText } from 'components'
@@ -102,7 +102,7 @@ export interface SelectProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
-export const Select: React.FC<SelectProps> = ({
+export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   block,
   value,
   options = [],
@@ -139,7 +139,7 @@ export const Select: React.FC<SelectProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, forwardedRef) => {
   const findOption = useCallback((choiceValue: SelectInputValue) => (
     options.find((option) => (option.value === choiceValue))
   ), [
@@ -258,7 +258,7 @@ export const Select: React.FC<SelectProps> = ({
   ])
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLInputElement>()
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLDivElement>) => {
     if (valueOption) {
       const formatted = valueOption ? valueOption.label : `${value}`
@@ -537,7 +537,15 @@ export const Select: React.FC<SelectProps> = ({
       onKeyUp={onKeyUp}
     >
       <WidgetText
-        ref={textRef}
+        ref={(instance: HTMLInputElement) => {
+          textRef.current = instance
+          if (typeof forwardedRef === "function") {
+            forwardedRef(instance)
+          } else if (forwardedRef !== null) {
+            // eslint-disable-next-line no-param-reassign
+            forwardedRef.current = instance
+          }
+        }}
         placeholder={placeholder}
         value={state.text}
         onFocus={handleTextFocus}
@@ -569,4 +577,4 @@ export const Select: React.FC<SelectProps> = ({
       )}
     </BlockDiv>
   )
-}
+})

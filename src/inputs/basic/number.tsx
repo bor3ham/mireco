@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { forwardRef, useState, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP } from 'constants'
@@ -44,7 +44,7 @@ export interface NumberProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-const NumberInput: React.FC<NumberProps> = ({
+const NumberInput = forwardRef<HTMLInputElement, NumberProps>(({
   block,
   value,
   onChange,
@@ -75,7 +75,7 @@ const NumberInput: React.FC<NumberProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, ref) => {
   const [textValue, setTextValue] = useState(formatNumber(value))
   useEffect(() => {
     if (
@@ -137,6 +137,7 @@ const NumberInput: React.FC<NumberProps> = ({
 
   return (
     <Text
+      ref={ref}
       block={block}
       value={textValue}
       onChange={handleTextChange}
@@ -169,6 +170,6 @@ const NumberInput: React.FC<NumberProps> = ({
       onKeyUp={onKeyUp}
     />
   )
-}
+})
 
 export { NumberInput as Number }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 import type { Unit } from 'humanize-duration'
 
@@ -7,6 +7,8 @@ import { HourglassVector } from 'vectors'
 import { KEYBOARD_ARROW_UP, KEYBOARD_ARROW_DOWN } from 'constants'
 import { formatDuration, parseDuration } from 'types'
 import type { DurationInputValue } from 'types'
+
+// todo: migrate from event.which
 
 export interface DurationProps {
   // mireco
@@ -43,7 +45,7 @@ export interface DurationProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Duration: React.FC<DurationProps> = ({
+export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
   block,
   value = null,
   onChange,
@@ -84,7 +86,7 @@ export const Duration: React.FC<DurationProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, ref) => {
   const [textValue, setTextValue] = useState(formatDuration(value, humaniseUnits))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
@@ -176,6 +178,7 @@ export const Duration: React.FC<DurationProps> = ({
   ])
   return (
     <WidgetText
+      ref={ref}
       id={id}
       value={textValue}
       block={block}
@@ -206,4 +209,4 @@ export const Duration: React.FC<DurationProps> = ({
       onKeyUp={onKeyUp}
     />
   )
-}
+})

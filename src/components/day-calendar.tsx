@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import React, { forwardRef, useState, useCallback, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 import {
   getMonth,
@@ -14,19 +14,19 @@ import { ISO_8601_DATE_FORMAT } from 'constants'
 import { ArrowRightVector, ArrowLeftVector } from 'vectors'
 import type { DateValue, DateInputValue } from 'types'
 
-interface Props {
+export interface DayCalendarProps {
   selectDay?(day: DateValue): void
   current?: DateInputValue
   showCurrent?: boolean
   highlight?(day: DateValue): void
 }
 
-export const DayCalendar: React.FC<Props> = ({
+export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   selectDay,
   current,
   showCurrent = true,
   highlight = (calendarDay: DateValue, today: DateValue) => (calendarDay === today),
-}) => {
+}, ref) => {
   const initial = current ? parse(current, ISO_8601_DATE_FORMAT, new Date()) : new Date()
   const [month, setMonth] = useState({
     year: initial.getFullYear(),
@@ -136,7 +136,7 @@ export const DayCalendar: React.FC<Props> = ({
   }, [month, selectDay, showCurrent, highlight, current, today])
 
   return (
-    <div className="MIRECO-day-calendar">
+    <div className="MIRECO-day-calendar" ref={ref}>
       <div className="calendar-header">
         <h5>{format(new Date(month.year, month.month), 'MMMM yyyy')}</h5>
         <button type="button" tabIndex={-1} onClick={prevMonth}>
@@ -149,4 +149,4 @@ export const DayCalendar: React.FC<Props> = ({
       {table}
     </div>
   )
-}
+})

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
-interface Props {
+export interface BlockDivProps {
   // mireco
   block?: boolean
   // block div
@@ -28,7 +28,7 @@ interface Props {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
-export const BlockDiv = forwardRef<HTMLDivElement, Props>(({
+export const BlockDiv = forwardRef<HTMLDivElement, BlockDivProps>(({
   block,
   inlineDisplay = 'inline-block',
   id,

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react'
+import React, { forwardRef, useRef, useMemo, useState, useEffect, useCallback } from 'react'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 
@@ -73,7 +73,7 @@ export interface DatetimeRangeProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
-export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
+export const DatetimeRange = forwardRef<HTMLDivElement, DatetimeRangeProps>(({
   block,
   value,
   onChange,
@@ -104,7 +104,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, ref) => {
   const splitValue = useMemo(() => (splitRange(value)), [
     value,
   ])
@@ -316,6 +316,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   
   return (
     <BlockDiv
+      ref={ref}
       block={block}
       className={classNames('MIRECO-datetime-range', className, {
         clearable,
@@ -378,4 +379,4 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       </BlockDiv>
     </BlockDiv>
   )
-}
+})

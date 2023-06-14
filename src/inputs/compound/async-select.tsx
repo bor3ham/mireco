@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import React, { forwardRef, useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 
 import { ChevronDownVector, SpinnerVector } from 'vectors'
@@ -52,7 +52,7 @@ export interface AsyncSelectProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
-export const AsyncSelect: React.FC<AsyncSelectProps> = ({
+export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
   block,
   value,
   getOptions,
@@ -87,7 +87,7 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
   onMouseUp,
   onKeyDown,
   onKeyUp,
-}) => {
+}, ref) => {
   const [options, setOptions] = useState<SelectOption[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const debounceRef = useRef<number>()
@@ -227,6 +227,7 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
   
   return (
     <Select
+      ref={ref}
       block={block}
       className={classNames(className, 'MIRECO-async-select')}
       options={basicOptions}
@@ -264,4 +265,4 @@ export const AsyncSelect: React.FC<AsyncSelectProps> = ({
       textStyle={textStyle}
     />
   )
-}
+})

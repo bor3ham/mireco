@@ -41,7 +41,7 @@ const DropdownOption = forwardRef<HTMLLIElement, DropdownOptionProps>(({
   )
 })
 
-interface DropdownProps {
+export interface DropdownProps {
   options: Option[]
   value: any
   onSelect?(value: any): void
@@ -51,7 +51,7 @@ interface DropdownProps {
   noOptionsPrompt?: string
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
+export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
   options,
   value,
   onSelect,
@@ -59,8 +59,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   beforeOptions,
   afterOptions,
   noOptionsPrompt = 'No options',
-}) => {
-  const listRef = useRef<HTMLUListElement>(null)
+}, forwardedRef) => {
+  const listRef = useRef<HTMLUListElement>()
   const currentRef = useRef<HTMLLIElement>(null)
 
   const focusOnCurrent = useCallback(() => {
@@ -128,11 +128,19 @@ export const Dropdown: React.FC<DropdownProps> = ({
         disabled,
       })}
       tabIndex={-1}
-      ref={listRef}
+      ref={(instance: HTMLUListElement) => {
+        listRef.current = instance
+        if (typeof forwardedRef === "function") {
+          forwardedRef(instance)
+        } else if (forwardedRef !== null) {
+          // eslint-disable-next-line no-param-reassign
+          forwardedRef.current = instance
+        }
+      }}
     >
       {beforeOptions}
       {contents}
       {afterOptions}
     </ul>
   )
-}
+})
