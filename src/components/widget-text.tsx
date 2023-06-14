@@ -41,6 +41,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     <BlockDiv
       block={block}
       className={classNames('MIRECO-widget-text', {
+        'has-icon': !!icon,
         'ever-clearable': everClearable,
       })}
     >
