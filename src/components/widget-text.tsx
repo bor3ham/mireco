@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useState, useCallback } from 'react'
 import classNames from 'classnames'
 
 import { Text } from 'inputs'
@@ -34,8 +34,27 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     onClear,
     icon = <ChevronDownVector />,
     everClearable = true,
+    onFocus,
+    onBlur,
     ...inputProps
   } = props
+  const [inFocus, setInFocus] = useState(false)
+  const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    setInFocus(true)
+    if (onFocus) {
+      onFocus(event)
+    }
+  }, [
+    onFocus,
+  ])
+  const handleBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    setInFocus(false)
+    if (onBlur) {
+      onBlur(event)
+    }
+  }, [
+    onBlur,
+  ])
   const clearable = !!onClear
   return (
     <BlockDiv
@@ -43,11 +62,14 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
       className={classNames('MIRECO-widget-text', {
         'has-icon': !!icon,
         'ever-clearable': everClearable,
+        'in-focus': inFocus,
       })}
     >
       <Text
         ref={ref}
         {...inputProps}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         block={block}
       />
       {clearable && (
