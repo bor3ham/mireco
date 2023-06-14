@@ -38,6 +38,7 @@ export interface DateProps {
   icon?: React.ReactNode
   textClassName?: string
   size?: number
+  initialText?: string
   // html
   id?: string
   className?: string
@@ -90,6 +91,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   icon = <CalendarVector />,
   textClassName,
   size,
+  initialText,
   id,
   className,
   tabIndex,
@@ -177,6 +179,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     disabled,
   ])
 
+  const textRef = useRef<HTMLInputElement>()
   const handleTextChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
@@ -192,6 +195,17 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       onFocus(event)
     }
   }, [onFocus])
+
+  // on first mount
+  useEffect(() => {
+    if (autoFocus && typeof initialText !== 'undefined') {
+      if (textRef.current) {
+        textRef.current.focus()
+      }
+      handleTextChange(initialText)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
@@ -248,7 +262,6 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       onClick(event)
     }
   }, [onClick])
-  const textRef = useRef<HTMLInputElement>()
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {
       onChange(day, false)
