@@ -76,6 +76,7 @@ export interface DatetimeProps {
   defaultDate?: DateValue
   clearable?: boolean
   timeFirst?: boolean
+  simplifyTime?: boolean
   // children specific
   dateTextClassName?: string
   timeTextClassName?: string
@@ -113,6 +114,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   defaultDate,
   clearable = true,
   timeFirst,
+  simplifyTime = false,
   dateTextClassName,
   timeTextClassName,
   clearButtonClassName,
@@ -311,6 +313,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       block={block}
       clearable={false}
       textClassName={timeTextClassName}
+      simplify={simplifyTime}
       {...timeProps}
     />
   )

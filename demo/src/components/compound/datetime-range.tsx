@@ -28,7 +28,7 @@ function stringifyValue(value: DatetimeRangeInputValue) {
 
 const DemoDatetimeRange = () => {
   const [value, setValue] = useState<DatetimeRangeInputValue>(null)
-  const handleChange = useCallback((newValue: DatetimeRangeInputValue, wasBlur: boolean) => {
+  const handleChange = useCallback((newValue: DatetimeRangeInputValue) => {
     setValue(newValue)
   }, [])
   return (
@@ -37,6 +37,7 @@ const DemoDatetimeRange = () => {
       <DatetimeRange
         value={value}
         onChange={handleChange}
+        block
       />
     </>
   )

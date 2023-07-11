@@ -12,7 +12,7 @@ function stringifyTime(time: TimeInputValue) {
 
 const DemoTime = () => {
   const [value, setValue] = useState<TimeInputValue>(null)
-  const handleChange = useCallback((newValue: TimeInputValue, wasBlur: boolean) => {
+  const handleChange = useCallback((newValue: TimeInputValue) => {
     setValue(newValue)
   }, [])
   return (

@@ -15,16 +15,16 @@ function stringifyDate(date: DatetimeInputValue) {
 
 const DemoDatetime = () => {
   const [value, setValue] = useState<DatetimeInputValue>(null)
-  const handleChange = useCallback((newValue: DatetimeInputValue, wasBlur: boolean) => {
+  const handleChange = useCallback((newValue: DatetimeInputValue) => {
     setValue(newValue)
   }, [])
   return (
     <>
       <p>Field value: {stringifyDate(value)}</p>
       <Datetime
-        block
         value={value}
         onChange={handleChange}
+        block
       />
     </>
   )

@@ -31,7 +31,7 @@ export function parseTime(textValue: string, inputFormats: string[]): TimeInputV
   return valid
 }
 
-export function formatTime(value: TimeInputValue, inputFormats: string[], longFormat: string, displayFormat: string): string {
+export function formatTime(value: TimeInputValue, inputFormats: string[], longFormat: string, displayFormat: string, simplify: boolean): string {
   if (!isTimeValue(value)) {
     return ''
   }
@@ -41,7 +41,7 @@ export function formatTime(value: TimeInputValue, inputFormats: string[], longFo
   const displayFormatted = format(adjustedValue, displayFormat)
   const longParsed = parseTime(longFormatted, inputFormats)
   const shortParsed = parseTime(displayFormatted, inputFormats)
-  if (longParsed === shortParsed) {
+  if (longParsed === shortParsed || simplify) {
     return displayFormatted
   }
   return longFormatted

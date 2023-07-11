@@ -82,6 +82,7 @@ export interface TimeProps {
   inputFormats?: string[]
   longFormat?: string
   displayFormat?: string
+  simplify?: boolean
   placeholder?: string
   autoErase?: boolean
   step?: number
@@ -139,6 +140,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   ],
   longFormat = 'h:mm:ss a',
   displayFormat = 'h:mm a',
+  simplify = false,
   placeholder = 'hh : mm',
   autoErase = true,
   step = 30,
@@ -171,11 +173,12 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   onKeyDown,
   onKeyUp,
 }, forwardedRef) => {
-  const formattedValue = useMemo(() => formatTime(value, inputFormats, longFormat, displayFormat), [
+  const formattedValue = useMemo(() => formatTime(value, inputFormats, longFormat, displayFormat, simplify), [
     value,
     inputFormats,
     longFormat,
     displayFormat,
+    simplify,
   ])
   const [state, dispatchState] = useReducer(timeReducer, {
     text: formattedValue,
@@ -420,13 +423,14 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     }
     dispatchState({
       type: 'close',
-      formatted: formatTime(newValue, inputFormats, longFormat, displayFormat),
+      formatted: formatTime(newValue, inputFormats, longFormat, displayFormat, simplify),
     })
   }, [
     onChange,
     inputFormats,
     longFormat,
     displayFormat,
+    simplify,
   ])
   const handleClear = useCallback(() => {
     if (onChange) {
