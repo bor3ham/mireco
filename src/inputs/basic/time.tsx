@@ -92,6 +92,7 @@ export interface TimeProps {
   clearable?: boolean
   textClassName?: string
   size?: number
+  autoComplete?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -150,6 +151,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   clearable = true,
   textClassName,
   size,
+  autoComplete,
   id,
   autoFocus,
   tabIndex,
@@ -490,6 +492,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         title={title}
         required={required}
         size={size}
+        autoComplete={autoComplete}
         onDoubleClick={onDoubleClick}
         onMouseDown={onMouseDown}
         onMouseEnter={onMouseEnter}

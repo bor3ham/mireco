@@ -19,6 +19,7 @@ export interface RangeProps {
   style?: React.CSSProperties
   className?: string
   title?: string
+  autoComplete?: string
   // form
   name?: string
   required?: boolean
@@ -52,6 +53,7 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
   style,
   className,
   title,
+  autoComplete,
   name,
   required,
   disabled,
@@ -97,6 +99,7 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
         className,
       )}
       title={title}
+      autoComplete={autoComplete}
       name={name}
       required={required}
       disabled={disabled}

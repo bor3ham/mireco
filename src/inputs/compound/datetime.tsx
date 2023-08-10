@@ -77,6 +77,7 @@ export interface DatetimeProps {
   clearable?: boolean
   timeFirst?: boolean
   simplifyTime?: boolean
+  autoComplete?: string
   // children specific
   dateTextClassName?: string
   timeTextClassName?: string
@@ -115,6 +116,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   clearable = true,
   timeFirst,
   simplifyTime = false,
+  autoComplete,
   dateTextClassName,
   timeTextClassName,
   clearButtonClassName,
@@ -287,6 +289,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       rightHang={timeFirst}
       clearable={false}
       textClassName={dateTextClassName}
+      autoComplete={autoComplete}
       {...dateProps}
     />
   )
@@ -314,6 +317,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       clearable={false}
       textClassName={timeTextClassName}
       simplify={simplifyTime}
+      autoComplete={autoComplete}
       {...timeProps}
     />
   )

@@ -41,8 +41,9 @@ export interface DatetimeRangeProps {
   value?: DatetimeRangeInputValue
   onChange?(newValue: DatetimeRangeInputValue, wasBlur: boolean): void
   defaultDuration?: DurationValue
-  clearable?: boolean,
-  simplifyTimes?: boolean,
+  clearable?: boolean
+  simplifyTimes?: boolean
+  autoComplete?: string
   // children specific
   startDateTextClassName?: string
   startTimeTextClassName?: string
@@ -81,6 +82,7 @@ export const DatetimeRange = forwardRef<HTMLDivElement, DatetimeRangeProps>(({
   defaultDuration = 60 * 60 * 1000,
   clearable = true,
   simplifyTimes = false,
+  autoComplete,
   startDateTextClassName,
   startTimeTextClassName,
   endDateTextClassName,
@@ -352,6 +354,7 @@ export const DatetimeRange = forwardRef<HTMLDivElement, DatetimeRangeProps>(({
         id={id}
         autoFocus={autoFocus}
         simplifyTime={simplifyTimes}
+        autoComplete={autoComplete}
       />
       <BlockDiv className="datetime-range-second" block={block}>
         <span className="to">{' - '}</span>
@@ -369,6 +372,7 @@ export const DatetimeRange = forwardRef<HTMLDivElement, DatetimeRangeProps>(({
           dateTextClassName={endDateTextClassName}
           timeTextClassName={endTimeTextClassName}
           simplifyTime={simplifyTimes}
+          autoComplete={autoComplete}
         />
         {!block && clearable && (
           <span>{' '}</span>

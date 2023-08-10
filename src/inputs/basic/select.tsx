@@ -72,6 +72,7 @@ export interface SelectProps {
   placeholder?: string
   size?: number
   clearable?: boolean
+  autoComplete?: string
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
@@ -115,6 +116,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   placeholder,
   size,
   clearable = true,
+  autoComplete,
   textClassName,
   textStyle,
   id,
@@ -561,6 +563,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
         icon={icon}
         onClear={canClear ? handleClear : undefined}
         everClearable={clearable}
+        autoComplete={autoComplete}
         tabIndex={tabIndex}
         title={title}
         required={required}

@@ -17,6 +17,7 @@ export interface NumberProps {
   step?: number
   placeholder?: string
   size?: number
+  autoComplete?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -53,6 +54,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberProps>(({
   step = 1,
   placeholder,
   size,
+  autoComplete,
   id,
   autoFocus,
   tabIndex,
@@ -155,6 +157,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberProps>(({
       required={required}
       disabled={disabled}
       size={size}
+      autoComplete={autoComplete}
       onFocus={onFocus}
       onBlur={handleBlur}
       onClick={onClick}

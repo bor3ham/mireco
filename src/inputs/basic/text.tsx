@@ -11,6 +11,7 @@ export type TextProps = {
   placeholder?: string
   maxLength?: number
   size?: number
+  autoComplete?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -47,6 +48,7 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
   placeholder,
   maxLength,
   size,
+  autoComplete,
   id,
   autoFocus,
   tabIndex,
@@ -112,6 +114,7 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
       )}
       style={style}
       size={size}
+      autoComplete={autoComplete}
       onFocus={onFocus}
       onBlur={onBlur}
       onClick={onClick}

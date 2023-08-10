@@ -50,6 +50,7 @@ export interface DateProps {
   disabled?: boolean
   name?: string
   required?: boolean
+  autoComplete?: string
   // event handlers
   onFocus?(event: React.FocusEvent<HTMLInputElement>): void
   onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
@@ -101,6 +102,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   disabled,
   name,
   required,
+  autoComplete,
   onFocus,
   onBlur,
   onClick,
@@ -326,6 +328,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         block={block}
         style={{marginBottom: '0'}}
         required={required}
+        autoComplete={autoComplete}
         className={textClassName}
         title={title}
         autoFocus={autoFocus}

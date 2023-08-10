@@ -22,6 +22,7 @@ export interface CalendarMonthProps {
   placeholder?: string
   rightHang?: boolean
   clearable?: boolean
+  autoComplete?: string
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
@@ -66,6 +67,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
   placeholder,
   rightHang,
   clearable = true,
+  autoComplete,
   textClassName,
   textStyle,
   id,
@@ -292,6 +294,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
         style={textStyle}
         id={id}
         onClear={canClear ? handleTextClear : undefined}
+        autoComplete={autoComplete}
         onChange={handleTextChange}
         onFocus={handleTextFocus}
         onBlur={onBlur}

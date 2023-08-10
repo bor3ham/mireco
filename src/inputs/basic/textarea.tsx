@@ -17,6 +17,7 @@ export interface TextareaProps {
   maxRows?: number
   placeholder?: string
   maxLength?: number
+  autoComplete?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -52,6 +53,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   maxRows = 5,
   placeholder,
   maxLength,
+  autoComplete,
   id,
   autoFocus,
   tabIndex,
@@ -119,6 +121,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       autoFocus={autoFocus}
       tabIndex={tabIndex}
       maxLength={maxLength}
+      autoComplete={autoComplete}
       id={id}
       className={classNames(
         'MIRECO-textarea',

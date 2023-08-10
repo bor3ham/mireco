@@ -22,6 +22,7 @@ export interface AsyncSelectProps {
   placeholder?: string
   size?: number
   clearable?: boolean
+  autoComplete?: string
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
@@ -63,6 +64,7 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
   placeholder,
   size,
   clearable,
+  autoComplete,
   textClassName,
   textStyle,
   id,
@@ -261,6 +263,7 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
       clearable={clearable}
+      autoComplete={autoComplete}
       textClassName={textClassName}
       textStyle={textStyle}
     />

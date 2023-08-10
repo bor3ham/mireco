@@ -22,6 +22,7 @@ export interface DurationProps {
   placeholder?: string
   size?: number
   autoFocus?: boolean
+  autoComplete?: string
   // html
   id?: string
   className?: string
@@ -68,6 +69,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
   placeholder,
   size,
   autoFocus,
+  autoComplete,
   id,
   className,
   style,
@@ -193,6 +195,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
       icon={<HourglassVector />}
       required={required}
       autoFocus={autoFocus}
+      autoComplete={autoComplete}
       onChange={handleTextChange}
       onFocus={onFocus}
       onBlur={handleTextBlur}

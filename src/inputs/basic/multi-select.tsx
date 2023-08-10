@@ -116,6 +116,7 @@ export interface MultiSelectProps {
   textClassName?: string
   onTextChange?(newValue: string): string
   dropdownProps?: any
+  autoComplete?: string
   // html
   id?: string
   style?: React.CSSProperties
@@ -138,6 +139,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   textClassName,
   onTextChange,
   dropdownProps,
+  autoComplete,
   id,
   style,
   className,
@@ -489,6 +491,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
             className={textClassName}
             id={id}
             required={required}
+            autoComplete={autoComplete}
           />
         </li>
       </ul>

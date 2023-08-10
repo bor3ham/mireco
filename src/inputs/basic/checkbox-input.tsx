@@ -5,6 +5,7 @@ export interface CheckboxInputProps {
   // checkbox
   value?: boolean
   onChange?(newValue: boolean, event: React.ChangeEvent<HTMLInputElement>): void
+  autoComplete?: string
   // html
   id?: string
   className?: string
@@ -36,6 +37,7 @@ export interface CheckboxInputProps {
 export const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>(({
   value = false,
   onChange,
+  autoComplete,
   id,
   className,
   tabIndex,
@@ -83,6 +85,7 @@ export const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>(({
       value={formValue}
       required={required}
       checked={!!value}
+      autoComplete={autoComplete}
       onChange={handleChange}
       onFocus={onFocus}
       onBlur={onBlur}
