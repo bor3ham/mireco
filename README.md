@@ -93,20 +93,63 @@ bottom.
 
 ## Development Setup
 
-Install dependencies for project itself, and watch the project for changes
+### Environment Install
+
+For convenience install [mise][3] to manage your environment.
+
+When it's installed setup `mise` with:
 
 ```
+mise install
+```
+
+This will install the required versions of `node` and `ruby`.
+
+### Project Install
+
+To install the project dependencies:
+
+```
+bundle
 npm install
+( cd demo && npm install )
+```
+
+This will install the `gems` (for demo site hosting) and `node_modules` (for package building).
+
+### Building Mireco
+
+With the environment and project installation complete, you can build `mireco` with:
+
+```
+npm run build
+```
+
+Or more likely for development convenience, you'll want to watch for changes with:
+
+```
 npm run watch
 ```
 
-### Accessing demo page
+### Building the Demo
 
-Follow the instructions found in `demo/README.md`.
+With `mireco` built, you can build the demo site (using your local copy of `mireco`) with:
+
+```
+( cd demo && npm run build )
+```
+
+Or again for convenience, you will want to both watch for changes and host the site with:
+
+```
+( cd demo && npm run start )
+```
+
+This will use `jekyll` to host the demo site [on your computer](http://127.0.0.1:4001).
 
 ## Components
 
-Check out the [API Documentation][3].
+Check out the [API Documentation][4].
 
 Basic form inputs:
 
@@ -179,4 +222,5 @@ in Mireco consumers.
 
 [1]: https://github.com/bor3ham/bootstrap-mireco/
 [2]: https://bor3ham.github.io/mireco/
-[3]: /docs/api.md
+[3]: https://github.com/jdx/mise
+[4]: /docs/api.md
