@@ -1,8 +1,8 @@
 import React from 'react'
 
-export const ArrowLeftVector = () => (
+export const ChevronRightVector = () => (
   <svg
-    className="MIRECO-arrow-left"
+    className="MIRECO-chevron-right"
     width="24"
     height="24"
     viewBox="0 0 6.35 6.35"
@@ -19,7 +19,8 @@ export const ArrowLeftVector = () => (
           strokeDasharray: 'none',
           strokeOpacity: '1',
         }}
-        d="M 3.96875,292.2375 2.3812499,293.825 3.96875,295.4125"
+        d="M 2.38125,292.2375 3.9687501,293.825 2.38125,295.4125"
+        id="path817"
       />
     </g>
   </svg>

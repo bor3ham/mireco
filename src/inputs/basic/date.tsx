@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'rea
 import classNames from 'classnames'
 import { parse, format, addDays, subDays } from 'date-fns'
 
-import { DayCalendar, BlockDiv, WidgetText } from 'components'
+import { DayCalendar, BlockDiv, WidgetDateText, DateTextHandle } from 'components'
 import { CalendarVector } from 'vectors'
 import {
   ISO_8601_DATE_FORMAT,
@@ -11,7 +11,7 @@ import {
   KEYBOARD_ENTER,
   KEYBOARD_ESCAPE,
 } from 'constants'
-import { formatDate, parseDate } from 'types'
+import { formatDate } from 'types'
 import type { DateInputValue, DateValue } from 'types'
 
 // todo: combine state into reducer
@@ -117,31 +117,10 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   onKeyDown,
   onKeyUp,
 }, forwardedRef) => {
-  const [textValue, setTextValue] = useState<string>(formatDate(value, displayFormat))
-  const textValueRef = useRef<string>(textValue)
-  textValueRef.current = textValue
-
-  // respond to value change
-  useEffect(() => {
-    if (value === null) {
-      setTextValue('')
-    } else if (typeof value === 'string') {
-      const parsedCurrent = parseDate(textValueRef.current, inputFormats)
-      if (parsedCurrent !== value) {
-        setTextValue(formatDate(value, displayFormat))
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    value,
-  ])
-  
   const [inFocus, setInFocus] = useState<boolean>(false)
   const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
     if (typeof value === 'string') {
-      const formatted = formatDate(value, displayFormat)
-      setTextValue(formatted)
       setInFocus(false)
       setCalendarOpen(false)
       if (onChange) {
@@ -150,24 +129,13 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     } else {
       setInFocus(false)
       setCalendarOpen(false)
-      if (autoErase) {
-        if (onChange) {
-          onChange(null, true)
-        } else {
-          setTextValue('')
-        }
-      } else if (onChange) {
-        onChange(value, true)
-      }
     }
     if (onBlur) {
       onBlur(event)
     }
   }, [
     value,
-    displayFormat,
     onChange,
-    autoErase,
     onBlur,
   ])
 
@@ -181,15 +149,14 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     disabled,
   ])
 
-  const textRef = useRef<HTMLInputElement>()
-  const handleTextChange = useCallback((newValue: string) => {
-    setTextValue(newValue)
+  const handleTextChange = useCallback((newValue: DateInputValue) => {
     if (onChange) {
-      onChange(parseDate(newValue, inputFormats), false)
+      onChange(newValue, false)
     }
+  }, [onChange])
+  const handleTextTextChange = useCallback(() => {
     setCalendarOpen(true)
-  }, [onChange, inputFormats])
-
+  }, [])
   const handleTextFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInFocus(true)
     setCalendarOpen(true)
@@ -197,17 +164,6 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       onFocus(event)
     }
   }, [onFocus])
-
-  // on first mount
-  useEffect(() => {
-    if (autoFocus && typeof initialText !== 'undefined') {
-      if (textRef.current) {
-        textRef.current.focus()
-      }
-      handleTextChange(initialText)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
@@ -228,7 +184,9 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     if (event && (event.which === KEYBOARD_ENTER || event.which === KEYBOARD_ESCAPE)) {
       if (calendarOpen) {
         const formatted = formatDate(value, displayFormat)
-        setTextValue(formatted)
+        if (textRef.current) {
+          textRef.current.setText(formatted)
+        }
         setCalendarOpen(false)
         event.preventDefault()
       }
@@ -264,6 +222,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       onClick(event)
     }
   }, [onClick])
+  const textRef = useRef<DateTextHandle>(null)
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {
       onChange(day, false)
@@ -308,24 +267,21 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       onBlur={handleContainerBlur}
       style={style}
     >
-      <WidgetText
+      <WidgetDateText
+        block={block}
+        value={value}
+        onChange={handleTextChange}
+        onTextChange={handleTextTextChange}
+        displayFormat={displayFormat}
+        inputFormats={inputFormats}
+        autoErase={autoErase}
         icon={icon}
         onClear={canClear ? handleClear : undefined}
         everClearable={clearable}
         id={id}
-        ref={(instance: HTMLInputElement) => {
-          textRef.current = instance
-          if (typeof forwardedRef === "function") {
-            forwardedRef(instance)
-          } else if (forwardedRef !== null) {
-            // eslint-disable-next-line no-param-reassign
-            forwardedRef.current = instance
-          }
-        }}
+        ref={textRef}
         placeholder={placeholder}
-        value={textValue}
         disabled={disabled}
-        block={block}
         style={{marginBottom: '0'}}
         required={required}
         autoComplete={autoComplete}
@@ -335,9 +291,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         tabIndex={tabIndex}
         name={name}
         size={size}
-        onChange={handleTextChange}
         onFocus={handleTextFocus}
-        onBlur={onBlur}
         onClick={handleTextClick}
         onDoubleClick={onDoubleClick}
         onMouseDown={onMouseDown}

@@ -1,4 +1,4 @@
-.MIRECO-text, .MIRECO-number, .MIRECO-multi-select
+.MIRECO-text, .MIRECO-number, .MIRECO-multi-select, .MIRECO-date-range
   -webkit-appearance: none
   font-family: standard-font-families
   font-weight: standard-font-weight
@@ -6,7 +6,6 @@
   line-height: standard-line-height
   border: thin-line solid content-muted
   border-radius: edge-rounding
-  input-textaligned-padding(standard-padding)
   outline: none
   background: content-background
 
@@ -20,3 +19,6 @@
 
   &:focus
     input-focus()
+
+.MIRECO-text, .MIRECO-number, .MIRECO-multi-select
+  input-textaligned-padding(standard-padding)

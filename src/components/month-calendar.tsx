@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import type { MonthInputValue, CalendarMonthValue } from 'types'
 import { dateAsMonth, monthAsDate, isMonthValue } from 'types'
-import { ArrowRightVector, ArrowLeftVector } from 'vectors'
+import { ChevronRightVector, ChevronLeftVector } from 'vectors'
 
 export interface MonthCalendarProps {
   current?: MonthInputValue
@@ -69,10 +69,10 @@ export const MonthCalendar = forwardRef<HTMLDivElement, MonthCalendarProps>(({
         <div className="calendar-header">
           <h5>{year}</h5>
           <button type="button" tabIndex={-1} onClick={prevYear}>
-            <ArrowLeftVector />
+            <ChevronLeftVector />
           </button>
           <button type="button" tabIndex={-1} onClick={nextYear}>
-            <ArrowRightVector />
+            <ChevronRightVector />
           </button>
         </div>
       )}

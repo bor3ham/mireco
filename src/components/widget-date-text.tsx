@@ -1,24 +1,23 @@
 import React, { forwardRef, useState, useCallback } from 'react'
 import classNames from 'classnames'
 
-import { Text } from 'inputs'
-import type { TextProps } from 'inputs'
-import { ChevronDownVector } from 'vectors'
+import { DateText, type DateTextProps, type DateTextHandle } from './date-text'
+import { CalendarVector } from 'vectors'
 import { BlockDiv } from './block-div'
 import { ClearButton } from './clear-button'
 
-export interface WidgetTextProps extends TextProps {
+export interface WidgetDateTextProps extends DateTextProps {
   // widget text
   onClear?(): void
   icon?: React.ReactNode
   everClearable?: boolean
 }
 
-export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, ref) => {
+export const WidgetDateText = forwardRef<DateTextHandle, WidgetDateTextProps>((props, ref) => {
   const {
     block,
     onClear,
-    icon = <ChevronDownVector />,
+    icon = <CalendarVector />,
     everClearable = true,
     onFocus,
     onBlur,
@@ -51,7 +50,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
         'in-focus': inFocus,
       })}
     >
-      <Text
+      <DateText
         ref={ref}
         {...inputProps}
         onFocus={handleFocus}
