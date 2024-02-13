@@ -3,10 +3,9 @@ import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 import { format, addMilliseconds, startOfDay } from 'date-fns'
 
-import { WidgetText, BlockDiv, Dropdown } from 'components'
+import { WidgetText, BlockDiv, TimeSelector } from 'components'
 import { ClockVector } from 'vectors'
-import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP, KEYBOARD_ENTER, KEYBOARD_ESCAPE } from 'constants'
-import type { TimeInputValue, DatetimeInputValue } from 'types'
+import type { TimeInputValue, TimeValue, DatetimeInputValue } from 'types'
 import { formatTime, parseTime, isTimeValue } from 'types'
 
 type TimeState = {
@@ -93,6 +92,7 @@ export interface TimeProps {
   textClassName?: string
   size?: number
   autoComplete?: string
+  closeOnSelect?: boolean
   // html
   id?: string
   autoFocus?: boolean
@@ -144,7 +144,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   simplify = false,
   placeholder = 'hh : mm',
   autoErase = true,
-  step = 30,
+  step = 15,
   relativeTo,
   relativeStart = 0,
   rightHang,
@@ -152,6 +152,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   textClassName,
   size,
   autoComplete,
+  closeOnSelect = true,
   id,
   autoFocus,
   tabIndex,
@@ -366,7 +367,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     nextOption,
   ])
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event && (event.which === KEYBOARD_ENTER || event.which === KEYBOARD_ESCAPE)) {
+    if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.dropdownOpen) {
         dispatchState({
           type: 'close',
@@ -376,24 +377,20 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       }
       return
     }
-    if (event.which === KEYBOARD_ARROW_DOWN) {
+    if (event.key === 'ArrowDown') {
       event.preventDefault()
       if (onChange) {
         onChange(nextOption, false)
       }
-      dispatchState({
-        type: 'open',
-      })
-    }
-    if (event.which === KEYBOARD_ARROW_UP) {
+    } else if (event.key === 'ArrowUp') {
       event.preventDefault()
       if (onChange) {
         onChange(prevOption, false)
       }
-      dispatchState({
-        type: 'open',
-      })
     }
+    dispatchState({
+      type: 'open',
+    })
     if (onKeyDown) {
       onKeyDown(event)
     }
@@ -416,24 +413,6 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     onClick,
   ])
   const textRef = useRef<HTMLInputElement>()
-  const handleDropdownSelect = useCallback((newValue: number) => {
-    if (onChange) {
-      onChange(newValue, false)
-    }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
-    dispatchState({
-      type: 'close',
-      formatted: formatTime(newValue, inputFormats, longFormat, displayFormat, simplify),
-    })
-  }, [
-    onChange,
-    inputFormats,
-    longFormat,
-    displayFormat,
-    simplify,
-  ])
   const handleClear = useCallback(() => {
     if (onChange) {
       onChange(null, false)
@@ -447,6 +426,22 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   const showClear = (
     !disabled && isTimeValue(value) && clearable
   )
+
+  const handleSelect = useCallback((newValue: TimeValue, finalChoice: boolean) => {
+    if (onChange) {
+      onChange(newValue, false)
+    }
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+    if (closeOnSelect && finalChoice) {
+      dispatchState({
+        type: 'close',
+        formatted: formatTime(newValue, inputFormats, longFormat, displayFormat, simplify),
+      })
+    }
+  }, [onChange, inputFormats, longFormat, displayFormat, simplify, closeOnSelect])
+
   return (
     <BlockDiv
       ref={containerRef}
@@ -504,11 +499,10 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         onKeyUp={onKeyUp}
       />
       {state.inFocus && state.dropdownOpen && !disabled && (
-        <Dropdown
-          options={options}
+        <TimeSelector
           value={value}
-          disabled={disabled}
-          onSelect={handleDropdownSelect}
+          onChange={handleSelect}
+          minuteIncrements={step}
         />
       )}
     </BlockDiv>

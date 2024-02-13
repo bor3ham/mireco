@@ -220,7 +220,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
     }
   }, [state, onChange])
   const handleStartKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if ((event.key === 'Enter' || event.key === 'Escape')) {
+    if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.calendarOpen) {
         const formatted = formatDate(value ? value.start : null, displayFormat)
         if (startRef.current) {
@@ -259,7 +259,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
     handleStartChange,
   ])
   const handleEndKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if ((event.key === 'Enter' || event.key === 'Escape')) {
+    if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.calendarOpen) {
         const formatted = formatDate(value ? value.end : null, displayFormat)
         if (endRef.current) {
