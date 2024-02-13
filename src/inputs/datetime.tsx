@@ -13,8 +13,8 @@ import type {
   TimeValue,
   TimeInputValue,
 } from 'types'
-import { Date as DateInput } from '../basic/date'
-import { Time } from '../basic/time'
+import { Date as DateInput } from './date'
+import { Time } from './time'
 
 // todo: combine state into reducer
 // todo: use name/required form with hidden input

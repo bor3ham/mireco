@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { ChevronDownVector, SpinnerVector } from 'vectors'
 import { isEmpty } from 'types'
 import type { SelectOption, SelectValue, SelectOptionInputValue, Empty } from 'types'
-import { Select } from '../basic/select'
+import { Select } from './select'
 
 // todo: merge loading and inFocus state into reducer
 // todo: double render flicker on using clear button
