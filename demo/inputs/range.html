@@ -2,13 +2,22 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Range</h2>
-  <div class="demo-mount-range"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/range.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/range.md">input
-  documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Range</h2>
+    <p>Slider for adjusting a numerical value.</p>
+  </div>
+  <div class="page-section">
+    <div class="range-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/range.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/range.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+      <li>Todo: RangeInputValue should probably never be null</li>
+    </ul>
+  </div>
 </div>

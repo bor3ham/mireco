@@ -2,13 +2,22 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Time</h2>
-  <div class="demo-mount-time"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/time.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/time.md">input
-  documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Time</h2>
+    <p>Time of day with hour / minute dropdown. Supports full keyboard input and adjustment.</p>
+    <p>Value represented as <code>null | undefined | ms since midnight</code>.</p>
+  </div>
+  <div class="page-section">
+    <div class="time-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/time.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/time.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+    </ul>
+  </div>
 </div>

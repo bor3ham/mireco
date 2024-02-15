@@ -1,15 +1,14 @@
 import React, { useState, useCallback } from 'react'
-import * as ReactDOM from 'react-dom/client'
 import { Textarea } from 'mireco'
 
-const DemoTextarea = () => {
+export const TextareaExample = () => {
   const [value, setValue] = useState<string>('')
   const handleChange = useCallback((newValue: string) => {
     setValue(newValue)
   }, [])
   return (
     <>
-      <p>Field value: {JSON.stringify(value)}</p>
+      <p><code>Current value: {JSON.stringify(value)}</code></p>
       <Textarea
         value={value}
         onChange={handleChange}
@@ -17,10 +16,4 @@ const DemoTextarea = () => {
       />
     </>
   )
-}
-
-const container = document.querySelector('div.demo-mount-textarea')
-if (container) {
-  const root = ReactDOM.createRoot(container)
-  root.render(<DemoTextarea />)
 }

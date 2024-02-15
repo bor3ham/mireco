@@ -1,8 +1,7 @@
 import React from 'react'
-import * as ReactDOM from 'react-dom/client'
 import { Button } from 'mireco'
 
-const DemoButtonStyles = () => (
+export const ButtonStyleShowcase = () => (
   <>
     <p>Standard:</p>
     <p>
@@ -36,9 +35,3 @@ const DemoButtonStyles = () => (
     </p>
   </>
 )
-
-const container = document.querySelector('div.demo-mount-button-styles')
-if (container) {
-  const root = ReactDOM.createRoot(container)
-  root.render(<DemoButtonStyles />)
-}

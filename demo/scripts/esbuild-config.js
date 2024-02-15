@@ -22,7 +22,7 @@ exports.config = {
     metafilePlugin,
   ],
   entryPoints: [
-    './src/demo.ts',
+    './src/demo.tsx',
     './src/demo.styl',
   ],
   outdir: 'dist',

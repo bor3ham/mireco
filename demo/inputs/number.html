@@ -2,13 +2,22 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Number</h2>
-  <div class="demo-mount-number"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/number.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/number.md">input
-  documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Number</h2>
+    <p>Text box that only accepts whole numerical values. Supports keyboard adjustment.</p>
+  </div>
+  <div class="page-section">
+    <div class="number-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/number.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/number.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+      <li>Todo: unfocusing with invalid value clears textbox but does not report null</li>
+    </ul>
+  </div>
 </div>

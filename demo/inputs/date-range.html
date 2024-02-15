@@ -2,13 +2,22 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Date Range</h2>
-  <div class="demo-mount-date-range"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/date-range.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/date-range.md">
-  input documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Date Range</h2>
+    <p>Start and end date range with dropdown calendar. Supports full keyboard input and adjustment.</p>
+    <p>Value represented as <code>{ start: null | undefined | ISO8601 date string, end: null | undefined | ISO8601 date string }</code>.</p>
+  </div>
+  <div class="page-section">
+    <div class="date-range-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/date-range.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/date-range.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+    </ul>
+  </div>
 </div>

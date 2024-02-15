@@ -2,13 +2,24 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Duration</h2>
-  <div class="demo-mount-duration"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/duration.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/duration.md">input
-  documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Duration</h2>
+    <p>Natural language duration text input. Supports full keyboard input and adjustment.</p>
+    <p>Value represented as <code>null | undefined | ms</code>.</p>
+  </div>
+  <div class="page-section">
+    <div class="duration-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/duration.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/duration.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+      <li>Todo: unfocusing with invalid value sets to 0 not null</li>
+      <li>Todo: should have clearable default option to be consistent with other time inputs</li>
+    </ul>
+  </div>
 </div>

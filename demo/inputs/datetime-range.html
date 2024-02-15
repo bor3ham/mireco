@@ -2,13 +2,23 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Datetime Range</h2>
-  <div class="demo-mount-datetime-range"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/datetime-range.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/datetime-range.md">
-  input documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Datetime Range</h2>
+    <p>Start and end date range input with dropdown controls. Supports full keyboard input and adjustment.</p>
+    <p>Value represented as <code>{ start: null | undefined | epoch ms, end: null | undefined | epoch ms }</code>.</p>
+  </div>
+  <div class="page-section">
+    <div class="datetime-range-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/datetime-range.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/datetime-range.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+      <li>Todo: don't allow null or undefined outer value</li>
+    </ul>
+  </div>
 </div>

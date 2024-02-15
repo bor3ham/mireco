@@ -2,13 +2,22 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Datetime</h2>
-  <div class="demo-mount-datetime"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/datetime.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/datetime.md">
-  input documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Datetime</h2>
+    <p>Combined date and time input with dropdown controls. Supports full keyboard input and adjustment.</p>
+    <p>Value represented as <code>null | undefined | epoch ms</code>.</p>
+  </div>
+  <div class="page-section">
+    <div class="datetime-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/datetime.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/datetime.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+    </ul>
+  </div>
 </div>
