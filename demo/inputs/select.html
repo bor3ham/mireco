@@ -2,13 +2,22 @@
 layout: base
 ---
 <div class="content-container">
-  <h2>Select</h2>
-  <div class="demo-mount-select"></div>
-  <code
-    class="script"
-    data-source="{{ site.baseurl }}/src/inputs/select.tsx"
-  >Loading ...</code>
-  <hr />
-  <p>Refer to the <a href="https://github.com/bor3ham/mireco/blob/master/docs/inputs/select.md">
-  input documentation</a> for full implementation options.</p>
+  <div class="page-section">
+    <h2>Select</h2>
+    <p>Choice from given set of options with dropdown. Supports full keyboard input and adjustment.</p>
+    <p>Value represented as <code>null | undefined | value from options</code>.</p>
+  </div>
+  <div class="page-section">
+    <div class="select-example"></div>
+    <code
+      class="script block"
+      data-source="{{ site.baseurl }}/src/examples/select.tsx"
+    >Loading ...</code>
+  </div>
+  <div class="page-section">
+    <ul>
+      <li><a href="https://github.com/bor3ham/mireco/blob/master/src/inputs/select.tsx">Source and props definition</a></li>
+      <!-- <li><a href="">Stress test</a></li> -->
+    </ul>
+  </div>
 </div>

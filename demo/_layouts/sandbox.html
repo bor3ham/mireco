@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{ site.package_name }}</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
+    <!-- no head.html - css is optionally mounted by react -->
+    <link rel="icon" href="{{ site.baseurl }}/static/favicon.png" type="image/png">
+    <link rel="icon" href="{{ site.baseurl }}/static/favicon.svg" type="image/svg+xml">
+  </head>
+  <body>
+    <div class="header">
+      <div class="content-container">
+        <a class="title" href="{{ site.baseurl }}/">{{ site.package_name }}</a>
+        <span style="margin-left: 20px;">
+          <a href="{{ site.package_github_url }}">GitHub</a>
+          &nbsp;|&nbsp;
+          <a href="{{ site.package_npm_url }}">NPM</a>
+        </span>
+      </div>
+    </div>
+
+    <div class="content">
+      {{ content }}
+      {% include required_static.html %}
+    </div>
+
+    <div class="footer">
+      <div class="content-container">
+        <a href="http://www.uptickhq.com/" style="float: right;">
+          <img
+            style="max-height: 40px;"
+            src="https://www.datocms-assets.com/103955/1700884339-logo-orange.png?auto=format&w=3027"
+          />
+        </a>
+        <p>Published under the MIT License</p>
+        <p>&copy; Copyright {{ site.time | date: '%Y' }} Uptick Pty Ltd</p>
+      </div>
+    </div>
+  </body>
+</html>

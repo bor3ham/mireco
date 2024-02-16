@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import * as ReactDOM from 'react-dom/client'
-import { MultiSelect } from 'mireco'
-import type { SelectValue } from 'mireco'
+import { MultiSelect, type SelectValue } from 'mireco'
 
 const OPTIONS = [
   {
@@ -22,26 +20,24 @@ const OPTIONS = [
   },
 ]
 
-const DemoMultiSelect = () => {
+const stringifyValue = (value: SelectValue[]) => {
+  return JSON.stringify(value)
+}
+
+export const MultiSelectExample = () => {
   const [value, setValue] = useState<SelectValue[]>([])
   const handleValueChange = useCallback((newValue: SelectValue[], wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
     <>
-      <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
+      <p><code>Current value: {stringifyValue(value)}</code></p>
       <MultiSelect
         value={value}
-        options={OPTIONS}
         onChange={handleValueChange}
-        placeholder="Select values"
+        options={OPTIONS}
+        placeholder="Select from values"
       />
     </>
   )
-}
-
-const container = document.querySelector('div.demo-mount-multi-select')
-if (container) {
-  const root = ReactDOM.createRoot(container)
-  root.render(<DemoMultiSelect />)
 }

@@ -1,11 +1,14 @@
 import React, { useState, useCallback } from 'react'
-import * as ReactDOM from 'react-dom/client'
-import { AsyncSelect } from 'mireco'
-import type { SelectOption, SelectOptionValue } from 'mireco'
+import { AsyncSelect, type SelectOption, type SelectOptionInputValue } from 'mireco'
 
 const SIMULATED_LAG = 1000
 
-function fakeResults(searchTerm: string): Promise<SelectOption[]> {
+const stringifyValue = (value: SelectOptionInputValue) => {
+  if (typeof value === 'undefined') return undefined
+  return JSON.stringify(value)
+}
+
+const fakeResults = (searchTerm: string): Promise<SelectOption[]> => {
   const keyedTerm = searchTerm.toLowerCase().trim().replace(' ', '_')
   return new Promise((resolve, reject) => {
     window.setTimeout(() => {
@@ -27,26 +30,20 @@ function fakeResults(searchTerm: string): Promise<SelectOption[]> {
   })
 }
 
-const DemoAsyncSelect = () => {
-  const [value, setValue] = useState<SelectOptionValue>(null)
-  const handleChange = useCallback((newValue: SelectOptionValue, wasBlur: boolean) => {
+export const AsyncSelectExample = () => {
+  const [value, setValue] = useState<SelectOptionInputValue>(null)
+  const handleChange = useCallback((newValue: SelectOptionInputValue, wasBlur: boolean) => {
     setValue(newValue)
   }, [])
   return (
     <>
-      <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
+      <p><code>Current value: {stringifyValue(value)}</code></p>
       <AsyncSelect
         value={value}
-        getOptions={fakeResults}
         onChange={handleChange}
+        getOptions={fakeResults}
         placeholder="Select value"
       />
     </>
   )
-}
-
-const container = document.querySelector('div.demo-mount-async-select')
-if (container) {
-  const root = ReactDOM.createRoot(container)
-  root.render(<DemoAsyncSelect />)
 }

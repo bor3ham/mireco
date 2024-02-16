@@ -1,9 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import * as ReactDOM from 'react-dom/client'
-import { Select } from 'mireco'
-import type { SelectInputValue } from 'mireco'
+import { Select, type SelectInputValue } from 'mireco'
 
-const NULLABLE = true
 const OPTIONS = [
   {
     value: 'bike',
@@ -23,27 +20,25 @@ const OPTIONS = [
   },
 ]
 
-const DemoSelect = () => {
-  const [value, setValue] = useState<SelectInputValue>(NULLABLE ? null : OPTIONS[0].value)
+const stringifyValue = (value: SelectInputValue) => {
+  if (typeof value === 'undefined') return 'undefined'
+  return JSON.stringify(value)
+}
+
+export const SelectExample = () => {
+  const [value, setValue] = useState<SelectInputValue>(null)
   const handleChange = useCallback((newValue: SelectInputValue) => {
     setValue(newValue)
   }, [])
   return (
     <>
-      <p>Field value: {JSON.stringify(value) || 'undefined'}</p>
+      <p><code>Current value: {stringifyValue(value)}</code></p>
       <Select
-        placeholder="Select value"
         value={value}
-        options={OPTIONS}
         onChange={handleChange}
-        nullable={NULLABLE}
+        options={OPTIONS}
+        placeholder="Select a value"
       />
     </>
   )
-}
-
-const container = document.querySelector('div.demo-mount-select')
-if (container) {
-  const root = ReactDOM.createRoot(container)
-  root.render(<DemoSelect />)
 }
