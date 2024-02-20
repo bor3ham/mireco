@@ -1,13 +1,7 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react'
 import { Checkbox, Range, Button } from 'mireco'
 
-interface SandboxWrapperProps {
-  children: React.ReactNode
-  initialValue: any
-  getRandomValue(): any
-}
-
-export const SandboxContext = createContext<{
+export const LabContext = createContext<{
   value: any
   onChange(newValue: any): void
   block: boolean
@@ -49,11 +43,24 @@ const FrequencyToggle = ({
   )
 }
 
-export const SandboxWrapper = ({
+const stringifyFormValue = (value: any) => {
+  if (typeof value === 'undefined') return 'undefined'
+  return JSON.stringify(value)
+}
+
+interface LabWrapperProps {
+  children: React.ReactNode
+  initialValue: any
+  getRandomValue(): any
+  stringify(value: any): string
+}
+
+export const LabWrapper = ({
   children,
   initialValue,
   getRandomValue,
-}: SandboxWrapperProps) => {
+  stringify,
+}: LabWrapperProps) => {
   const [state, setState] = useState({
     value: initialValue,
     styles: true,
@@ -115,6 +122,15 @@ export const SandboxWrapper = ({
     }
     return () => {}
   }, [toggleDisabled, state.disable, state.disableFrequency])
+
+  const [submittedValue, setSubmittedValue] = useState<any>(undefined)
+  const [lastSubmitted, setLastSubmitted] = useState<Date | undefined>(undefined)
+  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.target as HTMLFormElement)
+    setSubmittedValue(Object.fromEntries(formData))
+    setLastSubmitted(new Date())
+  }, [])
   
   const handleValueChange = useCallback((newValue: any) => {
     handleStateValueChange('value', newValue)
@@ -146,19 +162,16 @@ export const SandboxWrapper = ({
   const handleDisableFrequencyChange = useCallback((newValue: number) => {
     handleStateValueChange('disableFrequency', newValue)
   }, [handleStateValueChange])
+
   return (
-    <SandboxContext.Provider value={{
+    <LabContext.Provider value={{
       ...state,
       onChange: handleValueChange,
     }}>
       {state.styles && (
         <link href="../../dist/demo.css" rel="stylesheet" />
       )}
-      <div style={{
-        background: '#eee',
-        padding: '1rem',
-        marginBottom: '1rem',
-      }}>
+      <div className="lab-controls">
         <Checkbox block value={state.styles} onChange={handleStylesChange}>Include CSS</Checkbox>
         <Checkbox block value={state.block} onChange={handleBlockChange}>Block mode</Checkbox>
         <FrequencyToggle
@@ -199,9 +212,17 @@ export const SandboxWrapper = ({
           Disabled
         </Checkbox>
       </div>
-      <div key={`mount-${mountIndex}`}>
-        {children}
+      <div key={`mount-${mountIndex}`} style={{marginBottom: '1rem'}}>
+        <form onSubmit={handleSubmit}>
+          {children}
+          <button type="submit" hidden>Submit</button>
+        </form>
       </div>
-    </SandboxContext.Provider>
+      <div className="lab-controls" style={{marginTop: '15rem'}}>
+        <p><code>Current value: {stringify(state.value)}</code></p>
+        <p><code>Last submitted value: {stringifyFormValue(submittedValue)}</code></p>
+        <p><code>Last submitted at: {lastSubmitted ? lastSubmitted.toString() : 'undefined'}</code></p>
+      </div>
+    </LabContext.Provider>
   )
 }

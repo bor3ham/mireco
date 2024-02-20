@@ -1,4 +1,4 @@
-.MIRECO-date-range
+.MIRECO-datetime
   &.in-focus
     input-focus()
   
@@ -6,10 +6,19 @@
     border-color: content-muted !important
     background: content-faint !important
 
-  .MIRECO-date .MIRECO-text
+  .MIRECO-text
     border: none
     background: none
   
+  > .MIRECO-datetime-controls
+    border-radius: edge-rounding
+    border: thin-line solid content-muted
+    margin-top: -(thin-line)
+    popover-shadow()
+  
+    .MIRECO-day-calendar
+      border-right: thin-line solid content-muted
+
   padding-right: (standard-padding / 2)
   &.clearable
     padding-right: "calc(%s + 24px)" % (standard-padding / 2)

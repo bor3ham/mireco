@@ -76,6 +76,7 @@ export interface DayCalendarProps {
   showCurrent?: boolean
   highlight?(day: DateValue, hovered: DateValue | undefined): boolean
   invalid?(day: DateValue): string | undefined
+  className?: string
 }
 
 export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
@@ -84,6 +85,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   showCurrent = true,
   highlight = () => false,
   invalid = () => undefined,
+  className,
 }, ref) => {
   const initial = current ? parse(current, ISO_8601_DATE_FORMAT, new Date()) : new Date()
   const [month, setMonth] = useState({
@@ -198,7 +200,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   }, [month, selectDay, showCurrent, highlight, current, today, invalid, hoveredDay])
 
   return (
-    <div className="MIRECO-day-calendar" ref={ref}>
+    <div className={classNames('MIRECO-day-calendar', className)} ref={ref}>
       <div className="calendar-header">
         <h5>{format(new Date(month.year, month.month), 'MMMM yyyy')}</h5>
         <button type="button" tabIndex={-1} onClick={prevMonth}>

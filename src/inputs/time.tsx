@@ -1,12 +1,13 @@
 import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef } from 'react'
 import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
-import { format, addMilliseconds, startOfDay } from 'date-fns'
 
-import { WidgetText, BlockDiv, TimeSelector } from 'components'
+import { WidgetTimeText, type TimeTextHandle, BlockDiv, TimeSelector } from 'components'
 import { ClockVector } from 'vectors'
-import type { TimeInputValue, TimeValue, DatetimeInputValue } from 'types'
-import { formatTime, parseTime, isTimeValue } from 'types'
+import type { TimeInputValue, TimeValue } from 'types'
+import { formatTime } from 'types'
+
+const DAY_MS = 24 * 60 * 60 * 1000
 
 type TimeState = {
   text: string
@@ -16,9 +17,8 @@ type TimeState = {
 
 type TimeAction =
   | { type: 'open' }
-  | { type: 'textInput', text: string }
-  | { type: 'close', formatted?: string, blur?: boolean }
-  | { type: 'textOverride', text: string }
+  | { type: 'close' }
+  | { type: 'blur' }
 
 function timeReducer(state: TimeState, action: TimeAction): TimeState {
   switch (action.type) {
@@ -29,31 +29,17 @@ function timeReducer(state: TimeState, action: TimeAction): TimeState {
         inFocus: true,
       }
     }
-    case 'textInput': {
-      return {
-        ...state,
-        text: action.text,
-        dropdownOpen: true,
-        inFocus: true,
-      }
-    }
     case 'close': {
-      const updated = {
+      return {
         ...state,
         dropdownOpen: false,
       }
-      if ('formatted' in action) {
-        updated.text = action.formatted || ''
-      }
-      if ('blur' in action) {
-        updated.inFocus = false
-      }
-      return updated
     }
-    case 'textOverride': {
+    case 'blur': {
       return {
         ...state,
-        text: action.text,
+        dropdownOpen: false,
+        inFocus: false,
       }
     }
     default: {
@@ -73,38 +59,49 @@ const shortHumanizeDur = humanizeDuration.humanizer({
 })
 
 export interface TimeProps {
-  // mireco
+  // === Mireco
   block?: boolean
-  // time
+
+  // === Time Input Specific
   value?: TimeInputValue
   onChange?(newValue: TimeInputValue, wasBlur: boolean): void
   inputFormats?: string[]
   longFormat?: string
   displayFormat?: string
   simplify?: boolean
-  placeholder?: string
+  icon?: React.ReactNode
   autoErase?: boolean
+  /** Adjustment when using keyboard up/down, in ms */
   step?: number
-  relativeTo?: DatetimeInputValue
-  relativeStart?: TimeInputValue
+  /** Starting point when using keyboard up/down with no value */
+  startingPoint?: number
+  /** Whether to hang the dropdown controls from the right */
   rightHang?: boolean
+  /** Whether to show a clear X button inside the input */
   clearable?: boolean
+  /** Whether to close the dropdown controls when a value is selected */
+  closeOnSelect?: boolean
+
+  // === Text Input
+  placeholder?: string
   textClassName?: string
   size?: number
   autoComplete?: string
-  closeOnSelect?: boolean
-  // html
+
+  // === Form
+  name?: string
+  required?: boolean
+  disabled?: boolean
+
+  // === HTML
   id?: string
   autoFocus?: boolean
   tabIndex?: number
   style?: React.CSSProperties
   className?: string
   title?: string
-  // form
-  name?: string
-  required?: boolean
-  disabled?: boolean
-  // event handlers
+
+  // === Event Handlers
   onFocus?(event: React.FocusEvent<HTMLInputElement>): void
   onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
   onClick?(event: React.MouseEvent<HTMLInputElement>): void
@@ -142,26 +139,26 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   longFormat = 'h:mm:ss a',
   displayFormat = 'h:mm a',
   simplify = false,
-  placeholder = 'hh : mm',
+  icon = <ClockVector />,
   autoErase = true,
-  step = 15,
-  relativeTo,
-  relativeStart = 0,
+  step = 15 * 60 * 1000,
+  startingPoint = 9 * 60 * 60 * 1000,
   rightHang,
   clearable = true,
+  closeOnSelect = true,
+  placeholder = 'hh : mm',
   textClassName,
   size,
   autoComplete,
-  closeOnSelect = true,
+  name,
+  required,
+  disabled,
   id,
   autoFocus,
   tabIndex,
   style,
   className,
   title,
-  name,
-  required,
-  disabled,
   onFocus,
   onBlur,
   onClick,
@@ -183,127 +180,56 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     displayFormat,
     simplify,
   ])
-  const [state, dispatchState] = useReducer(timeReducer, {
+  const [state, dispatch] = useReducer(timeReducer, {
     text: formattedValue,
     dropdownOpen: false,
     inFocus: false,
   })
 
-  const options = useMemo(() => {
-    const o = []
-    for (let min = 0; min < 24 * 60; min += step) {
-      const ms = min * 60 * 1000
-      const newOption = {
-        value: ms,
-        label: format(addMilliseconds(startOfDay(new Date()), ms), displayFormat),
-      }
-      if (typeof relativeTo === 'number' && typeof relativeStart === 'number') {
-        const msAbsolute = relativeStart + newOption.value
-        if (msAbsolute > relativeTo) {
-          const duration = msAbsolute - relativeTo
-          if (
-            duration <= (24 * 60 * 60 * 1000) &&
-            duration % (5 * 60 * 1000) === 0
-          ) {
-            newOption.label += ` (${shortHumanizeDur(duration, {
-              units: ['h', 'm'],
-              spacer: '',
-            })})`
-          }
-        }
-      }
-      o.push(newOption)
-    }
-    return o
-  }, [
-    step,
-    displayFormat,
-    relativeTo,
-    relativeStart,
-  ])
-
-  // respond to value change
-  useEffect(() => {
-    if (value === null) {
-      dispatchState({
-        type: 'textOverride',
-        text: '',
-      })
-    } else if (isTimeValue(value)) {
-      if (value !== parseTime(state.text, inputFormats)) {
-        dispatchState({
-          type: 'textOverride',
-          text: formattedValue,
-        })
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    value,
-  ])
-
-  const containerRef = useRef<HTMLDivElement>(null)
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
-    if (isTimeValue(value)) {
-      dispatchState({
-        type: 'close',
-        formatted: formattedValue,
-        blur: true,
-      })
-      if (onChange) { 
-        onChange(value, true)
-      }
-    } else if (autoErase) {
-      dispatchState({
-        type: 'close',
-        formatted: '',
-        blur: true,
-      })
-      if (onChange) { 
-        onChange(null, true)
-      }
-    } else {
-      dispatchState({
-        type: 'close',
-        blur: true,
-      })
-      if (onChange) { 
-        onChange(value, true)
-      }
+    dispatch({ type: 'close' })
+    if (onChange) {
+      onChange(typeof value === 'number' ? value : null, true)
     }
     if (onBlur) {
       onBlur(event)
     }
   }, [
     value,
-    formattedValue,
-    autoErase,
     onChange,
     onBlur,
   ])
+
+  // respond to disabled change
   useEffect(() => {
-    if (disabled && state.inFocus) {
+    if (disabled) {
       handleBlur()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    state.inFocus,
     disabled,
-    handleBlur,
   ])
-  const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    dispatchState({
-      type: 'open',
-    })
+
+  const handleTextChange = useCallback((newValue: TimeInputValue) => {
+    if (onChange) {
+      onChange(newValue, false)
+    }
+  }, [onChange])
+  const handleTextTextChange = useCallback(() => {
+    dispatch({ type: 'open' })
+  }, [])
+  const handleTextFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    dispatch({ type: 'open' })
     if (onFocus) {
       onFocus(event)
     }
-  }, [
-    onFocus,
-  ])
-  const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+  }, [onFocus])
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const handleContainerBlur = useCallback((event: React.FocusEvent) => {
     if (
-      containerRef.current &&
-      (
+      containerRef.current
+      && (
         containerRef.current.contains(event.relatedTarget) ||
         containerRef.current === event.relatedTarget
       )
@@ -311,109 +237,77 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       // ignore internal blur
       return
     }
-    handleBlur(event)
-  }, [
-    handleBlur,
-  ])
-
-  const handleTextChange = useCallback((newValue: string) => {
-    dispatchState({
-      type: 'textInput',
-      text: newValue,
-    })
-    if (onChange) {
-      onChange(parseTime(newValue, inputFormats), false)
-    }
-  }, [
-    onChange,
-    inputFormats,
-  ])
-  const nextOption = useMemo(() => {
-    if (!isTimeValue(value)) {
-      return options[0].value
-    }
-    let nextIndex = 0
-    options.forEach((option, index) => {
-      if (option.value <= value!) {
-        nextIndex = index
-      }
-    })
-    nextIndex += 1
-    if (nextIndex >= options.length) {
-      nextIndex = 0
-    }
-    return options[nextIndex].value
-  }, [
-    value,
-    options,
-  ])
-  const prevOption = useMemo(() => {
-    if (!isTimeValue(value)) {
-      return nextOption
-    }
-    if (value === options[0].value) {
-      return options[options.length - 1].value
-    }
-    let nextIndex = 0
-    options.forEach((option, index) => {
-      if (option.value < value!) {
-        nextIndex = index
-      }
-    })
-    return options[nextIndex].value
-  }, [
-    value,
-    options,
-    nextOption,
-  ])
+    handleBlur()
+  }, [handleBlur])
+  
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.dropdownOpen) {
-        dispatchState({
-          type: 'close',
-          formatted: formattedValue,
-        })
+        const formatted = formatTime(value, inputFormats, longFormat, displayFormat, simplify)
+        if (textRef.current) {
+          textRef.current.setText(formatted)
+        }
+        dispatch({ type: 'close' })
         event.preventDefault()
       }
       return
     }
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      if (onChange) {
-        onChange(nextOption, false)
+    dispatch({ type: 'open' })
+    let wasEmpty = true
+    let current = startingPoint
+    if (typeof value === 'number') {
+      wasEmpty = false
+      current = value
+    }
+    if (event.key === 'ArrowUp') {
+      let loweredCurrent = Math.floor(current / step) * step
+      if (loweredCurrent === current && !wasEmpty) {
+        loweredCurrent -= step
       }
-    } else if (event.key === 'ArrowUp') {
+      if (loweredCurrent < 0) {
+        loweredCurrent += DAY_MS
+      }
       event.preventDefault()
       if (onChange) {
-        onChange(prevOption, false)
+        onChange(loweredCurrent, false)
+      }
+    } else if (event.key === 'ArrowDown') {
+      let raisedCurrent = Math.ceil(current / step) * step
+      if (raisedCurrent === current && !wasEmpty) {
+        raisedCurrent += step
+      }
+      raisedCurrent = raisedCurrent % DAY_MS
+      event.preventDefault()
+      if (onChange) {
+        onChange(raisedCurrent, false)
       }
     }
-    dispatchState({
-      type: 'open',
-    })
     if (onKeyDown) {
       onKeyDown(event)
     }
-  }, [
-    formattedValue,
-    nextOption,
-    prevOption,
-    onChange,
-    onKeyDown,
-    state.dropdownOpen,
-  ])
+  }, [state.dropdownOpen, startingPoint, value, displayFormat, onChange, onKeyDown])
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
-    dispatchState({
-      type: 'open',
-    })
+    dispatch({ type: 'open' })
     if (onClick) {
       onClick(event)
     }
-  }, [
-    onClick,
-  ])
-  const textRef = useRef<HTMLInputElement>()
+  }, [onClick])
+  const textRef = useRef<TimeTextHandle>(null)
+  const handleSelect = useCallback((newValue: TimeValue, final: boolean) => {
+    if (onChange) {
+      onChange(newValue, false)
+    }
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+    if (closeOnSelect && final) {
+      dispatch({ type: 'close' })
+    }
+  }, [onChange, closeOnSelect])
   const handleClear = useCallback(() => {
+    if (disabled) {
+      return
+    }
     if (onChange) {
       onChange(null, false)
       if (textRef.current) {
@@ -421,26 +315,21 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       }
     }
   }, [
+    disabled,
     onChange,
   ])
-  const showClear = (
-    !disabled && isTimeValue(value) && clearable
+  const canClear = (
+    typeof value === 'number' &&
+    clearable &&
+    !disabled
   )
 
-  const handleSelect = useCallback((newValue: TimeValue, finalChoice: boolean) => {
-    if (onChange) {
-      onChange(newValue, false)
+  const formValue = useMemo<string>(() => {
+    if (typeof value === 'number') {
+      return `${value}`
     }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
-    if (closeOnSelect && finalChoice) {
-      dispatchState({
-        type: 'close',
-        formatted: formatTime(newValue, inputFormats, longFormat, displayFormat, simplify),
-      })
-    }
-  }, [onChange, inputFormats, longFormat, displayFormat, simplify, closeOnSelect])
+    return ''
+  }, [value])
 
   return (
     <BlockDiv
@@ -457,37 +346,31 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       block={block}
       style={style}
     >
-      <WidgetText
-        ref={(instance: HTMLInputElement) => {
-          textRef.current = instance
-          if (typeof forwardedRef === "function") {
-            forwardedRef(instance)
-          } else if (forwardedRef !== null) {
-            // eslint-disable-next-line no-param-reassign
-            forwardedRef.current = instance
-          }
-        }}
-        placeholder={placeholder}
-        onChange={handleTextChange}
-        value={state.text}
-        onFocus={handleFocus}
-        disabled={disabled}
-        onKeyDown={handleTextKeyDown}
+      <WidgetTimeText
         block={block}
-        style={{marginBottom: '0'}}
-        onClick={handleTextClick}
-        icon={<ClockVector />}
-        onClear={!showClear ? undefined : handleClear}
+        value={value}
+        onChange={handleTextChange}
+        onTextChange={handleTextTextChange}
+        displayFormat={displayFormat}
+        inputFormats={inputFormats}
+        autoErase={autoErase}
+        icon={icon}
+        onClear={canClear ? handleClear : undefined}
         everClearable={clearable}
-        className={textClassName}
         id={id}
-        autoFocus={autoFocus}
-        name={name}
-        tabIndex={tabIndex}
-        title={title}
+        ref={textRef}
+        placeholder={placeholder}
+        disabled={disabled}
+        style={{marginBottom: '0'}}
         required={required}
-        size={size}
         autoComplete={autoComplete}
+        className={textClassName}
+        title={title}
+        autoFocus={autoFocus}
+        tabIndex={tabIndex}
+        size={size}
+        onFocus={handleTextFocus}
+        onClick={handleTextClick}
         onDoubleClick={onDoubleClick}
         onMouseDown={onMouseDown}
         onMouseEnter={onMouseEnter}
@@ -496,13 +379,15 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         onMouseOut={onMouseOut}
         onMouseOver={onMouseOver}
         onMouseUp={onMouseUp}
+        onKeyDown={handleTextKeyDown}
         onKeyUp={onKeyUp}
       />
+      <input type="hidden" name={name} value={formValue} />
       {state.inFocus && state.dropdownOpen && !disabled && (
         <TimeSelector
           value={value}
           onChange={handleSelect}
-          minuteIncrements={step}
+          minuteIncrements={15}
         />
       )}
     </BlockDiv>

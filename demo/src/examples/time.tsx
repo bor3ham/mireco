@@ -17,6 +17,7 @@ export const TimeExample = () => {
       <Time
         value={value}
         onChange={handleChange}
+        placeholder="Enter time"
       />
     </>
   )

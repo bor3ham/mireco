@@ -1,38 +1,39 @@
-clear-width = 3rem
-desired-date-width = 8rem
-desired-time-width = 8rem
-
 .MIRECO-datetime
-  &.block
+  position: relative
+
+  > .MIRECO-datetime-controls
+    position: absolute
+    z-index: 100
+    left: 0
+    top: 100%
     display: flex
-    flex-wrap: wrap
-    margin-right: -1 * text-space-width
+    flex-direction: row
+  &.right-hang>.MIRECO-day-calendar
+    left: auto
+    right: 0
 
-    >:first-child
-      &.MIRECO-date
-        flex-basis: desired-date-width
-      &.MIRECO-time
-        flex-basis: desired-time-width
-      flex-grow: 1
-      margin-right: text-space-width
-    div.second
-      margin-right: text-space-width
-      white-space: pre
-      &.date
-        flex-basis: desired-date-width
-      &.time
-        flex-basis: desired-time-width
-      flex-grow: 1
-      align-items: flex-start
-      display: flex
-      .MIRECO-time, .MIRECO-date
-        flex: 1
+  .MIRECO-text
+    background: none
+    border: none
+    box-shadow: none
+    margin: 0
 
-    &.clearable div.second
-      &.date
-        flex-basis: (desired-date-width + clear-width)
-      &.time
-        flex-basis: (desired-time-width + clear-width)
+    &:focus
+      box-shadow: none
 
-  &:focus
-    outline: none
+  p
+    display: inline
+    margin-right: 0.8rem
+
+  position: relative
+  > .MIRECO-clear-button
+    position: absolute
+    right: 0
+    top: 50%
+    transform: translateY(-50%)
+  > svg
+    position: absolute
+    right: 0
+    top: 50%
+    margin-top: -12px
+    pointer-events: none

@@ -1,1 +1,1 @@
-export * from './sandbox-wrapper'
+export * from './lab'

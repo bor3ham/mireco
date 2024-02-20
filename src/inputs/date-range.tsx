@@ -305,7 +305,6 @@ export const DateRange: React.FC<DateRangeProps> = ({
     handleEndChange,
   ])
 
-
   const containerRef = useRef<HTMLDivElement>(null)
   const startRef = useRef<DateTextHandle>(null)
   const endRef = useRef<DateTextHandle>(null)

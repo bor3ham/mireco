@@ -1,10 +1,11 @@
 .MIRECO-time-selector
   height: 15rem
-  border-radius: edge-rounding
-  border: thin-line solid content-muted
   color: content-foreground
-  margin-top: -(thin-line)
-  popover-shadow()
+  &:not(.MIRECO-embedded)
+    border-radius: edge-rounding
+    border: thin-line solid content-muted
+    margin-top: -(thin-line)
+    popover-shadow()
 
   display: flex
   flex-direction: row

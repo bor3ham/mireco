@@ -1,10 +1,19 @@
-import React, { useMemo, useState, useRef, useCallback, useEffect, forwardRef } from 'react'
-import { startOfDay, format, parse } from 'date-fns'
+import React, { useReducer, useRef, useCallback, useEffect, forwardRef } from 'react'
+import { startOfDay, format, parse, addDays, subDays } from 'date-fns'
 import classNames from 'classnames'
 
-import { BlockDiv, ClearButton } from 'components'
+import {
+  BlockDiv,
+  DateText,
+  type DateTextHandle,
+  TimeText,
+  type TimeTextHandle,
+  ClearButton,
+  DayCalendar,
+  TimeSelector,
+} from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
-import { isDateValue, isDatetimeValue, isTimeValue } from 'types'
+import { formatDate, formatTime } from 'types'
 import type {
   DatetimeValue,
   DatetimeInputValue,
@@ -13,58 +22,9 @@ import type {
   TimeValue,
   TimeInputValue,
 } from 'types'
-import { Date as DateInput } from './date'
-import { Time } from './time'
+import { ClockVector } from 'vectors'
 
-// todo: combine state into reducer
-// todo: use name/required form with hidden input
-// todo: up/down rollover on time to next day
-
-function datetimesEqual(datetime1: DatetimeInputValue, datetime2: DatetimeInputValue): boolean {
-  return (datetime1 === datetime2)
-}
-
-function datetimeNull(datetime: DatetimeInputValue): boolean {
-  return (datetime === null)
-}
-
-function dateNull(date: DateInputValue): boolean {
-  return (date === null)
-}
-
-function dateAsMs(date: DateValue): number {
-  return +parse(date, ISO_8601_DATE_FORMAT, new Date())
-}
-
-function combineDateTime(date: DateValue, time: TimeValue): DatetimeValue {
-  return +startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) + time
-}
-
-interface SplitDatetime {
-  date: DateInputValue
-  time: TimeInputValue
-}
-
-function splitDatetime(value: DatetimeInputValue): SplitDatetime {
-  if (value === null) {
-    return {
-      date: null,
-      time: null,
-    }
-  }
-  if (isDatetimeValue(value)) {
-    const date = format(value!, ISO_8601_DATE_FORMAT)
-    const time = value! - dateAsMs(date)
-    return {
-      date,
-      time,
-    }
-  }
-  return {
-    date: undefined,
-    time: undefined,
-  }
-}
+const DAY_MS = 24 * 60 * 60 * 1000
 
 export interface DatetimeProps {
   // mireco
@@ -72,11 +32,19 @@ export interface DatetimeProps {
   // datetime
   value?: DatetimeInputValue
   onChange?(newValue: DatetimeInputValue, wasBlur: boolean): void
+  dateDisplayFormat?: string
   relativeTo?: DatetimeValue
   defaultDate?: DateValue
-  clearable?: boolean
-  timeFirst?: boolean
+  timeInputFormats?: string[]
+  timeLongFormat?: string
+  timeDisplayFormat?: string
   simplifyTime?: boolean
+  /** Starting point when using keyboard up/down with no value */
+  timeStartingPoint?: number
+  timeStep?: number
+  icon?: React.ReactNode
+  clearable?: boolean
+  timeFirst?: boolean // todo: remove
   autoComplete?: string
   // children specific
   dateTextClassName?: string
@@ -107,15 +75,171 @@ export interface DatetimeProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
+enum DatetimeInput {
+  Date = 'date',
+  Time = 'time',
+}
+
+type DatetimeState = {
+  date: DateInputValue
+  time: TimeInputValue
+  inFocus: boolean
+  focusInput: DatetimeInput
+  controlsOpen: boolean
+}
+
+type DatetimeAction =
+  | { type: 'updateDate', value: DateInputValue }
+  | { type: 'updateTime', value: TimeInputValue }
+  | { type: 'updateBoth', date: DateInputValue, time: TimeInputValue }
+  | { type: 'focus', focusInput: DatetimeInput }
+  | { type: 'blur' }
+  | { type: 'cleanedBlur', date: DateInputValue, time: TimeInputValue }
+  | { type: 'clear' }
+  | { type: 'closeControls' }
+  | { type: 'showControls' }
+
+function datetimeReducer(state: DatetimeState, action: DatetimeAction): DatetimeState {
+  switch (action.type) {
+    case 'updateDate': {
+      return {
+        ...state,
+        date: action.value,
+      }
+    }
+    case 'updateTime': {
+      return {
+        ...state,
+        time: action.value,
+      }
+    }
+    case 'updateBoth': {
+      return {
+        ...state,
+        date: action.date,
+        time: action.time,
+      }
+    }
+    case 'focus': {
+      return {
+        ...state,
+        inFocus: true,
+        focusInput: action.focusInput,
+        controlsOpen: true,
+      }
+    }
+    case 'blur': {
+      return {
+        ...state,
+        inFocus: false,
+        focusInput: DatetimeInput.Date,
+        controlsOpen: false,
+      }
+    }
+    case 'cleanedBlur': {
+      return {
+        ...state,
+        inFocus: false,
+        controlsOpen: false,
+        date: action.date,
+        time: action.time,
+      }
+    }
+    case 'clear': {
+      return {
+        ...state,
+        date: null,
+        time: null,
+      }
+    }
+    case 'closeControls': {
+      return {
+        ...state,
+        controlsOpen: false,
+      }
+    }
+    case 'showControls': {
+      return {
+        ...state,
+        controlsOpen: true,
+      }
+    }
+    default: {
+      return state
+    }
+  }
+}
+
+const splitValue = (value: DatetimeInputValue): {
+  date: DateInputValue
+  time: TimeInputValue
+} => {
+  if (typeof value === 'undefined') return {
+    date: undefined,
+    time: undefined,
+  }
+  if (value === null) return {
+    date: null,
+    time: null,
+  }
+  const asDate = new Date(value)
+  return {
+    date: format(asDate, ISO_8601_DATE_FORMAT),
+    time: value - +(startOfDay(asDate)),
+  }
+}
+
+const combineValues = (
+  date: DateInputValue,
+  time: TimeInputValue,
+  fallback: boolean,
+  timeStartingPoint?: number
+): DatetimeInputValue => {
+  if (date === null && time === null) return null
+  if (typeof date === 'undefined' && typeof time === 'undefined') return undefined
+
+  const dateValid = typeof date === 'string'
+  const timeValid = typeof time === 'number'
+  if (!timeValid && !dateValid) {
+    if (fallback) return null
+    return undefined
+  }
+  if (!(timeValid && dateValid) && !fallback) {
+    return undefined
+  }
+  const parsedDate = date ? startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) : startOfDay(new Date())
+  return +parsedDate + (time || (timeStartingPoint || 0))
+}
+
 export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   block,
   value,
   onChange,
+  dateDisplayFormat = 'do MMM yyyy',
   relativeTo,
   defaultDate,
-  clearable = true,
-  timeFirst,
+  timeInputFormats = [
+    'h:mm:ss a',
+    'h:mm:ssa',
+    'h:mm:ss',
+    'h:mm a',
+    'H:mm:ss',
+    'H:mm',
+    'h:mma',
+    'h:mm',
+    'h a',
+    'H:mm',
+    'H',
+    'ha',
+    'h',
+  ],
+  timeLongFormat = 'h:mm:ss a',
+  timeDisplayFormat = 'h:mm a',
   simplifyTime = false,
+  timeStep = 15 * 60 * 1000,
+  timeStartingPoint = 9 * 60 * 60 * 1000,
+  icon = <ClockVector />,
+  clearable = true,
   autoComplete,
   dateTextClassName,
   timeTextClassName,
@@ -141,243 +265,316 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   onKeyDown,
   onKeyUp,
 }, forwardedRef) => {
-  const splitValue = useMemo(() => (splitDatetime(value)), [value])
-  const [date, setDate] = useState(splitValue.date)
-  const [time, setTime] = useState(splitValue.time)
+  const [state, dispatch] = useReducer(datetimeReducer, {
+    ...splitValue(value),
+    inFocus: false,
+    focusInput: DatetimeInput.Date,
+    controlsOpen: false,
+  })
 
-  const fallbackDefault: DateValue = defaultDate || format(new Date(), ISO_8601_DATE_FORMAT)
-  const combinedState = useMemo(() => (combineDateTime(
-    date || fallbackDefault,
-    time || 0
-  )), [
-    fallbackDefault,
-    date,
-    time,
+  useEffect(() => {
+    if (value === null) {
+      dispatch({
+        type: 'clear',
+      })
+    } else if (typeof value === 'number') {
+      dispatch({
+        type: 'updateBoth',
+        ...splitValue(value),
+      })
+    }
+  }, [
+    value,
   ])
 
-  // respond to value change
+  const handleBlur = useCallback(() => {
+    const fallback = combineValues(state.date, state.time, true, timeStartingPoint)
+    dispatch({
+      type: 'blur',
+    })
+    if (onChange) {
+      onChange(fallback, true)
+    }
+  }, [state.date, state.time, timeStartingPoint, onChange])
+
+  // respond to disabled change
   useEffect(() => {
-    if (!datetimesEqual(value, combinedState)) {
-      if (datetimeNull(value)) {
-        setDate(null)
-        setTime(null)
-      } else if (isDatetimeValue(value)) {
-        const split = splitDatetime(value)
-        setDate(split.date)
-        setTime(split.time)
-      }
+    if (disabled) {
+      handleBlur()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+  }, [
+    disabled,
+  ])
 
-  const updateParentValue = useCallback((newDate: DateInputValue, newTime: TimeInputValue) => {
+  const handleDateChange = useCallback((newDate: DateInputValue) => {
+    dispatch({
+      type: 'updateDate',
+      value: newDate,
+    })
     if (onChange) {
-      if (dateNull(newDate) && datetimeNull(newTime)) {
-        onChange(null, false)
-      } else if (isDateValue(newDate) || isTimeValue(newTime)) {
-        onChange(combineDateTime(
-          newDate || fallbackDefault,
-          newTime || 0
-        ), false)
-      } else {
-        onChange(undefined, false)
-      }
+      const newValue = combineValues(newDate, state.time, false)
+      onChange(newValue, false)
     }
-  }, [
-    onChange,
-    fallbackDefault,
-  ])
-  const handleDateChange = useCallback((newValue: DateInputValue) => {
-    setDate(newValue)
-    updateParentValue(
-      newValue,
-      time
-    )
-  }, [
-    updateParentValue,
-    time,
-  ])
-  const handleTimeChange = useCallback((newValue: TimeInputValue) => {
-    setTime(newValue)
-    updateParentValue(
-      date,
-      newValue
-    )
-  }, [
-    updateParentValue,
-    date,
-  ])
-  
-  const handleBlur = useCallback(() => {
-    if (isDateValue(date) || isTimeValue(time)) {
-      setDate(date || fallbackDefault)
-      setTime(time || 0)
-      if (onChange) {
-        onChange(combinedState, true)
+  }, [onChange, state.time])
+  const handleTimeChange = useCallback((newTime: TimeInputValue) => {
+    dispatch({
+      type: 'updateTime',
+      value: newTime,
+    })
+    if (onChange) {
+      const newValue = combineValues(state.date, newTime, false)
+      onChange(newValue, false)
+    }
+  }, [onChange, state.date])
+  const handleBothChange = useCallback((newDate: DateInputValue, newTime: TimeInputValue) => {
+    dispatch({
+      type: 'updateBoth',
+      date: newDate,
+      time: newTime,
+    })
+    if (onChange) {
+      const newValue = combineValues(newDate, newTime, false)
+      onChange(newValue, false)
+    }
+  }, [onChange])
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const dateRef = useRef<DateTextHandle>(null)
+  const timeRef = useRef<TimeTextHandle>(null)
+  const handleContainerClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    const targetElement = event.target as HTMLElement
+    if (
+      targetElement && (
+        targetElement.closest('.MIRECO-text') ||
+        targetElement.closest('.MIRECO-datetime-controls') ||
+        targetElement.closest('button')
+      )
+    ) {
+      return
+    }
+    if (targetElement.closest('p')) {
+      if (dateRef.current) {
+        dateRef.current.focus()
       }
     } else {
-      setDate(null)
-      setTime(null)
-      if (onChange) {
-        onChange(null, true)
+      if (timeRef.current) {
+        timeRef.current.focus()
       }
     }
-    if (onBlur) {
-      onBlur()
-    }
-  }, [
-    combinedState,
-    date,
-    fallbackDefault,
-    time,
-    onChange,
-    onBlur,
-  ])
-  const containerRef = useRef<HTMLDivElement>()
-  const dateRef = useRef<HTMLInputElement>(null)
-  const timeRef = useRef<HTMLInputElement>(null)
+  }, [])
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
-    if (event.relatedTarget) {
-      const dateContainer = dateRef.current ? dateRef.current.closest('.MIRECO-date') : null
-      const containedInDate = (
-        dateContainer &&
-        (
-          dateContainer.contains(event.relatedTarget) ||
-          dateContainer === event.relatedTarget
-        )
+    if (
+      containerRef.current &&
+      (
+        containerRef.current.contains(event.relatedTarget) ||
+        containerRef.current === event.relatedTarget
       )
-      const timeContainer = timeRef.current ? timeRef.current.closest('.MIRECO-time') : null
-      const containedInTime = (
-        timeContainer &&
-        (
-          timeContainer.contains(event.relatedTarget) ||
-          timeContainer === event.relatedTarget
-        )
-      )
-      if (containedInDate || containedInTime) {
-        // ignore internal blur
-        return
-      }
+    ) {
+      // ignore internal blur
+      return
     }
     handleBlur()
-  }, [
-    handleBlur,
-  ])
+  }, [handleBlur])
+
+  const hasValue = typeof value === 'number'
+
   const handleClear = useCallback(() => {
+    dispatch({ type: 'clear' })
     if (onChange) {
       onChange(null, false)
     }
+    if (dateRef.current) {
+      dateRef.current.focus()
+    }
+  }, [onChange])
+
+  const handleDateFocus = useCallback(() => {
+    dispatch({ type: 'focus', focusInput: DatetimeInput.Date })
+  }, [])
+  const handleTimeFocus = useCallback(() => {
+    dispatch({ type: 'focus', focusInput: DatetimeInput.Time })
+  }, [])
+  const handleTextClick = useCallback(() => {
+    dispatch({ type: 'showControls' })
+  }, [])
+  
+  const handleDateKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' || event.key === 'Escape') {
+      if (state.controlsOpen) {
+        const formatted = formatDate(state.date ? state.date : null, dateDisplayFormat)
+        if (dateRef.current) {
+          dateRef.current.setText(formatted)
+        }
+        dispatch({ type: 'closeControls' })
+        event.preventDefault()
+      }
+      return
+    }
+    let wasEmpty = true
+    let current = new Date()
+    if (state.date) {
+      wasEmpty = false
+      current = parse(state.date, ISO_8601_DATE_FORMAT, new Date())
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      const next = addDays(current, wasEmpty ? 0 : 1)
+      handleDateChange(format(next, ISO_8601_DATE_FORMAT))
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      const prev = subDays(current, wasEmpty ? 0 : 1)
+      handleDateChange(format(prev, ISO_8601_DATE_FORMAT))
+    }
+    dispatch({ type: 'focus', focusInput: DatetimeInput.Date })
   }, [
-    onChange,
+    state.controlsOpen,
+    state.date,
+    dateDisplayFormat,
+    handleDateChange,
+  ])
+  const handleTimeKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' || event.key === 'Escape') {
+      if (state.controlsOpen) {
+        const formatted = formatTime(state.time, timeInputFormats, timeLongFormat, timeDisplayFormat, simplifyTime)
+        if (timeRef.current) {
+          timeRef.current.setText(formatted)
+        }
+        dispatch({ type: 'closeControls' })
+        event.preventDefault()
+      }
+      return
+    }
+    let wasEmpty = true
+    let current = timeStartingPoint
+    if (typeof state.time === 'number') {
+      wasEmpty = false
+      current = state.time
+    }
+    if (event.key === 'ArrowUp') {
+      let loweredCurrent = Math.floor(current / timeStep) * timeStep
+      if (loweredCurrent === current && !wasEmpty) {
+        loweredCurrent -= timeStep
+      }
+      let traversedDay = false
+      if (loweredCurrent < 0) {
+        traversedDay = true
+        loweredCurrent += DAY_MS
+      }
+      event.preventDefault()
+      if (traversedDay && state.date) {
+        const newDate = subDays(parse(state.date, ISO_8601_DATE_FORMAT, new Date()), 1)
+        handleBothChange(format(newDate, ISO_8601_DATE_FORMAT), loweredCurrent)
+      } else {
+        handleTimeChange(loweredCurrent)
+      }
+    } else if (event.key === 'ArrowDown') {
+      let raisedCurrent = Math.ceil(current / timeStep) * timeStep
+      if (raisedCurrent === current && !wasEmpty) {
+        raisedCurrent += timeStep
+      }
+      let traversedDay = false
+      if (raisedCurrent >= DAY_MS) {
+        traversedDay = true
+        raisedCurrent = raisedCurrent % DAY_MS
+      }
+      event.preventDefault()
+      if (traversedDay && state.date) {
+        const newDate = addDays(parse(state.date, ISO_8601_DATE_FORMAT, new Date()), 1)
+        handleBothChange(format(newDate, ISO_8601_DATE_FORMAT), raisedCurrent)
+      } else {
+        handleTimeChange(raisedCurrent)
+      }
+    }
+    dispatch({ type: 'focus', focusInput: DatetimeInput.Time })
+  }, [
+    state.controlsOpen,
+    state.time,
+    handleTimeChange,
+    state.date,
+    handleBothChange,
+    timeStartingPoint,
+    timeStep,
   ])
 
-  const dateProps: {
-    id?: string
-    autoFocus?: boolean
-  } = {}
-  if (!timeFirst) {
-    dateProps.id = id
-    dateProps.autoFocus = autoFocus
-  }
-  const dateInput = (
-    <DateInput
-      ref={dateRef}
-      value={date}
-      onChange={handleDateChange}
-      disabled={disabled}
-      block={block}
-      rightHang={timeFirst}
-      clearable={false}
-      textClassName={dateTextClassName}
-      autoComplete={autoComplete}
-      {...dateProps}
-    />
-  )
-  let relativeStart
-  if (relativeTo && !datetimeNull(combinedState)) {
-    relativeStart = +startOfDay(new Date(combinedState))
-  }
-  const timeProps: {
-    id?: string
-    autoFocus?: boolean
-  } = {}
-  if (timeFirst) {
-    timeProps.id = id
-    timeProps.autoFocus = autoFocus
-  }
-  const timeInput = (
-    <Time
-      ref={timeRef}
-      value={time}
-      onChange={handleTimeChange}
-      disabled={disabled}
-      relativeTo={relativeTo}
-      relativeStart={relativeStart}
-      block={block}
-      clearable={false}
-      textClassName={timeTextClassName}
-      simplify={simplifyTime}
-      autoComplete={autoComplete}
-      {...timeProps}
-    />
-  )
+  const handleSelectDay = useCallback((newValue: DateValue) => {
+    handleDateChange(newValue)
+    if (timeRef.current) {
+      timeRef.current.focus()
+    }
+  }, [handleDateChange])
+  const handleSelectTime = useCallback((newValue: TimeValue, final: boolean) => {
+    handleTimeChange(newValue)
+    if (final) {
+      const fallback = combineValues(state.date, newValue, true, timeStartingPoint)
+      dispatch({
+        type: 'blur',
+      })
+      if (onChange) {
+        onChange(fallback, true)
+      }
+    }
+  } , [handleTimeChange, state.date, timeStartingPoint])
 
-  let first = dateInput
-  let second = timeInput
-  if (timeFirst) {
-    first = timeInput
-    second = dateInput
-  }
 
   return (
     <BlockDiv
-      ref={(instance: HTMLDivElement) => {
-        containerRef.current = instance
-        if (typeof forwardedRef === "function") {
-          forwardedRef(instance)
-        } else if (forwardedRef !== null) {
-          // eslint-disable-next-line no-param-reassign
-          forwardedRef.current = instance
-        }
-      }}
-      block={block}
+      ref={containerRef}
       className={classNames('MIRECO-datetime', className, {
         clearable,
+        'has-icon': !!icon,
+        'in-focus': state.inFocus,
+        disabled,
       })}
-      tabIndex={-1}
-      style={style}
-      onFocus={onFocus}
+      onClick={handleContainerClick}
       onBlur={handleContainerBlur}
-      onClick={onClick}
-      onDoubleClick={onDoubleClick}
-      onMouseDown={onMouseDown}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onMouseMove={onMouseMove}
-      onMouseOut={onMouseOut}
-      onMouseOver={onMouseOver}
-      onMouseUp={onMouseUp}
-      onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
+      tabIndex={-1}
+      block={block}
     >
-      {first}
-      {!block && <span>{' '}</span>}
-      <BlockDiv block={block} className={classNames('second', {
-        time: !timeFirst,
-        date: timeFirst,
-      })}>
-        {second}
-        {clearable && (
-          <span>{' '}</span>
-        )}
-        {clearable && (
-          <ClearButton
-            onClick={handleClear}
-            disabled={disabled}
-            className={clearButtonClassName}
+      <DateText
+        ref={dateRef}
+        value={state.date}
+        onChange={handleDateChange}
+        size={11}
+        onFocus={handleDateFocus}
+        onKeyDown={handleDateKeyDown}
+        onClick={handleTextClick}
+        displayFormat={dateDisplayFormat}
+        disabled={disabled}
+      />
+      <p>,</p>
+      <TimeText
+        ref={timeRef}
+        value={state.time}
+        onChange={handleTimeChange}
+        size={9}
+        onFocus={handleTimeFocus}
+        onKeyDown={handleTimeKeyDown}
+        onClick={handleTextClick}
+        disabled={disabled}
+      />
+      {clearable && hasValue && (
+        <ClearButton
+          onClick={handleClear}
+        />
+      )}
+      {icon}
+      {state.inFocus && state.controlsOpen && !disabled && (
+        <div className="MIRECO-datetime-controls">
+          <DayCalendar
+            className="MIRECO-embedded"
+            current={state.date}
+            selectDay={handleSelectDay}
+            // invalid={dayInvalid}
+            // highlight={dayHighlight}
           />
-        )}
-      </BlockDiv>
+          <TimeSelector
+            className="MIRECO-embedded"
+            value={state.time}
+            onChange={handleSelectTime}
+          />
+        </div>
+      )}
     </BlockDiv>
   )
 })

@@ -23,7 +23,7 @@ const ValueOption: React.FC<ValueOptionProps> = ({
 }) => {
   const handleClick = useCallback(() => {
     onClick(value)
-  }, [value])
+  }, [value, onClick])
   return (
     <li
       className={classNames({
@@ -31,7 +31,7 @@ const ValueOption: React.FC<ValueOptionProps> = ({
       })}
       data-value={value}
     >
-      <button tabIndex={-1} onClick={handleClick}>{children}</button>
+      <button tabIndex={-1} onClick={handleClick} type="button">{children}</button>
     </li>
   )
 }
@@ -110,10 +110,11 @@ const ValueList: React.FC<ValueListProps> = ({
 
 interface TimeSelectorProps {
   value?: TimeInputValue
-  onChange?(newValue: TimeValue, finalChoice: boolean): void
+  onChange?(value: TimeValue, final: boolean): void
   showSeconds?: boolean
   minuteIncrements?: number
   secondIncrements?: number
+  className?: string
 }
 
 export const TimeSelector: React.FC<TimeSelectorProps> = ({
@@ -122,6 +123,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
   showSeconds = false,
   minuteIncrements = 15,
   secondIncrements = 15,
+  className,
 }) => {
   const hourValues = useMemo(() => {
     const hours = Array.from(Array.from(Array(24)).keys())
@@ -220,7 +222,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
   }, [onChange])
 
   return (
-    <div className="MIRECO-time-selector">
+    <div className={classNames('MIRECO-time-selector', className)}>
       <ValueList
         values={hourValues}
         value={value}

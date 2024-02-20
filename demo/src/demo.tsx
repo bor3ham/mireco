@@ -23,8 +23,10 @@ import {
 } from './examples'
 import { ButtonStyleShowcase } from './showcases'
 import {
-  TextSandbox,
-} from './sandboxes'
+  DatetimeLab,
+  TextLab,
+  TimeLab,
+} from './labs'
 
 const MOUNTS: Record<string, ReactElement> = {
   'div.date-example': <DateExample />,
@@ -45,7 +47,9 @@ const MOUNTS: Record<string, ReactElement> = {
   'div.select-example': <SelectExample />,
   'div.multi-select-example': <MultiSelectExample />,
   'div.async-select-example': <AsyncSelectExample />,
-  'div.text-sandbox': <TextSandbox />,
+  'div.datetime-lab': <DatetimeLab />,
+  'div.text-lab': <TextLab />,
+  'div.time-lab': <TimeLab />,
 }
 
 Object.keys(MOUNTS).forEach((mount) => {

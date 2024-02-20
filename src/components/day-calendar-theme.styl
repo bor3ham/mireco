@@ -1,11 +1,12 @@
 .MIRECO-day-calendar
   width: 15rem
   height: 15rem
-  border-radius: edge-rounding
-  border: thin-line solid content-muted
   color: content-foreground
-  margin-top: -(thin-line)
-  popover-shadow()
+  &:not(.MIRECO-embedded)
+    border-radius: edge-rounding
+    border: thin-line solid content-muted
+    margin-top: -(thin-line)
+    popover-shadow()
 
   >.calendar-header
     margin-bottom: (standard-padding / 2)

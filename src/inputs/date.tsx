@@ -6,10 +6,6 @@ import { DayCalendar, BlockDiv, WidgetDateText, DateTextHandle } from 'component
 import { CalendarVector } from 'vectors'
 import {
   ISO_8601_DATE_FORMAT,
-  KEYBOARD_ARROW_DOWN,
-  KEYBOARD_ARROW_UP,
-  KEYBOARD_ENTER,
-  KEYBOARD_ESCAPE,
 } from 'constants'
 import { formatDate } from 'types'
 import type { DateInputValue, DateValue } from 'types'
@@ -181,7 +177,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   }, [handleBlur])
   
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event && (event.which === KEYBOARD_ENTER || event.which === KEYBOARD_ESCAPE)) {
+    if (event.key === 'Enter' || event.key === 'Escape') {
       if (calendarOpen) {
         const formatted = formatDate(value, displayFormat)
         if (textRef.current) {
@@ -194,26 +190,26 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     }
     setInFocus(true)
     setCalendarOpen(true)
-    if (event) {
-      let current = new Date()
-      if (typeof value === 'string') {
-        current = parse(value, ISO_8601_DATE_FORMAT, new Date())
+    let wasEmpty = true
+    let current = new Date()
+    if (typeof value === 'string') {
+      wasEmpty = false
+      current = parse(value, ISO_8601_DATE_FORMAT, new Date())
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      if (onChange) {
+        onChange(format(addDays(current, wasEmpty ? 0 : 1), ISO_8601_DATE_FORMAT), false)
       }
-      if (event.which === KEYBOARD_ARROW_DOWN) {
-        event.preventDefault()
-        if (onChange) {
-          onChange(format(addDays(current, 1), ISO_8601_DATE_FORMAT), false)
-        }
+    }
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (onChange) {
+        onChange(format(subDays(current, wasEmpty ? 0 : 1), ISO_8601_DATE_FORMAT), false)
       }
-      if (event.which === KEYBOARD_ARROW_UP) {
-        event.preventDefault()
-        if (onChange) {
-          onChange(format(subDays(current, 1), ISO_8601_DATE_FORMAT), false)
-        }
-      }
-      if (onKeyDown) {
-        onKeyDown(event)
-      }
+    }
+    if (onKeyDown) {
+      onKeyDown(event)
     }
   }, [calendarOpen, value, displayFormat, onChange, onKeyDown])
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
