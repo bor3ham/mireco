@@ -92,7 +92,7 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
       tabIndex={tabIndex}
       style={style}
       className={classNames(
-        'MIRECO-range',
+        'MIRECO-range MIRECO-blockable',
         {
           block,
         },

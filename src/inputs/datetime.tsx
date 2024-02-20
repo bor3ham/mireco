@@ -3,12 +3,11 @@ import { startOfDay, format, parse, addDays, subDays } from 'date-fns'
 import classNames from 'classnames'
 
 import {
-  BlockDiv,
+  WidgetBlock,
   DateText,
   type DateTextHandle,
   TimeText,
   type TimeTextHandle,
-  ClearButton,
   DayCalendar,
   TimeSelector,
 } from 'components'
@@ -377,7 +376,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     handleBlur()
   }, [handleBlur])
 
-  const hasValue = typeof value === 'number'
+  const hasValue = typeof state.date === 'string' || typeof state.time === 'number'
 
   const handleClear = useCallback(() => {
     dispatch({ type: 'clear' })
@@ -518,29 +517,32 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
 
 
   return (
-    <BlockDiv
+    <WidgetBlock
       ref={containerRef}
-      className={classNames('MIRECO-datetime', className, {
-        clearable,
-        'has-icon': !!icon,
-        'in-focus': state.inFocus,
-        disabled,
-      })}
+      className={classNames('MIRECO-datetime', className)}
+      style={style}
+      clearable={clearable && hasValue}
+      everClearable={clearable}
+      onClear={handleClear}
+      icon={icon}
+      inFocus={state.inFocus}
+      disabled={disabled}
+      block={block}
+      id={id}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
-      tabIndex={-1}
-      block={block}
     >
       <DateText
         ref={dateRef}
         value={state.date}
         onChange={handleDateChange}
-        size={11}
+        size={12}
         onFocus={handleDateFocus}
         onKeyDown={handleDateKeyDown}
         onClick={handleTextClick}
         displayFormat={dateDisplayFormat}
         disabled={disabled}
+        className="MIRECO-embedded"
       />
       <p>,</p>
       <TimeText
@@ -552,13 +554,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         onKeyDown={handleTimeKeyDown}
         onClick={handleTextClick}
         disabled={disabled}
+        className="MIRECO-embedded"
       />
-      {clearable && hasValue && (
-        <ClearButton
-          onClick={handleClear}
-        />
-      )}
-      {icon}
       {state.inFocus && state.controlsOpen && !disabled && (
         <div className="MIRECO-datetime-controls">
           <DayCalendar
@@ -575,6 +572,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
           />
         </div>
       )}
-    </BlockDiv>
+    </WidgetBlock>
   )
 })
+

@@ -20,7 +20,6 @@ export interface DateTextProps {
   inputFormats?: string[]
   autoErase?: boolean
   placeholder?: string
-  textClassName?: string
   size?: number
   initialText?: string
   // html
@@ -77,7 +76,6 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
   ],
   autoErase = true,
   placeholder = 'dd / mm / yyyy',
-  textClassName,
   size,
   initialText,
   id,
@@ -191,7 +189,7 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
       style={{marginBottom: '0'}}
       required={required}
       autoComplete={autoComplete}
-      className={textClassName}
+      className={className}
       title={title}
       autoFocus={autoFocus}
       tabIndex={tabIndex}

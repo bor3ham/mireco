@@ -124,7 +124,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       autoComplete={autoComplete}
       id={id}
       className={classNames(
-        'MIRECO-textarea',
+        'MIRECO-textarea MIRECO-blockable',
         {
           block,
         },

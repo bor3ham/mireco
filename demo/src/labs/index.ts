@@ -1,3 +1,5 @@
+export * from './date'
 export * from './datetime'
+export * from './duration'
 export * from './text'
 export * from './time'

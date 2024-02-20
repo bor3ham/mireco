@@ -65,7 +65,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     ref={ref}
     id={id}
     className={classNames(
-      'MIRECO-button',
+      'MIRECO-button MIRECO-blockable',
       {
         block,
       },

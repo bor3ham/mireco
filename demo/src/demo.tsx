@@ -4,6 +4,7 @@ import { init } from 'uptick-demo-site'
 
 import {
   DateExample,
+  FullFormExample,
   ButtonExample,
   TextExample,
   TextareaExample,
@@ -23,12 +24,15 @@ import {
 } from './examples'
 import { ButtonStyleShowcase } from './showcases'
 import {
+  DateLab,
   DatetimeLab,
+  DurationLab,
   TextLab,
   TimeLab,
 } from './labs'
 
 const MOUNTS: Record<string, ReactElement> = {
+  'div.full-form': <FullFormExample />,
   'div.date-example': <DateExample />,
   'div.button-example': <ButtonExample />,
   'div.button-style-showcase': <ButtonStyleShowcase />,
@@ -47,7 +51,9 @@ const MOUNTS: Record<string, ReactElement> = {
   'div.select-example': <SelectExample />,
   'div.multi-select-example': <MultiSelectExample />,
   'div.async-select-example': <AsyncSelectExample />,
+  'div.date-lab': <DateLab />,
   'div.datetime-lab': <DatetimeLab />,
+  'div.duration-lab': <DurationLab />,
   'div.text-lab': <TextLab />,
   'div.time-lab': <TimeLab />,
 }

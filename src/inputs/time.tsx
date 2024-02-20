@@ -2,7 +2,7 @@ import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef 
 import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 
-import { WidgetTimeText, type TimeTextHandle, BlockDiv, TimeSelector } from 'components'
+import { WidgetBlock, type TimeTextHandle, TimeText, TimeSelector } from 'components'
 import { ClockVector } from 'vectors'
 import type { TimeInputValue, TimeValue } from 'types'
 import { formatTime } from 'types'
@@ -332,39 +332,44 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   }, [value])
 
   return (
-    <BlockDiv
+    <WidgetBlock
       ref={containerRef}
-      className={classNames(
-        'MIRECO-time',
-        {
-          'right-hang': rightHang,
-        },
-        className,
-      )}
-      tabIndex={-1}
-      onBlur={handleContainerBlur}
       block={block}
       style={style}
+      className={classNames(className, 'MIRECO-time', {
+        'right-hang': rightHang,
+      })}
+      icon={icon}
+      clearable={canClear}
+      everClearable={clearable}
+      disabled={disabled}
+      id={id}
+      onClear={handleClear}
+      onBlur={handleContainerBlur}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={handleTextKeyDown}
+      onKeyUp={onKeyUp}
     >
-      <WidgetTimeText
-        block={block}
+      <TimeText
+        ref={textRef}
         value={value}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}
         displayFormat={displayFormat}
         inputFormats={inputFormats}
         autoErase={autoErase}
-        icon={icon}
-        onClear={canClear ? handleClear : undefined}
-        everClearable={clearable}
-        id={id}
-        ref={textRef}
         placeholder={placeholder}
         disabled={disabled}
-        style={{marginBottom: '0'}}
         required={required}
         autoComplete={autoComplete}
-        className={textClassName}
+        className={classNames('MIRECO-embedded', textClassName)}
         title={title}
         autoFocus={autoFocus}
         tabIndex={tabIndex}
@@ -390,6 +395,6 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
           minuteIncrements={15}
         />
       )}
-    </BlockDiv>
+    </WidgetBlock>
   )
 })

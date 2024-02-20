@@ -4,14 +4,14 @@ import classNames from 'classnames'
 import { Text } from 'inputs'
 import type { TextProps } from 'inputs'
 import { ChevronDownVector } from 'vectors'
-import { BlockDiv } from './block-div'
-import { ClearButton } from './clear-button'
+import { WidgetBlock } from './widget-block'
 
 export interface WidgetTextProps extends TextProps {
   // widget text
   onClear?(): void
   icon?: React.ReactNode
   everClearable?: boolean
+  children?: React.ReactNode
 }
 
 export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, ref) => {
@@ -22,6 +22,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     everClearable = true,
     onFocus,
     onBlur,
+    children,
     ...inputProps
   } = props
   const [inFocus, setInFocus] = useState(false)
@@ -43,27 +44,24 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
   ])
   const clearable = !!onClear
   return (
-    <BlockDiv
+    <WidgetBlock
       block={block}
-      className={classNames('MIRECO-widget-text', {
-        'has-icon': !!icon,
-        'ever-clearable': everClearable,
-        'in-focus': inFocus,
-      })}
+      className={classNames('MIRECO-widget-text')}
+      clearable={clearable}
+      everClearable={everClearable}
+      onClear={onClear}
+      icon={icon}
+      inFocus={inFocus}
+      disabled={inputProps.disabled}
     >
       <Text
         ref={ref}
         {...inputProps}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        block={block}
+        className="MIRECO-embedded"
       />
-      {clearable && (
-        <ClearButton
-          onClick={onClear}
-        />
-      )}
-      {icon}
-    </BlockDiv>
+      {children}
+    </WidgetBlock>
   )
 })

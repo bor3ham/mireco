@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { parse, format, addDays, subDays, max } from 'date-fns'
 
 import { type DateRangeInputValue, type DateInputValue, type DateValue, formatDate } from 'types'
-import { BlockDiv, ClearButton, DateText, type DateTextHandle, DayCalendar } from 'components'
+import { WidgetBlock, ClearButton, DateText, type DateTextHandle, DayCalendar } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
 import { CalendarVector } from 'vectors'
 
@@ -161,7 +161,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
   ],
   icon = <CalendarVector />,
   clearable = true,
-  size = 11,
+  size = 12,
   id,
   autoFocus,
   style,
@@ -394,7 +394,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
     handleEndChange,
   ])
 
-  const hasValue = value && (value.start || value.end)
+  const hasValue = !!(value && (value.start || value.end))
 
   const dayInvalid = useCallback((day: DateValue) => {
     if (state.focusInput === DateRangeInput.Start) return undefined
@@ -433,19 +433,20 @@ export const DateRange: React.FC<DateRangeProps> = ({
   ])
 
   return (
-    <BlockDiv
+    <WidgetBlock
       ref={containerRef}
-      className={classNames('MIRECO-date-range', className, {
-        clearable,
-        'has-icon': !!icon,
-        'in-focus': state.inFocus,
-      })}
-      tabIndex={-1}
+      block={block}
+      clearable={clearable && hasValue}
+      everClearable={clearable}
+      onClear={handleClear}
+      icon={icon}
+      inFocus={state.inFocus}
+      disabled={disabled}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
-      block={block}
       id={id}
       style={style}
+      className={classNames('MIRECO-date-range', className)}
     >
       <DateText
         ref={startRef}
@@ -458,6 +459,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         inputFormats={inputFormats}
         displayFormat={displayFormat}
         autoFocus={autoFocus}
+        className="MIRECO-embedded"
       />
       <p>to</p>
       <DateText
@@ -470,13 +472,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
         onClick={handleDateClick}
         inputFormats={inputFormats}
         displayFormat={displayFormat}
+        className="MIRECO-embedded"
       />
-      {clearable && hasValue && (
-        <ClearButton
-          onClick={handleClear}
-        />
-      )}
-      {icon}
       {state.inFocus && state.calendarOpen && !disabled && (
         <DayCalendar
           selectDay={handleSelectDay}
@@ -485,6 +482,6 @@ export const DateRange: React.FC<DateRangeProps> = ({
           highlight={dayHighlight}
         />
       )}
-    </BlockDiv>
+    </WidgetBlock>
   )
 }

@@ -76,7 +76,6 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
   displayFormat = 'h:mm a',
   simplify = false,
   placeholder = 'hh : mm',
-  textClassName,
   autoErase = true,
   size,
   initialText,
@@ -191,7 +190,7 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
       style={{marginBottom: '0'}}
       required={required}
       autoComplete={autoComplete}
-      className={textClassName}
+      className={className}
       title={title}
       autoFocus={autoFocus}
       tabIndex={tabIndex}

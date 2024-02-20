@@ -32,7 +32,7 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(({
     htmlFor={htmlFor}
     id={id}
     className={classNames(
-      'MIRECO-label',
+      'MIRECO-label MIRECO-blockable',
       {
         block,
       },

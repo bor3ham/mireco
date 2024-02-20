@@ -41,7 +41,7 @@ outline-colourise-button(colour, interact-colour)
   &:focus
     input-focus()
 
-  &:not(:disabled):not(.disabled)
+  &:not(:disabled):not(.disabled):not(.MIRECO-embedded)
     &:not(.outline)
       solid-colourise-button(primary-button-colour, primary-button-content-colour)
       &.secondary
@@ -57,4 +57,5 @@ outline-colourise-button(colour, interact-colour)
   &:disabled, &.disabled
     background: content-faint
     color: content-muted
-    border: thin-line solid content-foreground
+    &:not(.MIRECO-embedded)
+      border: thin-line solid content-foreground

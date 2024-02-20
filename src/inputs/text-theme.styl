@@ -1,24 +1,29 @@
-.MIRECO-text, .MIRECO-number, .MIRECO-multi-select, .MIRECO-date-range, .MIRECO-datetime
-  -webkit-appearance: none
+.MIRECO-text, .MIRECO-widget-block
   font-family: standard-font-families
   font-weight: standard-font-weight
   font-size: standard-font-size
   line-height: standard-line-height
-  border: thin-line solid content-muted
-  border-radius: edge-rounding
+  -webkit-appearance: none
+  color: content-foreground
   outline: none
-  background: content-background
 
-  &:disabled
-    background: content-faint
-    color: content-muted
+  &.MIRECO-embedded
+    border: none
+    background: none
+  &:not(.MIRECO-embedded)
+    border: thin-line solid content-muted
+    border-radius: edge-rounding
+    background: content-background
 
-  &:not(:disabled)
-    &:hover
-      border-color: primary-colour
+    &:disabled, &.disabled
+      background: content-faint
 
-  &:focus
-    input-focus()
+    &:not(:disabled):not(.disabled)
+      &:hover
+        border-color: primary-colour
 
-.MIRECO-text, .MIRECO-number, .MIRECO-multi-select
+    &:focus
+      input-focus()
+
+.MIRECO-text
   input-textaligned-padding(standard-padding)

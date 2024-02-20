@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'rea
 import classNames from 'classnames'
 import { parse, format, addDays, subDays } from 'date-fns'
 
-import { DayCalendar, BlockDiv, WidgetDateText, DateTextHandle } from 'components'
+import { DayCalendar, WidgetBlock, DateTextHandle, DateText } from 'components'
 import { CalendarVector } from 'vectors'
 import {
   ISO_8601_DATE_FORMAT,
@@ -34,7 +34,6 @@ export interface DateProps {
   icon?: React.ReactNode
   textClassName?: string
   size?: number
-  initialText?: string
   // html
   id?: string
   className?: string
@@ -88,7 +87,6 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   icon = <CalendarVector />,
   textClassName,
   size,
-  initialText,
   id,
   className,
   tabIndex,
@@ -175,6 +173,11 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     }
     handleBlur()
   }, [handleBlur])
+  const handleContainerClick = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
   
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Escape') {
@@ -248,57 +251,52 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     !disabled
   )
   return (
-    <BlockDiv
+    <WidgetBlock
       ref={containerRef}
       block={block}
-      className={classNames(
-        'MIRECO-date',
-        {
-          'right-hang': rightHang,
-          clearable,
-        },
-        className,
-      )}
-      tabIndex={-1}
-      onBlur={handleContainerBlur}
+      icon={icon}
+      inFocus={inFocus}
+      clearable={canClear}
+      everClearable={clearable}
+      onClear={handleClear}
+      id={id}
+      disabled={disabled}
       style={style}
+      className={classNames(className, 'MIRECO-date', {
+        'right-hang': rightHang,
+      })}
+      onBlur={handleContainerBlur}
+      onClick={handleContainerClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={handleTextKeyDown}
+      onKeyUp={onKeyUp}
     >
-      <WidgetDateText
-        block={block}
+      <DateText
+        ref={textRef}
         value={value}
+        onFocus={handleTextFocus}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}
         displayFormat={displayFormat}
         inputFormats={inputFormats}
         autoErase={autoErase}
-        icon={icon}
-        onClear={canClear ? handleClear : undefined}
-        everClearable={clearable}
-        id={id}
-        ref={textRef}
+        tabIndex={tabIndex}
         placeholder={placeholder}
         disabled={disabled}
-        style={{marginBottom: '0'}}
         required={required}
         autoComplete={autoComplete}
-        className={textClassName}
         title={title}
         autoFocus={autoFocus}
-        tabIndex={tabIndex}
         name={name}
         size={size}
-        onFocus={handleTextFocus}
-        onClick={handleTextClick}
-        onDoubleClick={onDoubleClick}
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
-        onMouseOut={onMouseOut}
-        onMouseOver={onMouseOver}
-        onMouseUp={onMouseUp}
-        onKeyDown={handleTextKeyDown}
-        onKeyUp={onKeyUp}
+        className={classNames('MIRECO-embedded', textClassName)}
       />
       {inFocus && calendarOpen && !disabled && (
         <DayCalendar
@@ -306,7 +304,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
           current={value}
         />
       )}
-    </BlockDiv>
+    </WidgetBlock>
   )
 })
 

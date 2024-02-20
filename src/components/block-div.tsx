@@ -62,7 +62,7 @@ export const BlockDiv = forwardRef<HTMLDivElement, BlockDivProps>(({
     <div
       ref={ref}
       style={combinedStyle}
-      className={classNames(className, {
+      className={classNames('MIRECO-blockable', className, {
         block,
       })}
       id={id}
