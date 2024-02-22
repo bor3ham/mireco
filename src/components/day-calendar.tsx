@@ -11,7 +11,7 @@ import {
 } from 'date-fns'
 
 import { ISO_8601_DATE_FORMAT } from 'constants'
-import { ChevronRightVector, ChevronLeftVector } from 'vectors'
+import { ChevronRightVector, ChevronLeftVector, DoubleChevronRightVector, DoubleChevronLeftVector } from 'vectors'
 import type { DateValue, DateInputValue } from 'types'
 
 interface DayProps {
@@ -120,6 +120,18 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
       }
     })
   }, [])
+  const prevYear = useCallback(() => {
+    setMonth((prev) => ({
+      month: prev.month,
+      year: prev.year - 1,
+    }))
+  }, [])
+  const nextYear = useCallback(() => {
+    setMonth((prev) => ({
+      month: prev.month,
+      year: prev.year + 1,
+    }))
+  }, [])
 
   useEffect(() => {
     if (typeof current === 'string') {
@@ -202,12 +214,18 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   return (
     <div className={classNames('MIRECO-day-calendar', className)} ref={ref}>
       <div className="calendar-header">
-        <h5>{format(new Date(month.year, month.month), 'MMMM yyyy')}</h5>
-        <button type="button" tabIndex={-1} onClick={prevMonth}>
+        <button type="button" tabIndex={-1} onClick={prevYear} title="Previous Year">
+          <DoubleChevronLeftVector />
+        </button>
+        <button type="button" tabIndex={-1} onClick={prevMonth} title="Previous Month">
           <ChevronLeftVector />
         </button>
-        <button type="button" tabIndex={-1} onClick={nextMonth}>
+        <h5>{format(new Date(month.year, month.month), 'MMMM yyyy')}</h5>
+        <button type="button" tabIndex={-1} onClick={nextMonth} title="Next Month">
           <ChevronRightVector />
+        </button>
+        <button type="button" tabIndex={-1} onClick={nextYear} title="Next Year">
+          <DoubleChevronRightVector />
         </button>
       </div>
       {table}

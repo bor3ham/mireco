@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { Datetime } from 'mireco'
+import { CalendarMonth } from 'mireco'
 
 import { LabWrapper, LabContext } from '../components'
-import { getRandomDatetime } from '../random'
+import { getRandomCalendarMonth } from '../random'
 
 const stringify = (value: any) => {
   if (typeof value === 'undefined') return 'undefined'
@@ -12,20 +12,21 @@ const stringify = (value: any) => {
 const Contents = () => {
   const { block, value, onChange, disabled } = useContext(LabContext)
   return (
-    <Datetime
+    <CalendarMonth
       block={block}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      // name="datetime"
+      name="calendar_month"
+      placeholder="Select month"
     />
   )
 }
 
-export const DatetimeLab = () => (
+export const CalendarMonthLab = () => (
   <LabWrapper
     initialValue={null}
-    getRandomValue={getRandomDatetime}
+    getRandomValue={getRandomCalendarMonth}
     stringify={stringify}
   >
     <Contents />

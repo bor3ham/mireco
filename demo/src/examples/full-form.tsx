@@ -24,29 +24,95 @@ import {
   DatetimeRange,
   type DatetimeRangeInputValue,
 } from 'mireco'
+import casual from 'casual-browserify'
+
+import {
+  getRandomCalendarMonth,
+  getRandomText,
+  getRandomTextarea,
+  getRandomCheckbox,
+  getRandomDate,
+  getRandomDateRange,
+  getRandomDatetime,
+  getRandomDuration,
+  getRandomNumber,
+  getRandomTime,
+} from '../random'
+
+const INITIAL_VALUE: {
+  text: string
+  textarea: string
+  checkbox: boolean
+  number: NumberInputValue
+  range: number
+  time: TimeInputValue
+  duration: DurationInputValue
+  date: DateInputValue
+  month: MonthInputValue
+  calendarMonth: CalendarMonthInputValue
+  datetime: DatetimeInputValue
+  dateRange: DateRangeInputValue
+  datetimeRange: DatetimeRangeInputValue
+} = {
+  text: '',
+  textarea: '',
+  checkbox: false,
+  number: null,
+  range: 1,
+  time: null,
+  duration: null,
+  date: null,
+  month: null,
+  calendarMonth: null,
+  datetime: null,
+  dateRange: {
+    start: null,
+    end: null,
+  },
+  datetimeRange: null,
+}
+
+const randomValue = () => ({
+  ...INITIAL_VALUE,
+  text: casual.coin_flip ? getRandomText() : '',
+  textarea: casual.coin_flip ? getRandomTextarea() : '',
+  checkbox: getRandomCheckbox(),
+  number: casual.coin_flip ? getRandomNumber() : null,
+  time: casual.coin_flip ? getRandomTime() : null,
+  duration: casual.coin_flip ? getRandomDuration() : null,
+  date: casual.coin_flip ? getRandomDate() : null,
+  calendarMonth: casual.coin_flip ? getRandomCalendarMonth() : null,
+  datetime: casual.coin_flip ? getRandomDatetime() : null,
+  dateRange: casual.random_element([
+    null,
+    {
+      start: getRandomDate(),
+      end: null,
+    },
+    {
+      start: null,
+      end: getRandomDate(),
+    },
+    getRandomDateRange(),
+  ]),
+})
+
+const randomFill = () => ({
+  ...INITIAL_VALUE,
+  text: getRandomText(),
+  textarea: getRandomTextarea(),
+  checkbox: true,
+  number: getRandomNumber(),
+  time: getRandomTime(),
+  duration: getRandomDuration(),
+  date: getRandomDate(),
+  calendarMonth: getRandomCalendarMonth(),
+  datetime: getRandomDatetime(),
+  dateRange: getRandomDateRange(),
+})
 
 export const FullFormExample = () => {
-  const [value, setValue] = useState({
-    text: '',
-    textarea: '',
-    checkbox: false,
-    number: null,
-    range: 1,
-    time: null,
-    duration: null,
-    date: null,
-    month: null,
-    calendarMonth: null,
-    datetime: null,
-    dateRange: {
-      start: null,
-      end: null,
-    },
-    datetimeRange: {
-      start: null,
-      end: null,
-    },
-  })
+  const [value, setValue] = useState(INITIAL_VALUE)
   const setValueField = useCallback((field: string, newValue: any) => {
     setValue(prev => ({
       ...prev,
@@ -92,6 +158,16 @@ export const FullFormExample = () => {
   const handleDatetimeRangeChange = useCallback((newValue: DatetimeRangeInputValue) => {
     setValueField('datetimeRange', newValue)
   }, [setValueField])
+
+  const reset = useCallback(() => {
+    setValue(INITIAL_VALUE)
+  }, [])
+  const randomise = useCallback(() => {
+    setValue(randomValue())
+  }, [])
+  const fill = useCallback(() => {
+    setValue(randomFill())
+  }, [])
 
   const handleFormSubmit = useCallback((event: React.FormEvent) => {
     event.preventDefault()
@@ -180,9 +256,11 @@ export const FullFormExample = () => {
         justifyContent: 'space-between',
       }}>
         <div>
-          <Button type="button" className="secondary">Reset</Button>
+          <Button type="button" className="secondary" onClick={reset}>Reset</Button>
           {' '}
-          <Button type="button" className="secondary">Randomise</Button>
+          <Button type="button" className="secondary" onClick={randomise}>Randomise</Button>
+          {' '}
+          <Button type="button" className="secondary" onClick={fill}>Fill</Button>
         </div>
         <Button type="submit">Submit</Button>
       </div>

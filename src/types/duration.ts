@@ -32,7 +32,7 @@ export function parseDuration(value: string, defaultTimeUnit: string): DurationI
   }
 
   const parsed = parse(trimmed)
-  if (parsed === 0 && trimmed[0] !== '0' || typeof parsed === 'undefined') {
+  if (parsed === null || typeof parsed === 'undefined') {
     return undefined
   }
   return Math.floor(parsed)

@@ -7,7 +7,6 @@ import { CalendarVector } from 'vectors'
 import {
   ISO_8601_DATE_FORMAT,
 } from 'constants'
-import { formatDate } from 'types'
 import type { DateInputValue, DateValue } from 'types'
 
 // todo: combine state into reducer
@@ -86,7 +85,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   placeholder = 'dd / mm / yyyy',
   icon = <CalendarVector />,
   textClassName,
-  size,
+  size = 12,
   id,
   className,
   tabIndex,
@@ -182,9 +181,8 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Escape') {
       if (calendarOpen) {
-        const formatted = formatDate(value, displayFormat)
         if (textRef.current) {
-          textRef.current.setText(formatted)
+          textRef.current.cleanText()
         }
         setCalendarOpen(false)
         event.preventDefault()
@@ -214,13 +212,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     if (onKeyDown) {
       onKeyDown(event)
     }
-  }, [calendarOpen, value, displayFormat, onChange, onKeyDown])
-  const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
-    setCalendarOpen(true)
-    if (onClick) {
-      onClick(event)
-    }
-  }, [onClick])
+  }, [calendarOpen, value, onChange, onKeyDown])
   const textRef = useRef<DateTextHandle>(null)
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {

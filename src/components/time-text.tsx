@@ -50,6 +50,7 @@ export interface TimeTextProps {
 export interface TimeTextHandle {
   focus(): void
   setText(newText: string): void
+  cleanText(): void
 }
 
 export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
@@ -157,16 +158,35 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
     }
   }, [onChange, inputFormats])
 
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      if (textRef.current) {
-        textRef.current.focus()
-      }
-    },
-    setText: (newText: string) => {
-      setTextValue(newText)
+  const focus = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
     }
-  }), [])
+  }, [])
+  const setText = useCallback((newText: string) => {
+    setTextValue(newText)
+  }, [])
+  const cleanText = useCallback(() => {
+    const clean = formatTime(value, inputFormats, longFormat, displayFormat, simplify)
+    setText(clean)
+  }, [
+    value,
+    inputFormats,
+    longFormat,
+    displayFormat,
+    simplify,
+    setText,
+  ])
+
+  useImperativeHandle(ref, () => ({
+    focus,
+    setText,
+    cleanText,
+  }), [
+    focus,
+    setText,
+    cleanText,
+  ])
   
   // on first mount
   useEffect(() => {

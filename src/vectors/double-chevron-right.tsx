@@ -1,15 +1,15 @@
 import React from 'react'
 
-import { ChevronLeftVector } from './chevron-left'
+import { DoubleChevronLeftVector } from './double-chevron-left'
 
 interface Props {
   style?: React.CSSProperties
 }
 
-export const ChevronRightVector = ({
+export const DoubleChevronRightVector = ({
   style,
 }: Props) => (
-  <ChevronLeftVector
+  <DoubleChevronLeftVector
     style={{
       transform: 'scaleX(-1)',
       ...style,

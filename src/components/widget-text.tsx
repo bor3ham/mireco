@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useCallback } from 'react'
+import React, { forwardRef, useState, useCallback, useRef } from 'react'
 import classNames from 'classnames'
 
 import { Text } from 'inputs'
@@ -14,7 +14,7 @@ export interface WidgetTextProps extends TextProps {
   children?: React.ReactNode
 }
 
-export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, ref) => {
+export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, forwardedRef) => {
   const {
     block,
     onClear,
@@ -43,19 +43,34 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     onBlur,
   ])
   const clearable = !!onClear
+  const textRef = useRef<HTMLInputElement>()
+  const handleContainerClick = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
   return (
     <WidgetBlock
       block={block}
       className={classNames('MIRECO-widget-text')}
       clearable={clearable}
       everClearable={everClearable}
-      onClear={onClear}
+      onClick={handleContainerClick}
+      onClear={onClear} 
       icon={icon}
       inFocus={inFocus}
       disabled={inputProps.disabled}
     >
       <Text
-        ref={ref}
+        ref={(instance: HTMLInputElement) => {
+          textRef.current = instance
+          if (typeof forwardedRef === "function") {
+            forwardedRef(instance)
+          } else if (forwardedRef !== null) {
+            // eslint-disable-next-line no-param-reassign
+            forwardedRef.current = instance
+          }
+        }}
         {...inputProps}
         onFocus={handleFocus}
         onBlur={handleBlur}

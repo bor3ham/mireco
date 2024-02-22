@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import type { MonthInputValue, CalendarMonthValue } from 'types'
 import { dateAsMonth, monthAsDate, isMonthValue } from 'types'
-import { ChevronRightVector, ChevronLeftVector } from 'vectors'
+import { DoubleChevronRightVector, DoubleChevronLeftVector } from 'vectors'
 
 export interface MonthCalendarProps {
   current?: MonthInputValue
@@ -67,12 +67,12 @@ export const MonthCalendar = forwardRef<HTMLDivElement, MonthCalendarProps>(({
     <div className="MIRECO-month-calendar" ref={ref}>
       {showYears && (
         <div className="calendar-header">
-          <h5>{year}</h5>
-          <button type="button" tabIndex={-1} onClick={prevYear}>
-            <ChevronLeftVector />
+          <button type="button" tabIndex={-1} onClick={prevYear} title="Previous Year">
+            <DoubleChevronLeftVector />
           </button>
-          <button type="button" tabIndex={-1} onClick={nextYear}>
-            <ChevronRightVector />
+          <h5>{year}</h5>
+          <button type="button" tabIndex={-1} onClick={nextYear} title="Next Year">
+            <DoubleChevronRightVector />
           </button>
         </div>
       )}

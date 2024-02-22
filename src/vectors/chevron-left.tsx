@@ -1,11 +1,18 @@
 import React from 'react'
 
-export const ChevronLeftVector = () => (
+interface Props {
+  style?: React.CSSProperties
+}
+
+export const ChevronLeftVector = ({
+  style,
+}: Props) => (
   <svg
     className="MIRECO-chevron-left"
     width="24"
     height="24"
     viewBox="0 0 6.35 6.35"
+    style={style}
   >
     <g transform="translate(0,-290.65)">
       <path

@@ -1,17 +1,12 @@
 import React, { useContext } from 'react'
 import { Text } from 'mireco'
-import casual from 'casual-browserify'
 
 import { LabWrapper, LabContext } from '../components'
+import { getRandomText } from '../random'
 
 const stringify = (value: any) => {
   if (typeof value === 'undefined') return 'undefined'
   return JSON.stringify(value)
-}
-
-const getRandomValue = () => {
-  if (casual.coin_flip) return ''
-  return casual.title
 }
 
 const Contents = () => {
@@ -28,15 +23,12 @@ const Contents = () => {
   )
 }
 
-export const TextLab = () => {
-  
-  return (
-    <LabWrapper
-      initialValue={''}
-      getRandomValue={getRandomValue}
-      stringify={stringify}
-    >
-      <Contents />
-    </LabWrapper>
-  )
-}
+export const TextLab = () => (
+  <LabWrapper
+    initialValue={''}
+    getRandomValue={getRandomText}
+    stringify={stringify}
+  >
+    <Contents />
+  </LabWrapper>
+)

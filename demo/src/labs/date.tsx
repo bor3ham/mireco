@@ -1,21 +1,13 @@
 import React, { useContext } from 'react'
-import { Date as DateInput, ISO_8601_DATE_FORMAT } from 'mireco'
-import casual from 'casual-browserify'
-import { addDays, subDays, format } from 'date-fns'
+import { Date as DateInput } from 'mireco'
 
 import { LabWrapper, LabContext } from '../components'
+import { getRandomDate } from '../random'
 
 const stringify = (value: any) => {
   if (typeof value === 'undefined') return 'undefined'
   return JSON.stringify(value)
 }
-
-const getRandomValue = () => (
-  casual.random_element([
-    null,
-    format(addDays(subDays(new Date(), 30), casual.integer(60)), ISO_8601_DATE_FORMAT),
-  ])
-)
 
 const Contents = () => {
   const { block, value, onChange, disabled } = useContext(LabContext)
@@ -30,14 +22,12 @@ const Contents = () => {
   )
 }
 
-export const DateLab = () => {
-  return (
-    <LabWrapper
-      initialValue={null}
-      getRandomValue={getRandomValue}
-      stringify={stringify}
-    >
-      <Contents />
-    </LabWrapper>
-  )
-}
+export const DateLab = () => (
+  <LabWrapper
+    initialValue={null}
+    getRandomValue={getRandomDate}
+    stringify={stringify}
+  >
+    <Contents />
+  </LabWrapper>
+)

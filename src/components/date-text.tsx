@@ -53,6 +53,7 @@ export interface DateTextProps {
 export interface DateTextHandle {
   focus(): void
   setText(newText: string): void
+  cleanText(): void
 }
 
 export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
@@ -156,16 +157,28 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
     }
   }, [onChange, inputFormats])
 
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      if (textRef.current) {
-        textRef.current.focus()
-      }
-    },
-    setText: (newText: string) => {
-      setTextValue(newText)
+  const focus = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
     }
-  }), [])
+  }, [])
+  const setText = useCallback((newText: string) => {
+    setTextValue(newText)
+  }, [])
+  const cleanText = useCallback(() => {
+    const clean = formatDate(value, displayFormat)
+    setTextValue(clean)
+  }, [value, displayFormat, setText])
+
+  useImperativeHandle(ref, () => ({
+    focus,
+    setText,
+    cleanText,
+  }), [
+    focus,
+    setText,
+    cleanText,
+  ])
   
   // on first mount
   useEffect(() => {

@@ -24,6 +24,7 @@ export interface MonthProps {
   rightHang?: boolean
   clearable?: boolean
   autoComplete?: string
+  size?: number
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
@@ -73,6 +74,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
   rightHang,
   clearable = true,
   autoComplete,
+  size = 13,
   textClassName,
   textStyle,
   id,
@@ -298,6 +300,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
         id={id}
         style={textStyle}
         autoComplete={autoComplete}
+        size={size}
         onClear={canClear ? handleTextClear : undefined}
         onChange={handleTextChange}
         onFocus={handleTextFocus}

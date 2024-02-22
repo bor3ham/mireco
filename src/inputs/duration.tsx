@@ -4,7 +4,6 @@ import type { Unit } from 'humanize-duration'
 
 import { WidgetText } from 'components'
 import { HourglassVector } from 'vectors'
-import { KEYBOARD_ARROW_UP, KEYBOARD_ARROW_DOWN } from 'constants'
 import { formatDuration, parseDuration } from 'types'
 import type { DurationInputValue } from 'types'
 
@@ -23,6 +22,7 @@ export interface DurationProps {
   size?: number
   autoFocus?: boolean
   autoComplete?: string
+  clearable?: boolean
   // html
   id?: string
   className?: string
@@ -48,7 +48,7 @@ export interface DurationProps {
 
 export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
   block,
-  value = null,
+  value,
   onChange,
   humaniseUnits = [
     'w',
@@ -70,6 +70,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
   size,
   autoFocus,
   autoComplete,
+  clearable = true,
   id,
   className,
   style,
@@ -109,7 +110,8 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
   const handleTextChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
-      onChange(parseDuration(newValue, defaultTimeUnit), false)
+      const parsed = parseDuration(newValue, defaultTimeUnit)
+      onChange(parsed, false)
     }
   }, [
     onChange,
@@ -132,7 +134,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
     return incrementUnits[incIndex]
   }, [value, incrementUnits])
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.which === KEYBOARD_ARROW_DOWN) {
+    if (event.key === 'ArrowDown') {
       event.preventDefault()
       if (onChange) {
         if (typeof value === 'number') {
@@ -142,8 +144,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
           onChange(0, false)
         }
       }
-    }
-    if (event.which === KEYBOARD_ARROW_UP) {
+    } else if (event.key === 'ArrowUp') {
       event.preventDefault()
       if (onChange) {
         if (typeof value === 'number') {
@@ -167,7 +168,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
   const handleTextBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setTextValue(formatDuration(value, humaniseUnits))
     if (onChange) {
-      onChange(value, true)
+      onChange(value || null, true)
     }
     if (onBlur) {
       onBlur(event)
@@ -178,6 +179,18 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
     onBlur,
     humaniseUnits,
   ])
+
+  const handleClear = useCallback(() => {
+    if (onChange) {
+      onChange(null, false)
+    } else {
+      setTextValue('')
+    }
+  }, [
+    onChange,
+  ])
+  const hasValue = !!value
+
   return (
     <WidgetText
       ref={ref}
@@ -197,6 +210,8 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
       autoFocus={autoFocus}
       autoComplete={autoComplete}
       onChange={handleTextChange}
+      onClear={(clearable && hasValue) ? handleClear : undefined}
+      everClearable={clearable}
       onFocus={onFocus}
       onBlur={handleTextBlur}
       onClick={onClick}

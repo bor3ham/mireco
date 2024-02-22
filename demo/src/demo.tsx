@@ -24,10 +24,15 @@ import {
 } from './examples'
 import { ButtonStyleShowcase } from './showcases'
 import {
+  CalendarMonthLab,
+  CheckboxLab,
+  DateRangeLab,
   DateLab,
   DatetimeLab,
   DurationLab,
+  MonthLab,
   TextLab,
+  TextareaLab,
   TimeLab,
 } from './labs'
 
@@ -51,10 +56,15 @@ const MOUNTS: Record<string, ReactElement> = {
   'div.select-example': <SelectExample />,
   'div.multi-select-example': <MultiSelectExample />,
   'div.async-select-example': <AsyncSelectExample />,
+  'div.calendar-month-lab': <CalendarMonthLab />,
+  'div.checkbox-lab': <CheckboxLab />,
+  'div.date-range-lab': <DateRangeLab />,
   'div.date-lab': <DateLab />,
   'div.datetime-lab': <DatetimeLab />,
   'div.duration-lab': <DurationLab />,
+  'div.month-lab': <MonthLab />,
   'div.text-lab': <TextLab />,
+  'div.textarea-lab': <TextareaLab />,
   'div.time-lab': <TimeLab />,
 }
 

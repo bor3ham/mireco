@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { Datetime } from 'mireco'
+import { Checkbox } from 'mireco'
 
 import { LabWrapper, LabContext } from '../components'
-import { getRandomDatetime } from '../random'
+import { getRandomCheckbox } from '../random'
 
 const stringify = (value: any) => {
   if (typeof value === 'undefined') return 'undefined'
@@ -12,20 +12,22 @@ const stringify = (value: any) => {
 const Contents = () => {
   const { block, value, onChange, disabled } = useContext(LabContext)
   return (
-    <Datetime
+    <Checkbox
       block={block}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      // name="datetime"
-    />
+      name="checkbox"
+    >
+      Checked
+    </Checkbox>
   )
 }
 
-export const DatetimeLab = () => (
+export const CheckboxLab = () => (
   <LabWrapper
-    initialValue={null}
-    getRandomValue={getRandomDatetime}
+    initialValue={false}
+    getRandomValue={getRandomCheckbox}
     stringify={stringify}
   >
     <Contents />

@@ -18,6 +18,7 @@ export const DurationExample = () => {
         value={value}
         onChange={handleChange}
         placeholder="Enter a duration"
+        clearable
       />
     </>
   )

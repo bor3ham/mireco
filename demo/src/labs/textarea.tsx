@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { Datetime } from 'mireco'
+import { Textarea } from 'mireco'
 
 import { LabWrapper, LabContext } from '../components'
-import { getRandomDatetime } from '../random'
+import { getRandomTextarea } from '../random'
 
 const stringify = (value: any) => {
   if (typeof value === 'undefined') return 'undefined'
@@ -12,20 +12,21 @@ const stringify = (value: any) => {
 const Contents = () => {
   const { block, value, onChange, disabled } = useContext(LabContext)
   return (
-    <Datetime
+    <Textarea
       block={block}
-      value={value}
+      value={value as string}
       onChange={onChange}
       disabled={disabled}
-      // name="datetime"
+      placeholder="Enter long text"
+      name="textarea"
     />
   )
 }
 
-export const DatetimeLab = () => (
+export const TextareaLab = () => (
   <LabWrapper
-    initialValue={null}
-    getRandomValue={getRandomDatetime}
+    initialValue={''}
+    getRandomValue={getRandomTextarea}
     stringify={stringify}
   >
     <Contents />

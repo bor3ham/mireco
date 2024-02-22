@@ -5,12 +5,10 @@ import classNames from 'classnames'
 import { WidgetBlock, type TimeTextHandle, TimeText, TimeSelector } from 'components'
 import { ClockVector } from 'vectors'
 import type { TimeInputValue, TimeValue } from 'types'
-import { formatTime } from 'types'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
 type TimeState = {
-  text: string
   dropdownOpen: boolean
   inFocus: boolean
 }
@@ -173,15 +171,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   onKeyDown,
   onKeyUp,
 }, forwardedRef) => {
-  const formattedValue = useMemo(() => formatTime(value, inputFormats, longFormat, displayFormat, simplify), [
-    value,
-    inputFormats,
-    longFormat,
-    displayFormat,
-    simplify,
-  ])
   const [state, dispatch] = useReducer(timeReducer, {
-    text: formattedValue,
     dropdownOpen: false,
     inFocus: false,
   })
@@ -239,13 +229,17 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     }
     handleBlur()
   }, [handleBlur])
+  const handleContainerClick = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
   
   const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.dropdownOpen) {
-        const formatted = formatTime(value, inputFormats, longFormat, displayFormat, simplify)
         if (textRef.current) {
-          textRef.current.setText(formatted)
+          textRef.current.cleanText()
         }
         dispatch({ type: 'close' })
         event.preventDefault()
@@ -285,7 +279,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     if (onKeyDown) {
       onKeyDown(event)
     }
-  }, [state.dropdownOpen, startingPoint, value, displayFormat, onChange, onKeyDown])
+  }, [state.dropdownOpen, startingPoint, value, onChange, onKeyDown])
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
     dispatch({ type: 'open' })
     if (onClick) {
@@ -345,6 +339,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       disabled={disabled}
       id={id}
       onClear={handleClear}
+      onClick={handleContainerClick}
       onBlur={handleContainerBlur}
       onDoubleClick={onDoubleClick}
       onMouseDown={onMouseDown}

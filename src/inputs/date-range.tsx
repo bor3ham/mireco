@@ -186,6 +186,12 @@ export const DateRange: React.FC<DateRangeProps> = ({
         start: value.start,
         end: value.end,
       })
+    } else if (value === null) {
+      dispatch({
+        type: 'updateBoth',
+        start: null,
+        end: null,
+      })
     }
   }, [
     value,
@@ -460,6 +466,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         displayFormat={displayFormat}
         autoFocus={autoFocus}
         className="MIRECO-embedded"
+        disabled={disabled}
       />
       <p>to</p>
       <DateText
@@ -473,6 +480,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         inputFormats={inputFormats}
         displayFormat={displayFormat}
         className="MIRECO-embedded"
+        disabled={disabled}
       />
       {state.inFocus && state.calendarOpen && !disabled && (
         <DayCalendar

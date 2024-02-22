@@ -12,7 +12,6 @@ import {
   TimeSelector,
 } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
-import { formatDate, formatTime } from 'types'
 import type {
   DatetimeValue,
   DatetimeInputValue,
@@ -401,9 +400,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   const handleDateKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.controlsOpen) {
-        const formatted = formatDate(state.date ? state.date : null, dateDisplayFormat)
         if (dateRef.current) {
-          dateRef.current.setText(formatted)
+          dateRef.current.cleanText()
         }
         dispatch({ type: 'closeControls' })
         event.preventDefault()
@@ -429,15 +427,13 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   }, [
     state.controlsOpen,
     state.date,
-    dateDisplayFormat,
     handleDateChange,
   ])
   const handleTimeKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === 'Escape') {
       if (state.controlsOpen) {
-        const formatted = formatTime(state.time, timeInputFormats, timeLongFormat, timeDisplayFormat, simplifyTime)
         if (timeRef.current) {
-          timeRef.current.setText(formatted)
+          timeRef.current.cleanText()
         }
         dispatch({ type: 'closeControls' })
         event.preventDefault()
