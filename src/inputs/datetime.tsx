@@ -1,5 +1,5 @@
 import React, { useReducer, useRef, useCallback, useEffect, forwardRef } from 'react'
-import { startOfDay, format, parse, addDays, subDays } from 'date-fns'
+import { format, parse, addDays, subDays } from 'date-fns'
 import classNames from 'classnames'
 
 import {
@@ -12,13 +12,15 @@ import {
   TimeSelector,
 } from 'components'
 import { ISO_8601_DATE_FORMAT } from 'constants'
-import type {
-  DatetimeValue,
-  DatetimeInputValue,
-  DateValue,
-  DateInputValue,
-  TimeValue,
-  TimeInputValue,
+import {
+  type DatetimeValue,
+  type DatetimeInputValue,
+  type DateValue,
+  type DateInputValue,
+  type TimeValue,
+  type TimeInputValue,
+  combineDatetimeValues,
+  splitDatetimeValue,
 } from 'types'
 import { ClockVector } from 'vectors'
 
@@ -32,13 +34,14 @@ export interface DatetimeProps {
   onChange?(newValue: DatetimeInputValue, wasBlur: boolean): void
   dateDisplayFormat?: string
   relativeTo?: DatetimeValue
-  defaultDate?: DateValue
   timeInputFormats?: string[]
   timeLongFormat?: string
   timeDisplayFormat?: string
   simplifyTime?: boolean
-  /** Starting point when using keyboard up/down with no value */
-  timeStartingPoint?: number
+  /** Starting point for up/down with no value, or when other field filled and blurred */
+  defaultDate?: DateValue
+  /** Starting point for up/down with no value, or when other field filled and blurred */
+  defaultTime?: number
   timeStep?: number
   icon?: React.ReactNode
   clearable?: boolean
@@ -91,8 +94,7 @@ type DatetimeAction =
   | { type: 'updateTime', value: TimeInputValue }
   | { type: 'updateBoth', date: DateInputValue, time: TimeInputValue }
   | { type: 'focus', focusInput: DatetimeInput }
-  | { type: 'blur' }
-  | { type: 'cleanedBlur', date: DateInputValue, time: TimeInputValue }
+  | { type: 'blur', date: DateInputValue, time: TimeInputValue }
   | { type: 'clear' }
   | { type: 'closeControls' }
   | { type: 'showControls' }
@@ -132,13 +134,6 @@ function datetimeReducer(state: DatetimeState, action: DatetimeAction): Datetime
         inFocus: false,
         focusInput: DatetimeInput.Date,
         controlsOpen: false,
-      }
-    }
-    case 'cleanedBlur': {
-      return {
-        ...state,
-        inFocus: false,
-        controlsOpen: false,
         date: action.date,
         time: action.time,
       }
@@ -168,54 +163,12 @@ function datetimeReducer(state: DatetimeState, action: DatetimeAction): Datetime
   }
 }
 
-const splitValue = (value: DatetimeInputValue): {
-  date: DateInputValue
-  time: TimeInputValue
-} => {
-  if (typeof value === 'undefined') return {
-    date: undefined,
-    time: undefined,
-  }
-  if (value === null) return {
-    date: null,
-    time: null,
-  }
-  const asDate = new Date(value)
-  return {
-    date: format(asDate, ISO_8601_DATE_FORMAT),
-    time: value - +(startOfDay(asDate)),
-  }
-}
-
-const combineValues = (
-  date: DateInputValue,
-  time: TimeInputValue,
-  fallback: boolean,
-  timeStartingPoint?: number
-): DatetimeInputValue => {
-  if (date === null && time === null) return null
-  if (typeof date === 'undefined' && typeof time === 'undefined') return undefined
-
-  const dateValid = typeof date === 'string'
-  const timeValid = typeof time === 'number'
-  if (!timeValid && !dateValid) {
-    if (fallback) return null
-    return undefined
-  }
-  if (!(timeValid && dateValid) && !fallback) {
-    return undefined
-  }
-  const parsedDate = date ? startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) : startOfDay(new Date())
-  return +parsedDate + (time || (timeStartingPoint || 0))
-}
-
 export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   block,
   value,
   onChange,
   dateDisplayFormat = 'do MMM yyyy',
   relativeTo,
-  defaultDate,
   timeInputFormats = [
     'h:mm:ss a',
     'h:mm:ssa',
@@ -235,7 +188,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   timeDisplayFormat = 'h:mm a',
   simplifyTime = false,
   timeStep = 15 * 60 * 1000,
-  timeStartingPoint = 9 * 60 * 60 * 1000,
+  defaultDate,
+  defaultTime = 9 * 60 * 60 * 1000,
   icon = <ClockVector />,
   clearable = true,
   autoComplete,
@@ -264,7 +218,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   onKeyUp,
 }, forwardedRef) => {
   const [state, dispatch] = useReducer(datetimeReducer, {
-    ...splitValue(value),
+    ...splitDatetimeValue(value),
     inFocus: false,
     focusInput: DatetimeInput.Date,
     controlsOpen: false,
@@ -276,24 +230,43 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         type: 'clear',
       })
     } else if (typeof value === 'number') {
-      dispatch({
-        type: 'updateBoth',
-        ...splitValue(value),
-      })
+      const split = splitDatetimeValue(value)
+      const current = combineDatetimeValues(state.date, state.time, true, defaultDate, defaultTime)
+      const currentSplit = splitDatetimeValue(current)
+      const dateChanged = split.date != currentSplit.date
+      const timeChanged = split.time != currentSplit.time
+      if (dateChanged && timeChanged) {
+        dispatch({
+          type: 'updateBoth',
+          ...split,
+        })
+      } else if (dateChanged) {
+        dispatch({
+          type: 'updateDate',
+          value: split.date,
+        })
+      } else if (timeChanged) {
+        dispatch({
+          type: 'updateTime',
+          value: split.time,
+        })
+      }
     }
   }, [
     value,
   ])
 
   const handleBlur = useCallback(() => {
-    const fallback = combineValues(state.date, state.time, true, timeStartingPoint)
+    const fallback = combineDatetimeValues(state.date, state.time, true, defaultDate, defaultTime)
+    const split = splitDatetimeValue(fallback)
     dispatch({
       type: 'blur',
+      ...split,
     })
     if (onChange) {
       onChange(fallback, true)
     }
-  }, [state.date, state.time, timeStartingPoint, onChange])
+  }, [state.date, state.time, defaultDate, defaultTime, onChange])
 
   // respond to disabled change
   useEffect(() => {
@@ -311,20 +284,20 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       value: newDate,
     })
     if (onChange) {
-      const newValue = combineValues(newDate, state.time, false)
+      const newValue = combineDatetimeValues(newDate, state.time, false, defaultDate, defaultTime)
       onChange(newValue, false)
     }
-  }, [onChange, state.time])
+  }, [onChange, state.time, defaultDate, defaultTime])
   const handleTimeChange = useCallback((newTime: TimeInputValue) => {
     dispatch({
       type: 'updateTime',
       value: newTime,
     })
     if (onChange) {
-      const newValue = combineValues(state.date, newTime, false)
+      const newValue = combineDatetimeValues(state.date, newTime, false, defaultDate, defaultTime)
       onChange(newValue, false)
     }
-  }, [onChange, state.date])
+  }, [onChange, state.date, defaultDate, defaultTime])
   const handleBothChange = useCallback((newDate: DateInputValue, newTime: TimeInputValue) => {
     dispatch({
       type: 'updateBoth',
@@ -332,10 +305,10 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       time: newTime,
     })
     if (onChange) {
-      const newValue = combineValues(newDate, newTime, false)
+      const newValue = combineDatetimeValues(newDate, newTime, false, defaultDate, defaultTime)
       onChange(newValue, false)
     }
-  }, [onChange])
+  }, [onChange, defaultDate, defaultTime])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const dateRef = useRef<DateTextHandle>(null)
@@ -441,7 +414,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       return
     }
     let wasEmpty = true
-    let current = timeStartingPoint
+    let current = defaultTime
     if (typeof state.time === 'number') {
       wasEmpty = false
       current = state.time
@@ -488,7 +461,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     handleTimeChange,
     state.date,
     handleBothChange,
-    timeStartingPoint,
+    defaultTime,
     timeStep,
   ])
 
@@ -501,15 +474,17 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   const handleSelectTime = useCallback((newValue: TimeValue, final: boolean) => {
     handleTimeChange(newValue)
     if (final) {
-      const fallback = combineValues(state.date, newValue, true, timeStartingPoint)
+      const fallback = combineDatetimeValues(state.date, newValue, true, defaultDate, defaultTime)
+      const split = splitDatetimeValue(fallback)
       dispatch({
         type: 'blur',
+        ...split,
       })
       if (onChange) {
         onChange(fallback, true)
       }
     }
-  } , [handleTimeChange, state.date, timeStartingPoint])
+  } , [handleTimeChange, state.date, defaultDate, defaultTime])
 
 
   return (
@@ -540,7 +515,6 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         disabled={disabled}
         className="MIRECO-embedded"
       />
-      <p>,</p>
       <TimeText
         ref={timeRef}
         value={state.time}

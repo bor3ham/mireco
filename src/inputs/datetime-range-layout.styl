@@ -1,48 +1,24 @@
-clear-width = 3rem
-desired-datetime-width = 19rem
-
 .MIRECO-datetime-range
-  span.to
-    margin-top: text-space-width
-    white-space: pre-wrap
-  div.duration-inner
+  position: relative
+
+  > .MIRECO-datetime-range-controls
+    position: absolute
+    z-index: 100
+    left: 0
+    top: 100%
     display: flex
-    align-items: flex-start
-    input.MIRECO-text
-      flex: 1
-      margin-right: text-space-width
+    flex-direction: column
+  &.right-hang>.MIRECO-datetime-range-controls
+    left: auto
+    right: 0
+  
+  .MIRECO-datetime-range-header
+    text-align: center
 
-  &.block
+  .MIRECO-datetime-range-body
     display: flex
-    flex-wrap: wrap
-    align-items: flex-start
+    flex-direction: row
 
-    // replace individual padding with overall
-    div.MIRECO-time, div.MIRECO-date
-      margin-bottom: 0
-
-    // pad out components on narrow devices
-    > div.MIRECO-datetime, div.datetime-range-second
-      margin-bottom: standard-padding
-
-    button.MIRECO-clear-button
-      margin-left: text-space-width
-
-    div.MIRECO-datetime
-      flex-wrap: nowrap
-
-    > div.MIRECO-datetime
-      flex-basis: desired-datetime-width
-      flex-grow: 1
-    div.datetime-range-second
-      flex-basis: desired-datetime-width
-      flex-grow: 1
-      display: flex
-      align-items: flex-start
-
-      div.MIRECO-datetime
-        flex: 1
-
-    &.clearable
-      div.datetime-range-second
-        flex-basis: (desired-datetime-width + clear-width)
+  p
+    display: inline
+    margin-right: 0.8rem

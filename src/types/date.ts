@@ -42,3 +42,10 @@ export function parseDate(textValue: string, inputFormats: string[]): DateInputV
   return valid
 }
 
+export function dateValueAsDate(value: DateValue): Date {
+  return parse(value, ISO_8601_DATE_FORMAT, new Date())
+}
+
+export function dateAsDateValue(date: Date): DateValue {
+  return format(date, ISO_8601_DATE_FORMAT)
+}

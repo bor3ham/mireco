@@ -66,3 +66,20 @@ export const getRandomTime = () => (
     casual.integer(0, 24 * HOUR_MS), // random uneven time
   ])
 )
+
+export const getRandomDatetimeRange = () => {
+  const a = getRandomDatetime()
+  const b = getRandomDatetime()
+  const parsedA = new Date(a)
+  const parsedB = new Date(b)
+  if (parsedA > parsedB) {
+    return {
+      start: b,
+      end: a,
+    }
+  }
+  return {
+    start: a,
+    end: b,
+  }
+}

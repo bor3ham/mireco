@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback, useEffect } from 'react'
+import React, { useMemo, useRef, useCallback, useEffect, useState } from 'react'
 import { format, startOfDay, add } from 'date-fns'
 import classNames from 'classnames'
 
@@ -13,6 +13,9 @@ interface ValueOptionProps {
   children: string
   current: boolean
   onClick(value: number): void
+  onHovered(time: TimeValue | undefined): void
+  highlight: boolean
+  invalid?: string
 }
 
 const ValueOption: React.FC<ValueOptionProps> = ({
@@ -20,6 +23,9 @@ const ValueOption: React.FC<ValueOptionProps> = ({
   children,
   current,
   onClick,
+  onHovered,
+  highlight,
+  invalid,
 }) => {
   const handleClick = useCallback(() => {
     onClick(value)
@@ -28,10 +34,26 @@ const ValueOption: React.FC<ValueOptionProps> = ({
     <li
       className={classNames({
         current,
+        highlight,
+        invalid,
       })}
       data-value={value}
     >
-      <button tabIndex={-1} onClick={handleClick} type="button">{children}</button>
+      <button
+        tabIndex={-1}
+        onClick={handleClick}
+        onMouseEnter={() => {
+          onHovered(value)
+        }}
+        onMouseLeave={() => {
+          onHovered(undefined)
+        }}
+        type="button"
+        disabled={!!invalid}
+        title={invalid}
+      >
+        {children}
+      </button>
     </li>
   )
 }
@@ -46,7 +68,12 @@ interface ValueListProps {
   value?: TimeInputValue
   scrollOnChange?: boolean
   scrollStartMid?: boolean
+  rounding: number
   onClick(value: number): void
+  hovered: TimeValue | undefined
+  onHovered(time: TimeValue | undefined): void
+  highlight?(time: TimeValue, hovered: TimeValue | undefined, rounding: number): boolean
+  invalid?(time: TimeValue, rounding: number): string | undefined
 }
 
 const ValueList: React.FC<ValueListProps> = ({
@@ -54,7 +81,12 @@ const ValueList: React.FC<ValueListProps> = ({
   value,
   scrollOnChange = false,
   scrollStartMid = false,
+  rounding,
   onClick,
+  hovered,
+  onHovered,
+  highlight,
+  invalid,
 }) => {
   const listRef = useRef<HTMLUListElement>(null)
   const scrollToOption = useCallback((option: HTMLElement) => {
@@ -100,6 +132,9 @@ const ValueList: React.FC<ValueListProps> = ({
           value={listValue.value}
           current={listValue.value === value}
           onClick={onClick}
+          onHovered={onHovered}
+          highlight={highlight ? highlight(listValue.value, hovered, rounding) : false}
+          invalid={invalid ? invalid(listValue.value, rounding) : undefined}
         >
           {listValue.label}
         </ValueOption>
@@ -115,6 +150,8 @@ interface TimeSelectorProps {
   minuteIncrements?: number
   secondIncrements?: number
   className?: string
+  highlight?(time: TimeValue, hovered: TimeValue | undefined, rounding: number): boolean
+  invalid?(time: TimeValue, rounding: number): string | undefined
 }
 
 export const TimeSelector: React.FC<TimeSelectorProps> = ({
@@ -124,6 +161,8 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
   minuteIncrements = 15,
   secondIncrements = 15,
   className,
+  highlight,
+  invalid,
 }) => {
   const hourValues = useMemo(() => {
     const hours = Array.from(Array.from(Array(24)).keys())
@@ -221,6 +260,11 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
     }
   }, [onChange])
 
+  const [hoveredTime, setHoveredTime] = useState<TimeValue | undefined>(undefined)
+  const handleHovered = useCallback((time: TimeValue | undefined) => {
+    setHoveredTime(time)
+  }, [])
+
   return (
     <div className={classNames('MIRECO-time-selector', className)}>
       <ValueList
@@ -228,18 +272,33 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
         value={value}
         scrollOnChange
         scrollStartMid
+        rounding={AN_HOUR_MS}
         onClick={handleClickHour}
+        highlight={highlight}
+        invalid={invalid}
+        hovered={hoveredTime}
+        onHovered={handleHovered}
       />
       <ValueList
         values={minuteValues}
         value={value}
+        rounding={A_MINUTE_MS}
         onClick={handleClickMinute}
+        highlight={highlight}
+        invalid={invalid}
+        hovered={hoveredTime}
+        onHovered={handleHovered}
       />
       {showSeconds && (
         <ValueList
           values={secondValues}
           value={value}
+          rounding={A_SECOND_MS}
           onClick={handleClickSecond}
+          highlight={highlight}
+          invalid={invalid}
+          hovered={hoveredTime}
+          onHovered={handleHovered}
         />
       )}
     </div>

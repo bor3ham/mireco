@@ -1,14 +1,12 @@
 import React, { useState, useCallback } from 'react'
-import { DatetimeRange, type DatetimeRangeInputValue, type DatetimeValue } from 'mireco'
+import { DatetimeRange, type DatetimeRangeInputValue, type DatetimeInputValue } from 'mireco'
 
-function stringifyDate(value: DatetimeValue) {
+function stringifyDate(value: DatetimeInputValue) {
   if (typeof value === 'undefined') return 'undefined'
   return JSON.stringify(value)
 }
 
 function stringifyValue(value: DatetimeRangeInputValue) {
-  if (typeof value === 'undefined') return 'undefined' // temp until this is changed
-  if (value === null) return 'null' // temp until this is changed
   return `{
     start: ${stringifyDate(value.start)},
     end: ${stringifyDate(value.end)}
@@ -16,7 +14,10 @@ function stringifyValue(value: DatetimeRangeInputValue) {
 }
 
 export const DatetimeRangeExample = () => {
-  const [value, setValue] = useState<DatetimeRangeInputValue>(null)
+  const [value, setValue] = useState<DatetimeRangeInputValue>({
+    start: null,
+    end: null,
+  })
   const handleChange = useCallback((newValue: DatetimeRangeInputValue) => {
     setValue(newValue)
   }, [])
