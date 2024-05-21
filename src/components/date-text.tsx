@@ -1,7 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react'
 
 import { Text } from 'inputs'
-import { formatDate, parseDate, type DateInputValue } from 'types'
+import type { DateInputValue, DateParseFunction, DateFormatFunction } from 'types'
+import { getSafeLocale } from 'constants'
+import {
+  parseDate as defaultParse,
+  formatDate as defaultFormat,
+  DATE_PLACEHOLDERS,
+} from 'locale'
 
 export interface DateTextProps {
   // mireco
@@ -10,14 +16,9 @@ export interface DateTextProps {
   value?: DateInputValue
   onChange?(newValue: DateInputValue): void
   onTextChange?(newValue: string): void
-  displayFormat?: string
-  /**
-   * Ordered list of input formats, when parsing text will accept the first valid
-   * result.
-   * 
-   * Note that input spaces are automatically replaced with slashes.
-  */
-  inputFormats?: string[]
+  locale?: string
+  format?: DateFormatFunction
+  parse?: DateParseFunction
   autoErase?: boolean
   placeholder?: string
   size?: number
@@ -61,22 +62,11 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
   value,
   onChange,
   onTextChange,
-  displayFormat = 'do MMM yyyy',
-  inputFormats = [
-    'd',
-    'do',
-    'd/MM',
-    'do/MMM',
-    'do/MMMM',
-    'd/MM/yy',
-    'd/MM/yyyy',
-    'do/MMM/yy',
-    'do/MMM/yyyy',
-    'do/MMMM/yy',
-    'do/MMMM/yyyy',
-  ],
+  locale,
+  format = defaultFormat,
+  parse = defaultParse,
   autoErase = true,
-  placeholder = 'dd / mm / yyyy',
+  placeholder,
   size,
   initialText,
   id,
@@ -103,7 +93,7 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
   onKeyDown,
   onKeyUp,
 }, ref) => {
-  const [textValue, setTextValue] = useState<string>(formatDate(value, displayFormat))
+  const [textValue, setTextValue] = useState<string>(format(value, locale))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
 
@@ -112,9 +102,9 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
     if (value === null) {
       setTextValue('')
     } else if (typeof value === 'string') {
-      const parsedCurrent = parseDate(textValueRef.current, inputFormats)
+      const parsedCurrent = parse(textValueRef.current, locale)
       if (parsedCurrent !== value) {
-        setTextValue(formatDate(value, displayFormat))
+        setTextValue(format(value, locale))
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,7 +114,7 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
 
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
     if (typeof value === 'string') {
-      const formatted = formatDate(value, displayFormat)
+      const formatted = format(value, locale)
       setTextValue(formatted)
     } else {
       if (autoErase) {
@@ -140,7 +130,8 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
     }
   }, [
     value,
-    displayFormat,
+    format,
+    locale,
     onChange,
     autoErase,
     onBlur,
@@ -150,12 +141,12 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
   const handleChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
-      onChange(parseDate(newValue, inputFormats))
+      onChange(parse(newValue, locale))
     }
     if (onTextChange) {
       onTextChange(newValue)
     }
-  }, [onChange, inputFormats])
+  }, [onChange, parse, locale])
 
   const focus = useCallback(() => {
     if (textRef.current) {
@@ -166,9 +157,9 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
     setTextValue(newText)
   }, [])
   const cleanText = useCallback(() => {
-    const clean = formatDate(value, displayFormat)
-    setTextValue(clean)
-  }, [value, displayFormat, setText])
+    const clean = format(value, locale)
+    setText(clean)
+  }, [format, value, locale, setText])
 
   useImperativeHandle(ref, () => ({
     focus,
@@ -190,16 +181,28 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const fallbackPlaceholder = useMemo(() => {
+    if (typeof placeholder === 'string') return placeholder
+    const safeLocale = getSafeLocale(locale)
+    return DATE_PLACEHOLDERS[safeLocale]
+  }, [
+    placeholder,
+    locale,
+  ])
   
   return (
     <Text
       id={id}
       ref={textRef}
-      placeholder={placeholder}
+      placeholder={fallbackPlaceholder}
       value={textValue}
       disabled={disabled}
       block={block}
-      style={{marginBottom: '0'}}
+      style={{
+        marginBottom: '0',
+        ...style,
+      }}
       required={required}
       autoComplete={autoComplete}
       className={className}

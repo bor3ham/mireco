@@ -29,6 +29,7 @@ export const CheckboxLab = () => (
     initialValue={false}
     getRandomValue={getRandomCheckbox}
     stringify={stringify}
+    showSubmit
   >
     <Contents />
   </LabWrapper>

@@ -6,6 +6,7 @@ export interface ButtonProps {
   block?: boolean
   // button
   type?: 'submit' | 'reset' | 'button'
+  hidden?: boolean
   // html
   id?: string
   className?: string
@@ -37,6 +38,7 @@ export interface ButtonProps {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   block,
   type = 'submit',
+  hidden = false,
   id,
   className,
   tabIndex,
@@ -80,6 +82,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     value={formValue}
     // eslint-disable-next-line react/button-has-type
     type={type}
+    hidden={hidden}
     onFocus={onFocus}
     onBlur={onBlur}
     onClick={onClick}

@@ -28,6 +28,7 @@ export const TextareaLab = () => (
     initialValue={''}
     getRandomValue={getRandomTextarea}
     stringify={stringify}
+    showSubmit
   >
     <Contents />
   </LabWrapper>

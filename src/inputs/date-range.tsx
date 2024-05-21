@@ -1,11 +1,12 @@
-import React, { useReducer, useCallback, useEffect, useRef } from 'react'
+import React, { useReducer, useCallback, useEffect, useRef, useMemo } from 'react'
 import classNames from 'classnames'
-import { parse, format, addDays, subDays, max } from 'date-fns'
+import { addDays, subDays, max } from 'date-fns'
 
-import { type DateRangeInputValue, type DateInputValue, type DateValue, formatDate } from 'types'
-import { WidgetBlock, ClearButton, DateText, type DateTextHandle, DayCalendar } from 'components'
-import { ISO_8601_DATE_FORMAT } from 'constants'
+import { type DateRangeInputValue, type DateInputValue, type DateValue } from 'types'
+import { WidgetBlock, DateText, type DateTextHandle, DayCalendar } from 'components'
 import { CalendarVector } from 'vectors'
+import { dateValueAsDate, dateAsDateValue } from 'types'
+import { useInputKeyDownHandler } from 'hooks'
 
 export interface DateRangeProps {
   // mireco
@@ -13,8 +14,9 @@ export interface DateRangeProps {
   // date range
   value?: DateRangeInputValue
   onChange?(newValue: DateRangeInputValue, wasBlur: boolean): void
-  displayFormat?: string
-  inputFormats?: string[]
+  locale?: string
+  format?(value: DateInputValue, locale?: string): string
+  parse?(value: string, locale?: string): DateInputValue
   icon?: React.ReactNode
   clearable?: boolean
   size?: number
@@ -35,8 +37,8 @@ const cleanedValue = (value: DateRangeInputValue): DateRangeInputValue => {
     start: value.start || null,
     end: value.end || null,
   }
-  const parsedStart = parse(value.start, ISO_8601_DATE_FORMAT, new Date())
-  const parsedEnd = parse(value.end, ISO_8601_DATE_FORMAT, new Date())
+  const parsedStart = dateValueAsDate(value.start)
+  const parsedEnd = dateValueAsDate(value.end)
   if (parsedStart > parsedEnd) {
     return {
       start: value.end,
@@ -145,20 +147,9 @@ export const DateRange: React.FC<DateRangeProps> = ({
   block,
   value,
   onChange,
-  displayFormat = 'do MMM yyyy',
-  inputFormats = [
-    'd',
-    'do',
-    'd/MM',
-    'do/MMM',
-    'do/MMMM',
-    'd/MM/yy',
-    'd/MM/yyyy',
-    'do/MMM/yy',
-    'do/MMM/yyyy',
-    'do/MMMM/yy',
-    'do/MMMM/yyyy',
-  ],
+  locale,
+  format,
+  parse,
   icon = <CalendarVector />,
   clearable = true,
   size = 12,
@@ -225,91 +216,120 @@ export const DateRange: React.FC<DateRangeProps> = ({
       })
     }
   }, [state, onChange])
-  const handleStartKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-      if (state.calendarOpen) {
-        const formatted = formatDate(value ? value.start : null, displayFormat)
-        if (startRef.current) {
-          startRef.current.setText(formatted)
-        }
-        if (event.key === 'Enter') {
-          if (endRef.current) {
-            endRef.current.focus()
-          }
-        } else {
-          dispatch({ type: 'closeCalendar' })
-        }
-        event.preventDefault()
-      }
-      return
-    }
-    // start up / down increment on current date
-    let current = new Date()
-    if (state.start) {
-      current = parse(state.start, ISO_8601_DATE_FORMAT, new Date())
-    }
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      const adjusted = format(addDays(current, 1), ISO_8601_DATE_FORMAT)
-      handleStartChange(adjusted)
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      const adjusted = format(subDays(current, 1), ISO_8601_DATE_FORMAT)
-      handleStartChange(adjusted)
-    }
+
+  const closeCalendar = useCallback(() => {
+    dispatch({ type: 'closeCalendar' })
+  }, [])
+
+  const cleanStart = useCallback(() => {
+    if (startRef.current) startRef.current.cleanText()
+  }, [])
+  const recordStartFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DateRangeInput.Start })
+  }, [])
+  // todo: handle submit case
+  // if (event.key === 'Enter') {
+  //   if (endRef.current) {
+  //     endRef.current.focus()
+  //   }
+  // } else {
+  //   dispatch({ type: 'closeCalendar' })
+  // }
+  const [fallbackStart, hasStart] = useMemo(() => {
+    let has = false
+    let fallback = new Date()
+    if (state.start) {
+      has = true
+      fallback = dateValueAsDate(state.start)
+    }
+    return [fallback, has]
   }, [
-    state,
-    value,
-    displayFormat,
+    state.start,
+  ])
+  const decrementStart = useCallback(() => {
+    const adjusted = dateAsDateValue(subDays(fallbackStart, hasStart ? 1 : 0))
+    handleStartChange(adjusted)
+  }, [
+    fallbackStart,
+    hasStart,
     handleStartChange,
   ])
-  const handleEndKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-      if (state.calendarOpen) {
-        const formatted = formatDate(value ? value.end : null, displayFormat)
-        if (endRef.current) {
-          endRef.current.setText(formatted)
-        }
-        dispatch({ type: 'closeCalendar' })
-        event.preventDefault()
-      }
-      return
-    }
-    // start up / down increment on start date
-    let current = new Date()
-    let parsedStart = new Date()
+  const incrementStart = useCallback(() => {
+    const adjusted = dateAsDateValue(addDays(fallbackStart, hasStart ? 1 : 0))
+    handleStartChange(adjusted)
+  }, [
+    fallbackStart,
+    hasStart,
+    handleStartChange,
+  ])
+  const handleStartKeyDown = useInputKeyDownHandler(
+    state.calendarOpen,
+    closeCalendar,
+    cleanStart,
+    recordStartFocus,
+    decrementStart,
+    incrementStart,
+  )
+  
+  const cleanEnd = useCallback(() => {
+    if (endRef.current) endRef.current.cleanText()
+  }, [])
+  const recordEndFocus = useCallback(() => {
+    dispatch({ type: 'focus', focusInput: DateRangeInput.End })
+  }, [])
+  // todo: handle submit case
+  // if (event.key === 'Enter') {
+  //   if (endRef.current) {
+  //     endRef.current.focus()
+  //   }
+  // } else {
+  //   dispatch({ type: 'closeCalendar' })
+  // }
+  const [fallbackEnd, hasEnd] = useMemo(() => {
+    let has = false
+    let fallback = new Date()
     if (state.start) {
-      parsedStart = parse(state.start, ISO_8601_DATE_FORMAT, new Date())
-      current = parsedStart
+      fallback = dateValueAsDate(state.start)
     }
     if (state.end) {
-      current = parse(state.end, ISO_8601_DATE_FORMAT, new Date())
+      has = true
+      fallback = dateValueAsDate(state.end)
     }
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      let next = addDays(current, 1)
-      if (state.start) {
-        next = max([next, parsedStart])
-      }
-      const adjusted = format(next, ISO_8601_DATE_FORMAT)
-      handleEndChange(adjusted)
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      let prev = subDays(current, 1)
-      if (state.start) {
-        prev = max([prev, parsedStart])
-      }
-      const adjusted = format(prev, ISO_8601_DATE_FORMAT)
-      handleEndChange(adjusted)
-    }
-    dispatch({ type: 'focus', focusInput: DateRangeInput.End })
+    return [fallback, has]
   }, [
-    state,
-    value,
-    displayFormat,
+    state.end,
+    state.start,
+  ])
+  const decrementEnd = useCallback(() => {
+    let adjusted = subDays(fallbackEnd, hasEnd ? 1 : 0)
+    if (state.start) {
+      adjusted = max([adjusted, dateValueAsDate(state.start)])
+    }
+    handleEndChange(dateAsDateValue(adjusted))
+  }, [
+    fallbackEnd,
+    hasEnd,
     handleEndChange,
   ])
+  const incrementEnd = useCallback(() => {
+    let adjusted = addDays(fallbackEnd, hasEnd ? 1 : 0)
+    if (state.start) {
+      adjusted = max([adjusted, dateValueAsDate(state.start)])
+    }
+    handleEndChange(dateAsDateValue(adjusted))
+  }, [
+    fallbackEnd,
+    hasEnd,
+    handleEndChange,
+  ])
+  const handleEndKeyDown = useInputKeyDownHandler(
+    state.calendarOpen,
+    closeCalendar,
+    cleanEnd,
+    recordEndFocus,
+    decrementEnd,
+    incrementEnd,
+  )
 
   const containerRef = useRef<HTMLDivElement>(null)
   const startRef = useRef<DateTextHandle>(null)
@@ -405,8 +425,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
   const dayInvalid = useCallback((day: DateValue) => {
     if (state.focusInput === DateRangeInput.Start) return undefined
     if (!state.start) return undefined
-    const parsedStart = parse(state.start, ISO_8601_DATE_FORMAT, new Date())
-    const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
+    const parsedStart = dateValueAsDate(state.start)
+    const parsedDay = dateValueAsDate(day)
     if (parsedStart > parsedDay) return 'Before start date'
     return undefined
   }, [
@@ -414,21 +434,21 @@ export const DateRange: React.FC<DateRangeProps> = ({
     state,
   ])
   const dayHighlight = useCallback((day: DateValue, hovered: DateValue | undefined) => {
-    const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
+    const parsedDay = dateValueAsDate(day)
     if (state.focusInput === DateRangeInput.Start) {
       if (state.start && state.end) {
-        const parsedStart = parse(state.start, ISO_8601_DATE_FORMAT, new Date())
-        const parsedEnd = parse(state.end, ISO_8601_DATE_FORMAT, new Date())
+        const parsedStart = dateValueAsDate(state.start)
+        const parsedEnd = dateValueAsDate(state.end)
         return parsedDay >= parsedStart && parsedDay <= parsedEnd
       }
     } else {
       if (state.start && hovered) {
-        const parsedStart = parse(state.start, ISO_8601_DATE_FORMAT, new Date())
-        const parsedEnd = parse(hovered, ISO_8601_DATE_FORMAT, new Date())
+        const parsedStart = dateValueAsDate(state.start)
+        const parsedEnd = dateValueAsDate(hovered)
         return parsedDay >= parsedStart && parsedDay <= parsedEnd
       } else if (state.start && state.end) {
-        const parsedStart = parse(state.start, ISO_8601_DATE_FORMAT, new Date())
-        const parsedEnd = parse(state.end, ISO_8601_DATE_FORMAT, new Date())
+        const parsedStart = dateValueAsDate(state.start)
+        const parsedEnd = dateValueAsDate(state.end)
         return parsedDay >= parsedStart && parsedDay <= parsedEnd
       }
     }
@@ -462,8 +482,9 @@ export const DateRange: React.FC<DateRangeProps> = ({
         onFocus={handleStartFocus}
         onKeyDown={handleStartKeyDown}
         onClick={handleDateClick}
-        inputFormats={inputFormats}
-        displayFormat={displayFormat}
+        locale={locale}
+        format={format}
+        parse={parse}
         autoFocus={autoFocus}
         className="MIRECO-embedded"
         disabled={disabled}
@@ -477,8 +498,9 @@ export const DateRange: React.FC<DateRangeProps> = ({
         onFocus={handleEndFocus}
         onKeyDown={handleEndKeyDown}
         onClick={handleDateClick}
-        inputFormats={inputFormats}
-        displayFormat={displayFormat}
+        locale={locale}
+        format={format}
+        parse={parse}
         className="MIRECO-embedded"
         disabled={disabled}
       />

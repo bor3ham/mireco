@@ -34,6 +34,7 @@ import {
   getRandomDate,
   getRandomDateRange,
   getRandomDatetime,
+  getRandomDatetimeRange,
   getRandomDuration,
   getRandomNumber,
   getRandomTime,
@@ -69,7 +70,10 @@ const INITIAL_VALUE: {
     start: null,
     end: null,
   },
-  datetimeRange: null,
+  datetimeRange: {
+    start: null,
+    end: null,
+  },
 }
 
 const randomValue = () => ({
@@ -84,7 +88,10 @@ const randomValue = () => ({
   calendarMonth: casual.coin_flip ? getRandomCalendarMonth() : null,
   datetime: casual.coin_flip ? getRandomDatetime() : null,
   dateRange: casual.random_element([
-    null,
+    {
+      start: null,
+      end: null,
+    },
     {
       start: getRandomDate(),
       end: null,
@@ -94,6 +101,21 @@ const randomValue = () => ({
       end: getRandomDate(),
     },
     getRandomDateRange(),
+  ]),
+  datetimeRange: casual.random_element([
+    {
+      start: null,
+      end: null,
+    },
+    {
+      start: getRandomDatetime(),
+      end: null,
+    },
+    {
+      start: null,
+      end: getRandomDatetime(),
+    },
+    getRandomDatetimeRange(),
   ]),
 })
 
@@ -109,6 +131,7 @@ const randomFill = () => ({
   calendarMonth: getRandomCalendarMonth(),
   datetime: getRandomDatetime(),
   dateRange: getRandomDateRange(),
+  datetimeRange: getRandomDatetimeRange(),
 })
 
 export const FullFormExample = () => {

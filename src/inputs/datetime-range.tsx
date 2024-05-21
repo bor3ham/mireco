@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useCallback, useRef, useMemo } from 'react'
-import { startOfDay, addDays, subDays, format } from 'date-fns'
+import { startOfDay, addDays, subDays } from 'date-fns'
 import classNames from 'classnames'
 
 import { WidgetBlock, DateText, TimeText, DayCalendar, TimeSelector, type DateTextHandle, type TimeTextHandle } from 'components'
@@ -11,15 +11,18 @@ import {
   combineDatetimeRangeValues,
   combineDatetimeValues,
   splitDatetimeValue,
-  DateValue,
-  TimeValue,
+  type DateValue,
+  type TimeValue,
   dateValueAsDate,
   dateAsDateValue,
+  type DateFormatFunction,
+  type DateParseFunction,
+  type TimeFormatFunction,
+  type TimeParseFunction,
 } from 'types'
 import { Button } from './button'
 import { ClockVector } from 'vectors'
 import { useInputKeyDownHandler } from 'hooks'
-import { ISO_8601_DATE_FORMAT } from 'constants'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -30,6 +33,13 @@ export interface DatetimeRangeProps {
   disabled?: boolean
   icon?: React.ReactNode
   clearable?: boolean
+  dateLocale?: string
+  dateFormat?: DateFormatFunction
+  dateParse?: DateParseFunction
+  timeLocale?: string
+  timeFormat?: TimeFormatFunction
+  timeParse?: TimeParseFunction
+  simplifyTime?: boolean
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
   /** Starting point for up/down with no value, or when other field filled and blurred */
@@ -211,6 +221,13 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   disabled,
   icon = <ClockVector />,
   clearable = true,
+  dateLocale,
+  dateFormat,
+  dateParse,
+  timeLocale,
+  timeFormat,
+  timeParse,
+  simplifyTime,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
   timeStep = 15 * 60 * 1000,
@@ -222,7 +239,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     controlsOpen: false,
     endDateShowing: typeof value.end === 'number' && (
       typeof value.start !== 'number' ||
-      format(value.end, ISO_8601_DATE_FORMAT) != format(value.start, ISO_8601_DATE_FORMAT)
+      dateAsDateValue(new Date(value.end)) != dateAsDateValue(new Date(value.start))
     ),
   })
 
@@ -407,7 +424,17 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     }
   }, [])
   const handleBlur = useCallback(() => {
-    const fallback = combineDatetimeRangeValues(state.startDate, state.startTime, state.endDate, state.endTime, true, defaultDate, defaultTime)
+    let fallback = combineDatetimeRangeValues(state.startDate, state.startTime, state.endDate, state.endTime, true, defaultDate, defaultTime)
+    if (
+      typeof fallback.start === 'number' &&
+      typeof fallback.end === 'number' &&
+      fallback.start > fallback.end
+    ) {
+      fallback = {
+        start: fallback.end,
+        end: fallback.start,
+      }
+    }
     dispatch({
       type: 'blur',
     })
@@ -880,7 +907,6 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   ])
 
   // todo: swap start/end when blur wrong
-  // todo: close controls etc as response to disable
 
   return (
     <WidgetBlock
@@ -905,6 +931,9 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         size={12}
         disabled={disabled}
         onKeyDown={handleStartDateKeyDown}
+        locale={dateLocale}
+        format={dateFormat}
+        parse={dateParse}
       />
       <TimeText
         ref={startTimeRef}
@@ -916,6 +945,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         size={9}
         disabled={disabled}
         onKeyDown={handleStartTimeKeyDown}
+        locale={timeLocale}
+        format={timeFormat}
+        parse={timeParse}
+        simplify={simplifyTime}
       />
       <p>to</p>
       {state.endDateShowing && (
@@ -929,6 +962,9 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           size={12}
           disabled={disabled}
           onKeyDown={handleEndDateKeyDown}
+          locale={dateLocale}
+          format={dateFormat}
+          parse={dateParse}
         />
       )}
       <TimeText
@@ -941,11 +977,16 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         size={9}
         disabled={disabled}
         onKeyDown={handleEndTimeKeyDown}
+        locale={timeLocale}
+        format={timeFormat}
+        parse={timeParse}
+        simplify={simplifyTime}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
         <div className="MIRECO-datetime-range-controls">
           <div className="MIRECO-datetime-range-header">
             <Button
+              type="button"
               className={classNames({
                 'other': !focusedOnStart,
               })}
@@ -956,6 +997,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
             </Button>
             {' '}
             <Button
+              type="button"
               className={classNames({
                 'other': focusedOnStart,
               })}

@@ -1,10 +1,10 @@
 import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef } from 'react'
-import humanizeDuration from 'humanize-duration'
 import classNames from 'classnames'
 
 import { WidgetBlock, type TimeTextHandle, TimeText, TimeSelector } from 'components'
 import { ClockVector } from 'vectors'
-import type { TimeInputValue, TimeValue } from 'types'
+import type { TimeInputValue, TimeValue, TimeFormatFunction, TimeParseFunction } from 'types'
+import { useInputKeyDownHandler } from 'hooks'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -46,16 +46,6 @@ function timeReducer(state: TimeState, action: TimeAction): TimeState {
   }
 }
 
-const shortHumanizeDur = humanizeDuration.humanizer({
-  language: 'shortEn',
-  languages: {
-    shortEn: {
-      h: () => 'h',
-      m: () => 'm',
-    },
-  },
-})
-
 export interface TimeProps {
   // === Mireco
   block?: boolean
@@ -63,9 +53,9 @@ export interface TimeProps {
   // === Time Input Specific
   value?: TimeInputValue
   onChange?(newValue: TimeInputValue, wasBlur: boolean): void
-  inputFormats?: string[]
-  longFormat?: string
-  displayFormat?: string
+  locale?: string
+  format?: TimeFormatFunction
+  parse?: TimeParseFunction
   simplify?: boolean
   icon?: React.ReactNode
   autoErase?: boolean
@@ -119,23 +109,9 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   block,
   value,
   onChange,
-  inputFormats = [
-    'h:mm:ss a',
-    'h:mm:ssa',
-    'h:mm:ss',
-    'h:mm a',
-    'H:mm:ss',
-    'H:mm',
-    'h:mma',
-    'h:mm',
-    'h a',
-    'H:mm',
-    'H',
-    'ha',
-    'h',
-  ],
-  longFormat = 'h:mm:ss a',
-  displayFormat = 'h:mm a',
+  locale,
+  format,
+  parse,
   simplify = false,
   icon = <ClockVector />,
   autoErase = true,
@@ -144,7 +120,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   rightHang,
   clearable = true,
   closeOnSelect = true,
-  placeholder = 'hh : mm',
+  placeholder,
   textClassName,
   size,
   autoComplete,
@@ -235,51 +211,57 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     }
   }, [])
   
-  const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-      if (state.dropdownOpen) {
-        if (textRef.current) {
-          textRef.current.cleanText()
-        }
-        dispatch({ type: 'close' })
-        event.preventDefault()
-      }
-      return
+  const closeDropdown = useCallback(() => {
+    dispatch({ type: 'close' })
+  }, [])
+  const clean = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.cleanText()
     }
+  }, [])
+  const recordFocus = useCallback(() => {
     dispatch({ type: 'open' })
-    let wasEmpty = true
-    let current = startingPoint
+  }, [])
+  const [fallback, has] = useMemo(() => {
+    let has = false
+    let fallback = startingPoint
     if (typeof value === 'number') {
-      wasEmpty = false
-      current = value
+      has = true
+      fallback = value
     }
-    if (event.key === 'ArrowUp') {
-      let loweredCurrent = Math.floor(current / step) * step
-      if (loweredCurrent === current && !wasEmpty) {
-        loweredCurrent -= step
-      }
-      if (loweredCurrent < 0) {
-        loweredCurrent += DAY_MS
-      }
-      event.preventDefault()
-      if (onChange) {
-        onChange(loweredCurrent, false)
-      }
-    } else if (event.key === 'ArrowDown') {
-      let raisedCurrent = Math.ceil(current / step) * step
-      if (raisedCurrent === current && !wasEmpty) {
-        raisedCurrent += step
-      }
-      raisedCurrent = raisedCurrent % DAY_MS
-      event.preventDefault()
-      if (onChange) {
-        onChange(raisedCurrent, false)
-      }
+    return [fallback, has]
+  }, [startingPoint, value])
+  const decrement = useCallback(() => {
+    let lowered = Math.floor(fallback / step) * step
+    if (lowered === fallback && has) {
+      lowered -= step
     }
-    if (onKeyDown) {
-      onKeyDown(event)
+    if (lowered < 0) {
+      lowered += DAY_MS
     }
-  }, [state.dropdownOpen, startingPoint, value, onChange, onKeyDown])
+    if (onChange) {
+      onChange(lowered, false)
+    }
+  }, [fallback, step, has, onChange])
+  const increment = useCallback(() => {
+    let raised = Math.ceil(fallback / step) * step
+    if (raised === fallback && has) {
+      raised += step
+    }
+    raised = raised % DAY_MS
+    if (onChange) {
+      onChange(raised, false)
+    }
+  }, [fallback, step, has, onChange])
+  const handleTextKeyDown = useInputKeyDownHandler(
+    state.dropdownOpen,
+    closeDropdown,
+    clean,
+    recordFocus,
+    decrement,
+    increment,
+  )
+
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
     dispatch({ type: 'open' })
     if (onClick) {
@@ -357,8 +339,10 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         value={value}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}
-        displayFormat={displayFormat}
-        inputFormats={inputFormats}
+        locale={locale}
+        format={format}
+        parse={parse}
+        simplify={simplify}
         autoErase={autoErase}
         placeholder={placeholder}
         disabled={disabled}
@@ -379,7 +363,6 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
         onMouseOut={onMouseOut}
         onMouseOver={onMouseOver}
         onMouseUp={onMouseUp}
-        onKeyDown={handleTextKeyDown}
         onKeyUp={onKeyUp}
       />
       <input type="hidden" name={name} value={formValue} />

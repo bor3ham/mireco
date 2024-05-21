@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'react'
+import React, { useState, useRef, useEffect, useCallback, forwardRef, useMemo } from 'react'
 import classNames from 'classnames'
-import { parse, format, addDays, subDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 
 import { DayCalendar, WidgetBlock, DateTextHandle, DateText } from 'components'
 import { CalendarVector } from 'vectors'
-import {
-  ISO_8601_DATE_FORMAT,
-} from 'constants'
-import type { DateInputValue, DateValue } from 'types'
+import type { DateInputValue, DateValue, DateFormatFunction, DateParseFunction } from 'types'
+import { dateValueAsDate, dateAsDateValue } from 'types'
+import { useInputKeyDownHandler } from 'hooks'
 
 // todo: combine state into reducer
 // todo: replace keydown with keypress
@@ -18,14 +17,9 @@ export interface DateProps {
   // date
   value?: DateInputValue
   onChange?(newValue: DateInputValue, wasBlur: boolean): void
-  displayFormat?: string
-  /**
-   * Ordered list of input formats, when parsing text will accept the first valid
-   * result.
-   * 
-   * Note that input spaces are automatically replaced with slashes.
-  */
-  inputFormats?: string[]
+  locale?: string
+  format?: DateFormatFunction
+  parse?: DateParseFunction
   autoErase?: boolean
   clearable?: boolean
   rightHang?: boolean
@@ -65,24 +59,13 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   block,
   value,
   onChange,
-  displayFormat = 'do MMM yyyy',
-  inputFormats = [
-    'd',
-    'do',
-    'd/MM',
-    'do/MMM',
-    'do/MMMM',
-    'd/MM/yy',
-    'd/MM/yyyy',
-    'do/MMM/yy',
-    'do/MMM/yyyy',
-    'do/MMMM/yy',
-    'do/MMMM/yyyy',
-  ],
+  locale,
+  format,
+  parse,
   autoErase = true,
   clearable = true,
   rightHang,
-  placeholder = 'dd / mm / yyyy',
+  placeholder,
   icon = <CalendarVector />,
   textClassName,
   size = 12,
@@ -177,42 +160,47 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       textRef.current.focus()
     }
   }, [])
-  
-  const handleTextKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-      if (calendarOpen) {
-        if (textRef.current) {
-          textRef.current.cleanText()
-        }
-        setCalendarOpen(false)
-        event.preventDefault()
-      }
-      return
+
+  const closeCalendar = useCallback(() => {
+    setCalendarOpen(false)
+  }, [])
+  const clean = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.cleanText()
     }
+  }, [])
+  const recordFocus = useCallback(() => {
     setInFocus(true)
     setCalendarOpen(true)
-    let wasEmpty = true
-    let current = new Date()
+  }, [])
+  const [fallback, has] = useMemo(() => {
+    let has = false
+    let fallback = new Date()
     if (typeof value === 'string') {
-      wasEmpty = false
-      current = parse(value, ISO_8601_DATE_FORMAT, new Date())
+      has = true
+      fallback = dateValueAsDate(value)
     }
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      if (onChange) {
-        onChange(format(addDays(current, wasEmpty ? 0 : 1), ISO_8601_DATE_FORMAT), false)
-      }
+    return [fallback, has]
+  }, [value])
+  const decrement = useCallback(() => {
+    if (onChange) {
+      onChange(dateAsDateValue(subDays(fallback, has ? 1 : 0)), false)
     }
-    if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      if (onChange) {
-        onChange(format(subDays(current, wasEmpty ? 0 : 1), ISO_8601_DATE_FORMAT), false)
-      }
+  }, [onChange, fallback, has])
+  const increment = useCallback(() => {
+    if (onChange) {
+      onChange(dateAsDateValue(addDays(fallback, has ? 1 : 0)), false)
     }
-    if (onKeyDown) {
-      onKeyDown(event)
-    }
-  }, [calendarOpen, value, onChange, onKeyDown])
+  }, [onChange, fallback, has])
+  const handleTextKeyDown = useInputKeyDownHandler(
+    calendarOpen,
+    closeCalendar,
+    clean,
+    recordFocus,
+    decrement,
+    increment,
+  )
+
   const textRef = useRef<DateTextHandle>(null)
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {
@@ -276,8 +264,9 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         onFocus={handleTextFocus}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}
-        displayFormat={displayFormat}
-        inputFormats={inputFormats}
+        locale={locale}
+        format={format}
+        parse={parse}
         autoErase={autoErase}
         tabIndex={tabIndex}
         placeholder={placeholder}

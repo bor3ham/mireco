@@ -1,5 +1,5 @@
-import React, { useReducer, useRef, useCallback, useEffect, forwardRef } from 'react'
-import { format, parse, addDays, subDays } from 'date-fns'
+import React, { useReducer, useRef, useCallback, useEffect, forwardRef, useMemo } from 'react'
+import { addDays, subDays } from 'date-fns'
 import classNames from 'classnames'
 
 import {
@@ -11,7 +11,6 @@ import {
   DayCalendar,
   TimeSelector,
 } from 'components'
-import { ISO_8601_DATE_FORMAT } from 'constants'
 import {
   type DatetimeValue,
   type DatetimeInputValue,
@@ -21,8 +20,15 @@ import {
   type TimeInputValue,
   combineDatetimeValues,
   splitDatetimeValue,
+  dateValueAsDate,
+  dateAsDateValue,
+  DateFormatFunction,
+  DateParseFunction,
+  TimeFormatFunction,
+  TimeParseFunction,
 } from 'types'
 import { ClockVector } from 'vectors'
+import { useInputKeyDownHandler } from 'hooks'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -32,11 +38,12 @@ export interface DatetimeProps {
   // datetime
   value?: DatetimeInputValue
   onChange?(newValue: DatetimeInputValue, wasBlur: boolean): void
-  dateDisplayFormat?: string
-  relativeTo?: DatetimeValue
-  timeInputFormats?: string[]
-  timeLongFormat?: string
-  timeDisplayFormat?: string
+  dateLocale?: string
+  dateFormat?: DateFormatFunction
+  dateParse?: DateParseFunction
+  timeLocale?: string
+  timeFormat?: TimeFormatFunction
+  timeParse?: TimeParseFunction
   simplifyTime?: boolean
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
@@ -167,26 +174,13 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   block,
   value,
   onChange,
-  dateDisplayFormat = 'do MMM yyyy',
-  relativeTo,
-  timeInputFormats = [
-    'h:mm:ss a',
-    'h:mm:ssa',
-    'h:mm:ss',
-    'h:mm a',
-    'H:mm:ss',
-    'H:mm',
-    'h:mma',
-    'h:mm',
-    'h a',
-    'H:mm',
-    'H',
-    'ha',
-    'h',
-  ],
-  timeLongFormat = 'h:mm:ss a',
-  timeDisplayFormat = 'h:mm a',
-  simplifyTime = false,
+  dateLocale,
+  dateFormat,
+  dateParse,
+  timeLocale,
+  timeFormat,
+  timeParse,
+  simplifyTime,
   timeStep = 15 * 60 * 1000,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
@@ -360,9 +354,6 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     }
   }, [onChange])
 
-  const handleDateFocus = useCallback(() => {
-    dispatch({ type: 'focus', focusInput: DatetimeInput.Date })
-  }, [])
   const handleTimeFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeInput.Time })
   }, [])
@@ -370,100 +361,103 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     dispatch({ type: 'showControls' })
   }, [])
   
-  const handleDateKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-      if (state.controlsOpen) {
-        if (dateRef.current) {
-          dateRef.current.cleanText()
-        }
-        dispatch({ type: 'closeControls' })
-        event.preventDefault()
-      }
-      return
+  const closeControls = useCallback(() => {
+    dispatch({ type: 'closeControls' })
+  }, [])
+
+  const cleanDate = useCallback(() => {
+    if (dateRef.current) {
+      dateRef.current.cleanText()
     }
-    let wasEmpty = true
-    let current = new Date()
-    if (state.date) {
-      wasEmpty = false
-      current = parse(state.date, ISO_8601_DATE_FORMAT, new Date())
-    }
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      const next = addDays(current, wasEmpty ? 0 : 1)
-      handleDateChange(format(next, ISO_8601_DATE_FORMAT))
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      const prev = subDays(current, wasEmpty ? 0 : 1)
-      handleDateChange(format(prev, ISO_8601_DATE_FORMAT))
-    }
+  }, [])
+  const recordDateFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeInput.Date })
-  }, [
+  }, [])
+  const [fallbackDate, hasDate] = useMemo(() => {
+    let has = false
+    let fallback = defaultDate ? dateValueAsDate(defaultDate) : new Date()
+    if (state.date) {
+      has = true
+      fallback = dateValueAsDate(state.date)
+    }
+    return [fallback, has]
+  }, [defaultDate, state.date])
+  const incrementDate = useCallback(() => {
+    const next = addDays(fallbackDate, hasDate ? 1 : 0)
+    handleDateChange(dateAsDateValue(next))
+  }, [fallbackDate, hasDate, handleDateChange])
+  const decrementDate = useCallback(() => {
+    const prev = subDays(fallbackDate, hasDate ? 1 : 0)
+    handleDateChange(dateAsDateValue(prev))
+  }, [fallbackDate, hasDate, handleDateChange])
+  const handleDateKeyDown = useInputKeyDownHandler(
     state.controlsOpen,
-    state.date,
-    handleDateChange,
-  ])
-  const handleTimeKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === 'Escape') {
-      if (state.controlsOpen) {
-        if (timeRef.current) {
-          timeRef.current.cleanText()
-        }
-        dispatch({ type: 'closeControls' })
-        event.preventDefault()
-      }
-      return
+    closeControls,
+    cleanDate,
+    recordDateFocus,
+    decrementDate,
+    incrementDate,
+  )
+
+  const cleanTime = useCallback(() => {
+    if (timeRef.current) {
+      timeRef.current.cleanText()
     }
-    let wasEmpty = true
-    let current = defaultTime
-    if (typeof state.time === 'number') {
-      wasEmpty = false
-      current = state.time
-    }
-    if (event.key === 'ArrowUp') {
-      let loweredCurrent = Math.floor(current / timeStep) * timeStep
-      if (loweredCurrent === current && !wasEmpty) {
-        loweredCurrent -= timeStep
-      }
-      let traversedDay = false
-      if (loweredCurrent < 0) {
-        traversedDay = true
-        loweredCurrent += DAY_MS
-      }
-      event.preventDefault()
-      if (traversedDay && state.date) {
-        const newDate = subDays(parse(state.date, ISO_8601_DATE_FORMAT, new Date()), 1)
-        handleBothChange(format(newDate, ISO_8601_DATE_FORMAT), loweredCurrent)
-      } else {
-        handleTimeChange(loweredCurrent)
-      }
-    } else if (event.key === 'ArrowDown') {
-      let raisedCurrent = Math.ceil(current / timeStep) * timeStep
-      if (raisedCurrent === current && !wasEmpty) {
-        raisedCurrent += timeStep
-      }
-      let traversedDay = false
-      if (raisedCurrent >= DAY_MS) {
-        traversedDay = true
-        raisedCurrent = raisedCurrent % DAY_MS
-      }
-      event.preventDefault()
-      if (traversedDay && state.date) {
-        const newDate = addDays(parse(state.date, ISO_8601_DATE_FORMAT, new Date()), 1)
-        handleBothChange(format(newDate, ISO_8601_DATE_FORMAT), raisedCurrent)
-      } else {
-        handleTimeChange(raisedCurrent)
-      }
-    }
+  }, [])
+  const recordTimeFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeInput.Time })
-  }, [
+  }, [])
+  const [fallbackTime, hasTime] = useMemo(() => {
+    let has = false
+    let fallback = defaultTime
+    if (typeof state.time === 'number') {
+      has = true
+      fallback = state.time
+    }
+    return [fallback, has]
+  }, [defaultTime, state.time])
+  const decrementTime = useCallback(() => {
+    let earlier = Math.floor(fallbackTime / timeStep) * timeStep
+    if (earlier === fallbackTime && hasTime) {
+      earlier -= timeStep
+    }
+    let traversedDay = false
+    if (earlier < 0) {
+      traversedDay = true
+      earlier += DAY_MS
+    }
+    if (traversedDay && state.date) {
+      const newDate = subDays(dateValueAsDate(state.date), 1)
+      handleBothChange(dateAsDateValue(newDate), earlier)
+    } else {
+      handleTimeChange(earlier)
+    }
+  }, [fallbackTime, timeStep, hasTime, state.date, handleBothChange, handleTimeChange])
+  const incrementTime = useCallback(() => {
+    let later = Math.ceil(fallbackTime / timeStep) * timeStep
+    if (later === fallbackTime && hasTime) {
+      later += timeStep
+    }
+    let traversedDay = false
+    if (later >= DAY_MS) {
+      traversedDay = true
+      later = later % DAY_MS
+    }
+    if (traversedDay && state.date) {
+      const newDate = addDays(dateValueAsDate(state.date), 1)
+      handleBothChange(dateAsDateValue(newDate), later)
+    } else {
+      handleTimeChange(later)
+    }
+  }, [fallbackTime, timeStep, hasTime, state.date, handleBothChange, handleTimeChange])
+  const handleTimeKeyDown = useInputKeyDownHandler(
     state.controlsOpen,
-    state.time,
-    handleTimeChange,
-    state.date,
-    handleBothChange,
-    defaultTime,
-    timeStep,
-  ])
+    closeControls,
+    cleanTime,
+    recordTimeFocus,
+    decrementTime,
+    incrementTime,
+  )
 
   const handleSelectDay = useCallback((newValue: DateValue) => {
     handleDateChange(newValue)
@@ -486,7 +480,6 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     }
   } , [handleTimeChange, state.date, defaultDate, defaultTime])
 
-
   return (
     <WidgetBlock
       ref={containerRef}
@@ -508,10 +501,12 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         value={state.date}
         onChange={handleDateChange}
         size={12}
-        onFocus={handleDateFocus}
+        onFocus={recordDateFocus}
         onKeyDown={handleDateKeyDown}
         onClick={handleTextClick}
-        displayFormat={dateDisplayFormat}
+        locale={dateLocale}
+        format={dateFormat}
+        parse={dateParse}
         disabled={disabled}
         className="MIRECO-embedded"
       />
@@ -525,6 +520,10 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         onClick={handleTextClick}
         disabled={disabled}
         className="MIRECO-embedded"
+        locale={timeLocale}
+        format={timeFormat}
+        parse={timeParse}
+        simplify={simplifyTime}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
         <div className="MIRECO-datetime-controls">
@@ -545,4 +544,3 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     </WidgetBlock>
   )
 })
-

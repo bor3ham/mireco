@@ -12,36 +12,6 @@ export function isDateValue(value: DateInputValue): boolean {
   return !isEmpty(value)
 }
 
-export function formatDate(value: DateInputValue, displayFormat: string): string {
-  if (!isDateValue(value)) {
-    return ''
-  }
-  return format(parse(value as DateValue, ISO_8601_DATE_FORMAT, new Date()), displayFormat)
-}
-
-export function parseDate(textValue: string, inputFormats: string[]): DateInputValue {
-  let trimmed = textValue.trim()
-  if (trimmed.length === 0) {
-    return null
-  }
-  trimmed = trimmed.replace(/\\/g, '/') // replace backslashes with forward
-  trimmed = trimmed.replace(/ /g, '/') // replace spaces with slashes
-  trimmed = trimmed.replace(/\/+/g, '/') // merge several slashes into one
-  trimmed = trimmed.replace(/\/+$/, '') // remove trailing slashes from consideration
-
-  let valid: DateInputValue
-  inputFormats.forEach((inputFormat) => {
-    if (typeof valid !== 'undefined') {
-      return
-    }
-    const parsed = parse(trimmed, inputFormat, new Date())
-    if (isValid(parsed)) {
-      valid = format(parsed, ISO_8601_DATE_FORMAT)
-    }
-  })
-  return valid
-}
-
 export function dateValueAsDate(value: DateValue): Date {
   return parse(value, ISO_8601_DATE_FORMAT, new Date())
 }
@@ -49,3 +19,7 @@ export function dateValueAsDate(value: DateValue): Date {
 export function dateAsDateValue(date: Date): DateValue {
   return format(date, ISO_8601_DATE_FORMAT)
 }
+
+export type DateParseFunction = (value: string, locale?: string) => DateInputValue
+
+export type DateFormatFunction = (value: DateInputValue, locale?: string) => string

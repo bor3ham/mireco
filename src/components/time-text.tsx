@@ -1,7 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react'
 
 import { Text } from 'inputs'
-import { formatTime, parseTime, type TimeInputValue } from 'types'
+import type { TimeInputValue, TimeFormatFunction, TimeParseFunction } from 'types'
+import { getSafeLocale } from 'constants'
+import {
+  formatTime as defaultFormat,
+  parseTime as defaultParse,
+  TIME_PLACEHOLDERS,
+} from 'locale'
 
 export interface TimeTextProps {
   // mireco
@@ -10,9 +16,9 @@ export interface TimeTextProps {
   value?: TimeInputValue
   onChange?(newValue: TimeInputValue): void
   onTextChange?(newValue: string): void
-  inputFormats?: string[]
-  longFormat?: string
-  displayFormat?: string
+  locale?: string
+  format?: TimeFormatFunction
+  parse?: TimeParseFunction
   simplify?: boolean
   placeholder?: string
   textClassName?: string
@@ -58,25 +64,11 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
   value,
   onChange,
   onTextChange,
-  inputFormats = [
-    'h:mm:ss a',
-    'h:mm:ssa',
-    'h:mm:ss',
-    'h:mm a',
-    'H:mm:ss',
-    'H:mm',
-    'h:mma',
-    'h:mm',
-    'h a',
-    'H:mm',
-    'H',
-    'ha',
-    'h',
-  ],
-  longFormat = 'h:mm:ss a',
-  displayFormat = 'h:mm a',
+  locale,
+  format = defaultFormat,
+  parse = defaultParse,
   simplify = false,
-  placeholder = 'hh : mm',
+  placeholder,
   autoErase = true,
   size,
   initialText,
@@ -104,7 +96,7 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
   onKeyDown,
   onKeyUp,
 }, ref) => {
-  const [textValue, setTextValue] = useState<string>(formatTime(value, inputFormats, longFormat, displayFormat, simplify))
+  const [textValue, setTextValue] = useState<string>(format(value, locale, simplify))
   const textValueRef = useRef<string>(textValue)
   textValueRef.current = textValue
 
@@ -113,9 +105,9 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
     if (value === null) {
       setTextValue('')
     } else if (typeof value === 'number') {
-      const parsedCurrent = parseTime(textValueRef.current, inputFormats)
+      const parsedCurrent = parse(textValueRef.current, locale)
       if (parsedCurrent !== value) {
-        setTextValue(formatTime(value, inputFormats, longFormat, displayFormat, simplify))
+        setTextValue(format(value, locale, simplify))
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +117,7 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
 
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
     if (typeof value === 'number') {
-      const formatted = formatTime(value, inputFormats, longFormat, displayFormat, simplify)
+      const formatted = format(value, locale, simplify)
       setTextValue(formatted)
     } else {
       if (autoErase) {
@@ -141,9 +133,11 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
     }
   }, [
     value,
-    displayFormat,
-    onChange,
+    locale,
+    simplify,
+    format,
     autoErase,
+    onChange,
     onBlur,
   ])
 
@@ -151,12 +145,12 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
   const handleChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {
-      onChange(parseTime(newValue, inputFormats))
+      onChange(parse(newValue, locale))
     }
     if (onTextChange) {
       onTextChange(newValue)
     }
-  }, [onChange, inputFormats])
+  }, [onChange, locale])
 
   const focus = useCallback(() => {
     if (textRef.current) {
@@ -167,13 +161,12 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
     setTextValue(newText)
   }, [])
   const cleanText = useCallback(() => {
-    const clean = formatTime(value, inputFormats, longFormat, displayFormat, simplify)
+    const clean = format(value, locale, simplify)
     setText(clean)
   }, [
+    format,
     value,
-    inputFormats,
-    longFormat,
-    displayFormat,
+    locale,
     simplify,
     setText,
   ])
@@ -198,16 +191,25 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const fallbackPlaceholder = useMemo(() => {
+    if (typeof placeholder === 'string') return placeholder
+    const safeLocale = getSafeLocale(locale)
+    return TIME_PLACEHOLDERS[safeLocale]
+  }, [placeholder, locale])
   
   return (
     <Text
       id={id}
       ref={textRef}
-      placeholder={placeholder}
+      placeholder={fallbackPlaceholder}
       value={textValue}
       disabled={disabled}
       block={block}
-      style={{marginBottom: '0'}}
+      style={{
+        marginBottom: '0',
+        ...style,
+      }}
       required={required}
       autoComplete={autoComplete}
       className={className}

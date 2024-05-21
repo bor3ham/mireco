@@ -1,6 +1,8 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react'
 import { Checkbox, Range, Button } from 'mireco'
 
+import { ResizeContainer } from './resize-container'
+
 export const LabContext = createContext<{
   value: any
   onChange(newValue: any): void
@@ -53,6 +55,7 @@ interface LabWrapperProps {
   initialValue: any
   getRandomValue(): any
   stringify(value: any): string
+  showSubmit?: boolean
 }
 
 export const LabWrapper = ({
@@ -60,6 +63,7 @@ export const LabWrapper = ({
   initialValue,
   getRandomValue,
   stringify,
+  showSubmit = false,
 }: LabWrapperProps) => {
   const [state, setState] = useState({
     value: initialValue,
@@ -214,8 +218,11 @@ export const LabWrapper = ({
       </div>
       <div key={`mount-${mountIndex}`} style={{marginBottom: '1rem'}}>
         <form onSubmit={handleSubmit}>
-          {children}
-          <button type="submit" hidden>Submit</button>
+          <ResizeContainer>
+            {children}
+            {' '}
+            <Button type="submit" hidden={!showSubmit} disabled={state.disabled}>Submit</Button>
+          </ResizeContainer>
         </form>
       </div>
       <div className="lab-controls" style={{marginTop: '15rem'}}>

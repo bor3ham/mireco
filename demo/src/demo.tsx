@@ -36,6 +36,7 @@ import {
   TextareaLab,
   TimeLab,
 } from './labs'
+import { Localisation } from './localisation'
 
 const MOUNTS: Record<string, ReactElement> = {
   'div.full-form': <FullFormExample />,
@@ -68,6 +69,7 @@ const MOUNTS: Record<string, ReactElement> = {
   'div.text-lab': <TextLab />,
   'div.textarea-lab': <TextareaLab />,
   'div.time-lab': <TimeLab />,
+  'div.localisation': <Localisation />,
 }
 
 Object.keys(MOUNTS).forEach((mount) => {
