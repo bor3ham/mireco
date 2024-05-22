@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useReducer, useCallback, useEffect } from 'react'
 import classNames from 'classnames'
 
-import { BlockDiv, Dropdown, ClearButton } from 'components'
+import { WidgetBlock, Dropdown, ClearButton } from 'components'
 import { ChevronDownVector } from 'vectors'
 import {
   KEYBOARD_ARROW_DOWN,
@@ -135,7 +135,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   onChange,
   filter = true,
   icon = <ChevronDownVector />,
-  placeholder,
+  placeholder = 'Select',
   textClassName,
   onTextChange,
   dropdownProps,
@@ -440,7 +440,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   const hasValue = (value || []).length > 0
   const clearable = hasValue && !disabled
   return (
-    <BlockDiv
+    <WidgetBlock
       ref={containerRef}
       block={block}
       className={classNames('MIRECO-multi-select', {
@@ -452,6 +452,10 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
       onBlur={handleContainerBlur}
       onClick={handleContainerClick}
       tabIndex={-1}
+      onClear={clearAll}
+      clearable={clearable}
+      everClearable
+      icon={icon}
     >
       <ul className="selected">
         {(value || []).map((selectedValue, valueIndex) => {
@@ -470,6 +474,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
         })}
         <li className="text">
           <Text
+            className={classNames('MIRECO-embedded', textClassName)}
             ref={(instance: HTMLInputElement) => {
               textRef.current = instance
               if (typeof forwardedRef === "function") {
@@ -486,19 +491,17 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
             onChange={handleTextChange}
             disabled={disabled}
             block={block}
-            style={style}
             autoFocus={autoFocus}
-            className={textClassName}
             id={id}
             required={required}
             autoComplete={autoComplete}
+            style={{
+              marginBottom: '0',
+              ...style,
+            }}
           />
         </li>
       </ul>
-      {clearable && (
-        <ClearButton onClick={clearAll} />
-      )}
-      {icon}
       {state.dropdownOpen && !disabled && (
         <Dropdown
           options={filtered}
@@ -507,6 +510,6 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
           {...dropdownProps}
         />
       )}
-    </BlockDiv>
+    </WidgetBlock>
   )
 })

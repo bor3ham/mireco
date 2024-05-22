@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { addDays, subDays, max } from 'date-fns'
 
 import { type DateRangeInputValue, type DateInputValue, type DateValue } from 'types'
-import { WidgetBlock, DateText, type DateTextHandle, DayCalendar } from 'components'
+import { WidgetBlock, DateText, type DateTextHandle, DayCalendar, StartEndHeader, ControlsPopover } from 'components'
 import { CalendarVector } from 'vectors'
 import { dateValueAsDate, dateAsDateValue } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
@@ -20,7 +20,8 @@ export interface DateRangeProps {
   icon?: React.ReactNode
   clearable?: boolean
   size?: number
-
+  startPlaceholder?: string
+  endPlaceholder?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -153,6 +154,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
   icon = <CalendarVector />,
   clearable = true,
   size = 12,
+  startPlaceholder,
+  endPlaceholder,
   id,
   autoFocus,
   style,
@@ -458,6 +461,19 @@ export const DateRange: React.FC<DateRangeProps> = ({
     state,
   ])
 
+  const handleStartClick = useCallback(() => {
+    if (startRef.current) {
+      startRef.current.focus()
+    }
+  }, [])
+  const handleEndClick = useCallback(() => {
+    if (endRef.current) {
+      endRef.current.focus()
+    }
+  }, [])
+
+  const focusedOnStart = state.focusInput === DateRangeInput.Start
+
   return (
     <WidgetBlock
       ref={containerRef}
@@ -488,6 +504,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         autoFocus={autoFocus}
         className="MIRECO-embedded"
         disabled={disabled}
+        placeholder={startPlaceholder}
       />
       <p>to</p>
       <DateText
@@ -503,14 +520,25 @@ export const DateRange: React.FC<DateRangeProps> = ({
         parse={parse}
         className="MIRECO-embedded"
         disabled={disabled}
+        placeholder={endPlaceholder}
       />
       {state.inFocus && state.calendarOpen && !disabled && (
-        <DayCalendar
-          selectDay={handleSelectDay}
-          current={state.focusInput === DateRangeInput.Start ? (value && value.start) : (value && value.end)}
-          invalid={dayInvalid}
-          highlight={dayHighlight}
-        />
+        <ControlsPopover className="MIRECO-date-range-controls">
+          <StartEndHeader
+            focusedOnStart={focusedOnStart}
+            onStartClick={handleStartClick}
+            onEndClick={handleEndClick}
+          />
+          <div className="MIRECO-datetime-range-body">
+            <DayCalendar
+              className="MIRECO-embedded"
+              selectDay={handleSelectDay}
+              current={state.focusInput === DateRangeInput.Start ? (value && value.start) : (value && value.end)}
+              invalid={dayInvalid}
+              highlight={dayHighlight}
+            />
+          </div>
+        </ControlsPopover>
       )}
     </WidgetBlock>
   )

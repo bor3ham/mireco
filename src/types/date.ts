@@ -1,12 +1,12 @@
-import { parse, format, isValid } from 'date-fns'
+import { parse, format } from 'date-fns'
 
 import { ISO_8601_DATE_FORMAT } from 'constants'
 import { isEmpty } from './empty'
-import type { Empty } from './empty'
+import type { InputValue } from './empty'
 
 export type DateValue = string // ISO8601 formatted date eg: '2023-02-18'
 
-export type DateInputValue = DateValue | Empty
+export type DateInputValue = InputValue<DateValue>
 
 export function isDateValue(value: DateInputValue): boolean {
   return !isEmpty(value)

@@ -10,9 +10,9 @@ import {
   type TimeTextHandle,
   DayCalendar,
   TimeSelector,
+  ControlsPopover,
 } from 'components'
 import {
-  type DatetimeValue,
   type DatetimeInputValue,
   type DateValue,
   type DateInputValue,
@@ -45,6 +45,8 @@ export interface DatetimeProps {
   timeFormat?: TimeFormatFunction
   timeParse?: TimeParseFunction
   simplifyTime?: boolean
+  datePlaceholder?: string
+  timePlaceholder?: string
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
   /** Starting point for up/down with no value, or when other field filled and blurred */
@@ -181,6 +183,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   timeFormat,
   timeParse,
   simplifyTime,
+  datePlaceholder,
+  timePlaceholder,
   timeStep = 15 * 60 * 1000,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
@@ -509,6 +513,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         parse={dateParse}
         disabled={disabled}
         className="MIRECO-embedded"
+        placeholder={datePlaceholder}
       />
       <TimeText
         ref={timeRef}
@@ -524,9 +529,10 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         format={timeFormat}
         parse={timeParse}
         simplify={simplifyTime}
+        placeholder={timePlaceholder}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
-        <div className="MIRECO-datetime-controls">
+        <ControlsPopover className="MIRECO-datetime-controls">
           <DayCalendar
             className="MIRECO-embedded"
             current={state.date}
@@ -539,7 +545,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
             value={state.time}
             onChange={handleSelectTime}
           />
-        </div>
+        </ControlsPopover>
       )}
     </WidgetBlock>
   )

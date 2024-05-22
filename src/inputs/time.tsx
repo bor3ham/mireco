@@ -312,9 +312,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       ref={containerRef}
       block={block}
       style={style}
-      className={classNames(className, 'MIRECO-time', {
-        'right-hang': rightHang,
-      })}
+      className={classNames(className, 'MIRECO-time')}
       icon={icon}
       clearable={canClear}
       everClearable={clearable}
@@ -368,6 +366,9 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       <input type="hidden" name={name} value={formValue} />
       {state.inFocus && state.dropdownOpen && !disabled && (
         <TimeSelector
+          className={classNames({
+            'right-hang': rightHang,
+          })}
           value={value}
           onChange={handleSelect}
           minuteIncrements={15}

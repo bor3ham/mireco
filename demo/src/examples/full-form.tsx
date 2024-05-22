@@ -23,10 +23,18 @@ import {
   type DateRangeInputValue,
   DatetimeRange,
   type DatetimeRangeInputValue,
+  Select,
+  type SelectInputValue,
+  MultiSelect,
+  type SelectValue,
+  type SelectOption,
+  type SelectOptionInputValue,
+  AsyncSelect,
 } from 'mireco'
 import casual from 'casual-browserify'
 
 import {
+  getRandomMonth,
   getRandomCalendarMonth,
   getRandomText,
   getRandomTextarea,
@@ -39,6 +47,25 @@ import {
   getRandomNumber,
   getRandomTime,
 } from '../random'
+
+const SELECT_OPTIONS = [
+  {
+    value: 'bike',
+    label: 'Bicycle',
+  },
+  {
+    value: 'cyclone',
+    label: 'Cyclone',
+  },
+  {
+    value: 'wash_cycle',
+    label: 'Wash Cycle',
+  },
+  {
+    value: 'binoculars',
+    label: 'Binoculars',
+  },
+]
 
 const INITIAL_VALUE: {
   text: string
@@ -54,6 +81,9 @@ const INITIAL_VALUE: {
   datetime: DatetimeInputValue
   dateRange: DateRangeInputValue
   datetimeRange: DatetimeRangeInputValue
+  select: SelectInputValue
+  multiSelect: SelectValue[]
+  asyncSelect: SelectOptionInputValue
 } = {
   text: '',
   textarea: '',
@@ -74,6 +104,46 @@ const INITIAL_VALUE: {
     start: null,
     end: null,
   },
+  select: null,
+  multiSelect: [],
+  asyncSelect: null,
+}
+
+const shuffledArray = (source: any[]) => {
+  const shuffled = [...source]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled
+}
+
+const SIMULATED_LAG = 1000
+
+const fakeResults = (searchTerm: string): SelectOption[] => {
+  const keyedTerm = searchTerm.toLowerCase().trim().replace(' ', '_')
+  return [
+    {
+      value: `${keyedTerm}`,
+      label: `Basic ${searchTerm}`,
+    },
+    {
+      value: `new_${keyedTerm}`,
+      label: `New ${searchTerm}`,
+    },
+    {
+      value: 'other_item',
+      label: 'Other Item',
+    },
+  ]
+}
+
+const fakeLoadResults = (searchTerm: string): Promise<SelectOption[]> => {
+  return new Promise((resolve, reject) => {
+    window.setTimeout(() => {
+      resolve(fakeResults(searchTerm))
+    }, SIMULATED_LAG)
+  })
 }
 
 const randomValue = () => ({
@@ -85,6 +155,7 @@ const randomValue = () => ({
   time: casual.coin_flip ? getRandomTime() : null,
   duration: casual.coin_flip ? getRandomDuration() : null,
   date: casual.coin_flip ? getRandomDate() : null,
+  month: casual.coin_flip ? getRandomMonth() : null,
   calendarMonth: casual.coin_flip ? getRandomCalendarMonth() : null,
   datetime: casual.coin_flip ? getRandomDatetime() : null,
   dateRange: casual.random_element([
@@ -117,6 +188,11 @@ const randomValue = () => ({
     },
     getRandomDatetimeRange(),
   ]),
+  select: casual.coin_flip ? casual.random_element(SELECT_OPTIONS).value : null,
+  multiSelect: shuffledArray(SELECT_OPTIONS).slice(0, casual.integer(0, SELECT_OPTIONS.length)).map((option) => (option.value)),
+  asyncSelect: casual.coin_flip ? casual.random_element(
+    fakeResults(casual.word),
+  ) : null,
 })
 
 const randomFill = () => ({
@@ -128,10 +204,16 @@ const randomFill = () => ({
   time: getRandomTime(),
   duration: getRandomDuration(),
   date: getRandomDate(),
+  month: getRandomMonth(),
   calendarMonth: getRandomCalendarMonth(),
   datetime: getRandomDatetime(),
   dateRange: getRandomDateRange(),
   datetimeRange: getRandomDatetimeRange(),
+  select: casual.random_element(SELECT_OPTIONS).value,
+  multiSelect: shuffledArray(SELECT_OPTIONS).slice(0, casual.integer(1, SELECT_OPTIONS.length)).map((option) => (option.value)),
+  asyncSelect: casual.random_element(
+    fakeResults(casual.word),
+  ),
 })
 
 export const FullFormExample = () => {
@@ -180,6 +262,15 @@ export const FullFormExample = () => {
   }, [setValueField])
   const handleDatetimeRangeChange = useCallback((newValue: DatetimeRangeInputValue) => {
     setValueField('datetimeRange', newValue)
+  }, [setValueField])
+  const handleSelectChange = useCallback((newValue: SelectInputValue) => {
+    setValueField('select', newValue)
+  }, [setValueField])
+  const handleMultiSelectChange = useCallback((newValue: SelectValue[]) => {
+    setValueField('multiSelect', newValue)
+  }, [setValueField])
+  const handleAsyncChange = useCallback((newValue: SelectValue[]) => {
+    setValueField('asyncSelect', newValue)
   }, [setValueField])
 
   const reset = useCallback(() => {
@@ -262,16 +353,44 @@ export const FullFormExample = () => {
         block
         value={value.datetime}
         onChange={handleDatetimeChange}
+        datePlaceholder="Date"
+        timePlaceholder="Time"
       />
       <DateRange
         block
         value={value.dateRange}
         onChange={handleDateRangeChange}
+        startPlaceholder="Start"
+        endPlaceholder="End"
       />
       <DatetimeRange
         block
         value={value.datetimeRange}
         onChange={handleDatetimeRangeChange}
+        startDatePlaceholder="Date"
+        startTimePlaceholder="Time"
+        endDatePlaceholder="Date"
+        endTimePlaceholder="Time"
+      />
+      <Select
+        block
+        value={value.select}
+        options={SELECT_OPTIONS}
+        onChange={handleSelectChange}
+      />
+      <MultiSelect
+        block
+        value={value.multiSelect}
+        options={SELECT_OPTIONS}
+        onChange={handleMultiSelectChange}
+        placeholder="Multi Select"
+      />
+      <AsyncSelect
+        block
+        value={value.asyncSelect}
+        getOptions={fakeLoadResults}
+        onChange={handleAsyncChange}
+        placeholder="Async Select"
       />
       <div style={{
         display: 'flex',

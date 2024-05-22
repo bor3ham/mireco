@@ -10,12 +10,14 @@ export interface MonthCalendarProps {
   current?: MonthInputValue
   onSelect?(month: CalendarMonthValue, year: number): void
   showYears?: boolean
+  className?: string
 }
 
 export const MonthCalendar = forwardRef<HTMLDivElement, MonthCalendarProps>(({
   current,
   onSelect,
   showYears,
+  className,
 }, ref) => {
   const [year, setYear] = useState<number>((new Date()).getFullYear())
   const prevYear = useCallback(() => {
@@ -64,7 +66,7 @@ export const MonthCalendar = forwardRef<HTMLDivElement, MonthCalendarProps>(({
     onSelect,
   ])
   return (
-    <div className="MIRECO-month-calendar" ref={ref}>
+    <div className={classNames('MIRECO-month-calendar MIRECO-controls-popover', className)} ref={ref}>
       {showYears && (
         <div className="calendar-header">
           <button type="button" tabIndex={-1} onClick={prevYear} title="Previous Year">

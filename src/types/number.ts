@@ -1,6 +1,6 @@
-import type { Empty } from './empty'
+import type { InputValue } from './empty'
 
-export type NumberInputValue = number | Empty
+export type NumberInputValue = InputValue<number>
 
 export function formatNumber(value: NumberInputValue): string {
   if (typeof value === 'number') {

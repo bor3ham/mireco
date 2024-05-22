@@ -1,14 +1,12 @@
 .MIRECO-date-range
   position: relative
+  
+  .MIRECO-date-range-header
+    text-align: center
 
-  > .MIRECO-day-calendar
-    position: absolute
-    z-index: 100
-    left: 0
-    top: 100%
-  &.right-hang>.MIRECO-day-calendar
-    left: auto
-    right: 0
+  .MIRECO-date-range-body
+    display: flex
+    flex-direction: row
 
   p
     display: inline

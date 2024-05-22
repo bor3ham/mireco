@@ -266,7 +266,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
   }, [])
 
   return (
-    <div className={classNames('MIRECO-time-selector', className)}>
+    <div className={classNames('MIRECO-time-selector MIRECO-controls-popover', className)}>
       <ValueList
         values={hourValues}
         value={value}

@@ -1,5 +1,7 @@
 export * from './block-div'
 export * from './clear-button'
+export * from './controls-popover'
+export * from './start-end-header'
 export * from './date-text'
 export * from './day-calendar'
 export * from './dropdown'

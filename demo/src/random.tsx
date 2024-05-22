@@ -1,6 +1,6 @@
 import casual from 'casual-browserify'
-import { addDays, subDays, format, parse } from 'date-fns'
-import { ISO_8601_DATE_FORMAT } from 'mireco'
+import { addDays, subDays } from 'date-fns'
+import { dateValueAsDate, dateAsDateValue, dateAsMonth } from 'mireco'
 
 const MINUTE_MS = 60 * 1000
 const HOUR_MS = 60 * MINUTE_MS
@@ -16,14 +16,14 @@ export const getRandomTextarea = () => {
 }
 
 export const getRandomDate = () => (
-  format(addDays(subDays(new Date(), 30), casual.integer(0, 60)), ISO_8601_DATE_FORMAT)
+  dateAsDateValue(addDays(subDays(new Date(), 30), casual.integer(0, 60)))
 )
 
 export const getRandomDateRange = () => {
   const a = getRandomDate()
   const b = getRandomDate()
-  const parsedA = parse(a, ISO_8601_DATE_FORMAT, new Date())
-  const parsedB = parse(a, ISO_8601_DATE_FORMAT, new Date())
+  const parsedA = dateValueAsDate(a)
+  const parsedB = dateValueAsDate(a)
   if (parsedA > parsedB) {
     return {
       start: b,
@@ -39,6 +39,11 @@ export const getRandomDateRange = () => {
 export const getRandomCalendarMonth = () => (
   casual.integer(0, 11)
 )
+
+export const getRandomMonth = () => (dateAsMonth(new Date(
+  (new Date().getFullYear()) + casual.integer(-2, 2),
+  getRandomCalendarMonth(),
+)))
 
 export const getRandomCheckbox = () => (!!casual.coin_flip)
 

@@ -271,7 +271,6 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
       className={classNames(
         'MIRECO-calendar-month',
         {
-          'right-hang': rightHang,
           clearable,
         },
         className,
@@ -321,6 +320,9 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
           current={value}
           onSelect={handleCalendarSelect}
           showYears
+          className={classNames({
+            'right-hang': rightHang,
+          })}
         />
       )}
     </BlockDiv>

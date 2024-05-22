@@ -1,5 +1,5 @@
 .MIRECO-multi-select
-  &:not(.sized)
+  &:not(.sized):not(.block)
     width: 100%
     max-width: 15rem
     min-width: 0
@@ -19,17 +19,13 @@
       display: inline-block
 
       &.option
-        margin-right: 0.5rem
+        margin: 0.25rem
+        margin-right: 0
 
       &.text
         flex-grow: 1
         flex-basis: 8rem
-        > .MIRECO-text
-          background: none
-          border: none
-          padding: 0
-          box-shadow: none
-          margin: 0
+        margin-bottom: 0
   
   &.disabled > ul.selected > li.option
     padding-right: 0.25rem

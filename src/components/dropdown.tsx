@@ -124,7 +124,7 @@ export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
   ])
   return (
     <ul
-      className={classNames('MIRECO-dropdown', {
+      className={classNames('MIRECO-dropdown MIRECO-controls-popover', {
         disabled,
       })}
       tabIndex={-1}

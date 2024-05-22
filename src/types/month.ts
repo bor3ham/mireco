@@ -1,13 +1,12 @@
 import { format, parse, isValid, addMonths, subMonths } from 'date-fns'
 
 import { ISO_8601_MONTH_FORMAT } from 'constants'
-import { isEmpty } from './empty'
-import type { Empty } from './empty'
+import { isEmpty, type InputValue } from './empty'
 import { CalendarMonthInputValue, isCalendarMonthValue, parseCalendarMonth } from './calendar-month'
 
 export type MonthValue = string // ISO8601 formatted month eg: '2023-02'
 
-export type MonthInputValue = MonthValue | Empty
+export type MonthInputValue = InputValue<MonthValue>
 
 export function isMonthValue(value: MonthInputValue): boolean {
   if (isEmpty(value)) {
@@ -64,7 +63,8 @@ export function calendarMonthInYear(calendarMonth: CalendarMonthInputValue, year
     const asDate = new Date(useYear!, calendarMonth!)
     return dateAsMonth(asDate)
   }
-  return calendarMonth as Empty
+  if (calendarMonth === null) return null
+  return undefined
 }
 
 export function parseMonth(textValue: string, yearInputFormats: string[], monthInputFormats: string[]): MonthInputValue {

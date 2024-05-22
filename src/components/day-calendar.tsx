@@ -7,12 +7,10 @@ import {
   format,
   addWeeks,
   addDays,
-  parse,
 } from 'date-fns'
 
-import { ISO_8601_DATE_FORMAT } from 'constants'
 import { ChevronRightVector, ChevronLeftVector, DoubleChevronRightVector, DoubleChevronLeftVector } from 'vectors'
-import type { DateValue, DateInputValue } from 'types'
+import { type DateValue, type DateInputValue, dateValueAsDate, dateAsDateValue } from 'types'
 
 interface DayProps {
   day: DateValue
@@ -39,7 +37,7 @@ const Day: React.FC<DayProps> = ({
   onMouseLeave,
   select,
 }) => {
-  const parsedDay = parse(day, ISO_8601_DATE_FORMAT, new Date())
+  const parsedDay = dateValueAsDate(day)
   const valid = !invalidReason
   return (
     <td
@@ -87,7 +85,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   invalid = () => undefined,
   className,
 }, ref) => {
-  const initial = current ? parse(current, ISO_8601_DATE_FORMAT, new Date()) : new Date()
+  const initial = current ? dateValueAsDate(current) : new Date()
   const [month, setMonth] = useState({
     year: initial.getFullYear(),
     month: initial.getMonth(),
@@ -135,7 +133,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
 
   useEffect(() => {
     if (typeof current === 'string') {
-      const parsed = parse(current, ISO_8601_DATE_FORMAT, new Date())
+      const parsed = dateValueAsDate(current)
       setMonth({
         year: parsed.getFullYear(),
         month: parsed.getMonth(),
@@ -145,7 +143,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
     current,
   ])
 
-  const today = format(new Date(), ISO_8601_DATE_FORMAT)
+  const today = dateAsDateValue(new Date())
 
   const [hoveredDay, setHoveredDay] = useState<DateValue | undefined>(undefined)
 
@@ -157,7 +155,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
     while (+day < +lastDay) {
       const newWeek: string[] = []
       for (let i = 0; i < 7; i++) {
-        newWeek.push(format(addDays(day, i), ISO_8601_DATE_FORMAT))
+        newWeek.push(dateAsDateValue(addDays(day, i)))
       }
       weeks.push(newWeek)
       day = addWeeks(day, 1)
@@ -168,7 +166,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
         <tbody>
           <tr>
             {weeks[0].map((weekDay) => {
-              const parsedDay = parse(weekDay, ISO_8601_DATE_FORMAT, new Date())
+              const parsedDay = dateValueAsDate(weekDay)
               return (
                 <th key={`header-${weekDay}`}>
                   {format(parsedDay, 'EEEEEE')}
@@ -212,7 +210,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   }, [month, selectDay, showCurrent, highlight, current, today, invalid, hoveredDay])
 
   return (
-    <div className={classNames('MIRECO-day-calendar', className)} ref={ref}>
+    <div className={classNames('MIRECO-day-calendar MIRECO-controls-popover', className)} ref={ref}>
       <div className="calendar-header">
         <button type="button" tabIndex={-1} onClick={prevYear} title="Previous Year">
           <DoubleChevronLeftVector />

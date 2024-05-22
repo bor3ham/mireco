@@ -242,9 +242,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       id={id}
       disabled={disabled}
       style={style}
-      className={classNames(className, 'MIRECO-date', {
-        'right-hang': rightHang,
-      })}
+      className={classNames(className, 'MIRECO-date')}
       onBlur={handleContainerBlur}
       onClick={handleContainerClick}
       onDoubleClick={onDoubleClick}
@@ -283,6 +281,9 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         <DayCalendar
           selectDay={handleSelectDay}
           current={value}
+          className={classNames({
+            'right-hang': rightHang,
+          })}
         />
       )}
     </WidgetBlock>

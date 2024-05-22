@@ -1,11 +1,10 @@
 import { format, parse, isValid } from 'date-fns'
 
-import { isEmpty } from './empty'
-import type { Empty } from './empty'
+import { isEmpty, type InputValue } from './empty'
 
 export type CalendarMonthValue = number // 0-11
 
-export type CalendarMonthInputValue = CalendarMonthValue | Empty
+export type CalendarMonthInputValue = InputValue<CalendarMonthValue>
 
 export function isCalendarMonthValue(value: CalendarMonthInputValue): boolean {
   if (isEmpty(value)) {

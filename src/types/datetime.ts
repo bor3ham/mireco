@@ -1,14 +1,12 @@
-import { format, startOfDay, parse } from 'date-fns'
+import { startOfDay } from 'date-fns'
 
-import type { Empty } from './empty'
-import { isEmpty } from './empty'
-import type { DateInputValue, DateValue } from './date'
+import { isEmpty, type InputValue } from './empty'
+import { type DateInputValue, type DateValue, dateAsDateValue, dateValueAsDate } from './date'
 import type { TimeInputValue } from './time'
-import { ISO_8601_DATE_FORMAT } from 'constants'
 
 export type DatetimeValue = number // epoch ms eg: 1686116893002
 
-export type DatetimeInputValue = DatetimeValue | Empty
+export type DatetimeInputValue = InputValue<DatetimeValue>
 
 export function isDatetimeValue(value: DatetimeInputValue): boolean {
   return !isEmpty(value) && !Number.isNaN(value!)
@@ -28,7 +26,7 @@ export const splitDatetimeValue = (value: DatetimeInputValue): {
   }
   const asDate = new Date(value)
   return {
-    date: format(asDate, ISO_8601_DATE_FORMAT),
+    date: dateAsDateValue(asDate),
     time: value - +(startOfDay(asDate)),
   }
 }
@@ -52,7 +50,7 @@ export const combineDatetimeValues = (
   // if (!(timeValid && dateValid) && !fallback) {
   //   return undefined
   // }
-  const parsedDefaultDate = defaultDate ? startOfDay(parse(defaultDate, ISO_8601_DATE_FORMAT, new Date())) : startOfDay(new Date())
-  const parsedDate = date ? startOfDay(parse(date, ISO_8601_DATE_FORMAT, new Date())) : parsedDefaultDate
+  const parsedDefaultDate = defaultDate ? startOfDay(dateValueAsDate(defaultDate)) : startOfDay(new Date())
+  const parsedDate = date ? startOfDay(dateValueAsDate(date)) : parsedDefaultDate
   return +parsedDate + (time || (defaultTime || 0))
 }

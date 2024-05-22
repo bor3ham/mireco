@@ -113,7 +113,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   onTextChange,
   icon = <ChevronDownVector />,
   dropdownProps,
-  placeholder,
+  placeholder = 'Select',
   size,
   clearable = true,
   autoComplete,

@@ -1,8 +1,7 @@
 import React, { useReducer, useEffect, useCallback, useRef, useMemo } from 'react'
 import { startOfDay, addDays, subDays } from 'date-fns'
-import classNames from 'classnames'
 
-import { WidgetBlock, DateText, TimeText, DayCalendar, TimeSelector, type DateTextHandle, type TimeTextHandle } from 'components'
+import { WidgetBlock, DateText, TimeText, DayCalendar, TimeSelector, type DateTextHandle, type TimeTextHandle, StartEndHeader, ControlsPopover } from 'components'
 import {
   type DatetimeRangeInputValue,
   type DateInputValue,
@@ -20,7 +19,6 @@ import {
   type TimeFormatFunction,
   type TimeParseFunction,
 } from 'types'
-import { Button } from './button'
 import { ClockVector } from 'vectors'
 import { useInputKeyDownHandler } from 'hooks'
 
@@ -40,6 +38,10 @@ export interface DatetimeRangeProps {
   timeFormat?: TimeFormatFunction
   timeParse?: TimeParseFunction
   simplifyTime?: boolean
+  startDatePlaceholder?: string
+  startTimePlaceholder?: string
+  endDatePlaceholder?: string
+  endTimePlaceholder?: string
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
   /** Starting point for up/down with no value, or when other field filled and blurred */
@@ -228,6 +230,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   timeFormat,
   timeParse,
   simplifyTime,
+  startDatePlaceholder,
+  startTimePlaceholder,
+  endDatePlaceholder,
+  endTimePlaceholder,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
   timeStep = 15 * 60 * 1000,
@@ -934,6 +940,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         locale={dateLocale}
         format={dateFormat}
         parse={dateParse}
+        placeholder={startDatePlaceholder}
       />
       <TimeText
         ref={startTimeRef}
@@ -949,6 +956,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         format={timeFormat}
         parse={timeParse}
         simplify={simplifyTime}
+        placeholder={startTimePlaceholder}
       />
       <p>to</p>
       {state.endDateShowing && (
@@ -965,6 +973,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           locale={dateLocale}
           format={dateFormat}
           parse={dateParse}
+          placeholder={endDatePlaceholder}
         />
       )}
       <TimeText
@@ -981,32 +990,15 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         format={timeFormat}
         parse={timeParse}
         simplify={simplifyTime}
+        placeholder={endTimePlaceholder}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
-        <div className="MIRECO-datetime-range-controls">
-          <div className="MIRECO-datetime-range-header">
-            <Button
-              type="button"
-              className={classNames({
-                'other': !focusedOnStart,
-              })}
-              onClick={handleStartClick}
-              tabIndex={-1}
-            >
-              Start
-            </Button>
-            {' '}
-            <Button
-              type="button"
-              className={classNames({
-                'other': focusedOnStart,
-              })}
-              onClick={handleEndClick}
-              tabIndex={-1}
-            >
-              End
-            </Button>
-          </div>
+        <ControlsPopover className="MIRECO-datetime-range-controls">
+          <StartEndHeader
+            focusedOnStart={focusedOnStart}
+            onStartClick={handleStartClick}
+            onEndClick={handleEndClick}
+          />
           <div className="MIRECO-datetime-range-body">
             <DayCalendar
               className="MIRECO-embedded"
@@ -1023,7 +1015,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
               highlight={timeHighlight}
             />
           </div>
-        </div>
+        </ControlsPopover>
       )}
     </WidgetBlock>
   )

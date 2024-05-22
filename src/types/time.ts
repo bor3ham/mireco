@@ -1,9 +1,8 @@
-import type { Empty } from './empty'
-import { isEmpty } from './empty'
+import { isEmpty, type InputValue } from './empty'
 
-export type TimeValue = number
+export type TimeValue = number // ms since start of day
 
-export type TimeInputValue = TimeValue | Empty
+export type TimeInputValue = InputValue<TimeValue>
 
 export function isTimeValue(value: TimeInputValue): boolean {
   return !isEmpty(value && !Number.isNaN(value))

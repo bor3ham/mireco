@@ -2,15 +2,15 @@ import humanizeDuration from 'humanize-duration'
 import parse from 'parse-duration'
 import type { Unit } from 'humanize-duration'
 
-import type { Empty } from './empty'
+import type { InputValue } from './empty'
 
 // simplify large units rather than exact
 parse.month = parse.week * 4
 parse.year = parse.week * 52
 
-export type DurationValue = number
+export type DurationValue = number // ms
 
-export type DurationInputValue = DurationValue | Empty
+export type DurationInputValue = InputValue<DurationValue>
 
 export function formatDuration(value: DurationInputValue, humaniseUnits: Unit[]): string {
   let formatted = ''
