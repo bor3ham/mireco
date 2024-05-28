@@ -60,7 +60,8 @@ jobs:
           JEKYLL_ENV: production
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        path: 'demo/_site/'
+        with:
+          path: 'demo/_site/'
 
   # Deployment job
   deploy:
