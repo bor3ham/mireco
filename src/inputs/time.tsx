@@ -307,6 +307,11 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     return ''
   }, [value])
 
+  const timeSelected = useCallback((time: TimeValue, rounding: number) => {
+    if (!value) return false
+    return value === time
+  }, [value])
+
   return (
     <WidgetBlock
       ref={containerRef}
@@ -372,6 +377,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
           value={value}
           onChange={handleSelect}
           minuteIncrements={15}
+          selected={timeSelected}
         />
       )}
     </WidgetBlock>

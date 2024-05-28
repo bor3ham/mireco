@@ -21,6 +21,7 @@ import {
   SelectExample,
   MultiSelectExample,
   AsyncSelectExample,
+  ToggleSelectExample,
 } from './examples'
 import { ButtonStyleShowcase } from './showcases'
 import {
@@ -70,6 +71,7 @@ const MOUNTS: Record<string, ReactElement> = {
   'div.textarea-lab': <TextareaLab />,
   'div.time-lab': <TimeLab />,
   'div.localisation': <Localisation />,
+  'div.toggle-select-example': <ToggleSelectExample />,
 }
 
 Object.keys(MOUNTS).forEach((mount) => {

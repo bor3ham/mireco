@@ -133,6 +133,12 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   const handleTextTextChange = useCallback(() => {
     setCalendarOpen(true)
   }, [])
+  const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
+    setCalendarOpen(true)
+    if (onClick) {
+      onClick(event)
+    }
+  }, [onClick])
   const handleTextFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInFocus(true)
     setCalendarOpen(true)
@@ -211,6 +217,9 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     }
     setCalendarOpen(false)
   }, [onChange])
+  const daySelected = useCallback((day: DateValue) => (
+    day === value
+  ), [value])
   const handleClear = useCallback(() => {
     if (disabled) {
       return
@@ -262,6 +271,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         onFocus={handleTextFocus}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}
+        onClick={handleTextClick}
         locale={locale}
         format={format}
         parse={parse}
@@ -280,10 +290,11 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
       {inFocus && calendarOpen && !disabled && (
         <DayCalendar
           selectDay={handleSelectDay}
-          current={value}
+          value={value}
           className={classNames({
             'right-hang': rightHang,
           })}
+          selected={daySelected}
         />
       )}
     </WidgetBlock>

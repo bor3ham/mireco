@@ -322,6 +322,25 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     defaultDate,
     defaultTime,
   ])
+  const handleStartDateResetChange = useCallback((newDate: DateInputValue) => {
+    dispatch({
+      type: 'updateAll',
+      startDate: newDate,
+      startTime: state.startTime,
+      endDate: null,
+      endTime: null,
+    })
+    if (onChange) {
+      const newValue = combineDatetimeRangeValues(newDate, state.startTime, null, null, false, defaultDate, defaultTime)
+      onChange(newValue, false)
+    }
+  }, [
+    state.startTime,
+    onChange,
+    state.startTime,
+    defaultDate,
+    defaultTime,
+  ])
   const handleStartTimeChange = useCallback((newTime: TimeInputValue) => {
     dispatch({ type: 'updateStartTime', value: newTime })
     if (onChange) {
@@ -494,23 +513,6 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   ), [
     state.focusInput,
   ])
-  const handleSelectDay = useCallback((newValue: DateValue) => {
-    if (focusedOnStart) {
-      handleStartDateChange(newValue)
-      if (startTimeRef.current) {
-        startTimeRef.current.focus()
-      }
-    } else {
-      handleEndDateChange(newValue)
-      if (endTimeRef.current) {
-        endTimeRef.current.focus()
-      }
-    }
-  }, [
-    focusedOnStart,
-    handleStartDateChange,
-    handleEndDateChange,
-  ])
   const handleSelectTime = useCallback((newValue: TimeValue, final: boolean) => {
     if (focusedOnStart) {
       handleStartTimeChange(newValue)
@@ -548,6 +550,29 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     closeControls,
   ])
 
+  const calendarValue = useMemo(() => (
+    focusedOnStart ? state.startDate : state.endDate
+  ), [
+    focusedOnStart,
+    state.startDate,
+    state.endDate,
+  ])
+  const daySelected = useCallback((day: DateValue) => {
+    if (state.startDate && state.endDate) {
+      const parsedDay = dateValueAsDate(day)
+      const parsedStart = dateValueAsDate(state.startDate)
+      const parsedEnd = dateValueAsDate(state.endDate)
+      return parsedDay >= parsedStart && parsedDay <= parsedEnd
+    } else if (state.startDate) {
+      return day === state.startDate
+    } else if (state.endDate) {
+      return day === state.endDate
+    }
+    return false
+  }, [
+    state.startDate,
+    state.endDate,
+  ])
   const dayInvalid = useCallback((day: DateValue) => {
     if (focusedOnStart) return undefined
     if (!state.startDate) return undefined
@@ -560,83 +585,26 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     state.startDate,
   ])
   const dayHighlight = useCallback((day: DateValue, hovered: DateValue | undefined) => {
+    if (!hovered) return false
     const parsedDay = dateValueAsDate(day)
+    let hoveredStart = state.startDate
+    let hoveredEnd = state.endDate
     if (focusedOnStart) {
-      if (state.startDate && state.endDate) {
-        const parsedStart = startOfDay(dateValueAsDate(state.startDate))
-        const parsedEnd = startOfDay(dateValueAsDate(state.endDate))
-        return parsedDay >= parsedStart && parsedDay <= parsedEnd
-      }
+      hoveredStart = hovered
     } else {
-      if (state.startDate && hovered) {
-        const parsedStart = startOfDay(dateValueAsDate(state.startDate))
-        const parsedEnd = dateValueAsDate(hovered)
-        return parsedDay >= parsedStart && parsedDay <= parsedEnd
-      } else if (state.startDate) {
-        const fallbackEnd = state.endDate ? state.endDate : state.startDate
-        const parsedStart = startOfDay(dateValueAsDate(state.startDate))
-        const parsedEnd = startOfDay(dateValueAsDate(fallbackEnd))
-        return parsedDay >= parsedStart && parsedDay <= parsedEnd
-      }
+      hoveredEnd = hovered
+    }
+    if (hoveredStart && hoveredEnd) {
+      const parsedStart = dateValueAsDate(hoveredStart)
+      const parsedEnd = dateValueAsDate(hoveredEnd)
+      return parsedDay >= parsedStart && parsedDay <= parsedEnd
     }
     return false
   }, [
-    focusedOnStart,
+    value,
     state.startDate,
     state.endDate,
-  ])
-
-  const timeInvalid = useCallback((time: TimeValue, rounding: number) => {
-    if (focusedOnStart) return undefined
-    if (typeof state.startTime !== 'number') return undefined
-    if (state.startDate) {
-      const combinedStart = combineDatetimeValues(state.startDate, state.startTime, false)
-      const roundedStart = combinedStart! - (combinedStart! % rounding)
-      const combinedTime = combineDatetimeValues(state.endDate || state.startDate!, time, false)
-      if (combinedTime! < roundedStart) return 'Before start time'
-    } else {
-      const roundedStart = state.startTime - (state.startTime % rounding)
-      if (time < roundedStart) return 'Before start time'
-    }
-    return undefined
-  }, [
     focusedOnStart,
-    state.startTime,
-    state.startDate,
-    state.endDate,
-  ])
-  const timeHighlight = useCallback((time: TimeValue, hovered: TimeValue | undefined, rounding: number) => {
-    if (focusedOnStart && !state.endTime) return false
-    if (!focusedOnStart && !state.startTime) return false
-
-    let fallbackStart = state.startDate || defaultDate
-    let fallbackEnd = state.endDate || fallbackStart
-    let rangeTime = time
-    let rangeStart = combineDatetimeValues(fallbackStart, state.startTime, false)
-    let rangeEnd = combineDatetimeValues(fallbackEnd, state.endTime, false)
-    if (focusedOnStart) {
-      rangeTime = combineDatetimeValues(fallbackStart, time, false)!
-      if (hovered) {
-        rangeStart = combineDatetimeValues(fallbackStart, hovered, false)
-      }
-    } else {
-      rangeTime = combineDatetimeValues(fallbackEnd, time, false)!
-      if (hovered) {
-        rangeEnd = combineDatetimeValues(fallbackEnd, hovered, false)
-      }
-    }
-    const roundedStart = rangeStart! - (rangeStart! % rounding)
-    const roundedTime = rangeTime - (rangeTime % rounding)
-    return (
-      rangeTime >= roundedStart && roundedTime <= rangeEnd!
-    )
-  }, [
-    focusedOnStart,
-    state.endTime,
-    state.startTime,
-    state.startDate,
-    defaultDate,
-    state.endDate,
   ])
 
   const handleStartClick = useCallback(() => {
@@ -660,7 +628,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   }, [])
   const [fallbackStartDate, hasStartDate] = useMemo(() => {
     let has = false
-    let fallback = defaultDate ? dateValueAsDate(defaultDate) : new Date()
+    let fallback = defaultDate ? dateValueAsDate(defaultDate) : startOfDay(new Date())
     if (state.startDate) {
       has = true
       fallback = dateValueAsDate(state.startDate)
@@ -877,6 +845,105 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     incrementEndTime,
   )
 
+  const focusedTrackTime = useCallback((time: TimeValue): Date => {
+    if (focusedOnStart) {
+      return new Date(+fallbackStartDate + time)
+    }
+    return new Date(+fallbackEndDate + time)
+  }, [
+    focusedOnStart,
+    fallbackStartDate,
+    fallbackEndDate,
+  ])
+  const fallbackStart = useMemo<TimeValue>(() => (
+    combineDatetimeValues(dateAsDateValue(fallbackStartDate), fallbackStartTime, true, defaultDate)!
+  ), [
+    fallbackStartDate,
+    fallbackStartTime,
+    defaultDate,
+  ])
+  const fallbackEnd = useMemo<TimeValue>(() => (
+    combineDatetimeValues(dateAsDateValue(fallbackEndDate), fallbackEndTime, true, defaultDate)!
+  ), [
+    fallbackEndDate,
+    fallbackEndTime,
+    defaultDate,
+  ])
+  const timeSelected = useCallback((time: TimeValue, rounding: number) => {
+    const trackTime = focusedTrackTime(time)
+    const roundedTrackTime = +trackTime - (+trackTime % rounding)
+    if (hasStartTime && hasEndTime) {
+      const roundedStart = fallbackStart! - (fallbackStart! % rounding)
+      const roundedEnd = fallbackEnd! - (fallbackEnd! % rounding)
+      return (roundedTrackTime >= roundedStart! && roundedTrackTime <= roundedEnd!)
+    } else if (hasStartTime) {
+      const roundedStart = fallbackStart! - (fallbackStart! % rounding)
+      return (roundedTrackTime === roundedStart)
+    } else if (hasEndTime) {
+      const roundedEnd = fallbackEnd! - (fallbackEnd! % rounding)
+      return (roundedTrackTime === roundedEnd)
+    }
+    return false
+  }, [
+    hasStartTime,
+    hasEndTime,
+    focusedTrackTime,
+    fallbackStart,
+    fallbackEnd,
+  ])
+  const timeHighlight = useCallback((time: TimeValue, hovered: TimeValue | undefined, rounding: number) => {
+    if (typeof hovered !== 'number') return false
+    let start: TimeInputValue = null
+    let end: TimeInputValue = null
+    if (hasStartTime) {
+      start = fallbackStart
+    }
+    if (hasEndTime) {
+      end = fallbackEnd
+    }
+    if (focusedOnStart) {
+      start = +focusedTrackTime(hovered)
+    } else {
+      end = +focusedTrackTime(hovered)
+    }
+    const trackTime = (focusedOnStart ? +fallbackStartDate : +fallbackEndDate) + time
+    if (typeof start === 'number' && typeof end === 'number') {
+      const roundedStart = start! - (start! % rounding)
+      const roundedEnd = end! - (end! % rounding)
+      const roundedTrackTime = trackTime - (trackTime % rounding)
+      return (roundedTrackTime >= roundedStart && roundedTrackTime <= roundedEnd)
+    }
+    return false
+  }, [
+    hasStartTime,
+    hasEndTime,
+    fallbackStart,
+    fallbackEnd,
+    focusedOnStart,
+    focusedTrackTime,
+    fallbackStartDate,
+    fallbackEndDate,
+  ])
+  const timeInvalid = useCallback((time: TimeValue, rounding: number) => {
+    if (focusedOnStart) return undefined
+    if (typeof state.startTime !== 'number') return undefined
+    if (state.startDate) {
+      const combinedStart = combineDatetimeValues(state.startDate, state.startTime, false)
+      const roundedStart = combinedStart! - (combinedStart! % rounding)
+      const combinedTime = combineDatetimeValues(state.endDate || state.startDate!, time, false)
+      if (combinedTime! < roundedStart) return 'Before start time'
+    } else {
+      const roundedStart = state.startTime - (state.startTime % rounding)
+      if (time < roundedStart) return 'Before start time'
+    }
+    return undefined
+  }, [
+    focusedOnStart,
+    state.startTime,
+    state.startDate,
+    state.endDate,
+  ])
+
   const endDateDiffers = useMemo(() => (
     state.endDate && (
       !state.startDate ||
@@ -912,7 +979,54 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     focusedOnStart,
   ])
 
-  // todo: swap start/end when blur wrong
+  const handleSelectDay = useCallback((newValue: DateValue) => {
+    if (focusedOnStart) {
+      if (newValue && endDateDiffers) {
+        const newCombinedStart = combineDatetimeValues(
+          newValue,
+          state.startTime,
+          true,
+          dateAsDateValue(fallbackStartDate),
+          fallbackStartTime,
+        )
+        const combinedEnd = combineDatetimeValues(
+          state.endDate,
+          state.endTime,
+          true,
+          dateAsDateValue(fallbackEndDate),
+          fallbackEndTime,
+        )
+        if (newCombinedStart! > combinedEnd!) {
+          handleStartDateResetChange(newValue)
+        } else {
+          handleStartDateChange(newValue)
+        }
+      } else {
+        handleStartDateChange(newValue)
+      }
+      if (startTimeRef.current) {
+        startTimeRef.current.focus()
+      }
+    } else {
+      handleEndDateChange(newValue)
+      if (endTimeRef.current) {
+        endTimeRef.current.focus()
+      }
+    }
+  }, [
+    focusedOnStart,
+    endDateDiffers,
+    state.startTime,
+    fallbackStartDate,
+    fallbackStartTime,
+    state.endDate,
+    state.endTime,
+    fallbackEndDate,
+    fallbackEndTime,
+    handleStartDateResetChange,
+    handleStartDateChange,
+    handleEndDateChange,
+  ])
 
   return (
     <WidgetBlock
@@ -1002,17 +1116,19 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           <div className="MIRECO-datetime-range-body">
             <DayCalendar
               className="MIRECO-embedded"
-              current={focusedOnStart ? state.startDate : (state.endDate || state.startDate)}
+              value={calendarValue}
               selectDay={handleSelectDay}
-              invalid={dayInvalid}
+              selected={daySelected}
               highlight={dayHighlight}
+              invalid={dayInvalid}
             />
             <TimeSelector
               className="MIRECO-embedded"
               value={focusedOnStart ? state.startTime : state.endTime}
               onChange={handleSelectTime}
-              invalid={timeInvalid}
+              selected={timeSelected}
               highlight={timeHighlight}
+              invalid={timeInvalid}
             />
           </div>
         </ControlsPopover>

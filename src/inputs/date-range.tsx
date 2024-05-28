@@ -219,6 +219,20 @@ export const DateRange: React.FC<DateRangeProps> = ({
       })
     }
   }, [state, onChange])
+  const handleBothChange = useCallback((newStart: DateInputValue, newEnd: DateInputValue) => {
+    const newValue = {
+      start: newStart,
+      end: newEnd,
+    }
+    if (onChange) {
+      onChange(newValue, false)
+    } else {
+      dispatch({
+        type: 'updateBoth',
+        ...newValue,
+      })
+    }
+  }, [])
 
   const closeCalendar = useCallback(() => {
     dispatch({ type: 'closeCalendar' })
@@ -406,7 +420,17 @@ export const DateRange: React.FC<DateRangeProps> = ({
 
   const handleSelectDay = useCallback((day: DateValue) => {
     if (state.focusInput === DateRangeInput.Start) {
-      handleStartChange(day)
+      if (state.end) {
+        const parsedDay = dateValueAsDate(day)
+        const parsedEnd = dateValueAsDate(state.end)
+        if (parsedDay > parsedEnd) {
+          handleBothChange(day, null)
+        } else {
+          handleStartChange(day)
+        }
+      } else {
+        handleStartChange(day)
+      }
       if (endRef.current) {
         endRef.current.focus()
       }
@@ -419,12 +443,32 @@ export const DateRange: React.FC<DateRangeProps> = ({
     }
   }, [
     state,
+    handleBothChange,
     handleStartChange,
     handleEndChange,
   ])
 
   const hasValue = !!(value && (value.start || value.end))
 
+  const calendarValue = useMemo(() => {
+    if (state.focusInput === DateRangeInput.Start) {
+      return value && value.start
+    }
+    return value && value.end
+  }, [state.focusInput, value])
+  const daySelected = useCallback((day: DateValue) => {
+    const parsedDay = dateValueAsDate(day)
+    if (state.start && state.end) {
+      const parsedStart = dateValueAsDate(state.start)
+      const parsedEnd = dateValueAsDate(state.end)
+      return parsedDay >= parsedStart && parsedDay <= parsedEnd
+    } else {
+      return state.start === day || state.end === day
+    }
+  }, [
+    state.start,
+    state.end,
+  ])
   const dayInvalid = useCallback((day: DateValue) => {
     if (state.focusInput === DateRangeInput.Start) return undefined
     if (!state.start) return undefined
@@ -437,28 +481,26 @@ export const DateRange: React.FC<DateRangeProps> = ({
     state,
   ])
   const dayHighlight = useCallback((day: DateValue, hovered: DateValue | undefined) => {
+    if (!hovered) return false
     const parsedDay = dateValueAsDate(day)
+    let hoveredStart = state.start
+    let hoveredEnd = state.end
     if (state.focusInput === DateRangeInput.Start) {
-      if (state.start && state.end) {
-        const parsedStart = dateValueAsDate(state.start)
-        const parsedEnd = dateValueAsDate(state.end)
-        return parsedDay >= parsedStart && parsedDay <= parsedEnd
-      }
+      hoveredStart = hovered
     } else {
-      if (state.start && hovered) {
-        const parsedStart = dateValueAsDate(state.start)
-        const parsedEnd = dateValueAsDate(hovered)
-        return parsedDay >= parsedStart && parsedDay <= parsedEnd
-      } else if (state.start && state.end) {
-        const parsedStart = dateValueAsDate(state.start)
-        const parsedEnd = dateValueAsDate(state.end)
-        return parsedDay >= parsedStart && parsedDay <= parsedEnd
-      }
+      hoveredEnd = hovered
+    }
+    if (hoveredStart && hoveredEnd) {
+      const parsedStart = dateValueAsDate(hoveredStart)
+      const parsedEnd = dateValueAsDate(hoveredEnd)
+      return parsedDay >= parsedStart && parsedDay <= parsedEnd
     }
     return false
   }, [
     value,
-    state,
+    state.start,
+    state.end,
+    state.focusInput,
   ])
 
   const handleStartClick = useCallback(() => {
@@ -533,7 +575,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
             <DayCalendar
               className="MIRECO-embedded"
               selectDay={handleSelectDay}
-              current={state.focusInput === DateRangeInput.Start ? (value && value.start) : (value && value.end)}
+              value={calendarValue}
+              selected={daySelected}
               invalid={dayInvalid}
               highlight={dayHighlight}
             />

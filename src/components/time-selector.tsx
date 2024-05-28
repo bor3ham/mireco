@@ -14,7 +14,12 @@ interface ValueOptionProps {
   current: boolean
   onClick(value: number): void
   onHovered(time: TimeValue | undefined): void
+  selected: boolean
+  firstSelected: boolean
+  lastSelected: boolean
   highlight: boolean
+  firstHighlight: boolean
+  lastHighlight: boolean
   invalid?: string
 }
 
@@ -24,7 +29,12 @@ const ValueOption: React.FC<ValueOptionProps> = ({
   current,
   onClick,
   onHovered,
+  selected,
+  firstSelected,
+  lastSelected,
   highlight,
+  firstHighlight,
+  lastHighlight,
   invalid,
 }) => {
   const handleClick = useCallback(() => {
@@ -34,7 +44,12 @@ const ValueOption: React.FC<ValueOptionProps> = ({
     <li
       className={classNames({
         current,
+        selected,
+        'first-selected': firstSelected,
+        'last-selected': lastSelected,
         highlight,
+        'first-highlight': firstHighlight,
+        'last-highlight': lastHighlight,
         invalid,
       })}
       data-value={value}
@@ -72,6 +87,7 @@ interface ValueListProps {
   onClick(value: number): void
   hovered: TimeValue | undefined
   onHovered(time: TimeValue | undefined): void
+  selected?(time: TimeValue, rounding: number): boolean
   highlight?(time: TimeValue, hovered: TimeValue | undefined, rounding: number): boolean
   invalid?(time: TimeValue, rounding: number): string | undefined
 }
@@ -85,6 +101,7 @@ const ValueList: React.FC<ValueListProps> = ({
   onClick,
   hovered,
   onHovered,
+  selected,
   highlight,
   invalid,
 }) => {
@@ -126,19 +143,45 @@ const ValueList: React.FC<ValueListProps> = ({
   }, [value])
   return (
     <ul ref={listRef} tabIndex={-1}>
-      {values.map((listValue) => (
-        <ValueOption
-          key={listValue.value}
-          value={listValue.value}
-          current={listValue.value === value}
-          onClick={onClick}
-          onHovered={onHovered}
-          highlight={highlight ? highlight(listValue.value, hovered, rounding) : false}
-          invalid={invalid ? invalid(listValue.value, rounding) : undefined}
-        >
-          {listValue.label}
-        </ValueOption>
-      ))}
+      {values.map((listValue) => {
+        const valueSelected = selected ? selected(listValue.value, rounding) : false
+        const valueHighlight = highlight ? highlight(listValue.value, hovered, rounding) : false
+        let firstSelected = false
+        let lastSelected = false
+        let firstHighlight = false
+        let lastHighlight = false
+        if (valueSelected || valueHighlight) {
+          const prevValue = listValue.value - rounding
+          const nextValue = listValue.value + rounding
+          if (valueSelected) {
+            firstSelected = !selected!(prevValue, rounding)
+            lastSelected = !selected!(nextValue, rounding)
+          }
+          if (valueHighlight) {
+            firstHighlight = !highlight!(prevValue, hovered, rounding)
+            lastHighlight = !highlight!(nextValue, hovered, rounding)
+          }
+        }
+        const valueInvalid = invalid ? invalid(listValue.value, rounding) : undefined
+        return (
+          <ValueOption
+            key={listValue.value}
+            value={listValue.value}
+            current={listValue.value === value}
+            onClick={onClick}
+            onHovered={onHovered}
+            selected={valueSelected}
+            firstSelected={firstSelected}
+            lastSelected={lastSelected}
+            highlight={valueHighlight}
+            firstHighlight={firstHighlight}
+            lastHighlight={lastHighlight}
+            invalid={valueInvalid}
+          >
+            {listValue.label}
+          </ValueOption>
+        )
+      })}
     </ul>
   )
 }
@@ -150,6 +193,7 @@ interface TimeSelectorProps {
   minuteIncrements?: number
   secondIncrements?: number
   className?: string
+  selected?(time: TimeValue, rounding: number): boolean
   highlight?(time: TimeValue, hovered: TimeValue | undefined, rounding: number): boolean
   invalid?(time: TimeValue, rounding: number): string | undefined
 }
@@ -161,6 +205,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
   minuteIncrements = 15,
   secondIncrements = 15,
   className,
+  selected,
   highlight,
   invalid,
 }) => {
@@ -274,6 +319,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
         scrollStartMid
         rounding={AN_HOUR_MS}
         onClick={handleClickHour}
+        selected={selected}
         highlight={highlight}
         invalid={invalid}
         hovered={hoveredTime}
@@ -284,6 +330,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
         value={value}
         rounding={A_MINUTE_MS}
         onClick={handleClickMinute}
+        selected={selected}
         highlight={highlight}
         invalid={invalid}
         hovered={hoveredTime}
@@ -295,6 +342,7 @@ export const TimeSelector: React.FC<TimeSelectorProps> = ({
           value={value}
           rounding={A_SECOND_MS}
           onClick={handleClickSecond}
+          selected={selected}
           highlight={highlight}
           invalid={invalid}
           hovered={hoveredTime}

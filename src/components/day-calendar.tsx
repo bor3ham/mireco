@@ -7,6 +7,7 @@ import {
   format,
   addWeeks,
   addDays,
+  subDays,
 } from 'date-fns'
 
 import { ChevronRightVector, ChevronLeftVector, DoubleChevronRightVector, DoubleChevronLeftVector } from 'vectors'
@@ -17,7 +18,12 @@ interface DayProps {
   title?: string
   month: number
   current: boolean
+  selected: boolean
+  firstSelected: boolean
+  lastSelected: boolean
   highlight: boolean
+  firstHighlight: boolean
+  lastHighlight: boolean
   invalidReason?: string
   today: DateInputValue
   onMouseEnter(): void
@@ -30,7 +36,12 @@ const Day: React.FC<DayProps> = ({
   title,
   month,
   current,
+  selected,
+  firstSelected,
+  lastSelected,
   highlight,
+  firstHighlight,
+  lastHighlight,
   invalidReason,
   today,
   onMouseEnter,
@@ -45,7 +56,12 @@ const Day: React.FC<DayProps> = ({
       className={classNames({
         'outside-month': getMonth(parsedDay) !== month,
         current,
+        selected,
+        'first-selected': firstSelected,
+        'last-selected': lastSelected,
         highlight,
+        'first-highlight': firstHighlight,
+        'last-highlight': lastHighlight,
         'invalid': !valid,
         today: day === today,
       })}
@@ -70,8 +86,8 @@ const Day: React.FC<DayProps> = ({
 
 export interface DayCalendarProps {
   selectDay?(day: DateValue): void
-  current?: DateInputValue
-  showCurrent?: boolean
+  value?: DateInputValue
+  selected?(day: DateValue): boolean
   highlight?(day: DateValue, hovered: DateValue | undefined): boolean
   invalid?(day: DateValue): string | undefined
   className?: string
@@ -79,13 +95,13 @@ export interface DayCalendarProps {
 
 export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   selectDay,
-  current,
-  showCurrent = true,
+  value,
+  selected = () => false,
   highlight = () => false,
   invalid = () => undefined,
   className,
 }, ref) => {
-  const initial = current ? dateValueAsDate(current) : new Date()
+  const initial = value ? dateValueAsDate(value) : new Date()
   const [month, setMonth] = useState({
     year: initial.getFullYear(),
     month: initial.getMonth(),
@@ -132,15 +148,15 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
   }, [])
 
   useEffect(() => {
-    if (typeof current === 'string') {
-      const parsed = dateValueAsDate(current)
+    if (typeof value === 'string') {
+      const parsed = dateValueAsDate(value)
       setMonth({
         year: parsed.getFullYear(),
         month: parsed.getMonth(),
       })
     }
   }, [
-    current,
+    value,
   ])
 
   const today = dateAsDateValue(new Date())
@@ -176,11 +192,29 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
           </tr>
           {weeks.map((week) => (
             <tr key={`week-${week[0]}`}>
-              {week.map((dayInWeek) => {
+              {week.map((dayInWeek, weekIndex) => {
                 const invalidReason = invalid(dayInWeek)
                 let title = dayInWeek == today ? 'Today' : ''
                 if (invalidReason) {
                   title += `\n\n${invalidReason}`
+                }
+                const daySelected = selected && selected(dayInWeek)
+                let firstSelected = false
+                let lastSelected = false
+                const dayHighlight = highlight && highlight(dayInWeek, hoveredDay)
+                let firstHighlight = false
+                let lastHighlight = false
+                if (daySelected || dayHighlight) {
+                  const prevDayInWeek = dateAsDateValue(subDays(dateValueAsDate(dayInWeek), 1))
+                  const nextDayInWeek = dateAsDateValue(addDays(dateValueAsDate(dayInWeek), 1))
+                  if (daySelected) {
+                    firstSelected = !selected(prevDayInWeek)
+                    lastSelected = !selected(nextDayInWeek)
+                  }
+                  if (dayHighlight) {
+                    firstHighlight = !highlight(prevDayInWeek, hoveredDay)
+                    lastHighlight = !highlight(nextDayInWeek, hoveredDay)
+                  }
                 }
                 return (
                   <Day
@@ -188,8 +222,13 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
                     day={dayInWeek}
                     title={title.trim()}
                     month={month.month}
-                    current={showCurrent && (current === dayInWeek)}
-                    highlight={highlight && highlight(dayInWeek, hoveredDay)}
+                    current={dayInWeek === value}
+                    selected={daySelected}
+                    firstSelected={firstSelected}
+                    lastSelected={lastSelected}
+                    highlight={dayHighlight}
+                    firstHighlight={firstHighlight}
+                    lastHighlight={lastHighlight}
                     invalidReason={invalidReason}
                     today={today}
                     onMouseEnter={() => {
@@ -207,7 +246,7 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
         </tbody>
       </table>
     )
-  }, [month, selectDay, showCurrent, highlight, current, today, invalid, hoveredDay])
+  }, [month, selectDay, selected, highlight, value, today, invalid, hoveredDay])
 
   return (
     <div className={classNames('MIRECO-day-calendar MIRECO-controls-popover', className)} ref={ref}>

@@ -6,7 +6,7 @@
   ul
     flex: 1
     list-style: none
-    padding: 0
+    padding: 0 2px
     margin: 0
     width: 5rem
     overflow-y: auto
@@ -15,6 +15,7 @@
       padding: 0
       margin: 0
       button
+        position: relative
         margin: 0
         padding: (standard-padding / 2) (standard-padding)
         background: none
@@ -28,17 +29,43 @@
         font-size: (standard-font-size * 0.8)
         line-height: standard-line-height
         white-space: nowrap
-        &:not(:disabled)
+        &:not(:disabled):not(.disabled)
           cursor: pointer
           &:hover
-            color: primary-colour
+            color: content-foreground
+            background: content-faint
       &.invalid
         opacity: 0.1
+      
       &.highlight
+        button:after
+          content: ' '
+          position: absolute
+          top: -1px
+          left: -1px
+          right: -1px
+          bottom: -1px
+          border-left: 1px dashed secondary-colour
+          border-right: 1px dashed secondary-colour
+        &.first-highlight button:after
+          border-top: 1px dashed secondary-colour
+          border-top-left-radius: edge-rounding
+          border-top-right-radius: edge-rounding
+        &.last-highlight button:after
+          border-bottom: 1px dashed secondary-colour
+          border-bottom-left-radius: edge-rounding
+          border-bottom-right-radius: edge-rounding
+      &.current
         button
-          background: content-faint
-      &.current button
-        background: primary-colour
-        color: primary-content-colour
-        &:not(:disabled):hover
+          background: primary-colour
           color: primary-content-colour
+      &:not(.current).selected
+        button
+          background: alpha(primary-colour, 0.2)
+      &.selected
+        &.first-selected button
+          border-top-left-radius: edge-rounding
+          border-top-right-radius: edge-rounding
+        &.last-selected button
+          border-bottom-left-radius: edge-rounding
+          border-bottom-right-radius: edge-rounding

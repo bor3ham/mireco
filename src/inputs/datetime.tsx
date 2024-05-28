@@ -484,6 +484,14 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     }
   } , [handleTimeChange, state.date, defaultDate, defaultTime])
 
+  const daySelected = useCallback((day: DateValue) => (
+    day === state.date
+  ), [state.date])
+  const timeSelected = useCallback((time: TimeValue, rounding: number) => {
+    if (!state.time) return false
+    return time === state.time
+  }, [state.time])
+
   return (
     <WidgetBlock
       ref={containerRef}
@@ -535,8 +543,9 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         <ControlsPopover className="MIRECO-datetime-controls">
           <DayCalendar
             className="MIRECO-embedded"
-            current={state.date}
+            value={state.date}
             selectDay={handleSelectDay}
+            selected={daySelected}
             // invalid={dayInvalid}
             // highlight={dayHighlight}
           />
@@ -544,6 +553,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
             className="MIRECO-embedded"
             value={state.time}
             onChange={handleSelectTime}
+            selected={timeSelected}
           />
         </ControlsPopover>
       )}

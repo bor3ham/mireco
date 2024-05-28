@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import classNames from 'classnames'
 
-import { Button } from '../inputs'
+import type { SelectValue } from 'types'
+import { ToggleSelect } from 'inputs'
+
+const OPTIONS = [
+  {
+    value: 'start',
+    label: 'Start',
+  },
+  {
+    value: 'end',
+    label: 'End',
+  },
+]
 
 type StartEndHeaderProps = {
   className?: string
@@ -16,29 +28,21 @@ export const StartEndHeader: React.FC<StartEndHeaderProps> = ({
   onStartClick,
   onEndClick,
 }) => {
+  const handleChange = useCallback((newValue: SelectValue) => {
+    if (newValue === 'start') {
+      onStartClick()
+    } else {
+      onEndClick()
+    }
+  }, [])
   return (
-    <div className={classNames('MIRECO-start-end-header', className)}>
-      <Button
-        type="button"
-        className={classNames({
-          'other': !focusedOnStart,
-        })}
-        onClick={onStartClick}
-        tabIndex={-1}
-      >
-        Start
-      </Button>
-      {' '}
-      <Button
-        type="button"
-        className={classNames({
-          'other': focusedOnStart,
-        })}
-        onClick={onEndClick}
-        tabIndex={-1}
-      >
-        End
-      </Button>
-    </div>
+    <ToggleSelect
+      block
+      value={focusedOnStart ? 'start' : 'end'}
+      options={OPTIONS}
+      onChange={handleChange}
+      className={classNames('MIRECO-start-end-header', className)}
+      style={{marginBottom: '0', textAlign: 'center', borderRadius: '0'}}
+    />
   )
 }
