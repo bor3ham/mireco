@@ -22,6 +22,9 @@ export interface DateRangeProps {
   size?: number
   startPlaceholder?: string
   endPlaceholder?: string
+  startClassName?: string
+  endClassName?: string
+  clearButtonClassName?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -156,6 +159,9 @@ export const DateRange: React.FC<DateRangeProps> = ({
   size = 12,
   startPlaceholder,
   endPlaceholder,
+  startClassName,
+  endClassName,
+  clearButtonClassName,
   id,
   autoFocus,
   style,
@@ -531,6 +537,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
       id={id}
       style={style}
       className={classNames('MIRECO-date-range', className)}
+      clearButtonClassName={clearButtonClassName}
     >
       <DateText
         ref={startRef}
@@ -544,7 +551,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         format={format}
         parse={parse}
         autoFocus={autoFocus}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', startClassName)}
         disabled={disabled}
         placeholder={startPlaceholder}
       />
@@ -560,7 +567,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         locale={locale}
         format={format}
         parse={parse}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', endClassName)}
         disabled={disabled}
         placeholder={endPlaceholder}
       />

@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect, useCallback, useRef, useMemo } from 'react'
 import { startOfDay, addDays, subDays } from 'date-fns'
+import classNames from 'classnames'
 
 import { WidgetBlock, DateText, TimeText, DayCalendar, TimeSelector, type DateTextHandle, type TimeTextHandle, StartEndHeader, ControlsPopover } from 'components'
 import {
@@ -42,6 +43,11 @@ export interface DatetimeRangeProps {
   startTimePlaceholder?: string
   endDatePlaceholder?: string
   endTimePlaceholder?: string
+  startDateClassName?: string
+  startTimeClassName?: string
+  endDateClassName?: string
+  endTimeClassName?: string
+  clearButtonClassName?: string
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
   /** Starting point for up/down with no value, or when other field filled and blurred */
@@ -234,6 +240,11 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   startTimePlaceholder,
   endDatePlaceholder,
   endTimePlaceholder,
+  startDateClassName,
+  startTimeClassName,
+  endDateClassName,
+  endTimeClassName,
+  clearButtonClassName,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
   timeStep = 15 * 60 * 1000,
@@ -1040,6 +1051,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       everClearable={clearable}
       disabled={disabled}
       onClear={handleClear}
+      clearButtonClassName={clearButtonClassName}
     >
       <DateText
         ref={startDateRef}
@@ -1047,7 +1059,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         onChange={handleStartDateChange}
         onFocus={recordStartDateFocus}
         onClick={handleTextClick}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', startDateClassName)}
         size={12}
         disabled={disabled}
         onKeyDown={handleStartDateKeyDown}
@@ -1062,7 +1074,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         onChange={handleStartTimeChange}
         onFocus={recordStartTimeFocus}
         onClick={handleTextClick}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', startTimeClassName)}
         size={9}
         disabled={disabled}
         onKeyDown={handleStartTimeKeyDown}
@@ -1080,7 +1092,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           onChange={handleEndDateChange}
           onFocus={recordEndDateFocus}
           onClick={handleTextClick}
-          className="MIRECO-embedded"
+          className={classNames('MIRECO-embedded', endDateClassName)}
           size={12}
           disabled={disabled}
           onKeyDown={handleEndDateKeyDown}
@@ -1096,7 +1108,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         onChange={handleEndTimeChange}
         onFocus={recordEndTimeFocus}
         onClick={handleTextClick}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', endTimeClassName)}
         size={9}
         disabled={disabled}
         onKeyDown={handleEndTimeKeyDown}

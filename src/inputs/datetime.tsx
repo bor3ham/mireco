@@ -57,8 +57,8 @@ export interface DatetimeProps {
   timeFirst?: boolean // todo: remove
   autoComplete?: string
   // children specific
-  dateTextClassName?: string
-  timeTextClassName?: string
+  dateClassName?: string
+  timeClassName?: string
   clearButtonClassName?: string
   // html
   id?: string
@@ -191,8 +191,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   icon = <ClockVector />,
   clearable = true,
   autoComplete,
-  dateTextClassName,
-  timeTextClassName,
+  dateClassName,
+  timeClassName,
   clearButtonClassName,
   id,
   autoFocus,
@@ -507,6 +507,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       id={id}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
+      clearButtonClassName={clearButtonClassName}
     >
       <DateText
         ref={dateRef}
@@ -520,7 +521,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         format={dateFormat}
         parse={dateParse}
         disabled={disabled}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', dateClassName)}
         placeholder={datePlaceholder}
       />
       <TimeText
@@ -532,7 +533,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         onKeyDown={handleTimeKeyDown}
         onClick={handleTextClick}
         disabled={disabled}
-        className="MIRECO-embedded"
+        className={classNames('MIRECO-embedded', timeClassName)}
         locale={timeLocale}
         format={timeFormat}
         parse={timeParse}

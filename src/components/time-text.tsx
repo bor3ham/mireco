@@ -21,7 +21,6 @@ export interface TimeTextProps {
   parse?: TimeParseFunction
   simplify?: boolean
   placeholder?: string
-  textClassName?: string
   autoErase?: boolean
   size?: number
   initialText?: string

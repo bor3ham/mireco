@@ -12,6 +12,7 @@ interface WidgetBlockProps extends BlockDivProps {
   inFocus?: boolean
   disabled?: boolean
   children?: React.ReactNode
+  clearButtonClassName?: string
 }
 
 /** Wrapper to combine inputs together with an optional icon and/or clear prompt */
@@ -27,6 +28,7 @@ export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
   style,
   className,
   id,
+  clearButtonClassName,
   onFocus,
   onBlur,
   onClick,
@@ -39,7 +41,7 @@ export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
   onMouseOver,
   onMouseUp,
   onKeyDown,
-  onKeyUp
+  onKeyUp,
 }, ref) => {
   return (
     <BlockDiv
@@ -73,6 +75,7 @@ export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
       {clearable && !disabled && (
         <ClearButton
           onClick={onClear}
+          className={clearButtonClassName}
         />
       )}
       {icon}
