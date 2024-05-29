@@ -6,6 +6,9 @@ import { ClockVector } from 'vectors'
 import type { TimeInputValue, TimeValue, TimeFormatFunction, TimeParseFunction } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
 
+// todo: don't include hidden input without name
+// todo: add inputId prop or similar pattern
+
 const DAY_MS = 24 * 60 * 60 * 1000
 
 type TimeState = {
@@ -318,6 +321,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       block={block}
       style={style}
       className={classNames(className, 'MIRECO-time')}
+      inFocus={state.inFocus}
       icon={icon}
       clearable={canClear}
       everClearable={clearable}

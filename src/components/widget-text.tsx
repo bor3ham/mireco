@@ -12,6 +12,7 @@ export interface WidgetTextProps extends TextProps {
   icon?: React.ReactNode
   everClearable?: boolean
   children?: React.ReactNode
+  className?: string
 }
 
 export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, forwardedRef) => {
@@ -23,6 +24,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
     onFocus,
     onBlur,
     children,
+    className,
     ...inputProps
   } = props
   const [inFocus, setInFocus] = useState(false)
@@ -52,7 +54,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
   return (
     <WidgetBlock
       block={block}
-      className={classNames('MIRECO-widget-text')}
+      className={classNames('MIRECO-widget-text', className)}
       clearable={clearable}
       everClearable={everClearable}
       onClick={handleContainerClick}

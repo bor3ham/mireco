@@ -23,6 +23,9 @@ import {
 import { ClockVector } from 'vectors'
 import { useInputKeyDownHandler } from 'hooks'
 
+// todo: add imperative ref handle
+// todo: add id prop
+
 const DAY_MS = 24 * 60 * 60 * 1000
 
 export interface DatetimeRangeProps {
@@ -43,6 +46,7 @@ export interface DatetimeRangeProps {
   startTimePlaceholder?: string
   endDatePlaceholder?: string
   endTimePlaceholder?: string
+  className?: string
   startDateClassName?: string
   startTimeClassName?: string
   endDateClassName?: string
@@ -240,6 +244,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   startTimePlaceholder,
   endDatePlaceholder,
   endTimePlaceholder,
+  className,
   startDateClassName,
   startTimeClassName,
   endDateClassName,
@@ -1043,7 +1048,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     <WidgetBlock
       ref={containerRef}
       block={block}
-      className="MIRECO-datetime-range"
+      className={classNames('MIRECO-datetime-range', className)}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
       icon={icon}
