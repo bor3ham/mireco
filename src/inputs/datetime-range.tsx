@@ -412,7 +412,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     defaultDate,
     defaultTime,
   ])
-  const handleEndTimeChange = useCallback((newTime: TimeInputValue) => {
+  const handleEndTimeChange = useCallback((newTime: TimeInputValue, final: boolean = false) => {
     dispatch({ type: 'updateEndTime', value: newTime })
     if (onChange) {
       const newValue = combineDatetimeRangeValues(state.startDate, state.startTime, state.endDate, newTime, false, defaultDate, defaultTime)
@@ -486,9 +486,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         end: fallback.start,
       }
     }
-    dispatch({
-      type: 'blur',
-    })
+    dispatch({ type: 'blur' })
     if (onChange) {
       onChange(fallback, true)
     }
@@ -561,9 +559,9 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           newValue = state.startTime
         }
       }
-      handleEndTimeChange(newValue)
+      handleEndTimeChange(newValue, true)
       if (final) {
-        closeControls()
+        dispatch({ type: 'blur' })
       }
     }
   }, [

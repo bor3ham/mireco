@@ -41,9 +41,11 @@ export const MonthCalendar = forwardRef<HTMLDivElement, MonthCalendarProps>(({
     for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
       const asDate = new Date(year, monthIndex)
       const month = dateAsMonth(asDate)
+      const today = dateAsMonth(new Date()) === month
       m.push(
         <li key={`month-${monthIndex}`} className={classNames({
           current: current === month,
+          today,
         })}>
           <button
             type="button"

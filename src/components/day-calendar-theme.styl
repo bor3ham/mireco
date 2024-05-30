@@ -93,23 +93,15 @@
           corner-tag-size = 8px
           corner-tag-margin = 2px
           position: relative
-          &.today:before
-            content: ''
-            position: absolute
-            left: 0
-            top: 0
-            width: 0
-            height: 0
-            border-style: solid
-            border-width: 0 0 (corner-tag-size + corner-tag-margin) (corner-tag-size + corner-tag-margin)
-            border-color: transparent transparent transparent content-background
           &.today:after
             content: ''
             position: absolute
             left: 0
-            top: 0
+            top: 1px
             width: 0
             height: 0
             border-style: solid
             border-width: 0 0 corner-tag-size corner-tag-size
             border-color: transparent transparent transparent secondary-colour
+            border-top-left-radius: 2px
+            pointer-events: none

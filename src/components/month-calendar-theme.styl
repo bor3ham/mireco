@@ -46,3 +46,18 @@
         color: primary-content-colour
         &:not(:disabled):hover
           color: primary-content-colour
+    
+    corner-tag-size = 8px
+    position: relative
+    &.today:after
+      content: ''
+      position: absolute
+      left: 0
+      top: 0
+      width: 0
+      height: 0
+      border-style: solid
+      border-width: 0 0 corner-tag-size corner-tag-size
+      border-color: transparent transparent transparent secondary-colour
+      border-top-left-radius: 2px
+      pointer-events: none
