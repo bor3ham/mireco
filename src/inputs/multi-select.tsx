@@ -114,6 +114,7 @@ export interface MultiSelectProps {
   icon?: React.ReactNode
   placeholder?: string
   textClassName?: string
+  textId?: string
   onTextChange?(newValue: string): string
   dropdownProps?: any
   autoComplete?: string
@@ -137,6 +138,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   icon = <ChevronDownVector />,
   placeholder = 'Select',
   textClassName,
+  textId,
   onTextChange,
   dropdownProps,
   autoComplete,
@@ -456,6 +458,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
       clearable={clearable}
       everClearable
       icon={icon}
+      id={id}
     >
       <ul className="selected">
         {(value || []).map((selectedValue, valueIndex) => {
@@ -492,7 +495,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
             disabled={disabled}
             block={block}
             autoFocus={autoFocus}
-            id={id}
+            id={textId}
             required={required}
             autoComplete={autoComplete}
             style={{

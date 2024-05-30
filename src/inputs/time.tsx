@@ -76,6 +76,7 @@ export interface TimeProps {
   // === Text Input
   placeholder?: string
   textClassName?: string
+  textId?: string
   size?: number
   autoComplete?: string
 
@@ -125,6 +126,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   closeOnSelect = true,
   placeholder,
   textClassName,
+  textId,
   size,
   autoComplete,
   name,
@@ -156,7 +158,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   })
 
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLInputElement>) => {
-    dispatch({ type: 'close' })
+    dispatch({ type: 'blur' })
     if (onChange) {
       onChange(typeof value === 'number' ? value : null, true)
     }
@@ -326,7 +328,6 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       clearable={canClear}
       everClearable={clearable}
       disabled={disabled}
-      id={id}
       onClear={handleClear}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
@@ -340,9 +341,11 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       onMouseUp={onMouseUp}
       onKeyDown={handleTextKeyDown}
       onKeyUp={onKeyUp}
+      id={id}
     >
       <TimeText
         ref={textRef}
+        id={textId}
         value={value}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}

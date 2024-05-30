@@ -76,6 +76,7 @@ export interface SelectProps {
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
+  textId?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -119,6 +120,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   autoComplete,
   textClassName,
   textStyle,
+  textId,
   id,
   autoFocus,
   tabIndex,
@@ -537,6 +539,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
       onMouseOver={onMouseOver}
       onMouseUp={onMouseUp}
       onKeyUp={onKeyUp}
+      id={id}
     >
       <WidgetText
         ref={(instance: HTMLInputElement) => {
@@ -559,7 +562,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
         style={textStyle}
         autoFocus={autoFocus}
         className={textClassName}
-        id={id}
+        id={textId}
         icon={icon}
         onClear={canClear ? handleClear : undefined}
         everClearable={clearable}

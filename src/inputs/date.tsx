@@ -26,6 +26,7 @@ export interface DateProps {
   placeholder?: string
   icon?: React.ReactNode
   textClassName?: string
+  textId?: string
   size?: number
   // html
   id?: string
@@ -70,6 +71,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   textClassName,
   size = 12,
   id,
+  textId,
   className,
   tabIndex,
   title,
@@ -286,6 +288,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         name={name}
         size={size}
         className={classNames('MIRECO-embedded', textClassName)}
+        id={textId}
       />
       {inFocus && calendarOpen && !disabled && (
         <DayCalendar

@@ -59,6 +59,8 @@ export interface DatetimeProps {
   // children specific
   dateClassName?: string
   timeClassName?: string
+  dateId?: string
+  timeId?: string
   clearButtonClassName?: string
   // html
   id?: string
@@ -185,6 +187,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   simplifyTime,
   datePlaceholder,
   timePlaceholder,
+  dateId,
+  timeId,
   timeStep = 15 * 60 * 1000,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
@@ -523,6 +527,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         disabled={disabled}
         className={classNames('MIRECO-embedded', dateClassName)}
         placeholder={datePlaceholder}
+        id={dateId}
       />
       <TimeText
         ref={timeRef}
@@ -539,6 +544,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         parse={timeParse}
         simplify={simplifyTime}
         placeholder={timePlaceholder}
+        id={timeId}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
         <ControlsPopover className="MIRECO-datetime-controls">

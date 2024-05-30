@@ -21,6 +21,8 @@ export interface DateRangeProps {
   clearable?: boolean
   size?: number
   startPlaceholder?: string
+  startId?: string
+  endId?: string
   endPlaceholder?: string
   startClassName?: string
   endClassName?: string
@@ -163,13 +165,14 @@ export const DateRange: React.FC<DateRangeProps> = ({
   endClassName,
   clearButtonClassName,
   id,
+  startId,
+  endId,
   autoFocus,
   style,
   className,
   disabled,
   name,
   required,
-
 }) => {
   const [state, dispatch] = useReducer(dateRangeReducer, {
     start: value ? value.start : null,
@@ -554,6 +557,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         className={classNames('MIRECO-embedded', startClassName)}
         disabled={disabled}
         placeholder={startPlaceholder}
+        id={startId}
       />
       <p>to</p>
       <DateText
@@ -570,6 +574,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         className={classNames('MIRECO-embedded', endClassName)}
         disabled={disabled}
         placeholder={endPlaceholder}
+        id={endId}
       />
       {state.inFocus && state.calendarOpen && !disabled && (
         <ControlsPopover className="MIRECO-date-range-controls">

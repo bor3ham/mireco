@@ -33,6 +33,7 @@ export interface DatetimeRangeProps {
   value: DatetimeRangeInputValue
   onChange(newValue: DatetimeRangeInputValue, wasBlur: boolean): void
   disabled?: boolean
+  id?: string
   icon?: React.ReactNode
   clearable?: boolean
   dateLocale?: string
@@ -51,6 +52,10 @@ export interface DatetimeRangeProps {
   startTimeClassName?: string
   endDateClassName?: string
   endTimeClassName?: string
+  startDateId?: string
+  startTimeId?: string
+  endDateId?: string
+  endTimeId?: string
   clearButtonClassName?: string
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
@@ -231,6 +236,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   value,
   onChange,
   disabled,
+  id,
   icon = <ClockVector />,
   clearable = true,
   dateLocale,
@@ -249,6 +255,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   startTimeClassName,
   endDateClassName,
   endTimeClassName,
+  startDateId,
+  startTimeId,
+  endDateId,
+  endTimeId,
   clearButtonClassName,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
@@ -1057,6 +1067,8 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       disabled={disabled}
       onClear={handleClear}
       clearButtonClassName={clearButtonClassName}
+      inFocus={state.inFocus}
+      id={id}
     >
       <DateText
         ref={startDateRef}
@@ -1072,6 +1084,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         format={dateFormat}
         parse={dateParse}
         placeholder={startDatePlaceholder}
+        id={startDateId}
       />
       <TimeText
         ref={startTimeRef}
@@ -1088,6 +1101,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         parse={timeParse}
         simplify={simplifyTime}
         placeholder={startTimePlaceholder}
+        id={startTimeId}
       />
       <p>to</p>
       {state.endDateShowing && (
@@ -1105,6 +1119,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
           format={dateFormat}
           parse={dateParse}
           placeholder={endDatePlaceholder}
+          id={endDateId}
         />
       )}
       <TimeText
@@ -1122,6 +1137,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         parse={timeParse}
         simplify={simplifyTime}
         placeholder={endTimePlaceholder}
+        id={endTimeId}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
         <ControlsPopover className="MIRECO-datetime-range-controls">

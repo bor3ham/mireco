@@ -25,6 +25,7 @@ export interface AsyncSelectProps {
   autoComplete?: string
   // children specific
   textClassName?: string
+  textId?: string
   textStyle?: React.CSSProperties
   // html
   id?: string
@@ -67,6 +68,7 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
   autoComplete,
   textClassName,
   textStyle,
+  textId,
   id,
   autoFocus,
   tabIndex,
@@ -240,6 +242,7 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
       filter={false}
       icon={(loading && inFocus) ? <SpinnerVector /> : <ChevronDownVector />}
       id={id}
+      textId={textId}
       autoFocus={autoFocus}
       tabIndex={tabIndex}
       style={style}

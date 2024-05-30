@@ -26,6 +26,7 @@ export interface CalendarMonthProps {
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
+  textId?: string
   // html
   id?: string
   className?: string
@@ -70,6 +71,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
   autoComplete,
   textClassName,
   textStyle,
+  textId,
   id,
   className,
   tabIndex,
@@ -272,6 +274,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
       )}
       style={style}
       tabIndex={-1}
+      id={id}
     >
       <WidgetText
         ref={(instance: HTMLInputElement) => {
@@ -292,7 +295,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
         disabled={disabled}
         className={textClassName}
         style={textStyle}
-        id={id}
+        id={textId}
         onClear={canClear ? handleTextClear : undefined}
         autoComplete={autoComplete}
         onChange={handleTextChange}

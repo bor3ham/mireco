@@ -28,6 +28,7 @@ export interface MonthProps {
   // children specific
   textClassName?: string
   textStyle?: React.CSSProperties
+  textId?: string
   // html
   id?: string
   className?: string
@@ -77,6 +78,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
   size = 13,
   textClassName,
   textStyle,
+  textId,
   id,
   className,
   tabIndex,
@@ -277,6 +279,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
       )}
       style={style}
       tabIndex={-1}
+      id={id}
     >
       <WidgetText
         ref={(instance: HTMLInputElement) => {
@@ -296,7 +299,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
         autoFocus={autoFocus}
         disabled={disabled}
         className={textClassName}
-        id={id}
+        id={textId}
         style={textStyle}
         autoComplete={autoComplete}
         size={size}
