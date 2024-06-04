@@ -2,15 +2,17 @@ import React from 'react'
 
 interface Props {
   style?: React.CSSProperties
+  size?: number
 }
 
 export const ChevronLeftVector = ({
   style,
+  size = 24,
 }: Props) => (
   <svg
     className="MIRECO-chevron-left"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     viewBox="0 0 6.35 6.35"
     style={style}
   >

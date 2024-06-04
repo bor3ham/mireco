@@ -223,7 +223,8 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     if (textRef.current) {
       textRef.current.cleanText()
     }
-  }, [])
+    closeDropdown()
+  }, [closeDropdown])
   const recordFocus = useCallback(() => {
     dispatch({ type: 'open' })
   }, [])

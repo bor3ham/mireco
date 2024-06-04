@@ -2,8 +2,8 @@ import React, { useReducer, useCallback, useEffect, useRef, useMemo } from 'reac
 import classNames from 'classnames'
 import { addDays, subDays, max } from 'date-fns'
 
-import { type DateRangeInputValue, type DateInputValue, type DateValue } from 'types'
-import { WidgetBlock, DateText, type DateTextHandle, DayCalendar, StartEndHeader, ControlsPopover } from 'components'
+import type { DateRangeInputValue, DateInputValue, DateValue, DateRangeValue } from 'types'
+import { WidgetBlock, DateText, type DateTextHandle, DayCalendar, TimeRangePopover, AdvancedPopoverHandle } from 'components'
 import { CalendarVector } from 'vectors'
 import { dateValueAsDate, dateAsDateValue } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
@@ -27,6 +27,10 @@ export interface DateRangeProps {
   startClassName?: string
   endClassName?: string
   clearButtonClassName?: string
+  shortcuts?: {
+    value: DateRangeValue
+    label: string
+  }[],
   // html
   id?: string
   autoFocus?: boolean
@@ -164,6 +168,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
   startClassName,
   endClassName,
   clearButtonClassName,
+  shortcuts,
   id,
   startId,
   endId,
@@ -247,9 +252,17 @@ export const DateRange: React.FC<DateRangeProps> = ({
     dispatch({ type: 'closeCalendar' })
   }, [])
 
+  const popoverRef = useRef<AdvancedPopoverHandle>(null)
+  const openShortcuts = useCallback(() => {
+    if (popoverRef.current) {
+      popoverRef.current.openShortcuts()
+    }
+  }, [])
+
   const cleanStart = useCallback(() => {
     if (startRef.current) startRef.current.cleanText()
-  }, [])
+    closeCalendar()
+  }, [closeCalendar])
   const recordStartFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DateRangeInput.Start })
   }, [])
@@ -295,11 +308,13 @@ export const DateRange: React.FC<DateRangeProps> = ({
     recordStartFocus,
     decrementStart,
     incrementStart,
+    openShortcuts,
   )
   
   const cleanEnd = useCallback(() => {
     if (endRef.current) endRef.current.cleanText()
-  }, [])
+      closeCalendar()
+  }, [closeCalendar])
   const recordEndFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DateRangeInput.End })
   }, [])
@@ -355,11 +370,30 @@ export const DateRange: React.FC<DateRangeProps> = ({
     recordEndFocus,
     decrementEnd,
     incrementEnd,
+    openShortcuts,
   )
 
   const containerRef = useRef<HTMLDivElement>(null)
   const startRef = useRef<DateTextHandle>(null)
   const endRef = useRef<DateTextHandle>(null)
+  const focusedOnStart = state.focusInput === DateRangeInput.Start
+  const focusOnStart = useCallback(() => {
+    if (startRef.current) {
+      startRef.current.focus()
+    }
+  }, [])
+  const focusOnEnd = useCallback(() => {
+    if (endRef.current) {
+      endRef.current.focus()
+    }
+  }, [])
+  const focusOnCurrent = useCallback(() => {
+    if (focusedOnStart) {
+      focusOnStart()
+    } else {
+      focusOnEnd()
+    }
+  }, [focusOnStart, focusOnEnd, focusedOnStart])
   const onBlur = useCallback(() => {
     dispatch({
       type: 'blur',
@@ -371,25 +405,24 @@ export const DateRange: React.FC<DateRangeProps> = ({
   }, [value, onChange])
   const handleContainerClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     const targetElement = event.target as HTMLElement
-    if (
-      targetElement && (
-        targetElement.closest('.MIRECO-text') ||
-        targetElement.closest('.MIRECO-day-calendar') ||
-        targetElement.closest('button')
-      )
-    ) {
-      return
-    }
-    if (targetElement.closest('p')) {
-      if (startRef.current) {
-        startRef.current.focus()
-      }
+    const inText = targetElement && targetElement.closest('input')
+    const inButton = targetElement && targetElement.closest('button')
+    const inShortcutsButton = inButton && inButton.classList.contains('shortcuts')
+    const inHeaderButton = inButton && targetElement && targetElement.closest('div.calendar-header')
+    if (inText || (inButton && !inShortcutsButton && !inHeaderButton)) return
+    const inPopover = targetElement && targetElement.closest('.MIRECO-controls-popover')
+    if (inPopover) {
+      focusOnCurrent()
+    } else if (targetElement.closest('p')) {
+      focusOnStart()
     } else {
-      if (endRef.current) {
-        endRef.current.focus()
-      }
+      focusOnEnd()
     }
-  }, [])
+  }, [
+    focusOnCurrent,
+    focusOnStart,
+    focusOnEnd,
+  ])
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current &&
@@ -512,18 +545,17 @@ export const DateRange: React.FC<DateRangeProps> = ({
     state.focusInput,
   ])
 
-  const handleStartClick = useCallback(() => {
-    if (startRef.current) {
-      startRef.current.focus()
+  const handleSelectShortcut = useCallback((newValue: any) => {
+    dispatch({
+      type: 'updateBoth',
+      start: newValue.start,
+      end: newValue.end,
+    })
+    if (onChange) {
+      onChange(newValue, false)
+      focusOnEnd()
     }
-  }, [])
-  const handleEndClick = useCallback(() => {
-    if (endRef.current) {
-      endRef.current.focus()
-    }
-  }, [])
-
-  const focusedOnStart = state.focusInput === DateRangeInput.Start
+  }, [onChange, focusOnEnd])
 
   return (
     <WidgetBlock
@@ -577,23 +609,25 @@ export const DateRange: React.FC<DateRangeProps> = ({
         id={endId}
       />
       {state.inFocus && state.calendarOpen && !disabled && (
-        <ControlsPopover className="MIRECO-date-range-controls">
-          <StartEndHeader
-            focusedOnStart={focusedOnStart}
-            onStartClick={handleStartClick}
-            onEndClick={handleEndClick}
+        <TimeRangePopover
+          ref={popoverRef}
+          className="MIRECO-date-range-controls"
+          focusedOnStart={focusedOnStart}
+          focusOnStart={focusOnStart}
+          focusOnEnd={focusOnEnd}
+          shortcuts={shortcuts}
+          onSelectShortcut={handleSelectShortcut}
+          focusOnField={focusOnStart}
+        >
+          <DayCalendar
+            className="MIRECO-embedded"
+            selectDay={handleSelectDay}
+            value={calendarValue}
+            selected={daySelected}
+            invalid={dayInvalid}
+            highlight={dayHighlight}
           />
-          <div className="MIRECO-datetime-range-body">
-            <DayCalendar
-              className="MIRECO-embedded"
-              selectDay={handleSelectDay}
-              value={calendarValue}
-              selected={daySelected}
-              invalid={dayInvalid}
-              highlight={dayHighlight}
-            />
-          </div>
-        </ControlsPopover>
+        </TimeRangePopover>
       )}
     </WidgetBlock>
   )

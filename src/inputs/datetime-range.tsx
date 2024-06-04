@@ -2,7 +2,17 @@ import React, { useReducer, useEffect, useCallback, useRef, useMemo } from 'reac
 import { startOfDay, addDays, subDays } from 'date-fns'
 import classNames from 'classnames'
 
-import { WidgetBlock, DateText, TimeText, DayCalendar, TimeSelector, type DateTextHandle, type TimeTextHandle, StartEndHeader, ControlsPopover } from 'components'
+import {
+  WidgetBlock,
+  DateText,
+  TimeText,
+  DayCalendar,
+  TimeSelector,
+  type DateTextHandle,
+  type TimeTextHandle,
+  TimeRangePopover,
+  AdvancedPopoverHandle,
+} from 'components'
 import {
   type DatetimeRangeInputValue,
   type DateInputValue,
@@ -11,6 +21,7 @@ import {
   combineDatetimeRangeValues,
   combineDatetimeValues,
   splitDatetimeValue,
+  type DatetimeRangeValue,
   type DateValue,
   type TimeValue,
   dateValueAsDate,
@@ -57,6 +68,10 @@ export interface DatetimeRangeProps {
   endDateId?: string
   endTimeId?: string
   clearButtonClassName?: string
+  shortcuts?: {
+    value: DatetimeRangeValue
+    label: string
+  }[],
   /** Starting point for up/down with no value, or when other field filled and blurred */
   defaultDate?: DateValue
   /** Starting point for up/down with no value, or when other field filled and blurred */
@@ -260,6 +275,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   endDateId,
   endTimeId,
   clearButtonClassName,
+  shortcuts,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
   timeStep = 15 * 60 * 1000,
@@ -453,27 +469,79 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   const startTimeRef = useRef<TimeTextHandle>(null)
   const endDateRef = useRef<DateTextHandle>(null)
   const endTimeRef = useRef<TimeTextHandle>(null)
-  const handleContainerClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    const targetElement = event.target as HTMLElement
-    if (
-      targetElement && (
-        targetElement.closest('.MIRECO-text') ||
-        targetElement.closest('.MIRECO-datetime-range-controls') ||
-        targetElement.closest('button')
-      )
-    ) {
-      return
-    }
-    if (targetElement.closest('p')) {
-      if (startTimeRef.current) {
-        startTimeRef.current.focus()
-      }
-    } else {
-      if (endTimeRef.current) {
-        endTimeRef.current.focus()
-      }
+  const focusOnStartDate = useCallback(() => {
+    if (startDateRef.current) {
+      startDateRef.current.focus()
     }
   }, [])
+  const focusOnStartTime = useCallback(() => {
+    if (startTimeRef.current) {
+      startTimeRef.current.focus()
+    }
+  }, [])
+  const focusOnStart = useCallback(() => {
+    focusOnStartDate()
+  }, [focusOnStartDate])
+  const focusOnEndDate = useCallback(() => {
+    if (endDateRef.current) {
+      endDateRef.current.focus()
+    }
+  }, [])
+  const focusOnEndTime = useCallback(() => {
+    if (endTimeRef.current) {
+      endTimeRef.current.focus()
+    }
+  }, [])
+  const focusOnEnd = useCallback(() => {
+    if (endDateRef.current) {
+      focusOnEndDate()
+    } else {
+      focusOnEndTime()
+    }
+  }, [focusOnEndDate, focusOnEndTime])
+  const focusOnCurrent = useCallback(() => {
+    switch (state.focusInput) {
+      case DatetimeRangeInput.StartDate: {
+        focusOnStartDate()
+        break
+      }
+      case DatetimeRangeInput.StartTime: {
+        focusOnStartTime()
+        break
+      }
+      case DatetimeRangeInput.EndDate: {
+        focusOnEndDate()
+        break
+      }
+      case DatetimeRangeInput.EndTime: {
+        focusOnEndTime()
+        break
+      }
+    }
+  }, [
+    state.focusInput,
+    focusOnStartDate,
+    focusOnStartTime,
+    focusOnEndDate,
+    focusOnEndTime,
+  ])
+  const handleContainerClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    const targetElement = event.target as HTMLElement
+    const inText = targetElement && targetElement.closest('input')
+    const inButton = targetElement && targetElement.closest('button')
+    const inShortcutsButton = inButton && inButton.classList.contains('shortcuts')
+    const inHeaderButton = inButton && targetElement && targetElement.closest('div.calendar-header')
+    if (inText || (inButton && !inShortcutsButton && !inHeaderButton)) return
+
+    const inPopover = targetElement && targetElement.closest('.MIRECO-controls-popover')
+    if (inPopover) {
+      focusOnCurrent()
+    } else if (targetElement.closest('p')) {
+      focusOnStartTime()
+    } else {
+      focusOnEndTime()
+    }
+  }, [focusOnCurrent, focusOnStartTime, focusOnEndTime])
   const handleBlur = useCallback(() => {
     let fallback = combineDatetimeRangeValues(state.startDate, state.startTime, state.endDate, state.endTime, true, defaultDate, defaultTime)
     if (
@@ -521,10 +589,8 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         end: null,
       }, false)
     }
-    if (startDateRef.current) {
-      startDateRef.current.focus()
-    }
-  }, [onChange])
+    focusOnStart()
+  }, [onChange, focusOnStart])
   const hasValue = !!(typeof value.start === 'number' || typeof value.end === 'number')
 
   const closeControls = useCallback(() => {
@@ -541,20 +607,16 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     if (focusedOnStart) {
       handleStartTimeChange(newValue)
       if (final) {
-        if (endDateRef.current) {
-          endDateRef.current.focus()
-        } else if (endTimeRef.current) {
-          endTimeRef.current.focus()
-        }
+        focusOnEnd()
       }
     } else {
-      if (state.startDate && state.startTime) {
+      if (state.startDate && typeof state.startTime === 'number') {
         const combinedStart = combineDatetimeValues(state.startDate, state.startTime, false)
         const combinedEnd = combineDatetimeValues(state.endDate || state.startDate, newValue, false)
         if (combinedEnd! < combinedStart!) {
           newValue = state.startTime
         }
-      } else if (state.startTime) {
+      } else if (typeof state.startTime === 'number') {
         if (newValue < state.startTime) {
           newValue = state.startTime
         }
@@ -567,6 +629,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   }, [
     focusedOnStart,
     handleStartTimeChange,
+    focusOnEnd,
     state.startDate,
     state.startTime,
     state.endDate,
@@ -631,22 +694,17 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     focusedOnStart,
   ])
 
-  const handleStartClick = useCallback(() => {
-    if (startDateRef.current) {
-      startDateRef.current.focus()
-    }
-  }, [])
-  const handleEndClick = useCallback(() => {
-    if (endDateRef.current) {
-      endDateRef.current.focus()
-    } else if (endTimeRef.current) {
-      endTimeRef.current.focus()
+  const popoverRef = useRef<AdvancedPopoverHandle>(null)
+  const openShortcuts = useCallback(() => {
+    if (popoverRef.current) {
+      popoverRef.current.openShortcuts()
     }
   }, [])
 
   const cleanStartDate = useCallback(() => {
     if (startDateRef.current) startDateRef.current.cleanText()
-  }, [])
+    closeControls()
+  }, [closeControls])
   const recordStartDateFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeRangeInput.StartDate })
   }, [])
@@ -674,10 +732,12 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     recordStartDateFocus,
     decrementStartDate,
     incrementStartDate,
+    openShortcuts,
   )
 
   const cleanStartTime = useCallback(() => {
     if (startTimeRef.current) startTimeRef.current.cleanText()
+    closeControls()
   }, [])
   const recordStartTimeFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeRangeInput.StartTime })
@@ -732,11 +792,13 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     recordStartTimeFocus,
     decrementStartTime,
     incrementStartTime,
+    openShortcuts,
   )
 
   const cleanEndDate = useCallback(() => {
     if (endDateRef.current) endDateRef.current.cleanText()
-  }, [])
+    closeControls()
+  }, [closeControls])
   const recordEndDateFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeRangeInput.EndDate })
   }, [])
@@ -780,10 +842,12 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     recordEndDateFocus,
     decrementEndDate,
     incrementEndDate,
+    openShortcuts,
   )
 
   const cleanEndTime = useCallback(() => {
     if (endTimeRef.current) endTimeRef.current.cleanText()
+    closeControls()
   }, [])
   const recordEndTimeFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeRangeInput.EndTime })
@@ -867,6 +931,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     recordEndTimeFocus,
     decrementEndTime,
     incrementEndTime,
+    openShortcuts,
   )
 
   const focusedTrackTime = useCallback((time: TimeValue): Date => {
@@ -996,7 +1061,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     if (state.endDate && typeof state.endTime !== 'number' && (
       !state.inFocus || focusedOnStart
     )) {
-      dispatch({ type: 'updateEndTime', value: state.startTime || defaultTime })
+      dispatch({
+        type: 'updateEndTime',
+        value: typeof state.startTime === 'number' ? state.startTime : defaultTime,
+      })
     }
   }, [
     state.inFocus,
@@ -1028,14 +1096,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       } else {
         handleStartDateChange(newValue)
       }
-      if (startTimeRef.current) {
-        startTimeRef.current.focus()
-      }
+      focusOnStartTime()
     } else {
       handleEndDateChange(newValue)
-      if (endTimeRef.current) {
-        endTimeRef.current.focus()
-      }
+      focusOnEndTime()
     }
   }, [
     focusedOnStart,
@@ -1049,8 +1113,26 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     fallbackEndTime,
     handleStartDateResetChange,
     handleStartDateChange,
+    focusOnStartTime,
     handleEndDateChange,
+    focusOnEndTime,
   ])
+
+  const handleSelectShortcut = useCallback((newValue: any) => {
+    const splitStart = splitDatetimeValue(newValue.start)
+    const splitEnd = splitDatetimeValue(newValue.start)
+    dispatch({
+      type: 'updateAll',
+      startDate: splitStart.date,
+      startTime: splitStart.time,
+      endDate: splitEnd.date,
+      endTime: splitEnd.time,
+    })
+    if (onChange) {
+      onChange(newValue, false)
+      focusOnEndTime()
+    }
+  }, [onChange, focusOnEndTime])
 
   return (
     <WidgetBlock
@@ -1069,6 +1151,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       id={id}
     >
       <DateText
+        key="start-date"
         ref={startDateRef}
         value={state.startDate}
         onChange={handleStartDateChange}
@@ -1085,6 +1168,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         id={startDateId}
       />
       <TimeText
+        key="start-time"
         ref={startTimeRef}
         value={state.startTime}
         onChange={handleStartTimeChange}
@@ -1104,6 +1188,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       <p>to</p>
       {state.endDateShowing && (
         <DateText
+          key="end-date"
           ref={endDateRef}
           value={state.endDate}
           onChange={handleEndDateChange}
@@ -1121,6 +1206,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         />
       )}
       <TimeText
+        key="end-time"
         ref={endTimeRef}
         value={state.endTime}
         onChange={handleEndTimeChange}
@@ -1138,31 +1224,33 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         id={endTimeId}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
-        <ControlsPopover className="MIRECO-datetime-range-controls">
-          <StartEndHeader
-            focusedOnStart={focusedOnStart}
-            onStartClick={handleStartClick}
-            onEndClick={handleEndClick}
+        <TimeRangePopover
+          ref={popoverRef}
+          className="MIRECO-datetime-range-controls"
+          focusedOnStart={focusedOnStart}
+          focusOnStart={focusOnStart}
+          focusOnEnd={focusOnEnd}
+          shortcuts={shortcuts}
+          onSelectShortcut={handleSelectShortcut}
+          focusOnField={focusOnStart}
+        >
+          <DayCalendar
+            className="MIRECO-embedded"
+            value={calendarValue}
+            selectDay={handleSelectDay}
+            selected={daySelected}
+            highlight={dayHighlight}
+            invalid={dayInvalid}
           />
-          <div className="MIRECO-datetime-range-body">
-            <DayCalendar
-              className="MIRECO-embedded"
-              value={calendarValue}
-              selectDay={handleSelectDay}
-              selected={daySelected}
-              highlight={dayHighlight}
-              invalid={dayInvalid}
-            />
-            <TimeSelector
-              className="MIRECO-embedded"
-              value={focusedOnStart ? state.startTime : state.endTime}
-              onChange={handleSelectTime}
-              selected={timeSelected}
-              highlight={timeHighlight}
-              invalid={timeInvalid}
-            />
-          </div>
-        </ControlsPopover>
+          <TimeSelector
+            className="MIRECO-embedded"
+            value={focusedOnStart ? state.startTime : state.endTime}
+            onChange={handleSelectTime}
+            selected={timeSelected}
+            highlight={timeHighlight}
+            invalid={timeInvalid}
+          />
+        </TimeRangePopover>
       )}
     </WidgetBlock>
   )

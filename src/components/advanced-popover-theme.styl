@@ -1,0 +1,44 @@
+.MIRECO-advanced-popover
+  .MIRECO-advanced-popover-header
+    background: #eee
+    padding: 0.5rem
+    border-bottom: thin-line solid content-muted
+
+    button
+      padding: 0.25rem 1rem
+      font-size: 0.8rem
+      &.content
+        &:not(:disabled):not(.disabled):not(.MIRECO-embedded)
+          &:not(.active)
+            background: none
+
+      &.shortcuts
+        padding: 0.25rem 0.5rem
+        > svg
+          vertical-align: middle
+        &:not(:disabled):not(.disabled):hover
+          > svg.MIRECO-lightning path
+            fill: primary-colour !important
+          > svg.MIRECO-chevron-left path
+            stroke: primary-colour !important
+
+    .MIRECO-text
+      font-size: 0.8rem
+      padding: 0.25rem 0.5rem
+      margin-bottom: 0
+      margin-left: 0.3rem
+    
+    &.shortcuts
+      display: flex
+      flex-direction: row
+
+      button.shortcuts
+        position: relative
+        float: none
+  
+  .MIRECO-day-calendar:not(:last-child)
+    border-right: thin-line solid content-muted
+  
+  .MIRECO-advanced-popover-body .MIRECO-dropdown
+    max-width: none
+    width: 100%

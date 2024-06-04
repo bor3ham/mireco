@@ -3,15 +3,27 @@ import React, { useCallback } from 'react'
 export const useInputKeyDownHandler = (
   controlsOpen: boolean,
   closeControls?: () => void,
-  cleanText?: () => void,
+  submit?: () => void,
   recordFocus?: () => void,
   upAdjust?: () => void,
   downAdjust?: () => void,
+  openShortcuts?: () => void,
 ) => useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-  if (event.key === 'Enter' || event.key === 'Escape') {
+  if (event.key === '!' && openShortcuts) {
+    openShortcuts()
+    event.preventDefault()
+    return
+  }
+  if (event.key === 'Escape') {
     if (controlsOpen) {
-      if (cleanText) cleanText()
       if (closeControls) closeControls()
+      event.preventDefault()
+    }
+    return
+  }
+  if (event.key === 'Enter') {
+    if (controlsOpen) {
+      if (submit) submit()
       event.preventDefault()
     }
     return
@@ -27,8 +39,9 @@ export const useInputKeyDownHandler = (
 }, [
   controlsOpen,
   closeControls,
-  cleanText,
+  submit,
   recordFocus,
   upAdjust,
   downAdjust,
+  openShortcuts,
 ])

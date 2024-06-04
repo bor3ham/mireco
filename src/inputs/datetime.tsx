@@ -10,7 +10,7 @@ import {
   type TimeTextHandle,
   DayCalendar,
   TimeSelector,
-  ControlsPopover,
+  AdvancedPopover,
 } from 'components'
 import {
   type DatetimeInputValue,
@@ -315,6 +315,16 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   const containerRef = useRef<HTMLDivElement>(null)
   const dateRef = useRef<DateTextHandle>(null)
   const timeRef = useRef<TimeTextHandle>(null)
+  const focusOnDate = useCallback(() => {
+    if (dateRef.current) {
+      dateRef.current.focus()
+    }
+  }, [])
+  const focusOnTime = useCallback(() => {
+    if (timeRef.current) {
+      timeRef.current.focus()
+    }
+  }, [])
   const handleContainerClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     const targetElement = event.target as HTMLElement
     if (
@@ -327,15 +337,11 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       return
     }
     if (targetElement.closest('p')) {
-      if (dateRef.current) {
-        dateRef.current.focus()
-      }
+      focusOnDate()
     } else {
-      if (timeRef.current) {
-        timeRef.current.focus()
-      }
+      focusOnTime()
     }
-  }, [])
+  }, [focusOnDate, focusOnTime])
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current &&
@@ -377,7 +383,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     if (dateRef.current) {
       dateRef.current.cleanText()
     }
-  }, [])
+    closeControls()
+  }, [closeControls])
   const recordDateFocus = useCallback(() => {
     dispatch({ type: 'focus', focusInput: DatetimeInput.Date })
   }, [])
@@ -547,7 +554,10 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
         id={timeId}
       />
       {state.inFocus && state.controlsOpen && !disabled && (
-        <ControlsPopover className="MIRECO-datetime-controls">
+        <AdvancedPopover
+          className="MIRECO-datetime-controls"
+          focusOnField={focusOnDate}
+        >
           <DayCalendar
             className="MIRECO-embedded"
             value={state.date}
@@ -562,7 +572,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
             onChange={handleSelectTime}
             selected={timeSelected}
           />
-        </ControlsPopover>
+        </AdvancedPopover>
       )}
     </WidgetBlock>
   )

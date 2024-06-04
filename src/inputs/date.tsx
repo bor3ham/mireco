@@ -176,7 +176,8 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     if (textRef.current) {
       textRef.current.cleanText()
     }
-  }, [])
+    closeCalendar()
+  }, [closeCalendar])
   const recordFocus = useCallback(() => {
     setInFocus(true)
     setCalendarOpen(true)

@@ -52,5 +52,5 @@ export const combineDatetimeValues = (
   // }
   const parsedDefaultDate = defaultDate ? startOfDay(dateValueAsDate(defaultDate)) : startOfDay(new Date())
   const parsedDate = date ? startOfDay(dateValueAsDate(date)) : parsedDefaultDate
-  return +parsedDate + (time || (defaultTime || 0))
+  return +parsedDate + (typeof time === 'number' ? time : (defaultTime || 0))
 }

@@ -3,6 +3,7 @@ import classNames from 'classnames'
 
 interface Option {
   value: any
+  key?: string
   label: string
 }
 
@@ -49,6 +50,7 @@ export interface DropdownProps {
   beforeOptions?: React.ReactNode
   afterOptions?: React.ReactNode
   noOptionsPrompt?: string
+  embedded?: boolean
 }
 
 export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
@@ -59,6 +61,7 @@ export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
   beforeOptions,
   afterOptions,
   noOptionsPrompt = 'No options',
+  embedded = false,
 }, forwardedRef) => {
   const listRef = useRef<HTMLUListElement>()
   const currentRef = useRef<HTMLLIElement>(null)
@@ -105,7 +108,7 @@ export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
         return (
           <DropdownOption
             {...extraProps}
-            key={`option-${option.value}`}
+            key={`option-${option.key || value}`}
             option={option}
             current={current}
             disabled={disabled}
@@ -124,7 +127,8 @@ export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
   ])
   return (
     <ul
-      className={classNames('MIRECO-dropdown MIRECO-controls-popover', {
+      className={classNames('MIRECO-dropdown', {
+        'MIRECO-controls-popover': !embedded,
         disabled,
       })}
       tabIndex={-1}
