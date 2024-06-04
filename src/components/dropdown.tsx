@@ -108,7 +108,7 @@ export const Dropdown = forwardRef<HTMLUListElement, DropdownProps>(({
         return (
           <DropdownOption
             {...extraProps}
-            key={`option-${option.key || value}`}
+            key={`option-${option.key || option.value}`}
             option={option}
             current={current}
             disabled={disabled}
