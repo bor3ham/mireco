@@ -72,6 +72,43 @@ const Wheel = ({
     }
     return [top, bottom]
   }, [continuous, itemHeight, options])
+
+  const animationEnd = useRef<Date | undefined>(undefined)
+  const animateToValue = useCallback((value: number, ms: number) => {
+    animationEnd.current = new Date(new Date().valueOf() + Math.max(ms, 50))
+    if (listRef.current) {
+      let index = options.findIndex((option) => (option.value === value))
+      if (typeof index === 'number') {
+        let itemTop = index * itemHeight
+        if (continuous) {
+          itemTop += options.length * itemHeight
+        }
+        const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
+        const topDiff = listRef.current.scrollTop - scrollTop
+        const fullHeight = itemHeight * options.length
+        if (topDiff < -100 && ms > 0) {
+          // console.log('adjusting for large top diff: up')
+          listRef.current.scrollTop = listRef.current.scrollTop + fullHeight
+        }
+        if (topDiff > 100 && ms > 0) {
+          // console.log('adjusting for large top diff: down')
+          listRef.current.scrollTop = listRef.current.scrollTop - fullHeight
+        }
+        listRef.current.scrollTo({
+          top: scrollTop,
+          left: 0,
+          behavior: ms > 0 ? 'smooth' : 'instant',
+        })
+      }
+    }
+  }, [options])
+
+  const handleClick = useCallback((value: number) => {
+    animateToValue(value, 500)
+    onChange(value)
+  }, [
+    onChange,
+  ])
   const items = useMemo(() => {
     return repeated.map((repeat, index) => {
       return (
@@ -84,7 +121,7 @@ const Wheel = ({
           <button
             tabIndex={-1}
             onClick={() => {
-              onChange(repeat.option.value)
+              handleClick(repeat.option.value)
             }}
             style={{
               height: `${itemHeight}px`,
@@ -102,72 +139,53 @@ const Wheel = ({
     itemHeight,
   ])
   const listRef = useRef<HTMLUListElement>(null)
-  const initialisedAt = useRef<Date | undefined>(undefined)
-  // start scroll in middle iteration & on value
   useEffect(() => {
-    if (listRef.current) {
-      let index = options.findIndex((option) => (option.value === fallback))
-      if (typeof index === 'number') {
-        let itemTop = index * itemHeight
-        if (continuous) {
-          itemTop += options.length * itemHeight
-        }
-        const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
-        listRef.current.scrollTop = scrollTop
-      }
-    }
-    initialisedAt.current = new Date()
+    animateToValue(fallback, 0)
   }, [])
 
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      if (typeof value === 'number' && listRef.current) {
-        let index = options.findIndex((option) => (option.value === value))
-        if (typeof index === 'number') {
-          let itemTop = index * itemHeight
-          if (continuous) {
-            itemTop += options.length * itemHeight
-          }
-          const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
-          listRef.current.scrollTop = scrollTop
-          // listRef.current.scrollTo({
-          //   top: scrollTop,
-          //   left: 0,
-          //   behavior: 'instant',
-          // })
-        }
-      }
-    }, 300)
-    return () => {
-      window.clearTimeout(timeout)
+  const settleTimeout = useRef<number | undefined>(undefined)
+  const debounceSettle = useCallback(() => {
+    if (settleTimeout.current) {
+      window.clearTimeout(settleTimeout.current)
     }
+    settleTimeout.current = window.setTimeout(() => {
+      if (typeof value === 'number') {
+        console.log('settling on', value)
+        animateToValue(value, 500)
+      }
+    }, 500)
   }, [value])
+  useEffect(() => {
+    debounceSettle()
+  }, [debounceSettle])
 
   const handleScroll = useCallback(() => {
+    debounceSettle()
     if (
-      typeof initialisedAt.current !== 'undefined' &&
-      new Date().valueOf() > initialisedAt.current.valueOf() + 50
+      typeof animationEnd.current !== 'undefined' &&
+      animationEnd.current > new Date()
     ) {
-      if (listRef.current) {
-        if (continuous) {
-          const fullLength = itemHeight * options.length
-          if (listRef.current.scrollTop < fullLength) {
-            listRef.current.scrollTop = listRef.current.scrollTop + fullLength
-          }
-          if (listRef.current.scrollTop > (fullLength * 2)) {
-            listRef.current.scrollTop = listRef.current.scrollTop - fullLength
-          }
+      return
+    }
+    if (listRef.current) {
+      if (continuous) {
+        const fullLength = itemHeight * options.length
+        if (listRef.current.scrollTop < fullLength) {
+          listRef.current.scrollTop = listRef.current.scrollTop + fullLength
         }
-        const scrolledIndex = Math.floor(
-          (listRef.current.scrollTop + (height / 2))
-          / itemHeight
-        ) % options.length
-        if (scrolledIndex >= 0 && scrolledIndex < options.length) {
-          onChange(options[scrolledIndex].value)
+        if (listRef.current.scrollTop > (fullLength * 2)) {
+          listRef.current.scrollTop = listRef.current.scrollTop - fullLength
         }
       }
+      const scrolledIndex = Math.floor(
+        (listRef.current.scrollTop + (height / 2))
+        / itemHeight
+      ) % options.length
+      if (scrolledIndex >= 0 && scrolledIndex < options.length) {
+        onChange(options[scrolledIndex].value)
+      }
     }
-  }, [itemHeight, options, continuous, onChange])
+  }, [itemHeight, options, continuous, onChange, debounceSettle])
 
   return (
     <div className="MIRECO-time-wheel">
