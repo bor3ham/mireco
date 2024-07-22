@@ -215,7 +215,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       textRef.current.focus()
     }
   }, [])
-  
+
   const closeDropdown = useCallback(() => {
     dispatch({ type: 'close' })
   }, [])
@@ -384,8 +384,6 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
           })}
           value={value}
           onChange={handleSelect}
-          minuteIncrements={15}
-          selected={timeSelected}
         />
       )}
     </WidgetBlock>
