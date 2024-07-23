@@ -610,17 +610,17 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         focusOnEnd()
       }
     } else {
-      if (state.startDate && typeof state.startTime === 'number') {
-        const combinedStart = combineDatetimeValues(state.startDate, state.startTime, false)
-        const combinedEnd = combineDatetimeValues(state.endDate || state.startDate, newValue, false)
-        if (combinedEnd! < combinedStart!) {
-          newValue = state.startTime
-        }
-      } else if (typeof state.startTime === 'number') {
-        if (newValue < state.startTime) {
-          newValue = state.startTime
-        }
-      }
+      // if (state.startDate && typeof state.startTime === 'number') {
+      //   const combinedStart = combineDatetimeValues(state.startDate, state.startTime, false)
+      //   const combinedEnd = combineDatetimeValues(state.endDate || state.startDate, newValue, false)
+      //   if (combinedEnd! < combinedStart!) {
+      //     newValue = state.startTime
+      //   }
+      // } else if (typeof state.startTime === 'number') {
+      //   if (newValue < state.startTime) {
+      //     newValue = state.startTime
+      //   }
+      // }
       handleEndTimeChange(newValue, true)
       if (final) {
         dispatch({ type: 'blur' })
@@ -1243,12 +1243,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
             invalid={dayInvalid}
           />
           <TimeSelector
+            key={`${focusedOnStart ? 'start' : 'end'}-time-selector`}
             className="MIRECO-embedded"
             value={focusedOnStart ? state.startTime : state.endTime}
             onChange={handleSelectTime}
-            selected={timeSelected}
-            highlight={timeHighlight}
-            invalid={timeInvalid}
           />
         </TimeRangePopover>
       )}

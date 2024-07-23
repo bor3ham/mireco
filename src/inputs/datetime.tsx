@@ -374,7 +374,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   const handleTextClick = useCallback(() => {
     dispatch({ type: 'showControls' })
   }, [])
-  
+
   const closeControls = useCallback(() => {
     dispatch({ type: 'closeControls' })
   }, [])
@@ -498,10 +498,6 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   const daySelected = useCallback((day: DateValue) => (
     day === state.date
   ), [state.date])
-  const timeSelected = useCallback((time: TimeValue, rounding: number) => {
-    if (!state.time) return false
-    return time === state.time
-  }, [state.time])
 
   return (
     <WidgetBlock
@@ -570,7 +566,6 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
             className="MIRECO-embedded"
             value={state.time}
             onChange={handleSelectTime}
-            selected={timeSelected}
           />
         </AdvancedPopover>
       )}

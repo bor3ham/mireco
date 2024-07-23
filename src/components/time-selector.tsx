@@ -12,7 +12,7 @@ const AN_HOUR_MS = 60 * A_MINUTE_MS
 // scroll value-change ability
 // too short: parent value changes fight with scroll anim and interrupt user
 // too long: wheels scroll without value moving
-const IDLE_FRAMES = 30
+const IDLE_FRAMES = 20
 
 interface WheelProps {
   options: {
@@ -79,29 +79,34 @@ const Wheel = ({
     return [top, bottom]
   }, [continuous, itemHeight, options])
 
-  const animationInProgress = useRef(false)
+  const animationInProgress = useRef(true)
   const animationLastScrollTop = useRef(0)
   const animationIdleFrames = useRef(0)
   const animateToValue = useCallback((value: number, instant: boolean) => {
     animationInProgress.current = true
     if (listRef.current) {
-      let index = options.findIndex((option) => (option.value === value))
-      if (typeof index === 'number') {
-        let itemTop = index * itemHeight
-        if (continuous) {
-          itemTop += options.length * itemHeight
+      let index = 0
+      options.forEach((option, optionIndex) => {
+        if (option.value <= value) {
+          index = optionIndex
         }
-        const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
-        const topDiff = listRef.current.scrollTop - scrollTop
-        const fullHeight = itemHeight * options.length
-        if (topDiff < -100 && !instant) {
-          // console.log('adjusting for large top diff: up')
-          listRef.current.scrollTop = listRef.current.scrollTop + fullHeight
-        }
-        if (topDiff > 100 && !instant) {
-          // console.log('adjusting for large top diff: down')
-          listRef.current.scrollTop = listRef.current.scrollTop - fullHeight
-        }
+      })
+      let itemTop = index * itemHeight
+      if (continuous) {
+        itemTop += options.length * itemHeight
+      }
+      const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
+      const topDiff = listRef.current.scrollTop - scrollTop
+      const fullHeight = itemHeight * options.length
+      if (topDiff < -100 && !instant) {
+        // console.log('adjusting for large top diff: up')
+        listRef.current.scrollTop = listRef.current.scrollTop + fullHeight
+      }
+      if (topDiff > 100 && !instant) {
+        // console.log('adjusting for large top diff: down')
+        listRef.current.scrollTop = listRef.current.scrollTop - fullHeight
+      }
+      if (listRef.current.scrollTop != scrollTop) {
         animationLastScrollTop.current = listRef.current.scrollTop
         animationIdleFrames.current = 0
         listRef.current.scrollTo({
@@ -109,6 +114,8 @@ const Wheel = ({
           left: 0,
           behavior: instant ? 'instant' : 'smooth',
         })
+      } else {
+        animationInProgress.current = false
       }
     }
   }, [options])
@@ -262,8 +269,9 @@ export const TimeSelector = ({
     })
   }, [])
   const minutes = useMemo(() => {
-    const m = Array.from(Array.from(Array(60)).keys())
-    return m.map((minute) => {
+    const m = Array.from(Array.from(Array(12)).keys())
+    return m.map((minuteIndex) => {
+      const minute = minuteIndex * 5
       const asDate = new Date(1, 1, 1, 0, minute)
       return {
         label: format(asDate, 'mm'),
