@@ -8,6 +8,12 @@ const A_SECOND_MS = 1000
 const A_MINUTE_MS = 60 * A_SECOND_MS
 const AN_HOUR_MS = 60 * A_MINUTE_MS
 
+// number of frames after an animated-scroll is complete to restore
+// scroll value-change ability
+// too short: parent value changes fight with scroll anim and interrupt user
+// too long: wheels scroll without value moving
+const IDLE_FRAMES = 30
+
 interface WheelProps {
   options: {
     label: string
@@ -73,9 +79,11 @@ const Wheel = ({
     return [top, bottom]
   }, [continuous, itemHeight, options])
 
-  const animationEnd = useRef<Date | undefined>(undefined)
-  const animateToValue = useCallback((value: number, ms: number) => {
-    animationEnd.current = new Date(new Date().valueOf() + Math.max(ms, 50))
+  const animationInProgress = useRef(false)
+  const animationLastScrollTop = useRef(0)
+  const animationIdleFrames = useRef(0)
+  const animateToValue = useCallback((value: number, instant: boolean) => {
+    animationInProgress.current = true
     if (listRef.current) {
       let index = options.findIndex((option) => (option.value === value))
       if (typeof index === 'number') {
@@ -86,25 +94,52 @@ const Wheel = ({
         const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
         const topDiff = listRef.current.scrollTop - scrollTop
         const fullHeight = itemHeight * options.length
-        if (topDiff < -100 && ms > 0) {
+        if (topDiff < -100 && !instant) {
           // console.log('adjusting for large top diff: up')
           listRef.current.scrollTop = listRef.current.scrollTop + fullHeight
         }
-        if (topDiff > 100 && ms > 0) {
+        if (topDiff > 100 && !instant) {
           // console.log('adjusting for large top diff: down')
           listRef.current.scrollTop = listRef.current.scrollTop - fullHeight
         }
+        animationLastScrollTop.current = listRef.current.scrollTop
+        animationIdleFrames.current = 0
         listRef.current.scrollTo({
           top: scrollTop,
           left: 0,
-          behavior: ms > 0 ? 'smooth' : 'instant',
+          behavior: instant ? 'instant' : 'smooth',
         })
       }
     }
   }, [options])
+  const frameRef = useRef<number | undefined>(undefined)
+  const onFrame = () => {
+    if (animationInProgress.current && listRef.current) {
+      const scrollTop = listRef.current.scrollTop
+      if (scrollTop == animationLastScrollTop.current) {
+        animationIdleFrames.current++
+        if (animationIdleFrames.current > IDLE_FRAMES) {
+          animationInProgress.current = false
+          // console.log('animation over on wheel', options.length)
+        }
+      } else {
+        animationLastScrollTop.current = scrollTop
+        animationIdleFrames.current = 0
+      }
+    }
+    frameRef.current = requestAnimationFrame(onFrame)
+  }
+  useEffect(() => {
+    frameRef.current = requestAnimationFrame(onFrame)
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current)
+      }
+    }
+  }, [])
 
   const handleClick = useCallback((value: number) => {
-    animateToValue(value, 500)
+    animateToValue(value, false)
     onChange(value)
   }, [
     onChange,
@@ -140,7 +175,7 @@ const Wheel = ({
   ])
   const listRef = useRef<HTMLUListElement>(null)
   useEffect(() => {
-    animateToValue(fallback, 0)
+    animateToValue(fallback, true)
   }, [])
 
   const settleTimeout = useRef<number | undefined>(undefined)
@@ -150,8 +185,7 @@ const Wheel = ({
     }
     settleTimeout.current = window.setTimeout(() => {
       if (typeof value === 'number') {
-        console.log('settling on', value)
-        animateToValue(value, 500)
+        animateToValue(value, false)
       }
     }, 500)
   }, [value])
@@ -161,10 +195,7 @@ const Wheel = ({
 
   const handleScroll = useCallback(() => {
     debounceSettle()
-    if (
-      typeof animationEnd.current !== 'undefined' &&
-      animationEnd.current > new Date()
-    ) {
+    if (animationInProgress.current) {
       return
     }
     if (listRef.current) {
@@ -182,6 +213,7 @@ const Wheel = ({
         / itemHeight
       ) % options.length
       if (scrolledIndex >= 0 && scrolledIndex < options.length) {
+        // console.log('scroll caused value change on wheel', options.length)
         onChange(options[scrolledIndex].value)
       }
     }
@@ -189,7 +221,7 @@ const Wheel = ({
 
   return (
     <div className="MIRECO-time-wheel">
-      <ul ref={listRef} onScroll={handleScroll}>
+      <ul ref={listRef} onScroll={handleScroll} tabIndex={-1}>
         {paddingTop > 0 && (
           <li className="padding" style={{height: paddingTop}} />
         )}
