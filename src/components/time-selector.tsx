@@ -13,6 +13,8 @@ const AN_HOUR_MS = 60 * A_MINUTE_MS
 // too short: parent value changes fight with scroll anim and interrupt user
 // too long: wheels scroll without value moving
 const IDLE_FRAMES = 20
+// pause after scrolling before the current value settles in centre
+const SETTLE_DELAY = 1000
 
 interface WheelProps {
   options: {
@@ -98,11 +100,12 @@ const Wheel = ({
       const scrollTop = itemTop + (itemHeight / 2) - (height / 2) + paddingTop
       const topDiff = listRef.current.scrollTop - scrollTop
       const fullHeight = itemHeight * options.length
-      if (topDiff < -100 && !instant) {
+      const halfHeight = fullHeight / 2
+      if (topDiff < -halfHeight && !instant) {
         // console.log('adjusting for large top diff: up')
         listRef.current.scrollTop = listRef.current.scrollTop + fullHeight
       }
-      if (topDiff > 100 && !instant) {
+      if (topDiff > halfHeight && !instant) {
         // console.log('adjusting for large top diff: down')
         listRef.current.scrollTop = listRef.current.scrollTop - fullHeight
       }
@@ -161,6 +164,7 @@ const Wheel = ({
           })}
         >
           <button
+            type="button"
             tabIndex={-1}
             onClick={() => {
               handleClick(repeat.option.value)
@@ -194,7 +198,7 @@ const Wheel = ({
       if (typeof value === 'number') {
         animateToValue(value, false)
       }
-    }, 500)
+    }, SETTLE_DELAY)
   }, [value])
   useEffect(() => {
     debounceSettle()
@@ -205,7 +209,7 @@ const Wheel = ({
     if (animationInProgress.current) {
       return
     }
-    if (listRef.current) {
+    if (listRef.current && typeof value === 'number') {
       if (continuous) {
         const fullLength = itemHeight * options.length
         if (listRef.current.scrollTop < fullLength) {
@@ -224,7 +228,7 @@ const Wheel = ({
         onChange(options[scrolledIndex].value)
       }
     }
-  }, [itemHeight, options, continuous, onChange, debounceSettle])
+  }, [itemHeight, options, value, continuous, onChange, debounceSettle])
 
   return (
     <div className="MIRECO-time-wheel">
@@ -346,6 +350,8 @@ export const TimeSelector = ({
       onChange(current + (12 * AN_HOUR_MS), false)
     } else if (!newMeridian && meridian) {
       onChange(current - (12 * AN_HOUR_MS), false)
+    } else if (typeof value !== 'number') {
+      onChange(current, false)
     }
   }, [
     value,

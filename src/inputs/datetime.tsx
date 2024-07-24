@@ -189,7 +189,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   timePlaceholder,
   dateId,
   timeId,
-  timeStep = 15 * 60 * 1000,
+  timeStep = 5 * 60 * 1000,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
   icon = <ClockVector />,

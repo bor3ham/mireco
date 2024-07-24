@@ -26,7 +26,7 @@ export interface ButtonProps {
   onDoubleClick?(event: React.MouseEvent<HTMLButtonElement>): void
   onMouseDown?(event: React.MouseEvent<HTMLButtonElement>): void
   onMouseEnter?(event: React.MouseEvent<HTMLButtonElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLButtonElement>): void  
+  onMouseLeave?(event: React.MouseEvent<HTMLButtonElement>): void
   onMouseMove?(event: React.MouseEvent<HTMLButtonElement>): void
   onMouseOut?(event: React.MouseEvent<HTMLButtonElement>): void
   onMouseOver?(event: React.MouseEvent<HTMLButtonElement>): void
@@ -69,7 +69,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     className={classNames(
       'MIRECO-button MIRECO-blockable',
       {
-        block,
+        'MIRECO-block': block,
       },
       className,
     )}

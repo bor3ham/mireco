@@ -1138,7 +1138,9 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     <WidgetBlock
       ref={containerRef}
       block={block}
-      className={classNames('MIRECO-datetime-range', className)}
+      className={classNames('MIRECO-datetime-range', {
+        'MIRECO-end-date-showing': state.endDateShowing,
+      }, className)}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
       icon={icon}
@@ -1185,7 +1187,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
         placeholder={startTimePlaceholder}
         id={startTimeId}
       />
-      <p>to</p>
+      <p className="MIRECO-embedded">to</p>
       {state.endDateShowing && (
         <DateText
           key="end-date"

@@ -1,4 +1,22 @@
 .MIRECO-datetime-range
-  p
-    display: inline
-    margin-right: 0.8rem
+  display: flex !important
+  flex-wrap: wrap
+
+  &:not(.MIRECO-block)
+    max-width: 18rem
+
+  .MIRECO-text
+    min-width: 0
+    &:nth-child(1), &:nth-child(2)
+      flex-basis: 8rem
+      flex-grow: 1
+    &:nth-child(4)
+      flex-grow: 10
+
+  &.MIRECO-end-date-showing
+    .MIRECO-text
+      &:nth-child(4)
+        flex-basis: 8rem
+        flex-grow: 1
+      &:nth-child(5)
+        flex-grow: 10

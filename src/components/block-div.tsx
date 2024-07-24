@@ -19,7 +19,7 @@ export interface BlockDivProps {
   onDoubleClick?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseDown?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseEnter?(event: React.MouseEvent<HTMLDivElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void  
+  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseMove?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseOut?(event: React.MouseEvent<HTMLDivElement>): void
   onMouseOver?(event: React.MouseEvent<HTMLDivElement>): void
@@ -63,7 +63,7 @@ export const BlockDiv = forwardRef<HTMLDivElement, BlockDivProps>(({
       ref={ref}
       style={combinedStyle}
       className={classNames('MIRECO-blockable', className, {
-        block,
+        'MIRECO-block': block,
       })}
       id={id}
       tabIndex={tabIndex}

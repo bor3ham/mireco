@@ -107,7 +107,7 @@ export const Text = forwardRef<HTMLInputElement, TextProps>(({
       className={classNames(
         'MIRECO-text MIRECO-blockable',
         {
-          block,
+          'MIRECO-block': block,
           sized: !!size,
         },
         className,

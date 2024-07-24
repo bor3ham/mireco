@@ -310,7 +310,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
     incrementStart,
     openShortcuts,
   )
-  
+
   const cleanEnd = useCallback(() => {
     if (endRef.current) endRef.current.cleanText()
       closeCalendar()
@@ -591,7 +591,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
         placeholder={startPlaceholder}
         id={startId}
       />
-      <p>to</p>
+      <p className="MIRECO-embedded">to</p>
       <DateText
         ref={endRef}
         value={state.end}

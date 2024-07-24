@@ -94,7 +94,7 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
       className={classNames(
         'MIRECO-range MIRECO-blockable',
         {
-          block,
+          'MIRECO-block': block,
         },
         className,
       )}

@@ -58,12 +58,13 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
       clearable={clearable}
       everClearable={everClearable}
       onClick={handleContainerClick}
-      onClear={onClear} 
+      onClear={onClear}
       icon={icon}
       inFocus={inFocus}
       disabled={inputProps.disabled}
     >
       <Text
+        block
         ref={(instance: HTMLInputElement) => {
           textRef.current = instance
           if (typeof forwardedRef === "function") {

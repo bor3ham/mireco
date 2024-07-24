@@ -46,7 +46,7 @@ export interface MonthProps {
   onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void  
+  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
   onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void

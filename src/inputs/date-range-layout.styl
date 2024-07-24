@@ -1,6 +1,6 @@
 .MIRECO-date-range
   position: relative
-  
+
   .MIRECO-date-range-header
     text-align: center
 
@@ -8,6 +8,16 @@
     display: flex
     flex-direction: row
 
-  p
-    display: inline
-    margin-right: 0.8rem
+  display: flex !important
+  flex-wrap: wrap
+
+  &:not(.MIRECO-block)
+    max-width: 18rem
+
+  .MIRECO-text
+    min-width: 0
+    &:nth-child(1)
+      flex-basis: 8rem
+      flex-grow: 1
+    &:nth-child(3)
+      flex-grow: 10

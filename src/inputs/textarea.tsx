@@ -126,7 +126,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       className={classNames(
         'MIRECO-textarea MIRECO-blockable',
         {
-          block,
+          'MIRECO-block': block,
         },
         className,
       )}

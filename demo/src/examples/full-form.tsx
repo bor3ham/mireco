@@ -287,84 +287,85 @@ export const FullFormExample = () => {
     event.preventDefault()
     console.log('Submitting', value)
   }, [value])
+  const block = true
   return (
     <form className="lab-controls" onSubmit={handleFormSubmit}>
       <Text
-        block
+        block={block}
         value={value.text}
         onChange={handleTextChange}
         placeholder="Text"
       />
       <Textarea
-        block
+        block={block}
         value={value.textarea}
         onChange={handleTextareaChange}
         placeholder="Textarea"
       />
       <Checkbox
-        block
+        block={block}
         value={value.checkbox}
         onChange={handleCheckboxChange}
       >
         Checkbox
       </Checkbox>
       <Number
-        block
+        block={block}
         value={value.number}
         onChange={handleNumberChange}
         placeholder="Number"
       />
       <Range
-        block
+        block={block}
         value={value.range}
         onChange={handleRangeChange}
       />
       <Time
-        block
+        block={block}
         value={value.time}
         onChange={handleTimeChange}
         placeholder="Time"
       />
       <Duration
-        block
+        block={block}
         value={value.duration}
         onChange={handleDurationChange}
         placeholder="Duration"
       />
       <Date
-        block
+        block={block}
         value={value.date}
         onChange={handleDateChange}
         placeholder="Date"
       />
       <Month
-        block
+        block={block}
         value={value.month}
         onChange={handleMonthChange}
         placeholder="Month"
       />
       <CalendarMonth
-        block
+        block={block}
         value={value.calendarMonth}
         onChange={handleCalendarMonthChange}
         placeholder="Calendar Month"
       />
       <Datetime
-        block
+        block={block}
         value={value.datetime}
         onChange={handleDatetimeChange}
         datePlaceholder="Date"
         timePlaceholder="Time"
       />
       <DateRange
-        block
+        block={block}
         value={value.dateRange}
         onChange={handleDateRangeChange}
         startPlaceholder="Start"
         endPlaceholder="End"
       />
       <DatetimeRange
-        block
+        block={block}
         value={value.datetimeRange}
         onChange={handleDatetimeRangeChange}
         startDatePlaceholder="Date"
@@ -373,20 +374,20 @@ export const FullFormExample = () => {
         endTimePlaceholder="Time"
       />
       <Select
-        block
+        block={block}
         value={value.select}
         options={SELECT_OPTIONS}
         onChange={handleSelectChange}
       />
       <MultiSelect
-        block
+        block={block}
         value={value.multiSelect}
         options={SELECT_OPTIONS}
         onChange={handleMultiSelectChange}
         placeholder="Multi Select"
       />
       <AsyncSelect
-        block
+        block={block}
         value={value.asyncSelect}
         getOptions={fakeLoadResults}
         onChange={handleAsyncChange}

@@ -119,7 +119,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   simplify = false,
   icon = <ClockVector />,
   autoErase = true,
-  step = 15 * 60 * 1000,
+  step = 5 * 60 * 1000,
   startingPoint = 9 * 60 * 60 * 1000,
   rightHang,
   clearable = true,
@@ -345,6 +345,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       id={id}
     >
       <TimeText
+        block
         ref={textRef}
         id={textId}
         value={value}
