@@ -278,7 +278,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   shortcuts,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
-  timeStep = 15 * 60 * 1000,
+  timeStep = 5 * 60 * 1000,
 }) => {
   const [state, dispatch] = useReducer(datetimeRangeReducer, {
     ...splitDatetimeRangeValue(value),
