@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { stylusLoader } = require('esbuild-stylus-loader')
 const { exec } = require('child_process')
+const path = require('node:path')
 
 const pkg = require('../package.json')
 
@@ -15,12 +16,13 @@ const metafilePlugin = {
   },
 }
 
+const tscPath = path.resolve('./node_modules/.bin/tsc')
 const typescriptPlugin = {
   name: 'typescriptPlugin',
   setup: (build) => {
     build.onEnd((result) => {
       if (result.errors.length === 0) {
-        exec('./node_modules/.bin/tsc', (err, stdout, stderr) => {
+        exec(tscPath, (err, stdout, stderr) => {
           console.log(stdout)
           console.log(stderr)
           if (err) {
