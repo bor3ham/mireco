@@ -1,8 +1,10 @@
+@use '../variables' as *
+
 .MIRECO-advanced-popover
   .MIRECO-advanced-popover-header
     background: #eee
     padding: 0.5rem
-    border-bottom: thin-line solid content-muted
+    border-bottom: $thin-line solid $content-muted
 
     button
       padding: 0.25rem 1rem
@@ -18,9 +20,9 @@
           vertical-align: middle
         &:not(:disabled):not(.disabled):hover
           > svg.MIRECO-lightning path
-            fill: primary-colour !important
+            fill: $primary-colour !important
           > svg.MIRECO-chevron-left path
-            stroke: primary-colour !important
+            stroke: $primary-colour !important
 
     .MIRECO-text
       font-size: 0.8rem
@@ -37,7 +39,7 @@
         float: none
 
   .MIRECO-day-calendar:not(:last-child)
-    border-bottom: thin-line solid content-muted
+    border-bottom: $thin-line solid $content-muted
 
   .MIRECO-advanced-popover-body .MIRECO-dropdown
     max-width: none

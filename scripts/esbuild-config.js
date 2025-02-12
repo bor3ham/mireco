@@ -1,7 +1,8 @@
 const fs = require('fs')
-const { stylusLoader } = require('esbuild-stylus-loader')
 const { exec } = require('child_process')
 const path = require('node:path')
+const { sassPlugin } = require('esbuild-sass-plugin')
+const svgPlugin = require('esbuild-svg')
 
 const pkg = require('../package.json')
 
@@ -40,7 +41,8 @@ const external = [
 
 exports.config = {
   plugins: [
-    stylusLoader(),
+    sassPlugin(),
+    svgPlugin(),
     metafilePlugin,
     typescriptPlugin,
   ],
@@ -52,8 +54,8 @@ exports.config = {
   target: ['esnext'],
   entryPoints: [
     { out: 'index', in: './src/index.ts' },
-    { out: 'layout', in: './src/layout.styl' },
-    { out: 'theme', in: './src/theme.styl' },
+    { out: 'layout', in: './src/layout.sass' },
+    { out: 'theme', in: './src/theme.sass' },
   ],
   outdir: 'dist',
   external,

@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { stylusLoader } = require('esbuild-stylus-loader')
+const { sassPlugin } = require('esbuild-sass-plugin')
 
 const metafilePlugin = {
   name: 'metafilePlugin',
@@ -14,16 +14,12 @@ const metafilePlugin = {
 
 exports.config = {
   plugins: [
-    stylusLoader({
-      stylusOptions: {
-        includeCss: true,
-      },
-    }),
+    sassPlugin(),
     metafilePlugin,
   ],
   entryPoints: [
     './src/demo.tsx',
-    './src/demo.styl',
+    './src/demo.sass',
   ],
   outdir: 'dist',
   metafile: true,

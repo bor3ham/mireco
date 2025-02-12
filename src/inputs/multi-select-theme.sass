@@ -1,24 +1,28 @@
+@use 'sass:math'
+
+@use '../variables' as *
+
 .MIRECO-multi-select
   &.in-focus
-    input-focus()
+    @include input-focus()
 
   &.disabled
-    border-color: content-muted !important
-    background: content-faint !important
+    border-color: $content-muted !important
+    background: $content-faint !important
 
   padding-bottom: 0 !important
 
-  padding-right: "calc(%s + 24px)" % (standard-padding / 2)
+  padding-right: calc(#{math.div($standard-padding, 2)} + 24px)
   &.clearable
-    padding-right: "calc(%s + 48px)" % standard-padding
+    padding-right: calc(#{$standard-padding} + 48px)
 
   &:after
     content: ' '
     position: absolute
     height: calc(100% - 12px)
     top: 6px
-    right: "calc(%s + 24px)" % (standard-padding / 2)
-    border-right: thin-line solid content-muted
+    right: calc(#{math.div($standard-padding, 2)} + 24px)
+    border-right: $thin-line solid $content-muted
 
   > ul.selected
     > li
@@ -33,8 +37,8 @@
         text-overflow: ellipsis
         white-space: nowrap
         max-width: 60%
-        border: thin-line solid content-muted
-        border-radius: edge-rounding
+        border: $thin-line solid $content-muted
+        border-radius: $edge-rounding
         padding-left: 0.25rem
         line-height: 1.5em
         padding-right: 24px
@@ -52,6 +56,6 @@
   > .MIRECO-clear-button
     background: none !important
     border: none !important
-    right: "calc(%s + 24px)" % (standard-padding / 2)
+    right: calc(#{math.div($standard-padding, 2)} + 24px)
   > svg
-    right: (standard-padding / 4)
+    right: math.div($standard-padding, 4)

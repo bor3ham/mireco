@@ -1,3 +1,7 @@
+@use 'sass:color'
+
+@use '../variables' as *
+
 .MIRECO-time-selector
   display: flex
   flex-direction: row
@@ -40,26 +44,26 @@
         border-radius: 4px
         position: relative
         margin: 0
-        padding: 0 (standard-padding)
+        padding: 0 ($standard-padding)
         background: none
-        color: content-foreground
+        color: $content-foreground
         margin: 0
         display: block
         width: 100%
         text-align: center
         outline: none
         border: none
-        font-size: (standard-font-size * 0.8)
-        line-height: standard-line-height
+        font-size: ($standard-font-size * 0.8)
+        line-height: $standard-line-height
         white-space: nowrap
         &:not(:disabled):not(.disabled)
           cursor: pointer
           &:hover
-            color: content-foreground
-            background: content-faint
+            color: $content-foreground
+            background: $content-faint
       &.current button:not(:disabled):not(.disabled):hover
-        background: darken(primary-colour, 5%)
-        color: primary-content-colour
+        background: color.adjust($primary-colour, $lightness: -5%)
+        color: $primary-content-colour
       &.invalid
         opacity: 0.1
 
@@ -71,27 +75,27 @@
           left: -1px
           right: -1px
           bottom: -1px
-          border-left: 1px dashed secondary-colour
-          border-right: 1px dashed secondary-colour
+          border-left: 1px dashed $secondary-colour
+          border-right: 1px dashed $secondary-colour
         &.first-highlight button:after
-          border-top: 1px dashed secondary-colour
-          border-top-left-radius: edge-rounding
-          border-top-right-radius: edge-rounding
+          border-top: 1px dashed $secondary-colour
+          border-top-left-radius: $edge-rounding
+          border-top-right-radius: $edge-rounding
         &.last-highlight button:after
-          border-bottom: 1px dashed secondary-colour
-          border-bottom-left-radius: edge-rounding
-          border-bottom-right-radius: edge-rounding
+          border-bottom: 1px dashed $secondary-colour
+          border-bottom-left-radius: $edge-rounding
+          border-bottom-right-radius: $edge-rounding
       &.current
         button
-          background: primary-colour
-          color: primary-content-colour
+          background: $primary-colour
+          color: $primary-content-colour
       &:not(.current).selected
         button
-          background: alpha(primary-colour, 0.2)
+          background: color.adjust($primary-colour, $alpha: 0.2)
       &.selected
         &.first-selected button
-          border-top-left-radius: edge-rounding
-          border-top-right-radius: edge-rounding
+          border-top-left-radius: $edge-rounding
+          border-top-right-radius: $edge-rounding
         &.last-selected button
-          border-bottom-left-radius: edge-rounding
-          border-bottom-right-radius: edge-rounding
+          border-bottom-left-radius: $edge-rounding
+          border-bottom-right-radius: $edge-rounding

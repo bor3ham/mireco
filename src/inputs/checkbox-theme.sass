@@ -1,0 +1,48 @@
+@use 'sass:color'
+@use 'sass:math'
+
+@use '../variables' as *
+
+$size: $standard-font-size
+
+.MIRECO-checkbox
+  &:not(.disabled)
+    cursor: pointer
+    .MIRECO-checkbox-input
+      cursor: pointer
+
+.MIRECO-checkbox-input
+  width: 0
+  height: 0
+  margin: 0
+  position: absolute
+  opacity: 0
+
+  &+svg
+    background: $content-background
+    // important style to override inline
+    display: inline-block !important
+    vertical-align: middle
+    border: $thin-line solid $content-muted
+    border-radius: $edge-rounding
+    width: $size
+    height: $size
+    margin-bottom: math.div($size, 5)
+  &:disabled+svg
+    background: $content-faint
+    filter: grayscale(100%)
+
+  &+svg path
+    stroke: $content-soft
+    stroke-opacity: 0.25
+  &:not(:disabled)
+    &:hover+svg
+      border-color: color.adjust($primary-colour, $lightness: $hover-highlight)
+      path
+        stroke: color.adjust($primary-colour, $lightness: $hover-highlight)
+  &:checked+svg path
+    stroke: $primary-colour
+    stroke-opacity: 1
+
+  &:focus+svg
+    @include input-focus()

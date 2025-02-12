@@ -1,0 +1,25 @@
+@use 'sass:math'
+  
+@use '../variables' as *
+  
+.MIRECO-widget-block
+  > .MIRECO-clear-button
+    background: none !important
+    border: none !important
+
+  > svg
+    right: math.div($standard-padding, 4)
+  
+  &.has-icon
+    padding-right: calc(#{math.div($standard-padding, 2)} + 24px)
+    &.ever-clearable
+      padding-right: calc(#{$standard-padding} + 48px)
+    > .MIRECO-clear-button
+      right: calc(#{math.div($standard-padding, 2)} + 24px)
+    &:after
+      content: ' '
+      position: absolute
+      right: calc(#{math.div($standard-padding, 2)} + 24px)
+      height: calc(100% - 12px)
+      top: 6px
+      border-right: $thin-line solid $content-muted

@@ -1,3 +1,5 @@
+@use '../variables' as *
+  
 .MIRECO-clear-button
   &.MIRECO-button
     vertical-align: top
@@ -7,13 +9,13 @@
     padding-bottom: 0.5rem
   svg
     vertical-align: middle
-    height: standard-font-size
+    height: $standard-font-size
     path
-      stroke: content-foreground !important
+      stroke: $content-foreground !important
   &:disabled
     svg path
-      stroke: content-muted !important
+      stroke: $content-muted !important
   &:not(:disabled)
     &:hover, &:active
       svg path
-        stroke: primary-colour !important
+        stroke: $primary-colour !important

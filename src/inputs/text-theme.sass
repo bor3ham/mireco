@@ -1,0 +1,31 @@
+@use '../variables' as *
+
+.MIRECO-text, .MIRECO-widget-block
+  font-family: $standard-font-families
+  font-weight: $standard-font-weight
+  font-size: $standard-font-size
+  line-height: $standard-line-height
+  -webkit-appearance: none
+  color: $content-foreground
+  outline: none
+
+  &.MIRECO-embedded
+    border: none
+    background: none
+  &:not(.MIRECO-embedded)
+    border: $thin-line solid $content-muted
+    border-radius: $edge-rounding
+    background: $content-background
+
+    &:disabled, &.disabled
+      background: $content-faint
+
+    &:not(:disabled):not(.disabled)
+      &:hover
+        border-color: $primary-colour
+
+    &:focus
+      @include input-focus()
+
+.MIRECO-text
+  @include input-textaligned-padding($standard-padding)

@@ -1,0 +1,49 @@
+@use 'sass:math'
+
+// sizing
+$standard-padding: 1rem !default
+$standard-font-size: 1rem !default
+$standard-line-height: 1.2em !default
+$edge-rounding: 0.15rem !default
+$thin-line: 0.05rem !default
+$text-space-width: 0.35rem !default
+
+$textaligned-height-top: 1.2 !default
+$textaligned-height-bottom: 0.8 !default
+
+// colours
+$primary-colour: #007bff !default
+$primary-content-colour: #fff !default
+$secondary-colour: #17a2b8 !default
+$secondary-content-colour: #fff !default
+$content-foreground: #333 !default
+$content-background: #fff !default
+$content-muted: #666 !default
+$content-soft: #9a9a9a !default
+$content-faint: #eee !default
+
+$primary-button-colour: $primary-colour !default
+$primary-button-content-colour: $primary-content-colour !default
+$secondary-button-colour: $secondary-colour !default
+$secondary-button-content-colour: $secondary-content-colour !default
+$link-colour: $primary-colour !default
+
+// interaction
+$hover-highlight: 10% !default
+$interact-highlight: 15% !default
+
+// fonts
+$standard-font-families: Helvetica, Arial, sans-serif !default
+$standard-font-weight: 500 !default
+
+// mixins
+@mixin input-focus()
+  box-shadow: 0 0 0 ($thin-line * 2) transparent, 0 0 0 ($thin-line * 2) rgba(0, 0, 0, 0.2)
+
+@mixin popover-shadow()
+  box-shadow: 0px 0.2rem 0.5rem rgba(0, 0, 0, 0.3)
+
+@mixin input-textaligned-padding($amount)
+  padding: math.div($amount, 2)
+  padding-top: math.div($amount, 2) * $textaligned-height-top
+  padding-bottom: math.div($amount, 2) * $textaligned-height-bottom

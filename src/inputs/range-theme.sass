@@ -1,7 +1,9 @@
+@use '../variables' as *
+  
 .MIRECO-range
   // &::-webkit-slider-runnable-track
   //   color: red
 
   &:focus
     outline: none
-    input-focus()
+    @include input-focus()
