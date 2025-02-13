@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useReducer, useCallback, useEffect } from 'r
 import classNames from 'classnames'
 
 import { WidgetBlock, Dropdown, ClearButton } from 'components'
-import { ChevronDownVector } from 'vectors'
+import Chevron from '../vectors/chevron.svg'
 import {
   KEYBOARD_ARROW_DOWN,
   KEYBOARD_ARROW_UP,
@@ -98,7 +98,7 @@ const SelectedOption: React.FC<SelectedOptionProps> = ({
   <li className="option">
     {label}
     {!disabled && (
-      <ClearButton onClick={remove} spaced={false} disabled={disabled} />
+      <ClearButton onClick={remove} disabled={disabled} />
     )}
   </li>
 )
@@ -135,7 +135,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   options = [],
   onChange,
   filter = true,
-  icon = <ChevronDownVector />,
+  icon = <Chevron className="MIRECO-chevron" />,
   placeholder = 'Select',
   textClassName,
   textId,

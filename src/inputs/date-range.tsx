@@ -4,7 +4,7 @@ import { addDays, subDays, max } from 'date-fns'
 
 import type { DateRangeInputValue, DateInputValue, DateValue, DateRangeValue } from 'types'
 import { WidgetBlock, DateText, type DateTextHandle, DayCalendar, TimeRangePopover, AdvancedPopoverHandle } from 'components'
-import { CalendarVector } from 'vectors'
+import Calendar from '../vectors/calendar.svg'
 import { dateValueAsDate, dateAsDateValue } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
 
@@ -160,7 +160,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
   locale,
   format,
   parse,
-  icon = <CalendarVector />,
+  icon = <Calendar className="MIRECO-calendar" />,
   clearable = true,
   size = 12,
   startPlaceholder,

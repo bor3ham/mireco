@@ -3,7 +3,6 @@
 @use '../variables' as *
   
 .MIRECO-dropdown
-  color: $content-foreground
   list-style: none
   margin: 0
   padding: 0
@@ -24,18 +23,14 @@
     padding: 0
     display: block
     button, &.none
-      margin: 0
-      padding: math.div($standard-padding, 2) ($standard-padding)
+      padding: var(--MIRECO-form-field-padding)
       background: none
-      color: $content-foreground
       margin: 0
       display: block
       width: 100%
       text-align: left
       outline: none
       border: none
-      font-size: ($standard-font-size * 0.8)
-      line-height: $standard-line-height
       white-space: nowrap
     button
       &:not(:disabled)

@@ -10,7 +10,8 @@ import {
   subDays,
 } from 'date-fns'
 
-import { ChevronRightVector, ChevronLeftVector, DoubleChevronRightVector, DoubleChevronLeftVector } from 'vectors'
+import Chevron from '../vectors/chevron.svg'
+import DoubleChevron from '../vectors/double-chevron.svg'
 import { type DateValue, type DateInputValue, dateValueAsDate, dateAsDateValue } from 'types'
 
 interface DayProps {
@@ -252,17 +253,17 @@ export const DayCalendar = forwardRef<HTMLDivElement, DayCalendarProps>(({
     <div className={classNames('MIRECO-day-calendar MIRECO-controls-popover', className)} ref={ref}>
       <div className="calendar-header">
         <button type="button" tabIndex={-1} onClick={prevYear} title="Previous Year">
-          <DoubleChevronLeftVector />
+          <DoubleChevron className="MIRECO-double-chevron MIRECO-double-chevron-left" />
         </button>
         <button type="button" tabIndex={-1} onClick={prevMonth} title="Previous Month">
-          <ChevronLeftVector />
+          <Chevron className="MIRECO-chevron MIRECO-chevron-left" />
         </button>
         <h5>{format(new Date(month.year, month.month), 'MMMM yyyy')}</h5>
         <button type="button" tabIndex={-1} onClick={nextMonth} title="Next Month">
-          <ChevronRightVector />
+          <Chevron className="MIRECO-chevron MIRECO-chevron-right" />
         </button>
         <button type="button" tabIndex={-1} onClick={nextYear} title="Next Year">
-          <DoubleChevronRightVector />
+          <DoubleChevron className="MIRECO-double-chevron MIRECO-double-chevron-right" />
         </button>
       </div>
       {table}

@@ -31,7 +31,7 @@ import {
   type TimeFormatFunction,
   type TimeParseFunction,
 } from 'types'
-import { ClockVector } from 'vectors'
+import Clock from '../vectors/clock.svg'
 import { useInputKeyDownHandler } from 'hooks'
 
 // todo: add imperative ref handle
@@ -252,7 +252,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   onChange,
   disabled,
   id,
-  icon = <ClockVector />,
+  icon = <Clock className="MIRECO-clock" />,
   clearable = true,
   dateLocale,
   dateFormat,

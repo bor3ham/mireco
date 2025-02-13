@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useCallback, useReducer, useEffect, useMemo 
 import classNames from 'classnames'
 
 import { BlockDiv, Dropdown, WidgetText } from 'components'
-import { ChevronDownVector } from 'vectors'
+import Chevron from '../vectors/chevron.svg'
 import { SelectInputValue, SelectOption, isEmpty } from 'types'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP, KEYBOARD_ENTER, KEYBOARD_ESCAPE } from 'constants'
 
@@ -112,7 +112,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   nullable = true,
   filter = true,
   onTextChange,
-  icon = <ChevronDownVector />,
+  icon = <Chevron className="MIRECO-chevron" />,
   dropdownProps,
   placeholder = 'Select',
   size,

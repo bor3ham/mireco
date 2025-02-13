@@ -1,21 +1,31 @@
 @use '../variables' as *
+@use './input-states' as *
 
 .MIRECO-textarea
   vertical-align: middle
-  @include input-textaligned-padding($standard-padding)
-  font-family: $standard-font-families
-  font-weight: $standard-font-weight
-  font-size: $standard-font-size
-  line-height: $standard-line-height
-  border: $thin-line solid $content-muted
-  border-radius: $edge-rounding
+  padding: var(--MIRECO-form-field-padding)
+  font-family: var(--MIRECO-form-field-font-family)
+  font-weight: var(--MIRECO-form-field-font-weight)
+  font-size: var(--MIRECO-form-field-font-size)
+  line-height: var(--MIRECO-form-field-line-height)
+  color: var(--MIRECO-form-field-text)
+
+  border: var(--MIRECO-thin-border-width) solid var(--MIRECO-form-field-edge)
+  border-radius: var(--MIRECO-form-field-edge-rounding)
+  background: var(--MIRECO-form-field-background)
+
   outline: none
 
   &:disabled
-    background: $content-faint
+    background: var(--MIRECO-form-field-background-disabled)
 
   &:not(:disabled)
     &:hover
-      border-color: $primary-colour
+      border-color: var(--MIRECO-content-primary)
+
   &:focus
     @include input-focus()
+  
+  &::placeholder
+    color: var(--MIRECO-form-field-placeholder)
+    opacity: 1

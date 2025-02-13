@@ -2,10 +2,11 @@ import React, { forwardRef, useImperativeHandle, useState, useCallback, useMemo 
 import classNames from 'classnames'
 
 import { Button, Text } from 'inputs'
-import { LightningVector, ChevronLeftVector } from 'vectors'
+import { LightningVector } from 'vectors'
 import { ControlsPopover } from './controls-popover'
 import { Dropdown } from './dropdown'
 import { useInputKeyDownHandler } from 'hooks'
+import Chevron from '../vectors/chevron.svg'
 
 export interface AdvancedPopoverHandle {
   openShortcuts(): void
@@ -209,7 +210,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverHandle, AdvancedPopover
                 tabIndex={-1}
                 title="Back"
               >
-                <ChevronLeftVector size={15} />
+                <Chevron className="MIRECO-chevron MIRECO-left" />
               </Button>
               <Text
                 value={filter}

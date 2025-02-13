@@ -1,41 +1,18 @@
-@use 'sass:color'
-
-@use '../variables' as *
-
-@mixin solid-colourise-button($bkg, $frg)
-  background: $bkg
-  color: $frg
-  border: $thin-line solid color.adjust($bkg, $lightness: -10%)
-  &:hover
-    background: color.adjust($bkg, $lightness: $hover-highlight)
-    border-color: $bkg
-  &:active
-    background: color.adjust($bkg, $lightness: $interact-highlight)
-    border-color: $bkg
-
-@mixin outline-colourise-button($colour, $interact-colour)
-  background: $content-background
-  color: $colour
-  border: $thin-line solid $colour
-  &:hover
-    background: $content-background
-    color: $interact-colour
-    border-color: color.adjust($interact-colour, $lightness: $hover-highlight)
-  &:active
-    background: $content-background
-    color: $interact-colour
-    border-color: color.adjust($interact-colour, $lightness: $interact-highlight)
+@use './input-states' as *
 
 .MIRECO-button
+  display: inline-block
   -webkit-appearance: none
   box-sizing: border-box
-  border-radius: $edge-rounding
-  @include input-textaligned-padding($standard-padding)
+  border-radius: var(--MIRECO-edge-rounding)
   outline: none
-  font-family: $standard-font-families
-  font-weight: $standard-font-weight
-  font-size: $standard-font-size
-  line-height: $standard-line-height
+
+  font-family: var(--MIRECO-form-field-font-family)
+  font-weight: var(--MIRECO-form-field-font-weight)
+  font-size: var(--MIRECO-form-field-font-size)
+  line-height: var(--MIRECO-form-field-line-height)
+  padding: var(--MIRECO-form-field-padding)
+
   user-select: none
   text-align: center
   text-decoration: none
@@ -44,22 +21,53 @@
 
   &:focus
     @include input-focus()
+  
+  border-style: solid
+  border-width: var(--MIRECO-thin-border-width)
 
   &:not(:disabled):not(.disabled):not(.MIRECO-embedded)
-    &:not(.outline)
-      @include solid-colourise-button($primary-button-colour, $primary-button-content-colour)
-      &.secondary
-        @include solid-colourise-button($secondary-button-colour, $secondary-button-content-colour)
-      &.content
-        @include solid-colourise-button($content-foreground, $content-background)
+    background: var(--MIRECO-primary-background)
+    border-color: var(--MIRECO-primary-background)
+    color: var(--MIRECO-primary-text)
+    &:hover
+      border-color: var(--MIRECO-primary-background-interact)
+      background: var(--MIRECO-primary-background-interact)
     &.outline
-      @include outline-colourise-button($primary-button-colour, color.adjust($primary-button-colour, $lightness: -20%))
-      &.secondary
-        @include outline-colourise-button($secondary-button-colour, color.adjust($secondary-button-colour, $lightness: -20%))
-      &.content
-        @include outline-colourise-button($content-foreground, $primary-button-colour)
+      background: none
+      border-color: var(--MIRECO-content-primary)
+      color: var(--MIRECO-content-primary)
+      &:hover
+        background: var(--MIRECO-content-background-interact)
+
+    &.secondary
+      background: var(--MIRECO-secondary-background)
+      border-color: var(--MIRECO-secondary-background)
+      color: var(--MIRECO-secondary-text)
+      &:hover
+        background: var(--MIRECO-secondary-background-interact)
+        border-color: var(--MIRECO-secondary-background-interact)
+      &.outline
+        background: none
+        border-color: var(--MIRECO-content-secondary)
+        color: var(--MIRECO-content-secondary)
+        &:hover
+          background: var(--MIRECO-content-background-interact)
+    
+    &.content
+      background: var(--MIRECO-content-background)
+      border-color: var(--MIRECO-content-edge)
+      color: var(--MIRECO-content-text)
+      &:hover
+        background: var(--MIRECO-content-background-interact)
+      &.outline
+        background: none
+        border-color: var(--MIRECO-content-text)
+        color: var(--MIRECO-content-text)
+        &:hover
+          background: var(--MIRECO-content-background-interact)
+  
   &:disabled, &.disabled
-    background: $content-faint
-    color: $content-muted
+    background: var(--MIRECO-form-field-background-disabled)
+    color: var(--MIRECO-form-field-text)
     &:not(.MIRECO-embedded)
-      border: $thin-line solid $content-foreground
+      border-color: var(--MIRECO-form-field-edge)

@@ -1,9 +1,15 @@
-@use '../variables' as *
-  
 .MIRECO-controls-popover
+  font-family: var(--MIRECO-font-family)
+  font-weight: var(--MIRECO-font-weight)
+  font-size: var(--MIRECO-font-size-normal)
+  line-height: var(--MIRECO-line-height)
+  color: var(--MIRECO-content-text)
+
   &:not(.MIRECO-embedded)
-    border-radius: $edge-rounding
-    border: $thin-line solid $content-muted
-    margin-top: -($thin-line)
-    @include popover-shadow
-    background: $content-background
+    border-radius: var(--MIRECO-edge-rounding)
+    border-top-left-radius: 0
+    border-top-right-radius: 0
+    border: var(--MIRECO-thin-border-width) solid var(--MIRECO-content-edge)
+    margin-top: 0
+    box-shadow: var(--MIRECO-popover-shadow)
+    background: var(--MIRECO-content-background)

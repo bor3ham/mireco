@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useCallback, useEffect, useRef } from 'rea
 import classNames from 'classnames'
 
 import { WidgetText, BlockDiv, MonthCalendar } from 'components'
-import { CalendarVector } from 'vectors'
+import Calendar from '../vectors/calendar.svg'
 import { parseCalendarMonth, formatCalendarMonth, isCalendarMonthValue, CalendarMonthValue, calendarMonthInYear } from 'types'
 import type { CalendarMonthInputValue } from 'types'
 
@@ -64,7 +64,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
     'MMM',
     'MMMM',
   ],
-  icon = <CalendarVector />,
+  icon = <Calendar className="MIRECO-calendar" />,
   placeholder,
   rightHang,
   clearable = true,

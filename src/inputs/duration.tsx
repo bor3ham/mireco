@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import type { Unit } from 'humanize-duration'
 
 import { WidgetText } from 'components'
-import { HourglassVector } from 'vectors'
+import Hourglass from '../vectors/hourglass.svg'
 import { formatDuration, parseDuration } from 'types'
 import type { DurationInputValue } from 'types'
 
@@ -205,7 +205,7 @@ export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
         className,
       )}
       style={style}
-      icon={<HourglassVector />}
+      icon={<Hourglass className="MIRECO-hourglass" />}
       required={required}
       autoFocus={autoFocus}
       autoComplete={autoComplete}

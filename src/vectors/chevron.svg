@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -14,8 +12,8 @@
    viewBox="0 0 6.3499998 6.3499998"
    version="1.1"
    id="svg8"
-   sodipodi:docname="chevron-left.svg"
-   inkscape:version="0.92.2 2405546, 2018-03-11">
+   sodipodi:docname="chevron.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,18 +23,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.2"
-     inkscape:cx="-6.5713076"
-     inkscape:cy="-10.940424"
+     inkscape:zoom="31.678384"
+     inkscape:cx="-0.55061606"
+     inkscape:cy="8.931808"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1376"
-     inkscape:window-x="1920"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1">
+     inkscape:window-width="3840"
+     inkscape:window-height="2066"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid815" />
@@ -49,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,8 +58,8 @@
      id="layer1"
      transform="translate(0,-290.65)">
     <path
-       style="fill:none;stroke:#333333;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 3.96875,292.2375 2.3812499,293.825 3.96875,295.4125"
+       style="fill:none;stroke:#333333;stroke-width:0.396875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1.5875,293.03125 1.5875,1.5875 1.5875,-1.5875"
        id="path817"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />

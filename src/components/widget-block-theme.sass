@@ -1,25 +1,25 @@
-@use 'sass:math'
-  
-@use '../variables' as *
-  
 .MIRECO-widget-block
   > .MIRECO-clear-button
     background: none !important
     border: none !important
+    width: calc(var(--MIRECO-form-field-font-size) * var(--MIRECO-form-field-line-height))
+    height: calc(var(--MIRECO-form-field-font-size) * var(--MIRECO-form-field-line-height))
 
   > svg
-    right: math.div($standard-padding, 4)
+    right: var(--MIRECO-form-field-padding-vertical)
+    width: calc(var(--MIRECO-form-field-font-size) * var(--MIRECO-form-field-line-height))
+    height: calc(var(--MIRECO-form-field-font-size) * var(--MIRECO-form-field-line-height))
   
   &.has-icon
-    padding-right: calc(#{math.div($standard-padding, 2)} + 24px)
-    &.ever-clearable
-      padding-right: calc(#{$standard-padding} + 48px)
+    padding-right: var(--MIRECO-form-field-inner-height)
+    &.clearable
+      padding-right: calc(var(--MIRECO-form-field-inner-height) * 2)
     > .MIRECO-clear-button
-      right: calc(#{math.div($standard-padding, 2)} + 24px)
+      right: calc(var(--MIRECO-form-field-inner-height) + var(--MIRECO-form-field-padding-vertical) + var(--MIRECO-thin-border-width))
     &:after
       content: ' '
       position: absolute
-      right: calc(#{math.div($standard-padding, 2)} + 24px)
-      height: calc(100% - 12px)
-      top: 6px
-      border-right: $thin-line solid $content-muted
+      right: var(--MIRECO-form-field-inner-height)
+      bottom: var(--MIRECO-form-field-padding-vertical)
+      top: var(--MIRECO-form-field-padding-vertical)
+      border-right: var(--MIRECO-thin-border-width) solid var(--MIRECO-content-edge)

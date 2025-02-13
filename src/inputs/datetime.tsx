@@ -27,7 +27,7 @@ import {
   TimeFormatFunction,
   TimeParseFunction,
 } from 'types'
-import { ClockVector } from 'vectors'
+import Clock from '../vectors/clock.svg'
 import { useInputKeyDownHandler } from 'hooks'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -192,7 +192,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   timeStep = 5 * 60 * 1000,
   defaultDate,
   defaultTime = 9 * 60 * 60 * 1000,
-  icon = <ClockVector />,
+  icon = <Clock className="MIRECO-clock" />,
   clearable = true,
   autoComplete,
   dateClassName,

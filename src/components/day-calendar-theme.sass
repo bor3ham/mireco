@@ -6,49 +6,46 @@
 .MIRECO-day-calendar
   width: 15rem
   height: 15rem
-  color: $content-foreground
 
   >.calendar-header
-    margin-bottom: math.div($standard-padding, 2)
     h5
       margin: 0
-      font-weight: $standard-font-weight
-      font-size: ($standard-font-size * 0.9)
-      color: $content-muted
+      font-weight: var(--MIRECO-font-weight-normal)
+      font-size: var(--MIRECO-font-size-small)
       text-align: center
     button
       background: none
       outline: none
       border: none
-      padding: math.div($standard-padding, 2) 0
+      padding: 0.5rem 0
       margin: 0
       cursor: pointer
+      border-radius: var(--MIRECO-edge-rounding)
       svg
-        width: ($standard-padding * 2)
-        path
-          // important to override inline style for no css fallback
-          stroke: $content-muted !important
-      &:hover svg path
-        // important to override inline style for no css fallback
-        stroke: $primary-colour !important
+        width: 2rem
+      &:hover
+        background: #eee
+        svg path
+          stroke: var(--MIRECO-content-primary) !important
 
   >table
     tbody
       tr
         td, th
           text-align: center
-          font-weight: $standard-font-weight
+          font-weight: var(--MIRECO-font-weight-normal)
         th
-          color: $content-muted
-          font-size: ($standard-font-size * 0.7)
+          color: var(--MIRECO-content-text-soft)
+          font-size: var(--MIRECO-font-size-small)
         td
           padding: 1px 0
           button
             position: relative
-            font-size: ($standard-font-size * 0.8)
-            color: $content-foreground
+            font-size: var(--MIRECO-font-size-small)
+            color: var(--MIRECO-content-text)
             background: none
-            border: 1px solid rgba(0, 0, 0, 0)
+            border: var(--MIRECO-thin-border-width) solid transparent
+            border-radius: var(--MIRECO-edge-rounding)
             &:focus
               outline: none
               border: none

@@ -35,15 +35,3 @@ $interact-highlight: 15% !default
 // fonts
 $standard-font-families: Helvetica, Arial, sans-serif !default
 $standard-font-weight: 500 !default
-
-// mixins
-@mixin input-focus()
-  box-shadow: 0 0 0 ($thin-line * 2) transparent, 0 0 0 ($thin-line * 2) rgba(0, 0, 0, 0.2)
-
-@mixin popover-shadow()
-  box-shadow: 0px 0.2rem 0.5rem rgba(0, 0, 0, 0.3)
-
-@mixin input-textaligned-padding($amount)
-  padding: math.div($amount, 2)
-  padding-top: math.div($amount, 2) * $textaligned-height-top
-  padding-bottom: math.div($amount, 2) * $textaligned-height-bottom

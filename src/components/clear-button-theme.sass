@@ -1,21 +1,18 @@
-@use '../variables' as *
-  
 .MIRECO-clear-button
   &.MIRECO-button
-    vertical-align: top
-    padding-right: 0
-    padding-left: 0
-    padding-top: 0.5rem
-    padding-bottom: 0.5rem
-  svg
-    vertical-align: middle
-    height: $standard-font-size
+    padding: 0
+    background: none !important
+    border: none !important
+
+  svg.MIRECO-cross
+    width: 60%
+    height: 100%
     path
-      stroke: $content-foreground !important
+      stroke: var(--MIRECO-content-text-soft) !important
   &:disabled
     svg path
-      stroke: $content-muted !important
+      stroke: var(--MIRECO-content-text-faint) !important
   &:not(:disabled)
     &:hover, &:active
       svg path
-        stroke: $primary-colour !important
+        stroke: var(--MIRECO-content-primary) !important

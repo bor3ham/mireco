@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import { Text } from 'inputs'
 import type { TextProps } from 'inputs'
-import { ChevronDownVector } from 'vectors'
+import Chevron from '../vectors/chevron.svg'
 import { WidgetBlock } from './widget-block'
 
 export interface WidgetTextProps extends TextProps {
@@ -19,7 +19,7 @@ export const WidgetText = forwardRef<HTMLInputElement, WidgetTextProps>((props, 
   const {
     block,
     onClear,
-    icon = <ChevronDownVector />,
+    icon = <Chevron className="MIRECO-chevron" />,
     everClearable = true,
     onFocus,
     onBlur,

@@ -21,13 +21,9 @@
       margin: 0
       cursor: pointer
       svg
-        width: ($standard-padding * 2)
-        path
-          // important to override inline style for no css fallback
-          stroke: $content-muted !important
+        width: 2rem
       &:hover svg path
-        // important to override inline style for no css fallback
-        stroke: $primary-colour !important
+        stroke: var(--MIRECO-content-primary) !important
 
   ol.months li
     button

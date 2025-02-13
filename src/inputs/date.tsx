@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { addDays, subDays } from 'date-fns'
 
 import { DayCalendar, WidgetBlock, DateTextHandle, DateText } from 'components'
-import { CalendarVector } from 'vectors'
+import Calendar from '../vectors/calendar.svg'
 import type { DateInputValue, DateValue, DateFormatFunction, DateParseFunction } from 'types'
 import { dateValueAsDate, dateAsDateValue } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
@@ -67,7 +67,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   clearable = true,
   rightHang,
   placeholder,
-  icon = <CalendarVector />,
+  icon = <Calendar className="MIRECO-calendar" />,
   textClassName,
   size = 12,
   id,

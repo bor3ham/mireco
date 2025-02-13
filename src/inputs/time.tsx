@@ -2,7 +2,7 @@ import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef 
 import classNames from 'classnames'
 
 import { WidgetBlock, type TimeTextHandle, TimeText, TimeSelector } from 'components'
-import { ClockVector } from 'vectors'
+import Clock from '../vectors/clock.svg'
 import type { TimeInputValue, TimeValue, TimeFormatFunction, TimeParseFunction } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
 
@@ -117,7 +117,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   format,
   parse,
   simplify = false,
-  icon = <ClockVector />,
+  icon = <Clock className="MIRECO-clock" />,
   autoErase = true,
   step = 5 * 60 * 1000,
   startingPoint = 9 * 60 * 60 * 1000,

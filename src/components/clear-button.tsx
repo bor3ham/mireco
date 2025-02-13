@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
 import { Button } from 'inputs'
-import { CrossVector } from 'vectors'
+import Cross from '../vectors/cross.svg'
 
 export interface ClearButtonProps {
   onClick?(): void
@@ -17,7 +17,6 @@ export const ClearButton = forwardRef<HTMLButtonElement, ClearButtonProps>(({
   tabIndex = -1,
   disabled,
   className,
-  spaced = true,
 }, ref) => (
   <Button
     ref={ref}
@@ -27,8 +26,6 @@ export const ClearButton = forwardRef<HTMLButtonElement, ClearButtonProps>(({
     disabled={disabled}
     type="button"
   >
-    {spaced && (<>&nbsp;</>)}
-    <CrossVector />
-    {spaced && (<>&nbsp;</>)}
+    <Cross className="MIRECO-cross" />
   </Button>
 ))
