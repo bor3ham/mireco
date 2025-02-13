@@ -27,14 +27,23 @@
 
 @use './vectors/vectors-theme'
 
-$primary: #007bff
-$secondary: #17a2b8
+$drawer-background: #eee
+$drawer-text: #222
 $content-background: #fff
 $content-text: #222
+$primary: #007bff
+$primary-text: #fff
+$secondary: #17a2b8
+
+// $content-text: red
+// $primary: orange
+// $primary-text: #222
 
 $interact-lightness-adjust: 3%
 $disable-lightness-adjust: 5%
 $contrast-lightness-adjust: 5%
+
+$primary-contained: color.mix($content-background, $primary, $weight: 30%, $method: oklch)
 
 :root
   --MIRECO-font-family:         system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
@@ -51,6 +60,10 @@ $contrast-lightness-adjust: 5%
 
   --MIRECO-popover-shadow:      0px 5px 10px rgba(0, 0, 0, 0.2)
   --MIRECO-focus-shadow:        0 0 0 0.15rem transparent, 0 0 0 0.15rem rgba(0, 0, 0, 0.2)
+
+  --MIRECO-drawer-background:           #{$drawer-background}
+  --MIRECO-drawer-background-interact:  #{color.adjust($drawer-background, $lightness: -$interact-lightness-adjust)}
+  --MIRECO-drawer-text:                 #{$drawer-text}
   
   --MIRECO-content-background:          #{$content-background}
   --MIRECO-content-background-interact: #{color.adjust($content-background, $lightness: -$interact-lightness-adjust)}
@@ -61,9 +74,12 @@ $contrast-lightness-adjust: 5%
   --MIRECO-content-primary:             #{color.adjust($primary, $lightness: -$contrast-lightness-adjust)}
   --MIRECO-content-secondary:           #{color.adjust($secondary, $lightness: -$contrast-lightness-adjust)}
 
-  --MIRECO-primary-background:          #{$primary}
-  --MIRECO-primary-background-interact: #{color.adjust($primary, $lightness: $interact-lightness-adjust)}
-  --MIRECO-primary-text:                #fff
+  --MIRECO-primary-background:                    #{$primary}
+  --MIRECO-primary-background-interact:           #{color.adjust($primary, $lightness: $interact-lightness-adjust)}
+  --MIRECO-primary-text:                          #{$primary-text}
+  --MIRECO-primary-contained-background:          #{$primary-contained}
+  --MIRECO-primary-contained-background-interact: #{color.adjust($primary-contained, $lightness: $interact-lightness-adjust)}
+  --MIRECO-primary-contained-text:                #{$primary-text}
 
   --MIRECO-secondary-background:          #{$secondary}
   --MIRECO-secondary-background-interact: #{color.adjust($secondary, $lightness: $interact-lightness-adjust)}

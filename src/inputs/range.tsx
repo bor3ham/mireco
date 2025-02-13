@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback } from 'react'
+import React, { forwardRef, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 
 import type { RangeInputValue } from 'types'
@@ -78,6 +78,12 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
   }, [
     onChange,
   ])
+  const valuePct = useMemo(() => {
+    if (typeof value !== 'number') {
+      return 0
+    }
+    return ((+value - min) / (max - min) * 100)
+  }, [value])
   return (
     <input
       ref={ref}
@@ -90,7 +96,11 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
       id={id}
       autoFocus={autoFocus}
       tabIndex={tabIndex}
-      style={style}
+      style={{
+        ...style,
+        // @ts-ignore
+        '--background-size': `${valuePct}%`,
+      }}
       className={classNames(
         'MIRECO-range MIRECO-blockable',
         {

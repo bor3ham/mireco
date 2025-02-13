@@ -65,6 +65,19 @@
         color: var(--MIRECO-content-text)
         &:hover
           background: var(--MIRECO-content-background-interact)
+    
+    &.drawer
+      background: var(--MIRECO-drawer-background)
+      border-color: var(--MIRECO-content-edge)
+      color: var(--MIRECO-drawer-text)
+      &:hover
+        background: var(--MIRECO-drawer-background-interact)
+      &.outline
+        background: none
+        border-color: var(--MIRECO-drawer-text)
+        color: var(--MIRECO-drawer-text)
+        &:hover
+          background: var(--MIRECO-drawer-background-interact)
   
   &:disabled, &.disabled
     background: var(--MIRECO-form-field-background-disabled)

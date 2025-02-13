@@ -38,7 +38,7 @@ export const TimeRangePopover = forwardRef<AdvancedPopoverHandle, TimeRangePopov
       <div>
         <Button
           type="button"
-          className={classNames('content outline', {active: focusedOnStart})}
+          className={classNames({content: focusedOnStart, drawer: !focusedOnStart})}
           onClick={focusOnStart}
           tabIndex={-1}
         >
@@ -46,7 +46,7 @@ export const TimeRangePopover = forwardRef<AdvancedPopoverHandle, TimeRangePopov
         </Button>
         <Button
           type="button"
-          className={classNames('content outline', {active: !focusedOnStart})}
+          className={classNames({content: !focusedOnStart, drawer: focusedOnStart})}
           onClick={focusOnEnd}
           tabIndex={-1}
         >

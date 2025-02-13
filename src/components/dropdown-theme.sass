@@ -16,7 +16,7 @@
     outline: none
 
   &.disabled
-    background: $content-faint
+    background: var(--MIRECO-form-field-background-disabled)
 
   li
     margin: 0
@@ -24,6 +24,11 @@
     display: block
     button, &.none
       padding: var(--MIRECO-form-field-padding)
+      font-family: var(--MIRECO-font-family)
+      font-weight: var(--MIRECO-font-weight-normal)
+      font-size: var(--MIRECO-font-size-normal)
+      line-height: var(--MIRECO-line-height)
+      color: var(--MIRECO-content-text)
       background: none
       margin: 0
       display: block
@@ -36,9 +41,9 @@
       &:not(:disabled)
         cursor: pointer
     button:not(:disabled):hover
-      color: $primary-colour
+      background: var(--MIRECO-content-background-interact)
     &.current button
-      background: $primary-colour
-      color: $primary-content-colour
+      background: var(--MIRECO-primary-background)
+      color: var(--MIRECO-primary-text)
       &:not(:disabled):hover
-        color: $primary-content-colour
+        background: var(--MIRECO-primary-background-interact)
