@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 
-import { SpinnerVector } from 'vectors'
+import Spinner from '../vectors/spinner.svg'
 import Chevron from '../vectors/chevron.svg'
 import { isEmpty } from 'types'
 import type { SelectOption, SelectValue, SelectOptionInputValue, Empty } from 'types'
@@ -241,7 +241,7 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
       onChange={handleChange}
       dropdownProps={dropdownProps}
       filter={false}
-      icon={(loading && inFocus) ? <SpinnerVector /> : <Chevron className="MIRECO-chevron" />}
+      icon={(loading && inFocus) ? <Spinner className="MIRECO-spinner" /> : <Chevron className="MIRECO-chevron" />}
       id={id}
       textId={textId}
       autoFocus={autoFocus}

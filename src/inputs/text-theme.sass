@@ -24,10 +24,7 @@
 
     &:not(:disabled):not(.disabled)
       &:hover
-        border-color: var(--MIRECO-content-primary)
-
-    &:focus
-      @include input-focus()
+        @include input-hover()
 
 .MIRECO-text
   padding: var(--MIRECO-form-field-padding)
@@ -35,3 +32,10 @@
   &::placeholder
     color: var(--MIRECO-form-field-placeholder)
     opacity: 1
+  
+  &:not(.MIRECO-embedded):focus
+    @include input-focus()
+
+.MIRECO-widget-block
+  &.in-focus
+    @include input-focus()

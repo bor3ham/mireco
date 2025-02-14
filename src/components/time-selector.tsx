@@ -124,17 +124,41 @@ const Wheel = ({
   }, [options])
   const frameRef = useRef<number | undefined>(undefined)
   const onFrame = () => {
-    if (animationInProgress.current && listRef.current) {
+    if (listRef.current) {
       const scrollTop = listRef.current.scrollTop
-      if (scrollTop == animationLastScrollTop.current) {
-        animationIdleFrames.current++
-        if (animationIdleFrames.current > IDLE_FRAMES) {
-          animationInProgress.current = false
-          // console.log('animation over on wheel', options.length)
+      const offsetHeight = listRef.current.offsetHeight
+      if (animationInProgress.current) {
+        if (scrollTop == animationLastScrollTop.current) {
+          animationIdleFrames.current++
+          if (animationIdleFrames.current > IDLE_FRAMES) {
+            animationInProgress.current = false
+            // console.log('animation over on wheel', options.length)
+          }
+        } else {
+          animationLastScrollTop.current = scrollTop
+          animationIdleFrames.current = 0
         }
-      } else {
-        animationLastScrollTop.current = scrollTop
-        animationIdleFrames.current = 0
+      }
+      if (containerRef.current) {
+        const containerHeight = containerRef.current.clientHeight
+        listRef.current.childNodes.forEach((node, index) => {
+          const li = node as HTMLLIElement
+          const span = li.children[0]?.children[0] as HTMLSpanElement
+          const fadeRange = 45
+          const definitelyOutOfScrollRange = 100
+          const offsetTopCentre = li.offsetTop + (li.clientHeight / 2)
+          let topAlpha = 1
+          if (offsetTopCentre > scrollTop - definitelyOutOfScrollRange) {
+            topAlpha = 1 - Math.min(Math.max((offsetTopCentre - scrollTop) / fadeRange, 0), 1)
+          }
+          let bottomAlpha = 1
+          if (offsetTopCentre < scrollTop + containerHeight + definitelyOutOfScrollRange) {
+            bottomAlpha = 1 - Math.min(Math.max((scrollTop + containerHeight - offsetTopCentre) / fadeRange, 0), 1)
+          }
+          const fadeAlpha = Math.max(topAlpha, bottomAlpha)
+          li.style.setProperty('--edge-fade', `${fadeAlpha}`)
+          span?.style.setProperty('--edge-fade', `${fadeAlpha}`)
+        })
       }
     }
     frameRef.current = requestAnimationFrame(onFrame)
@@ -173,7 +197,7 @@ const Wheel = ({
               height: `${itemHeight}px`,
             }}
           >
-            {repeat.option.label}
+            <span>{repeat.option.label}</span>
           </button>
         </li>
       )
@@ -185,6 +209,7 @@ const Wheel = ({
     itemHeight,
   ])
   const listRef = useRef<HTMLUListElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     animateToValue(fallback, true)
   }, [])
@@ -231,7 +256,7 @@ const Wheel = ({
   }, [itemHeight, options, value, continuous, onChange, debounceSettle])
 
   return (
-    <div className="MIRECO-time-wheel">
+    <div className="MIRECO-time-wheel" ref={containerRef}>
       <ul ref={listRef} onScroll={handleScroll} tabIndex={-1}>
         {paddingTop > 0 && (
           <li className="padding" style={{height: paddingTop}} />

@@ -1,30 +1,4 @@
-@use 'sass:math'
-
-@use '../variables' as *
-@use './input-states'  as *
-
 .MIRECO-multi-select
-  &.in-focus
-    @include input-focus()
-
-  &.disabled
-    border-color: $content-muted !important
-    background: $content-faint !important
-
-  padding-bottom: 0 !important
-
-  padding-right: calc(#{math.div($standard-padding, 2)} + 24px)
-  &.clearable
-    padding-right: calc(#{$standard-padding} + 48px)
-
-  &:after
-    content: ' '
-    position: absolute
-    height: calc(100% - 12px)
-    top: 6px
-    right: calc(#{math.div($standard-padding, 2)} + 24px)
-    border-right: $thin-line solid $content-muted
-
   > ul.selected
     > li
       margin: 0
@@ -38,11 +12,13 @@
         text-overflow: ellipsis
         white-space: nowrap
         max-width: 60%
-        border: $thin-line solid $content-muted
-        border-radius: $edge-rounding
+        border: var(--MIRECO-thin-border-width) solid var(--MIRECO-content-edge)
+        border-radius: var(--MIRECO-edge-rounding)
         padding-left: 0.25rem
-        line-height: 1.5em
+        line-height: var(--MIRECO-form-field-line-height)
+        font-size: var(--MIRECO-font-size-small)
         padding-right: 24px
+        user-select: none
 
         > .MIRECO-clear-button
           position: absolute

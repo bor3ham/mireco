@@ -1,4 +1,3 @@
-@use '../variables' as *
 @use './input-states' as *
 
 .MIRECO-textarea
@@ -21,7 +20,7 @@
 
   &:not(:disabled)
     &:hover
-      border-color: var(--MIRECO-content-primary)
+      @include input-hover()
 
   &:focus
     @include input-focus()

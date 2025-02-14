@@ -48,6 +48,39 @@ import {
   getRandomTime,
 } from '../random'
 
+const DARK_STYLE = `
+form.lab-controls {
+	--MIRECO-popover-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+	--MIRECO-focus-shadow: 0 0 0 0.15rem transparent, 0 0 0 0.15rem rgba(0, 123, 255, 0.2);
+	--MIRECO-drawer-background: #222;
+	--MIRECO-drawer-background-interact: rgb(49.3, 49.3, 49.3);
+	--MIRECO-drawer-text: #fff;
+	--MIRECO-content-background: #111;
+	--MIRECO-content-background-interact: rgb(32.3, 32.3, 32.3);
+	--MIRECO-content-edge: #595c6a;
+	--MIRECO-content-text: #fff;
+	--MIRECO-content-text-soft: rgb(124.7367616089, 124.7367616089, 124.7367616089);
+	--MIRECO-content-text-faint: rgb(78.1139683693, 78.1139683693, 78.1139683693);
+	--MIRECO-content-primary: rgb(25.5, 136.2, 255);
+	--MIRECO-content-secondary: rgb(25.8333333333, 181.9565217391, 206.6666666667);
+	--MIRECO-primary-background: #007bff;
+	--MIRECO-primary-background-interact: rgb(15.3, 130.92, 255);
+	--MIRECO-primary-text: #fff;
+	--MIRECO-primary-contained-background: rgb(23.4102229285, 89.708933106, 175.6110544274);
+	--MIRECO-primary-contained-background-interact: rgb(25.2099119646, 96.6054152046, 189.1113653913);
+	--MIRECO-primary-contained-text: #fff;
+	--MIRECO-secondary-background: #17a2b8;
+	--MIRECO-secondary-background-interact: rgb(24.7, 173.9739130435, 197.6);
+	--MIRECO-secondary-text: #fff;
+	--MIRECO-form-field-background: #000;
+	--MIRECO-form-field-background-disabled: rgb(38.25, 38.25, 38.25);
+	--MIRECO-form-field-edge: var(--MIRECO-content-edge);
+	--MIRECO-form-field-edge-rounding: var(--MIRECO-edge-rounding);
+	--MIRECO-form-field-text: var(--MIRECO-content-text);
+	--MIRECO-form-field-placeholder: var(--MIRECO-content-text-soft);
+}
+`
+
 const SELECT_OPTIONS = [
   {
     value: 'bike',
@@ -217,6 +250,18 @@ const randomFill = () => ({
 })
 
 export const FullFormExample = () => {
+  const [disabled, setDisabled] = useState(false)
+  const handleDisabledChange = useCallback((newValue: boolean) => {
+    setDisabled(newValue)
+  }, [])
+  const [block, setBlock] = useState(true)
+  const handleBlockChange = useCallback((newValue: boolean) => {
+    setBlock(newValue)
+  }, [])
+  const [dark, setDark] = useState(false)
+  const handleDarkChange = useCallback((newValue: boolean) => {
+    setDark(newValue)
+  }, [])
   const [value, setValue] = useState(INITIAL_VALUE)
   const setValueField = useCallback((field: string, newValue: any) => {
     setValue(prev => ({
@@ -287,126 +332,153 @@ export const FullFormExample = () => {
     event.preventDefault()
     console.log('Submitting', value)
   }, [value])
-  const block = true
   return (
-    <form className="lab-controls" onSubmit={handleFormSubmit}>
-      <Text
-        block={block}
-        value={value.text}
-        onChange={handleTextChange}
-        placeholder="Text"
-      />
-      <Textarea
-        block={block}
-        value={value.textarea}
-        onChange={handleTextareaChange}
-        placeholder="Textarea"
-      />
-      <Checkbox
-        block={block}
-        value={value.checkbox}
-        onChange={handleCheckboxChange}
-      >
-        Checkbox
-      </Checkbox>
-      <Number
-        block={block}
-        value={value.number}
-        onChange={handleNumberChange}
-        placeholder="Number"
-      />
-      <Range
-        block={block}
-        value={value.range}
-        onChange={handleRangeChange}
-      />
-      <Time
-        block={block}
-        value={value.time}
-        onChange={handleTimeChange}
-        placeholder="Time"
-      />
-      <Duration
-        block={block}
-        value={value.duration}
-        onChange={handleDurationChange}
-        placeholder="Duration"
-      />
-      <Date
-        block={block}
-        value={value.date}
-        onChange={handleDateChange}
-        placeholder="Date"
-      />
-      <Month
-        block={block}
-        value={value.month}
-        onChange={handleMonthChange}
-        placeholder="Month"
-      />
-      <CalendarMonth
-        block={block}
-        value={value.calendarMonth}
-        onChange={handleCalendarMonthChange}
-        placeholder="Calendar Month"
-      />
-      <Datetime
-        block={block}
-        value={value.datetime}
-        onChange={handleDatetimeChange}
-        datePlaceholder="Date"
-        timePlaceholder="Time"
-      />
-      <DateRange
-        block={block}
-        value={value.dateRange}
-        onChange={handleDateRangeChange}
-        startPlaceholder="Start"
-        endPlaceholder="End"
-      />
-      <DatetimeRange
-        block={block}
-        value={value.datetimeRange}
-        onChange={handleDatetimeRangeChange}
-        startDatePlaceholder="Date"
-        startTimePlaceholder="Time"
-        endDatePlaceholder="Date"
-        endTimePlaceholder="Time"
-      />
-      <Select
-        block={block}
-        value={value.select}
-        options={SELECT_OPTIONS}
-        onChange={handleSelectChange}
-      />
-      <MultiSelect
-        block={block}
-        value={value.multiSelect}
-        options={SELECT_OPTIONS}
-        onChange={handleMultiSelectChange}
-        placeholder="Multi Select"
-      />
-      <AsyncSelect
-        block={block}
-        value={value.asyncSelect}
-        getOptions={fakeLoadResults}
-        onChange={handleAsyncChange}
-        placeholder="Async Select"
-      />
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    <>
+      <Checkbox value={block} onChange={handleBlockChange}>Block</Checkbox>
+      {' '}
+      <Checkbox value={disabled} onChange={handleDisabledChange}>Disabled</Checkbox>
+      {' '}
+      <Checkbox value={dark} onChange={handleDarkChange}>Dark Mode</Checkbox>
+      <form className="lab-controls" onSubmit={handleFormSubmit} style={{
+        background: dark ? '#111' : '#fff',
       }}>
-        <div>
-          <Button type="button" className="secondary" onClick={reset}>Reset</Button>
-          {' '}
-          <Button type="button" className="secondary" onClick={randomise}>Randomise</Button>
-          {' '}
-          <Button type="button" className="secondary" onClick={fill}>Fill</Button>
+        {dark && (
+          <style>{DARK_STYLE}</style>
+        )}
+        <Text
+          block={block}
+          disabled={disabled}
+          value={value.text}
+          onChange={handleTextChange}
+          placeholder="Text"
+        />
+        <Textarea
+          block={block}
+          disabled={disabled}
+          value={value.textarea}
+          onChange={handleTextareaChange}
+          placeholder="Textarea"
+        />
+        <Checkbox
+          block={block}
+          disabled={disabled}
+          value={value.checkbox}
+          onChange={handleCheckboxChange}
+        >
+          Checkbox
+        </Checkbox>
+        <Number
+          block={block}
+          disabled={disabled}
+          value={value.number}
+          onChange={handleNumberChange}
+          placeholder="Number"
+        />
+        <Range
+          block={block}
+          disabled={disabled}
+          value={value.range}
+          onChange={handleRangeChange}
+        />
+        <Time
+          block={block}
+          disabled={disabled}
+          value={value.time}
+          onChange={handleTimeChange}
+          placeholder="Time"
+        />
+        <Duration
+          block={block}
+          disabled={disabled}
+          value={value.duration}
+          onChange={handleDurationChange}
+          placeholder="Duration"
+        />
+        <Date
+          block={block}
+          disabled={disabled}
+          value={value.date}
+          onChange={handleDateChange}
+          placeholder="Date"
+        />
+        <Month
+          block={block}
+          disabled={disabled}
+          value={value.month}
+          onChange={handleMonthChange}
+          placeholder="Month"
+        />
+        <CalendarMonth
+          block={block}
+          disabled={disabled}
+          value={value.calendarMonth}
+          onChange={handleCalendarMonthChange}
+          placeholder="Calendar Month"
+        />
+        <Datetime
+          block={block}
+          disabled={disabled}
+          value={value.datetime}
+          onChange={handleDatetimeChange}
+          datePlaceholder="Date"
+          timePlaceholder="Time"
+        />
+        <DateRange
+          block={block}
+          disabled={disabled}
+          value={value.dateRange}
+          onChange={handleDateRangeChange}
+          startPlaceholder="Start"
+          endPlaceholder="End"
+        />
+        <DatetimeRange
+          block={block}
+          disabled={disabled}
+          value={value.datetimeRange}
+          onChange={handleDatetimeRangeChange}
+          startDatePlaceholder="Date"
+          startTimePlaceholder="Time"
+          endDatePlaceholder="Date"
+          endTimePlaceholder="Time"
+        />
+        <Select
+          block={block}
+          disabled={disabled}
+          value={value.select}
+          options={SELECT_OPTIONS}
+          onChange={handleSelectChange}
+        />
+        <MultiSelect
+          block={block}
+          disabled={disabled}
+          value={value.multiSelect}
+          options={SELECT_OPTIONS}
+          onChange={handleMultiSelectChange}
+          placeholder="Multi Select"
+        />
+        <AsyncSelect
+          block={block}
+          disabled={disabled}
+          value={value.asyncSelect}
+          getOptions={fakeLoadResults}
+          onChange={handleAsyncChange}
+          placeholder="Async Select"
+        />
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+          <div>
+            <Button type="button" className="secondary" onClick={reset} disabled={disabled}>Reset</Button>
+            {' '}
+            <Button type="button" className="secondary" onClick={randomise} disabled={disabled}>Randomise</Button>
+            {' '}
+            <Button type="button" className="secondary" onClick={fill} disabled={disabled}>Fill</Button>
+          </div>
+          <Button type="submit" disabled={disabled}>Submit</Button>
         </div>
-        <Button type="submit">Submit</Button>
-      </div>
-    </form>
+      </form>
+    </>
   )
 }

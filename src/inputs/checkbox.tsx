@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
 import { Label } from 'components'
-import { CheckVector } from 'vectors'
+import Check from '../vectors/check.svg'
 import { CheckboxInput } from './checkbox-input'
 
 export interface CheckboxProps {
@@ -110,7 +110,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
     />
-    <CheckVector />
+    <Check />
     {!!children && ' '}
     {!!children && (<span>{children}</span>)}
   </Label>

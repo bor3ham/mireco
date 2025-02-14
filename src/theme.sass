@@ -11,6 +11,7 @@
 @use './components/widget-block-theme'
 @use './components/time-range-popover-theme'
 @use './components/time-selector-theme'
+@use './components/lightning-theme'
 
 @use './inputs/button-theme'
 @use './inputs/checkbox-theme'
@@ -28,20 +29,53 @@
 @use './vectors/vectors-theme'
 
 $drawer-background: #eee
+$drawer-background-interact-lighten: -3%
 $drawer-text: #222
 $content-background: #fff
+$content-background-interact-lighten: -3%
+$content-edge: #c8ccdd
 $content-text: #222
+$content-primary-contrast-lighten: -5%
+$content-secondary-contrast-lighten: -5%
 $primary: #007bff
+$primary-interact-lighten: 3%
 $primary-text: #fff
 $secondary: #17a2b8
+$secondary-interact-lighten: 3%
+$form-field-background: $content-background
+$form-field-background-disable-lighten: -5%
+$focus-colour: rgba(0, 0, 0, 0.2)
+$shadow-colour: rgba(0, 0, 0, 0.2)
 
+// test adjust vars in light mode
 // $content-text: red
 // $primary: orange
 // $primary-text: #222
 
-$interact-lightness-adjust: 3%
-$disable-lightness-adjust: 5%
-$contrast-lightness-adjust: 5%
+// // dark mode
+// $drawer-background: #222
+// $drawer-background-interact-lighten: 6%
+// $drawer-text: #fff
+// $content-background: #111
+// $content-background-interact-lighten: 6%
+// $content-edge: #595c6a
+// $content-text: #fff
+// $content-primary-contrast-lighten: 5%
+// $content-secondary-contrast-lighten: 5%
+// $primary: #007bff
+// $primary-interact-lighten: 3%
+// $primary-text: #fff
+// $secondary: #17a2b8
+// $secondary-interact-lighten: 3%
+// $form-field-background: #000
+// $form-field-background-disable-lighten: 15%
+// $focus-colour: rgba($primary, 0.2)
+// $shadow-colour: rgba(0, 0, 0, 0.2)
+
+// test adjust vars in dark mode
+// $content-text: red
+// $primary: pink
+// $primary-text: #222
 
 $primary-contained: color.mix($content-background, $primary, $weight: 30%, $method: oklch)
 
@@ -58,31 +92,31 @@ $primary-contained: color.mix($content-background, $primary, $weight: 30%, $meth
   --MIRECO-standard-gutter:     0.3rem
   --MIRECO-edge-rounding:       0.15rem
 
-  --MIRECO-popover-shadow:      0px 5px 10px rgba(0, 0, 0, 0.2)
-  --MIRECO-focus-shadow:        0 0 0 0.15rem transparent, 0 0 0 0.15rem rgba(0, 0, 0, 0.2)
+  --MIRECO-popover-shadow:      0px 5px 10px #{$shadow-colour}
+  --MIRECO-focus-shadow:        0 0 0 0.15rem transparent, 0 0 0 0.15rem #{$focus-colour}
 
   --MIRECO-drawer-background:           #{$drawer-background}
-  --MIRECO-drawer-background-interact:  #{color.adjust($drawer-background, $lightness: -$interact-lightness-adjust)}
+  --MIRECO-drawer-background-interact:  #{color.adjust($drawer-background, $lightness: $drawer-background-interact-lighten)}
   --MIRECO-drawer-text:                 #{$drawer-text}
   
   --MIRECO-content-background:          #{$content-background}
-  --MIRECO-content-background-interact: #{color.adjust($content-background, $lightness: -$interact-lightness-adjust)}
-  --MIRECO-content-edge:              #c8ccdd
+  --MIRECO-content-background-interact: #{color.adjust($content-background, $lightness: $content-background-interact-lighten)}
+  --MIRECO-content-edge:                #{$content-edge}
   --MIRECO-content-text:                #{$content-text}
   --MIRECO-content-text-soft:           #{color.mix($content-text, $content-background, $weight: 50%, $method: oklch)}
   --MIRECO-content-text-faint:          #{color.mix($content-text, $content-background, $weight: 30%, $method: oklch)}
-  --MIRECO-content-primary:             #{color.adjust($primary, $lightness: -$contrast-lightness-adjust)}
-  --MIRECO-content-secondary:           #{color.adjust($secondary, $lightness: -$contrast-lightness-adjust)}
+  --MIRECO-content-primary:             #{color.adjust($primary, $lightness: $content-primary-contrast-lighten)}
+  --MIRECO-content-secondary:           #{color.adjust($secondary, $lightness: $content-secondary-contrast-lighten)}
 
   --MIRECO-primary-background:                    #{$primary}
-  --MIRECO-primary-background-interact:           #{color.adjust($primary, $lightness: $interact-lightness-adjust)}
+  --MIRECO-primary-background-interact:           #{color.adjust($primary, $lightness: $primary-interact-lighten)}
   --MIRECO-primary-text:                          #{$primary-text}
   --MIRECO-primary-contained-background:          #{$primary-contained}
-  --MIRECO-primary-contained-background-interact: #{color.adjust($primary-contained, $lightness: $interact-lightness-adjust)}
+  --MIRECO-primary-contained-background-interact: #{color.adjust($primary-contained, $lightness: $primary-interact-lighten)}
   --MIRECO-primary-contained-text:                #{$primary-text}
 
   --MIRECO-secondary-background:          #{$secondary}
-  --MIRECO-secondary-background-interact: #{color.adjust($secondary, $lightness: $interact-lightness-adjust)}
+  --MIRECO-secondary-background-interact: #{color.adjust($secondary, $lightness: $secondary-interact-lighten)}
   --MIRECO-secondary-text:                #fff
 
   --MIRECO-form-field-font-family:          var(--MIRECO-font-family)
@@ -90,8 +124,8 @@ $primary-contained: color.mix($content-background, $primary, $weight: 30%, $meth
   --MIRECO-form-field-font-size:            var(--MIRECO-font-size-normal)
   --MIRECO-form-field-line-height:          var(--MIRECO-line-height)
 
-  --MIRECO-form-field-background:           var(--MIRECO-content-background)
-  --MIRECO-form-field-background-disabled:  #{color.adjust($content-background, $lightness: -$disable-lightness-adjust)}
+  --MIRECO-form-field-background:           #{$form-field-background}
+  --MIRECO-form-field-background-disabled:  #{color.adjust($form-field-background, $lightness: $form-field-background-disable-lighten)}
   --MIRECO-form-field-edge:                 var(--MIRECO-content-edge)
   --MIRECO-form-field-edge-rounding:        var(--MIRECO-edge-rounding)
   --MIRECO-form-field-text:                 var(--MIRECO-content-text)

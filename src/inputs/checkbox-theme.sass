@@ -1,10 +1,6 @@
-@use 'sass:color'
-@use 'sass:math'
-
-@use '../variables' as *
 @use './input-states' as *
 
-$size: $standard-font-size
+$size: 1rem
 
 .MIRECO-checkbox
   &:not(.disabled)
@@ -20,30 +16,32 @@ $size: $standard-font-size
   opacity: 0
 
   &+svg
-    background: $content-background
+    background: var(--MIRECO-form-field-background)
     // important style to override inline
     display: inline-block !important
-    vertical-align: middle
-    border: $thin-line solid $content-muted
-    border-radius: $edge-rounding
+    vertical-align: text-bottom
+    border: var(--MIRECO-thin-border-width) solid var(--MIRECO-content-edge)
+    border-radius: var(--MIRECO-edge-rounding)
     width: $size
     height: $size
-    margin-bottom: math.div($size, 5)
-  &:disabled+svg
-    background: $content-faint
-    filter: grayscale(100%)
-
-  &+svg path
-    stroke: $content-soft
-    stroke-opacity: 0.25
+  
   &:not(:disabled)
     &:hover+svg
-      border-color: color.adjust($primary-colour, $lightness: $hover-highlight)
-      path
-        stroke: color.adjust($primary-colour, $lightness: $hover-highlight)
+      @include input-hover()
+
+  &+svg path
+    stroke: var(--MIRECO-content-text-faint) !important
   &:checked+svg path
-    stroke: $primary-colour
-    stroke-opacity: 1
+    stroke: var(--MIRECO-content-primary) !important
+  
+  &:disabled
+    &+svg
+      background: var(--MIRECO-form-field-background-disabled)
+      path
+        stroke: var(--MIRECO-content-text-faint) !important
+    &:checked+svg
+      path
+        stroke: var(--MIRECO-content-text) !important
 
   &:focus+svg
     @include input-focus()

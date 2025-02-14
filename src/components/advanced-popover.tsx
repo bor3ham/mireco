@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useState, useCallback, useMemo 
 import classNames from 'classnames'
 
 import { Button, Text } from 'inputs'
-import { LightningVector } from 'vectors'
+import Lightning from '../vectors/lightning.svg'
 import { ControlsPopover } from './controls-popover'
 import { Dropdown } from './dropdown'
 import { useInputKeyDownHandler } from 'hooks'
@@ -232,7 +232,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverHandle, AdvancedPopover
                   title="Shortcuts (!)"
                   tabIndex={-1}
                 >
-                  <LightningVector size={15} />
+                  <Lightning className="MIRECO-lightning" />
                 </Button>
               )}
               {header}
