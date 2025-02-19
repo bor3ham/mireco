@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { addDays, subDays, max } from 'date-fns'
 
 import type { DateRangeInputValue, DateInputValue, DateValue, DateRangeValue } from 'types'
-import { WidgetBlock, DateText, type DateTextHandle, DayCalendar, TimeRangePopover, AdvancedPopoverHandle } from 'components'
+import { WidgetBlock, DateText, type DateTextRef, DayCalendar, TimeRangePopover, type AdvancedPopoverRef } from 'components'
 import Calendar from '../vectors/calendar.svg'
 import { dateValueAsDate, dateAsDateValue } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
@@ -11,6 +11,7 @@ import { useInputKeyDownHandler } from 'hooks'
 export interface DateRangeProps {
   // mireco
   block?: boolean
+  rightHang?: boolean
   // date range
   value?: DateRangeInputValue
   onChange?(newValue: DateRangeInputValue, wasBlur: boolean): void
@@ -155,6 +156,7 @@ function dateRangeReducer(state: DateRangeState, action: DateRangeAction): DateR
 
 export const DateRange: React.FC<DateRangeProps> = ({
   block,
+  rightHang,
   value,
   onChange,
   locale,
@@ -252,7 +254,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
     dispatch({ type: 'closeCalendar' })
   }, [])
 
-  const popoverRef = useRef<AdvancedPopoverHandle>(null)
+  const popoverRef = useRef<AdvancedPopoverRef>(null)
   const openShortcuts = useCallback(() => {
     if (popoverRef.current) {
       popoverRef.current.openShortcuts()
@@ -374,8 +376,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
   )
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const startRef = useRef<DateTextHandle>(null)
-  const endRef = useRef<DateTextHandle>(null)
+  const startRef = useRef<DateTextRef>(null)
+  const endRef = useRef<DateTextRef>(null)
   const focusedOnStart = state.focusInput === DateRangeInput.Start
   const focusOnStart = useCallback(() => {
     if (startRef.current) {
@@ -611,7 +613,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
       {state.inFocus && state.calendarOpen && !disabled && (
         <TimeRangePopover
           ref={popoverRef}
-          className="MIRECO-date-range-controls"
+          className={classNames('MIRECO-date-range-controls', {'MIRECO-right-hang': rightHang})}
           focusedOnStart={focusedOnStart}
           focusOnStart={focusOnStart}
           focusOnEnd={focusOnEnd}

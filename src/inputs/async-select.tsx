@@ -5,7 +5,7 @@ import Spinner from '../vectors/spinner.svg'
 import Chevron from '../vectors/chevron.svg'
 import { isEmpty } from 'types'
 import type { SelectOption, SelectValue, SelectOptionInputValue, Empty } from 'types'
-import { Select } from './select'
+import { Select, type SelectRef } from './select'
 
 // todo: merge loading and inFocus state into reducer
 // todo: double render flicker on using clear button
@@ -55,7 +55,7 @@ export interface AsyncSelectProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
-export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
+export const AsyncSelect = forwardRef<SelectRef, AsyncSelectProps>(({
   block,
   value,
   getOptions,
@@ -67,9 +67,6 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
   size,
   clearable,
   autoComplete,
-  textClassName,
-  textStyle,
-  textId,
   id,
   autoFocus,
   tabIndex,
@@ -243,7 +240,6 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
       filter={false}
       icon={(loading && inFocus) ? <Spinner className="MIRECO-spinner" /> : <Chevron className="MIRECO-chevron" />}
       id={id}
-      textId={textId}
       autoFocus={autoFocus}
       tabIndex={tabIndex}
       style={style}
@@ -268,8 +264,6 @@ export const AsyncSelect = forwardRef<HTMLInputElement, AsyncSelectProps>(({
       onKeyUp={onKeyUp}
       clearable={clearable}
       autoComplete={autoComplete}
-      textClassName={textClassName}
-      textStyle={textStyle}
     />
   )
 })

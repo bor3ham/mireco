@@ -22,7 +22,7 @@ export const ClearButton = forwardRef<HTMLButtonElement, ClearButtonProps>(({
     ref={ref}
     tabIndex={tabIndex}
     onClick={onClick}
-    className={classNames('MIRECO-clear-button content outline', className)}
+    className={classNames('MIRECO-clear-button MIRECO-content MIRECO-outline', className)}
     disabled={disabled}
     type="button"
   >

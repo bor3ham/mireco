@@ -8,10 +8,10 @@ import {
   TimeText,
   DayCalendar,
   TimeSelector,
-  type DateTextHandle,
-  type TimeTextHandle,
+  type DateTextRef,
+  type TimeTextRef,
   TimeRangePopover,
-  AdvancedPopoverHandle,
+  AdvancedPopoverRef,
 } from 'components'
 import {
   type DatetimeRangeInputValue,
@@ -41,6 +41,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
 
 export interface DatetimeRangeProps {
   block?: boolean
+  rightHang?: boolean
   value: DatetimeRangeInputValue
   onChange(newValue: DatetimeRangeInputValue, wasBlur: boolean): void
   disabled?: boolean
@@ -248,6 +249,7 @@ function datetimeRangeReducer(state: DatetimeRangeState, action: DatetimeRangeAc
 
 export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   block,
+  rightHang,
   value,
   onChange,
   disabled,
@@ -465,10 +467,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   }, [])
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const startDateRef = useRef<DateTextHandle>(null)
-  const startTimeRef = useRef<TimeTextHandle>(null)
-  const endDateRef = useRef<DateTextHandle>(null)
-  const endTimeRef = useRef<TimeTextHandle>(null)
+  const startDateRef = useRef<DateTextRef>(null)
+  const startTimeRef = useRef<TimeTextRef>(null)
+  const endDateRef = useRef<DateTextRef>(null)
+  const endTimeRef = useRef<TimeTextRef>(null)
   const focusOnStartDate = useCallback(() => {
     if (startDateRef.current) {
       startDateRef.current.focus()
@@ -694,7 +696,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     focusedOnStart,
   ])
 
-  const popoverRef = useRef<AdvancedPopoverHandle>(null)
+  const popoverRef = useRef<AdvancedPopoverRef>(null)
   const openShortcuts = useCallback(() => {
     if (popoverRef.current) {
       popoverRef.current.openShortcuts()
@@ -1228,7 +1230,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       {state.inFocus && state.controlsOpen && !disabled && (
         <TimeRangePopover
           ref={popoverRef}
-          className="MIRECO-datetime-range-controls"
+          className={classNames('MIRECO-datetime-range-controls', {'MIRECO-right-hang': rightHang})}
           focusedOnStart={focusedOnStart}
           focusOnStart={focusOnStart}
           focusOnEnd={focusOnEnd}

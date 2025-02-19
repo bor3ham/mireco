@@ -5,9 +5,9 @@ import classNames from 'classnames'
 import {
   WidgetBlock,
   DateText,
-  type DateTextHandle,
+  type DateTextRef,
   TimeText,
-  type TimeTextHandle,
+  type TimeTextRef,
   DayCalendar,
   TimeSelector,
   AdvancedPopover,
@@ -35,6 +35,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
 export interface DatetimeProps {
   // mireco
   block?: boolean
+  rightHang?: boolean
   // datetime
   value?: DatetimeInputValue
   onChange?(newValue: DatetimeInputValue, wasBlur: boolean): void
@@ -176,6 +177,7 @@ function datetimeReducer(state: DatetimeState, action: DatetimeAction): Datetime
 
 export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   block,
+  rightHang,
   value,
   onChange,
   dateLocale,
@@ -313,8 +315,8 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   }, [onChange, defaultDate, defaultTime])
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const dateRef = useRef<DateTextHandle>(null)
-  const timeRef = useRef<TimeTextHandle>(null)
+  const dateRef = useRef<DateTextRef>(null)
+  const timeRef = useRef<TimeTextRef>(null)
   const focusOnDate = useCallback(() => {
     if (dateRef.current) {
       dateRef.current.focus()
@@ -551,7 +553,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       />
       {state.inFocus && state.controlsOpen && !disabled && (
         <AdvancedPopover
-          className="MIRECO-datetime-controls"
+          className={classNames('MIRECO-datetime-controls', {'MIRECO-right-hang': rightHang})}
           focusOnField={focusOnDate}
         >
           <DayCalendar

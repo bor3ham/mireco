@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react'
 
-import { Text } from 'inputs'
+import { Text, type TextRef } from 'inputs'
 import type { DateInputValue, DateParseFunction, DateFormatFunction } from 'types'
 import { getSafeLocale } from 'constants'
 import {
@@ -51,13 +51,13 @@ export interface DateTextProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export interface DateTextHandle {
+export interface DateTextRef {
   focus(): void
   setText(newText: string): void
   cleanText(): void
 }
 
-export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
+export const DateText = forwardRef<DateTextRef, DateTextProps>(({
   block,
   value,
   onChange,
@@ -137,7 +137,7 @@ export const DateText = forwardRef<DateTextHandle, DateTextProps>(({
     onBlur,
   ])
 
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<TextRef>(null)
   const handleChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {

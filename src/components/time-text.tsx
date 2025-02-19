@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react'
 
-import { Text } from 'inputs'
+import { Text, type TextRef } from 'inputs'
 import type { TimeInputValue, TimeFormatFunction, TimeParseFunction } from 'types'
 import { getSafeLocale } from 'constants'
 import {
@@ -52,13 +52,13 @@ export interface TimeTextProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export interface TimeTextHandle {
+export interface TimeTextRef {
   focus(): void
   setText(newText: string): void
   cleanText(): void
 }
 
-export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
+export const TimeText = forwardRef<TimeTextRef, TimeTextProps>(({
   block,
   value,
   onChange,
@@ -140,7 +140,7 @@ export const TimeText = forwardRef<TimeTextHandle, TimeTextProps>(({
     onBlur,
   ])
 
-  const textRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<TextRef>(null)
   const handleChange = useCallback((newValue: string) => {
     setTextValue(newValue)
     if (onChange) {

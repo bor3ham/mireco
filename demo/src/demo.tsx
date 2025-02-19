@@ -36,6 +36,8 @@ import {
   TextLab,
   TextareaLab,
   TimeLab,
+  SelectLab,
+  MultiSelectLab,
 } from './labs'
 import { Localisation } from './localisation'
 
@@ -72,6 +74,8 @@ const MOUNTS: Record<string, ReactElement> = {
   'div.time-lab': <TimeLab />,
   'div.localisation': <Localisation />,
   'div.toggle-select-example': <ToggleSelectExample />,
+  'div.select-lab': <SelectLab />,
+  'div.multi-select-lab': <MultiSelectLab />,
 }
 
 Object.keys(MOUNTS).forEach((mount) => {

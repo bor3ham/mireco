@@ -1,8 +1,8 @@
-import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react'
+import React, { forwardRef, useState, useRef, useEffect, useCallback, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 import type { Unit } from 'humanize-duration'
 
-import { WidgetText } from 'components'
+import { WidgetText, type WidgetTextRef } from 'components'
 import Hourglass from '../vectors/hourglass.svg'
 import { formatDuration, parseDuration } from 'types'
 import type { DurationInputValue } from 'types'
@@ -46,7 +46,7 @@ export interface DurationProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Duration = forwardRef<HTMLInputElement, DurationProps>(({
+export const Duration = forwardRef<WidgetTextRef, DurationProps>(({
   block,
   value,
   onChange,

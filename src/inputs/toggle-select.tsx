@@ -42,7 +42,7 @@ export const ToggleSelect: React.FC<ToggleSelectProps> = ({
           }}
           className={classNames({
             active: option.value === value,
-          }, 'content outline')}
+          }, 'MIRECO-content MIRECO-outline')}
           tabIndex={-1}
         >
           {option.label}

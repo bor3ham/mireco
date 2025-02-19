@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP } from 'constants'
 import type { NumberInputValue } from 'types'
 import { formatNumber, parseNumber } from 'types'
-import { Text } from './text'
+import { Text, type TextRef } from './text'
 
 export interface NumberProps {
   // mireco
@@ -45,7 +45,7 @@ export interface NumberProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-const NumberInput = forwardRef<HTMLInputElement, NumberProps>(({
+const NumberInput = forwardRef<TextRef, NumberProps>(({
   block,
   value,
   onChange,

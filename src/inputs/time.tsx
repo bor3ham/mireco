@@ -1,7 +1,7 @@
 import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef } from 'react'
 import classNames from 'classnames'
 
-import { WidgetBlock, type TimeTextHandle, TimeText, TimeSelector } from 'components'
+import { WidgetBlock, type TimeTextRef, TimeText, TimeSelector } from 'components'
 import Clock from '../vectors/clock.svg'
 import type { TimeInputValue, TimeValue, TimeFormatFunction, TimeParseFunction } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
@@ -274,7 +274,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       onClick(event)
     }
   }, [onClick])
-  const textRef = useRef<TimeTextHandle>(null)
+  const textRef = useRef<TimeTextRef>(null)
   const handleSelect = useCallback((newValue: TimeValue, final: boolean) => {
     if (onChange) {
       onChange(newValue, false)
@@ -381,7 +381,7 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       {state.inFocus && state.dropdownOpen && !disabled && (
         <TimeSelector
           className={classNames({
-            'right-hang': rightHang,
+            'MIRECO-right-hang': rightHang,
           })}
           value={value}
           onChange={handleSelect}

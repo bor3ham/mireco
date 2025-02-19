@@ -1,7 +1,7 @@
-import React, { forwardRef, useRef, useCallback, useReducer, useEffect, useMemo } from 'react'
+import React, { forwardRef, useRef, useCallback, useReducer, useEffect, useMemo, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
-import { BlockDiv, Dropdown, WidgetText } from 'components'
+import { Dropdown, WidgetText, type WidgetTextRef } from 'components'
 import Chevron from '../vectors/chevron.svg'
 import { SelectInputValue, SelectOption, isEmpty } from 'types'
 import { KEYBOARD_ARROW_DOWN, KEYBOARD_ARROW_UP, KEYBOARD_ENTER, KEYBOARD_ESCAPE } from 'constants'
@@ -57,6 +57,11 @@ function selectReducer(state: SelectState, action: SelectAction): SelectState {
   }
 }
 
+export interface SelectRef {
+  focus(): void
+  element: HTMLDivElement | null
+}
+
 export interface SelectProps {
   // mireco
   block?: boolean
@@ -73,10 +78,6 @@ export interface SelectProps {
   size?: number
   clearable?: boolean
   autoComplete?: string
-  // children specific
-  textClassName?: string
-  textStyle?: React.CSSProperties
-  textId?: string
   // html
   id?: string
   autoFocus?: boolean
@@ -104,7 +105,7 @@ export interface SelectProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLDivElement>): void
 }
 
-export const Select = forwardRef<HTMLInputElement, SelectProps>(({
+export const Select = forwardRef<SelectRef, SelectProps>(({
   block,
   value,
   options = [],
@@ -118,9 +119,6 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   size,
   clearable = true,
   autoComplete,
-  textClassName,
-  textStyle,
-  textId,
   id,
   autoFocus,
   tabIndex,
@@ -261,8 +259,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
     optionsStr,
   ])
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLInputElement>()
+  const textRef = useRef<WidgetTextRef>(null)
   const handleBlur = useCallback((event?: React.FocusEvent<HTMLDivElement>) => {
     if (valueOption) {
       const formatted = valueOption ? valueOption.label : `${value}`
@@ -294,16 +291,6 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
     onBlur,
   ])
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
-    if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
-      )
-    ) {
-      // ignore internal blur
-      return
-    }
     handleBlur(event)
   }, [
     handleBlur,
@@ -392,6 +379,11 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
     nullable,
     onKeyDown,
   ])
+  const focus = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
   const handleTextChange = useCallback((newValue: string, event: React.ChangeEvent<HTMLInputElement>) => {
     dispatchState({
       type: 'textFilter',
@@ -430,9 +422,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
     if (onChange) {
       onChange(newValue, true)
     }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
+    focus()
     dispatchState({
       type: 'close',
       formatted: selected.label,
@@ -440,6 +430,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   }, [
     options,
     onChange,
+    focus,
   ])
 
   // respond to disabled change
@@ -464,14 +455,18 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
         text: '',
       })
     }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
+    focus()
   }, [
     disabled,
     onChange,
     nullable,
+    focus,
   ])
+
+  useImperativeHandle(forwardedRef, () => ({
+    focus,
+    element: textRef.current ? textRef.current.element : null,
+  }), [focus])
 
   const filtered = useMemo(() => (
     state.filtering && filter ? getFilteredOptions(state.text) : options
@@ -520,58 +515,32 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
   ])
 
   return (
-    <BlockDiv
-      ref={containerRef}
+    <WidgetText
+      ref={textRef}
+      placeholder={placeholder}
+      value={state.text}
+      onFocus={handleTextFocus}
+      onKeyDown={handleTextKeyDown}
+      onChange={handleTextChange}
+      onClick={handleTextClick}
+      disabled={disabled}
       block={block}
-      className={classNames('MIRECO-select', {
-        'has-value': hasValue,
-        clearable: canClear,
-      }, className)}
       style={style}
-      onBlur={handleContainerBlur}
-      onClick={onClick}
-      onDoubleClick={onDoubleClick}
-      onMouseDown={onMouseDown}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onMouseMove={onMouseMove}
-      onMouseOut={onMouseOut}
-      onMouseOver={onMouseOver}
-      onMouseUp={onMouseUp}
-      onKeyUp={onKeyUp}
+      autoFocus={autoFocus}
+      className={classNames('MIRECO-select', className, {
+        'MIRECO-has-value': hasValue,
+      })}
       id={id}
+      icon={icon}
+      onClear={canClear ? handleClear : undefined}
+      everClearable={clearable}
+      autoComplete={autoComplete}
+      tabIndex={tabIndex}
+      title={title}
+      required={required}
+      size={size}
+      onContainerBlur={handleContainerBlur}
     >
-      <WidgetText
-        ref={(instance: HTMLInputElement) => {
-          textRef.current = instance
-          if (typeof forwardedRef === "function") {
-            forwardedRef(instance)
-          } else if (forwardedRef !== null) {
-            // eslint-disable-next-line no-param-reassign
-            forwardedRef.current = instance
-          }
-        }}
-        placeholder={placeholder}
-        value={state.text}
-        onFocus={handleTextFocus}
-        onKeyDown={handleTextKeyDown}
-        onChange={handleTextChange}
-        onClick={handleTextClick}
-        disabled={disabled}
-        block={block}
-        style={textStyle}
-        autoFocus={autoFocus}
-        className={textClassName}
-        id={textId}
-        icon={icon}
-        onClear={canClear ? handleClear : undefined}
-        everClearable={clearable}
-        autoComplete={autoComplete}
-        tabIndex={tabIndex}
-        title={title}
-        required={required}
-        size={size}
-      />
       {formElement}
       {state.dropdownOpen && (
         <Dropdown
@@ -581,6 +550,6 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(({
           {...dropdownProps}
         />
       )}
-    </BlockDiv>
+    </WidgetText>
   )
 })

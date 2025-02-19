@@ -1,6 +1,6 @@
 import casual from 'casual-browserify'
 import { addDays, subDays } from 'date-fns'
-import { dateValueAsDate, dateAsDateValue, dateAsMonth } from 'mireco'
+import { dateValueAsDate, dateAsDateValue, dateAsMonth, type SelectOption, type SelectInputValue } from 'mireco'
 
 const MINUTE_MS = 60 * 1000
 const HOUR_MS = 60 * MINUTE_MS
@@ -87,4 +87,23 @@ export const getRandomDatetimeRange = () => {
     start: a,
     end: b,
   }
+}
+
+export const getRandomOption = (options: SelectOption[]) => (
+  casual.random_element([
+    null,
+    casual.random_element(options).value,
+  ])
+)
+
+export const getRandomOptions = (options: SelectOption[]) => {
+  const selected: SelectInputValue[] = []
+  if (casual.coin_flip) {
+    options.forEach((option) => {
+      if (casual.coin_flip) {
+        selected.push(option.value)
+      }
+    })
+  }
+  return selected
 }

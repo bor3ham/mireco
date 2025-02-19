@@ -8,7 +8,7 @@ import { Dropdown } from './dropdown'
 import { useInputKeyDownHandler } from 'hooks'
 import Chevron from '../vectors/chevron.svg'
 
-export interface AdvancedPopoverHandle {
+export interface AdvancedPopoverRef {
   openShortcuts(): void
 }
 
@@ -24,7 +24,7 @@ type AdvancedPopoverProps = {
   focusOnField(): void
 }
 
-export const AdvancedPopover = forwardRef<AdvancedPopoverHandle, AdvancedPopoverProps>(({
+export const AdvancedPopover = forwardRef<AdvancedPopoverRef, AdvancedPopoverProps>(({
   header,
   children,
   className,
@@ -128,7 +128,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverHandle, AdvancedPopover
     fallbackShortcuts,
   ])
 
-  const handleFilterChange = useCallback((newValue: string) => {
+  const handleFilterChange = useCallback((newValue: string, event: any) => {
     setFilter(newValue)
     const cleaned = newValue.trim().toLowerCase()
     if (cleaned.length <= 0) {
@@ -206,7 +206,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverHandle, AdvancedPopover
               <Button
                 type="button"
                 onClick={closeShortcutsCancel}
-                className="content outline shortcuts"
+                className="MIRECO-content MIRECO-outline MIRECO-shortcuts"
                 tabIndex={-1}
                 title="Back"
               >
@@ -227,7 +227,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverHandle, AdvancedPopover
               {hasShortcuts && (
                 <Button
                   type="button"
-                  className="content outline shortcuts"
+                  className="MIRECO-content MIRECO-outline MIRECO-shortcuts"
                   onClick={openShortcuts}
                   title="Shortcuts (!)"
                   tabIndex={-1}

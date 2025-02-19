@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useReducer, useCallback, useEffect } from 'react'
+import React, { forwardRef, useRef, useReducer, useCallback, useEffect, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
 import { WidgetBlock, Dropdown, ClearButton } from 'components'
@@ -14,7 +14,7 @@ import {
   KEYBOARD_CAPS,
 } from 'constants'
 import type { SelectValue, SelectOption } from 'types'
-import { Text } from './text'
+import { Text, type TextRef } from './text'
 
 // todo: add hidden form element using name
 // todo: remove text selection from items
@@ -103,6 +103,11 @@ const SelectedOption: React.FC<SelectedOptionProps> = ({
   </li>
 )
 
+interface MultiSelectRef {
+  focus(): void
+  element: HTMLDivElement | null
+}
+
 export interface MultiSelectProps {
   // mireco
   block?: boolean
@@ -118,6 +123,7 @@ export interface MultiSelectProps {
   onTextChange?(newValue: string): string
   dropdownProps?: any
   autoComplete?: string
+  clearable?: boolean
   // html
   id?: string
   style?: React.CSSProperties
@@ -129,7 +135,7 @@ export interface MultiSelectProps {
   // name?: string
 }
 
-export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
+export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
   block,
   value = [],
   options = [],
@@ -142,6 +148,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   onTextChange,
   dropdownProps,
   autoComplete,
+  clearable,
   id,
   style,
   className,
@@ -151,7 +158,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   // name,
 }, forwardedRef) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLInputElement>()
+  const textRef = useRef<TextRef>(null)
 
   const [state, dispatchState] = useReducer(multiSelectReducer, {
     dropdownOpen: false,
@@ -173,6 +180,12 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disabled])
 
+  const focus = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
+
   const addValue = useCallback((adding: SelectValue) => {
     if (onChange) {
       onChange([...new Set([
@@ -192,14 +205,13 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
       const updated = [...value || []]
       updated.splice(index, 1)
       onChange(updated, false)
-      if (textRef.current) {
-        textRef.current.focus()
-      }
+      focus()
     }
   }, [
     disabled,
     onChange,
     value,
+    focus,
   ])
   const clearAll = useCallback(() => {
     if (disabled) {
@@ -211,11 +223,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
         type: 'textFilter',
         text: '',
       })
-      if (textRef.current) {
-        textRef.current.focus()
-      }
+      focus()
     }
-  }, [disabled, onChange])
+  }, [disabled, onChange, focus])
   const getFilteredOptions = useCallback((search: string) => {
     const terms = search.split(' ').map((term: string) => (
       term.trim().toLowerCase()
@@ -407,19 +417,20 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
       return
     }
     if (!state.dropdownOpen) {
-      if (textRef.current) {
-        if (textRef.current === document.activeElement) {
+      if (textRef.current && textRef.current.element) {
+        if (textRef.current.element === document.activeElement) {
           dispatchState({
             type: 'open',
           })
-        } else if (textRef.current) {
-          textRef.current.focus()
+        } else {
+          focus()
         }
       }
     }
   }, [
     disabled,
     state,
+    focus,
   ])
   const handleDropdownSelect = useCallback((newValue: string) => {
     const selected = options.find(option => option.value === newValue)
@@ -438,24 +449,29 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
     addValue,
   ])
 
+  useImperativeHandle(forwardedRef, () => ({
+    focus,
+    element: containerRef.current,
+  }), [focus])
+
   const filtered = getFilteredOptions(state.text)
   const hasValue = (value || []).length > 0
-  const clearable = hasValue && !disabled
+  const canClear = hasValue && !disabled && clearable
   return (
     <WidgetBlock
       ref={containerRef}
       block={block}
       className={classNames('MIRECO-multi-select', {
         'has-value': hasValue,
-        'in-focus': state.inFocus,
+        'MIRECO-in-focus': state.inFocus,
         disabled,
-        clearable,
+        clearable: canClear,
       }, className)}
       onBlur={handleContainerBlur}
       onClick={handleContainerClick}
       tabIndex={-1}
       onClear={clearAll}
-      clearable={clearable}
+      clearable={canClear}
       everClearable
       icon={icon}
       id={id}
@@ -478,15 +494,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(({
         <li className="text">
           <Text
             className={classNames('MIRECO-embedded', textClassName)}
-            ref={(instance: HTMLInputElement) => {
-              textRef.current = instance
-              if (typeof forwardedRef === "function") {
-                forwardedRef(instance)
-              } else if (forwardedRef !== null) {
-                // eslint-disable-next-line no-param-reassign
-                forwardedRef.current = instance
-              }
-            }}
+            ref={textRef}
             placeholder={placeholder}
             value={state.text}
             onFocus={handleTextFocus}

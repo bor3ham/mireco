@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import classNames from 'classnames'
 
-import { AdvancedPopover, AdvancedPopoverHandle } from './advanced-popover'
+import { AdvancedPopover, type AdvancedPopoverRef } from './advanced-popover'
 import { Button } from 'inputs'
 
 interface TimeRangePopoverProps {
@@ -18,7 +18,7 @@ interface TimeRangePopoverProps {
   focusOnField(): void
 }
 
-export const TimeRangePopover = forwardRef<AdvancedPopoverHandle, TimeRangePopoverProps>(({
+export const TimeRangePopover = forwardRef<AdvancedPopoverRef, TimeRangePopoverProps>(({
   children,
   focusedOnStart,
   focusOnStart,
@@ -38,7 +38,7 @@ export const TimeRangePopover = forwardRef<AdvancedPopoverHandle, TimeRangePopov
       <div>
         <Button
           type="button"
-          className={classNames({content: focusedOnStart, drawer: !focusedOnStart})}
+          className={classNames({'MIRECO-content': focusedOnStart, 'MIRECO-drawer': !focusedOnStart})}
           onClick={focusOnStart}
           tabIndex={-1}
         >
@@ -46,7 +46,7 @@ export const TimeRangePopover = forwardRef<AdvancedPopoverHandle, TimeRangePopov
         </Button>
         <Button
           type="button"
-          className={classNames({content: !focusedOnStart, drawer: focusedOnStart})}
+          className={classNames({'MIRECO-content': !focusedOnStart, 'MIRECO-drawer': focusedOnStart})}
           onClick={focusOnEnd}
           tabIndex={-1}
         >

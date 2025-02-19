@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import {
   Text,
   Textarea,
@@ -262,6 +262,14 @@ export const FullFormExample = () => {
   const handleDarkChange = useCallback((newValue: boolean) => {
     setDark(newValue)
   }, [])
+  const [clearable, setClearable] = useState(true)
+  const handleClearableChange = useCallback((newValue: boolean) => {
+    setClearable(newValue)
+  }, [])
+  const [rightHang, setRightHang] = useState(false)
+  const handleRightHangChange = useCallback((newValue: boolean) => {
+    setRightHang(newValue)
+  }, [])
   const [value, setValue] = useState(INITIAL_VALUE)
   const setValueField = useCallback((field: string, newValue: any) => {
     setValue(prev => ({
@@ -269,7 +277,9 @@ export const FullFormExample = () => {
       [field]: newValue,
     }))
   }, [])
+  const textRef = useRef(null)
   const handleTextChange = useCallback((newValue: string) => {
+    // console.log('an outer change to', textRef.current)
     setValueField('text', newValue)
   }, [setValueField])
   const handleTextareaChange = useCallback((newValue: string) => {
@@ -339,6 +349,10 @@ export const FullFormExample = () => {
       <Checkbox value={disabled} onChange={handleDisabledChange}>Disabled</Checkbox>
       {' '}
       <Checkbox value={dark} onChange={handleDarkChange}>Dark Mode</Checkbox>
+      {' '}
+      <Checkbox value={clearable} onChange={handleClearableChange}>Clearable Inputs</Checkbox>
+      {' '}
+      <Checkbox value={rightHang} onChange={handleRightHangChange}>Right Hang</Checkbox>
       <form className="lab-controls" onSubmit={handleFormSubmit} style={{
         background: dark ? '#111' : '#fff',
       }}>
@@ -346,6 +360,7 @@ export const FullFormExample = () => {
           <style>{DARK_STYLE}</style>
         )}
         <Text
+          ref={textRef}
           block={block}
           disabled={disabled}
           value={value.text}
@@ -386,6 +401,8 @@ export const FullFormExample = () => {
           value={value.time}
           onChange={handleTimeChange}
           placeholder="Time"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <Duration
           block={block}
@@ -393,6 +410,7 @@ export const FullFormExample = () => {
           value={value.duration}
           onChange={handleDurationChange}
           placeholder="Duration"
+          clearable={clearable}
         />
         <Date
           block={block}
@@ -400,6 +418,8 @@ export const FullFormExample = () => {
           value={value.date}
           onChange={handleDateChange}
           placeholder="Date"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <Month
           block={block}
@@ -407,6 +427,8 @@ export const FullFormExample = () => {
           value={value.month}
           onChange={handleMonthChange}
           placeholder="Month"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <CalendarMonth
           block={block}
@@ -414,6 +436,8 @@ export const FullFormExample = () => {
           value={value.calendarMonth}
           onChange={handleCalendarMonthChange}
           placeholder="Calendar Month"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <Datetime
           block={block}
@@ -422,6 +446,8 @@ export const FullFormExample = () => {
           onChange={handleDatetimeChange}
           datePlaceholder="Date"
           timePlaceholder="Time"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <DateRange
           block={block}
@@ -430,6 +456,8 @@ export const FullFormExample = () => {
           onChange={handleDateRangeChange}
           startPlaceholder="Start"
           endPlaceholder="End"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <DatetimeRange
           block={block}
@@ -440,6 +468,8 @@ export const FullFormExample = () => {
           startTimePlaceholder="Time"
           endDatePlaceholder="Date"
           endTimePlaceholder="Time"
+          clearable={clearable}
+          rightHang={rightHang}
         />
         <Select
           block={block}
@@ -447,6 +477,7 @@ export const FullFormExample = () => {
           value={value.select}
           options={SELECT_OPTIONS}
           onChange={handleSelectChange}
+          clearable={clearable}
         />
         <MultiSelect
           block={block}
@@ -455,6 +486,7 @@ export const FullFormExample = () => {
           options={SELECT_OPTIONS}
           onChange={handleMultiSelectChange}
           placeholder="Multi Select"
+          clearable={clearable}
         />
         <AsyncSelect
           block={block}
@@ -463,6 +495,7 @@ export const FullFormExample = () => {
           getOptions={fakeLoadResults}
           onChange={handleAsyncChange}
           placeholder="Async Select"
+          clearable={clearable}
         />
         <div style={{
           display: 'flex',

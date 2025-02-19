@@ -1,7 +1,7 @@
-import React, { forwardRef, useState, useCallback, useEffect, useRef } from 'react'
+import React, { forwardRef, useState, useCallback, useEffect, useRef, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
-import { WidgetText, BlockDiv, MonthCalendar } from 'components'
+import { WidgetText, BlockDiv, MonthCalendar, type WidgetTextRef } from 'components'
 import Calendar from '../vectors/calendar.svg'
 import { parseCalendarMonth, formatCalendarMonth, isCalendarMonthValue, CalendarMonthValue, calendarMonthInYear } from 'types'
 import type { CalendarMonthInputValue } from 'types'
@@ -9,6 +9,11 @@ import type { CalendarMonthInputValue } from 'types'
 // todo: name / required with hidden form field
 // todo: combine state into reducer
 // todo: start up/down on current value same as date
+
+export interface CalendarMonthRef {
+  focus(): void
+  element: HTMLDivElement | null
+}
 
 export interface CalendarMonthProps {
   // mireco
@@ -53,7 +58,7 @@ export interface CalendarMonthProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
+export const CalendarMonth = forwardRef<CalendarMonthRef, CalendarMonthProps>(({
   block,
   value,
   onChange,
@@ -138,16 +143,6 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
 
   const containerRef = useRef<HTMLDivElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
-    if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
-      )
-    ) {
-      // ignore internal blur
-      return
-    }
     handleBlur()
   }, [handleBlur])
 
@@ -221,7 +216,7 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
     onKeyDown,
   ])
 
-  const textRef = useRef<HTMLInputElement>()
+  const textRef = useRef<WidgetTextRef>(null)
   const handleCalendarSelect = useCallback((newValue: CalendarMonthValue) => {
     if (onChange) {
       onChange(newValue, false)
@@ -253,6 +248,16 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
     onClick,
   ])
 
+  const focus = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
+  useImperativeHandle(forwardedRef, () => ({
+    focus,
+    element: containerRef.current,
+  }), [focus])
+
   const canClear = (
     isCalendarMonthValue(value) &&
     clearable &&
@@ -260,65 +265,46 @@ export const CalendarMonth = forwardRef<HTMLDivElement, CalendarMonthProps>(({
   )
 
   return (
-    <BlockDiv
-      ref={containerRef}
-      onBlur={handleContainerBlur}
+    <WidgetText
+      ref={textRef}
       block={block}
-      className={classNames(
-        'MIRECO-calendar-month',
-        {
-          'right-hang': rightHang,
-          clearable,
-        },
-        className,
-      )}
-      style={style}
-      tabIndex={-1}
+      value={textValue}
+      icon={icon}
+      placeholder={placeholder}
+      tabIndex={tabIndex}
+      autoFocus={autoFocus}
+      disabled={disabled}
+      className={classNames('MIRECO-calendar-month', className)}
+      style={textStyle}
       id={id}
+      onClear={canClear ? handleTextClear : undefined}
+      autoComplete={autoComplete}
+      onChange={handleTextChange}
+      onFocus={handleTextFocus}
+      onBlur={onBlur}
+      onClick={handleTextClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={handleTextKeyDown}
+      onKeyUp={onKeyUp}
+      inFocus={inFocus}
+      onContainerBlur={handleContainerBlur}
     >
-      <WidgetText
-        ref={(instance: HTMLInputElement) => {
-          textRef.current = instance
-          if (typeof forwardedRef === "function") {
-            forwardedRef(instance)
-          } else if (forwardedRef !== null) {
-            // eslint-disable-next-line no-param-reassign
-            forwardedRef.current = instance
-          }
-        }}
-        block={block}
-        value={textValue}
-        icon={icon}
-        placeholder={placeholder}
-        tabIndex={tabIndex}
-        autoFocus={autoFocus}
-        disabled={disabled}
-        className={textClassName}
-        style={textStyle}
-        id={textId}
-        onClear={canClear ? handleTextClear : undefined}
-        autoComplete={autoComplete}
-        onChange={handleTextChange}
-        onFocus={handleTextFocus}
-        onBlur={onBlur}
-        onClick={handleTextClick}
-        onDoubleClick={onDoubleClick}
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
-        onMouseOut={onMouseOut}
-        onMouseOver={onMouseOver}
-        onMouseUp={onMouseUp}
-        onKeyDown={handleTextKeyDown}
-        onKeyUp={onKeyUp}
-      />
       {inFocus && calendarOpen && !disabled && (
         <MonthCalendar
           current={calendarMonthInYear(value)}
           onSelect={handleCalendarSelect}
+          className={classNames({
+            'MIRECO-right-hang': rightHang,
+          })}
         />
       )}
-    </BlockDiv>
+    </WidgetText>
   )
 })

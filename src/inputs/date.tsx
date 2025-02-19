@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, forwardRef, useMemo } 
 import classNames from 'classnames'
 import { addDays, subDays } from 'date-fns'
 
-import { DayCalendar, WidgetBlock, DateTextHandle, DateText } from 'components'
+import { DayCalendar, WidgetBlock, DateTextRef, DateText } from 'components'
 import Calendar from '../vectors/calendar.svg'
 import type { DateInputValue, DateValue, DateFormatFunction, DateParseFunction } from 'types'
 import { dateValueAsDate, dateAsDateValue } from 'types'
@@ -210,7 +210,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     increment,
   )
 
-  const textRef = useRef<DateTextHandle>(null)
+  const textRef = useRef<DateTextRef>(null)
   const handleSelectDay = useCallback((day: DateValue) => {
     if (onChange) {
       onChange(day, false)
@@ -297,7 +297,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
           selectDay={handleSelectDay}
           value={value}
           className={classNames({
-            'right-hang': rightHang,
+            'MIRECO-right-hang': rightHang,
           })}
           selected={daySelected}
         />

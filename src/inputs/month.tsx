@@ -1,7 +1,7 @@
-import React, { forwardRef, useState, useCallback, useEffect, useRef } from 'react'
+import React, { forwardRef, useState, useCallback, useEffect, useRef, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
-import { WidgetText, BlockDiv, MonthCalendar } from 'components'
+import { WidgetText, type WidgetTextRef, BlockDiv, MonthCalendar } from 'components'
 import Calendar from '../vectors/calendar.svg'
 import { parseMonth, formatMonth, isMonthValue, calendarMonthInYear, prevMonth, nextMonth, dateAsMonth } from 'types'
 import type { MonthInputValue, CalendarMonthValue } from 'types'
@@ -9,6 +9,11 @@ import type { MonthInputValue, CalendarMonthValue } from 'types'
 // todo: name / required with hidden form field
 // todo: combine state into reducer
 // todo: start up/down on current value same as date
+
+export interface MonthRef {
+  focus(): void
+  element: HTMLDivElement | null
+}
 
 export interface MonthProps {
   // mireco
@@ -25,10 +30,6 @@ export interface MonthProps {
   clearable?: boolean
   autoComplete?: string
   size?: number
-  // children specific
-  textClassName?: string
-  textStyle?: React.CSSProperties
-  textId?: string
   // html
   id?: string
   className?: string
@@ -55,7 +56,7 @@ export interface MonthProps {
   onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
 }
 
-export const Month = forwardRef<HTMLInputElement, MonthProps>(({
+export const Month = forwardRef<MonthRef, MonthProps>(({
   block,
   value,
   onChange,
@@ -76,9 +77,6 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
   clearable = true,
   autoComplete,
   size = 13,
-  textClassName,
-  textStyle,
-  textId,
   id,
   className,
   tabIndex,
@@ -146,18 +144,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
     disabled,
   ])
 
-  const containerRef = useRef<HTMLDivElement>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
-    if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
-      )
-    ) {
-      // ignore internal blur
-      return
-    }
     handleBlur()
   }, [handleBlur])
 
@@ -226,15 +213,18 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
     onKeyDown,
   ])
 
-  const textRef = useRef<HTMLInputElement>()
+  const textRef = useRef<WidgetTextRef>(null)
+  const focus = useCallback(() => {
+    if (textRef.current) {
+      textRef.current.focus()
+    }
+  }, [])
   const handleCalendarSelect = useCallback((month: CalendarMonthValue, year?: number) => {
     const useYear = typeof year !== 'undefined' ? year : (new Date()).getFullYear()
     if (onChange) {
       onChange(calendarMonthInYear(month, useYear), false)
     }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
+    focus()
     setCalendarOpen(false)
   }, [
     onChange,
@@ -244,9 +234,7 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
     if (onChange) {
       onChange(null, false)
     }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
+    focus()
   }, [
     onChange,
   ])
@@ -265,69 +253,53 @@ export const Month = forwardRef<HTMLInputElement, MonthProps>(({
     !disabled
   )
 
+  useImperativeHandle(forwardedRef, () => ({
+    focus,
+    element: textRef.current ? textRef.current.element : null,
+  }), [focus])
+
   return (
-    <BlockDiv
-      ref={containerRef}
-      onBlur={handleContainerBlur}
+    <WidgetText
+      ref={textRef}
       block={block}
-      className={classNames(
-        'MIRECO-calendar-month',
-        {
-          clearable,
-        },
-        className,
-      )}
-      style={style}
-      tabIndex={-1}
+      value={textValue}
+      icon={icon}
+      placeholder={placeholder}
+      tabIndex={tabIndex}
+      autoFocus={autoFocus}
+      disabled={disabled}
+      className={classNames('MIRECO-month', className)}
+      inFocus={inFocus}
       id={id}
+      style={style}
+      autoComplete={autoComplete}
+      size={size}
+      onClear={canClear ? handleTextClear : undefined}
+      onChange={handleTextChange}
+      onFocus={handleTextFocus}
+      onClick={handleTextClick}
+      onDoubleClick={onDoubleClick}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseOut={onMouseOut}
+      onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
+      onKeyDown={handleTextKeyDown}
+      onKeyUp={onKeyUp}
+      onContainerBlur={handleContainerBlur}
     >
-      <WidgetText
-        ref={(instance: HTMLInputElement) => {
-          textRef.current = instance
-          if (typeof forwardedRef === "function") {
-            forwardedRef(instance)
-          } else if (forwardedRef !== null) {
-            // eslint-disable-next-line no-param-reassign
-            forwardedRef.current = instance
-          }
-        }}
-        block={block}
-        value={textValue}
-        icon={icon}
-        placeholder={placeholder}
-        tabIndex={tabIndex}
-        autoFocus={autoFocus}
-        disabled={disabled}
-        className={textClassName}
-        id={textId}
-        style={textStyle}
-        autoComplete={autoComplete}
-        size={size}
-        onClear={canClear ? handleTextClear : undefined}
-        onChange={handleTextChange}
-        onFocus={handleTextFocus}
-        onClick={handleTextClick}
-        onDoubleClick={onDoubleClick}
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
-        onMouseOut={onMouseOut}
-        onMouseOver={onMouseOver}
-        onMouseUp={onMouseUp}
-        onKeyDown={handleTextKeyDown}
-        onKeyUp={onKeyUp}
-      />
       {inFocus && calendarOpen && !disabled && (
         <MonthCalendar
           current={value}
           onSelect={handleCalendarSelect}
           showYears
           className={classNames({
-            'right-hang': rightHang,
+            'MIRECO-right-hang': rightHang,
           })}
         />
       )}
-    </BlockDiv>
+    </WidgetText>
   )
 })

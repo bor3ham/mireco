@@ -52,7 +52,7 @@ export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
         'ever-clearable': everClearable,
         'clearable': clearable,
         'has-icon': !!icon,
-        'in-focus': inFocus,
+        'MIRECO-in-focus': inFocus,
         disabled,
       })}
       id={id}
