@@ -1,15 +1,9 @@
 .MIRECO-toggle-select
   display: inline-block
   padding: 0.4rem
-  background: #eee
-  border-radius: 0.15rem
+  background: var(--MIRECO-drawer-background)
+  border-radius: var(--MIRECO-edge-rounding)
 
   .MIRECO-button
     &:not(:last-child)
       margin-right: 0.5rem
-    &:not(:disabled):not(.disabled).outline.content
-      &:not(.active)
-        &:not(:hover)
-          background: none
-        &:hover
-          background: #ddd

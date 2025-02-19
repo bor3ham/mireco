@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 export const useInputKeyDownHandler = (
   controlsOpen: boolean,
@@ -45,3 +45,44 @@ export const useInputKeyDownHandler = (
   downAdjust,
   openShortcuts,
 ])
+
+type FocusHandler = () => void
+
+export function useLabelHover(id: string | undefined, focus?: FocusHandler) {
+  const [labelHovered, setLabelHovered] = useState(false)
+  const handleMouseOver = useCallback((event: MouseEvent) => {
+    if (id && event.target) {
+      const domTarget = event.target as HTMLElement
+      if (domTarget && domTarget.matches(`label[for="${id}"]`)) {
+        setLabelHovered(true)
+      }
+    }
+  }, [id])
+  const handleMouseOut = useCallback((event: MouseEvent) => {
+    if (id && event.target) {
+      const domTarget = event.target as HTMLElement
+      if (domTarget && domTarget.matches(`label[for="${id}"]`)) {
+        setLabelHovered(false)
+      }
+    }
+  }, [id])
+  const handleClick = useCallback((event: MouseEvent) => {
+    if (id && event.target && focus) {
+      const domTarget = event.target as HTMLElement
+      if (domTarget && domTarget.matches(`label[for="${id}"]`)) {
+        focus()
+      }
+    }
+  }, [id])
+  useEffect(() => {
+    document.addEventListener('mouseover', handleMouseOver)
+    document.addEventListener('mouseout', handleMouseOut)
+    document.addEventListener('click', handleClick)
+    return () => {
+      document.removeEventListener('mouseover', handleMouseOver)
+      document.removeEventListener('mouseout', handleMouseOut)
+      document.removeEventListener('click', handleClick)
+    }
+  }, [handleMouseOver, handleMouseOut])
+  return labelHovered
+}

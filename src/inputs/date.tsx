@@ -14,6 +14,7 @@ import { useInputKeyDownHandler } from 'hooks'
 export interface DateProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // date
   value?: DateInputValue
   onChange?(newValue: DateInputValue, wasBlur: boolean): void
@@ -58,6 +59,7 @@ export interface DateProps {
 
 const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   block,
+  marginless,
   value,
   onChange,
   locale,
@@ -246,10 +248,10 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     <WidgetBlock
       ref={containerRef}
       block={block}
+      marginless={marginless}
       icon={icon}
       inFocus={inFocus}
       clearable={canClear}
-      everClearable={clearable}
       onClear={handleClear}
       id={id}
       disabled={disabled}

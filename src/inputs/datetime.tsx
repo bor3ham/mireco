@@ -35,6 +35,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
 export interface DatetimeProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   rightHang?: boolean
   // datetime
   value?: DatetimeInputValue
@@ -177,6 +178,7 @@ function datetimeReducer(state: DatetimeState, action: DatetimeAction): Datetime
 
 export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   block,
+  marginless,
   rightHang,
   value,
   onChange,
@@ -507,12 +509,12 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
       className={classNames('MIRECO-datetime', className)}
       style={style}
       clearable={clearable && hasValue}
-      everClearable={clearable}
       onClear={handleClear}
       icon={icon}
       inFocus={state.inFocus}
       disabled={disabled}
       block={block}
+      marginless={marginless}
       id={id}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}

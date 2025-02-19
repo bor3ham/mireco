@@ -4,6 +4,7 @@ import classNames from 'classnames'
 export interface LabelProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // label
   htmlFor?: string
   // html
@@ -18,6 +19,7 @@ export interface LabelProps {
 
 export const Label = forwardRef<HTMLLabelElement, LabelProps>(({
   block,
+  marginless,
   htmlFor,
   id,
   className,
@@ -35,6 +37,7 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(({
       'MIRECO-label MIRECO-blockable',
       {
         'MIRECO-block': block,
+        'MIRECO-marginless': marginless,
       },
       className,
     )}

@@ -4,6 +4,7 @@ import classNames from 'classnames'
 export interface ButtonProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // button
   type?: 'submit' | 'reset' | 'button'
   hidden?: boolean
@@ -37,6 +38,7 @@ export interface ButtonProps {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   block,
+  marginless,
   type = 'submit',
   hidden = false,
   id,
@@ -70,6 +72,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
       'MIRECO-button MIRECO-blockable',
       {
         'MIRECO-block': block,
+        'MIRECO-marginless': marginless,
       },
       className,
     )}

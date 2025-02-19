@@ -10,6 +10,7 @@ declare type Style = Omit<NonNullable<React.TextareaHTMLAttributes<HTMLTextAreaE
 export interface TextareaProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // textarea
   value?: string
   onChange(newValue: string): void
@@ -47,6 +48,7 @@ export interface TextareaProps {
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   block,
+  marginless,
   value,
   onChange,
   minRows = 2,
@@ -127,6 +129,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         'MIRECO-textarea MIRECO-blockable',
         {
           'MIRECO-block': block,
+          'MIRECO-marginless': marginless,
         },
         className,
       )}

@@ -13,6 +13,7 @@ import { Select, type SelectRef } from './select'
 export interface AsyncSelectProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // async select
   value?: SelectOptionInputValue
   getOptions(searchTerm: string): Promise<SelectOption[]>
@@ -57,6 +58,7 @@ export interface AsyncSelectProps {
 
 export const AsyncSelect = forwardRef<SelectRef, AsyncSelectProps>(({
   block,
+  marginless,
   value,
   getOptions,
   onChange,
@@ -231,6 +233,7 @@ export const AsyncSelect = forwardRef<SelectRef, AsyncSelectProps>(({
     <Select
       ref={ref}
       block={block}
+      marginless={marginless}
       className={classNames(className, 'MIRECO-async-select')}
       options={basicOptions}
       value={basicValue}

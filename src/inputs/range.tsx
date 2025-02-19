@@ -6,6 +6,7 @@ import type { RangeInputValue } from 'types'
 export interface RangeProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // number
   value?: RangeInputValue
   onChange?(newValue: RangeInputValue, event: React.ChangeEvent<HTMLInputElement>): void
@@ -42,6 +43,7 @@ export interface RangeProps {
 
 export const Range = forwardRef<HTMLInputElement, RangeProps>(({
   block,
+  marginless,
   value,
   onChange,
   min = 0,
@@ -105,6 +107,7 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(({
         'MIRECO-range MIRECO-blockable',
         {
           'MIRECO-block': block,
+          'MIRECO-marginless': marginless,
         },
         className,
       )}

@@ -11,6 +11,7 @@ import { useInputKeyDownHandler } from 'hooks'
 export interface DateRangeProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   rightHang?: boolean
   // date range
   value?: DateRangeInputValue
@@ -156,6 +157,7 @@ function dateRangeReducer(state: DateRangeState, action: DateRangeAction): DateR
 
 export const DateRange: React.FC<DateRangeProps> = ({
   block,
+  marginless,
   rightHang,
   value,
   onChange,
@@ -563,8 +565,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
     <WidgetBlock
       ref={containerRef}
       block={block}
+      marginless={marginless}
       clearable={clearable && hasValue}
-      everClearable={clearable}
       onClear={handleClear}
       icon={icon}
       inFocus={state.inFocus}

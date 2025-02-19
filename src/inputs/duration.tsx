@@ -7,11 +7,10 @@ import Hourglass from '../vectors/hourglass.svg'
 import { formatDuration, parseDuration } from 'types'
 import type { DurationInputValue } from 'types'
 
-// todo: migrate from event.which
-
 export interface DurationProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // duration
   value?: DurationInputValue
   onChange?(newValue: DurationInputValue, wasBlur: boolean): void
@@ -48,6 +47,7 @@ export interface DurationProps {
 
 export const Duration = forwardRef<WidgetTextRef, DurationProps>(({
   block,
+  marginless,
   value,
   onChange,
   humaniseUnits = [
@@ -197,6 +197,7 @@ export const Duration = forwardRef<WidgetTextRef, DurationProps>(({
       id={id}
       value={textValue}
       block={block}
+      marginless={marginless}
       placeholder={placeholder}
       size={size}
       disabled={disabled}
@@ -211,7 +212,6 @@ export const Duration = forwardRef<WidgetTextRef, DurationProps>(({
       autoComplete={autoComplete}
       onChange={handleTextChange}
       onClear={(clearable && hasValue) ? handleClear : undefined}
-      everClearable={clearable}
       onFocus={onFocus}
       onBlur={handleTextBlur}
       onClick={onClick}

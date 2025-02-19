@@ -4,6 +4,7 @@ import classNames from 'classnames'
 export interface BlockDivProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // block div
   inlineDisplay?: string
   // html
@@ -30,6 +31,7 @@ export interface BlockDivProps {
 
 export const BlockDiv = forwardRef<HTMLDivElement, BlockDivProps>(({
   block,
+  marginless,
   inlineDisplay = 'inline-block',
   id,
   className,
@@ -64,6 +66,7 @@ export const BlockDiv = forwardRef<HTMLDivElement, BlockDivProps>(({
       style={combinedStyle}
       className={classNames('MIRECO-blockable', className, {
         'MIRECO-block': block,
+        'MIRECO-marginless': marginless,
       })}
       id={id}
       tabIndex={tabIndex}

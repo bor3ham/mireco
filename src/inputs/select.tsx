@@ -65,6 +65,7 @@ export interface SelectRef {
 export interface SelectProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // select
   value?: SelectInputValue
   options?: SelectOption[]
@@ -107,6 +108,7 @@ export interface SelectProps {
 
 export const Select = forwardRef<SelectRef, SelectProps>(({
   block,
+  marginless,
   value,
   options = [],
   onChange,
@@ -525,6 +527,7 @@ export const Select = forwardRef<SelectRef, SelectProps>(({
       onClick={handleTextClick}
       disabled={disabled}
       block={block}
+      marginless={marginless}
       style={style}
       autoFocus={autoFocus}
       className={classNames('MIRECO-select', className, {
@@ -533,7 +536,6 @@ export const Select = forwardRef<SelectRef, SelectProps>(({
       id={id}
       icon={icon}
       onClear={canClear ? handleClear : undefined}
-      everClearable={clearable}
       autoComplete={autoComplete}
       tabIndex={tabIndex}
       title={title}

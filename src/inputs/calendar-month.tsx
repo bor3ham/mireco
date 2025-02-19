@@ -18,6 +18,7 @@ export interface CalendarMonthRef {
 export interface CalendarMonthProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // calendar month
   value?: CalendarMonthInputValue
   onChange?(newValue: CalendarMonthInputValue, wasBlur: boolean): void
@@ -60,6 +61,7 @@ export interface CalendarMonthProps {
 
 export const CalendarMonth = forwardRef<CalendarMonthRef, CalendarMonthProps>(({
   block,
+  marginless,
   value,
   onChange,
   displayFormat = 'MMMM',
@@ -268,6 +270,7 @@ export const CalendarMonth = forwardRef<CalendarMonthRef, CalendarMonthProps>(({
     <WidgetText
       ref={textRef}
       block={block}
+      marginless={marginless}
       value={textValue}
       icon={icon}
       placeholder={placeholder}

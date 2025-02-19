@@ -1,37 +1,103 @@
-import React from 'react'
+import React, { useMemo } from 'react'
+import classNames from 'classnames'
 import { Button } from 'mireco'
+
+type ThemedButtonsProps = {
+  className?: string
+  disabled?: boolean
+}
+
+const ThemedButtons = ({
+  className,
+  disabled,
+}: ThemedButtonsProps) => {
+  const disabledSuffix = disabled ? ' (Disabled)' : ''
+  return (
+    <>
+      <Button className={className} disabled={disabled}>
+        Primary
+        {disabledSuffix}
+      </Button>
+      {' '}
+      <Button className={classNames('MIRECO-secondary', className)} disabled={disabled}>
+        Secondary
+        {disabledSuffix}
+      </Button>
+      {' '}
+      <Button className={classNames('MIRECO-content', className)} disabled={disabled}>
+        Content
+        {disabledSuffix}
+      </Button>
+      {' '}
+      <Button className={classNames('MIRECO-drawer', className)} disabled={disabled}>
+        Drawer
+        {disabledSuffix}
+      </Button>
+    </>
+  )
+}
+
+type ThemedLinksProps = {
+  className?: string
+  disabled?: boolean
+  suffix?: string
+}
+
+const ThemedLinks = ({
+  className,
+  disabled,
+  suffix,
+}: ThemedLinksProps) => {
+  const fullSuffix = useMemo(() => {
+    let s = suffix || ''
+    if (disabled) {
+      s += ' (Disabled)'
+    }
+    return s
+  }, [
+    disabled,
+    suffix,
+  ])
+  return (
+    <>
+      <a href="#" className={classNames('MIRECO-button', className, {'MIRECO-disabled': disabled})}>
+        Primary
+        {fullSuffix}
+      </a>
+      {' '}
+      <a href="#" className={classNames('MIRECO-button', 'MIRECO-secondary', className, {'MIRECO-disabled': disabled})}>
+        Secondary
+        {fullSuffix}
+      </a>
+      {' '}
+      <a href="#" className={classNames('MIRECO-button', 'MIRECO-content', className, {'MIRECO-disabled': disabled})}>
+        Content
+        {fullSuffix}
+      </a>
+      {' '}
+      <a href="#" className={classNames('MIRECO-button', 'MIRECO-drawer', className, {'MIRECO-disabled': disabled})}>
+        Drawer
+        {fullSuffix}
+      </a>
+    </>
+  )
+}
 
 export const ButtonStyleShowcase = () => (
   <>
     <p>Standard:</p>
     <p>
-      <Button>Primary</Button>
-      {' '}
-      <Button className="MIRECO-secondary">Secondary</Button>
-      {' '}
-      <Button className="MIRECO-content">Content</Button>
-      {' '}
-      <Button disabled>Disabled</Button>
+      <ThemedButtons />
     </p>
-    <p>Outlined:</p>
     <p>
-      <Button className="MIRECO-outline">Primary</Button>
-      {' '}
-      <Button className="MIRECO-secondary MIRECO-outline">Secondary</Button>
-      {' '}
-      <Button className="MIRECO-content MIRECO-outline">Content</Button>
-      {' '}
-      <Button className="MIRECO-outline" disabled>Disabled</Button>
+      <ThemedButtons disabled />
     </p>
     <p>Links with button classes:</p>
     <p>
-      <a href="#" className="MIRECO-button">Primary</a>
-      {' '}
-      <a href="#" className="MIRECO-button MIRECO-secondary">Secondary</a>
-      {' '}
-      <a href="#" className="MIRECO-button MIRECO-content">Content</a>
-      {' '}
-      <a className="MIRECO-button disabled">Disabled</a>
+      <ThemedLinks />
+    </p>
+    <p>
+      <ThemedLinks disabled />
     </p>
   </>
 )

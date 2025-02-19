@@ -206,7 +206,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverRef, AdvancedPopoverPro
               <Button
                 type="button"
                 onClick={closeShortcutsCancel}
-                className="MIRECO-content MIRECO-outline MIRECO-shortcuts"
+                className="MIRECO-content MIRECO-shortcuts"
                 tabIndex={-1}
                 title="Back"
               >
@@ -227,7 +227,7 @@ export const AdvancedPopover = forwardRef<AdvancedPopoverRef, AdvancedPopoverPro
               {hasShortcuts && (
                 <Button
                   type="button"
-                  className="MIRECO-content MIRECO-outline MIRECO-shortcuts"
+                  className="MIRECO-content MIRECO-shortcuts"
                   onClick={openShortcuts}
                   title="Shortcuts (!)"
                   tabIndex={-1}

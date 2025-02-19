@@ -8,6 +8,7 @@ import { CheckboxInput } from './checkbox-input'
 export interface CheckboxProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // checkbox
   value?: boolean
   onChange?(newValue: boolean, event: React.ChangeEvent<HTMLInputElement>): void
@@ -43,6 +44,7 @@ export interface CheckboxProps {
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({
   block,
+  marginless,
   value = false,
   onChange,
   autoComplete,
@@ -82,6 +84,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({
     title={title}
     style={style}
     block={block}
+    marginless={marginless}
     htmlFor={id}
   >
     <CheckboxInput

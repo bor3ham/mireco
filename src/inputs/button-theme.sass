@@ -16,7 +16,7 @@
   user-select: none
   text-align: center
   text-decoration: none
-  &:not(:disabled):not(.disabled)
+  &:not(:disabled):not(.MIRECO-disabled)
     cursor: pointer
 
   &:focus
@@ -25,19 +25,13 @@
   border-style: solid
   border-width: var(--MIRECO-thin-border-width)
 
-  &:not(:disabled):not(.disabled):not(.MIRECO-embedded)
+  &:not(:disabled):not(.MIRECO-disabled):not(.MIRECO-embedded)
     background: var(--MIRECO-primary-background)
     border-color: var(--MIRECO-primary-background)
     color: var(--MIRECO-primary-text)
     &:hover
       border-color: var(--MIRECO-primary-background-interact)
       background: var(--MIRECO-primary-background-interact)
-    &.MIRECO-outline
-      background: none
-      border-color: var(--MIRECO-content-primary)
-      color: var(--MIRECO-content-primary)
-      &:hover
-        background: var(--MIRECO-content-background-interact)
 
     &.MIRECO-secondary
       background: var(--MIRECO-secondary-background)
@@ -46,41 +40,26 @@
       &:hover
         background: var(--MIRECO-secondary-background-interact)
         border-color: var(--MIRECO-secondary-background-interact)
-      &.MIRECO-outline
-        background: none
-        border-color: var(--MIRECO-content-secondary)
-        color: var(--MIRECO-content-secondary)
-        &:hover
-          background: var(--MIRECO-content-background-interact)
-    
-    &.MIRECO-content
-      background: var(--MIRECO-content-background)
-      border-color: var(--MIRECO-content-edge)
-      color: var(--MIRECO-content-text)
-      &:hover
-        background: var(--MIRECO-content-background-interact)
-      &.MIRECO-outline
-        background: none
-        border-color: var(--MIRECO-content-text)
-        color: var(--MIRECO-content-text)
-        &:hover
-          background: var(--MIRECO-content-background-interact)
     
     &.MIRECO-drawer
       background: var(--MIRECO-drawer-background)
-      border-color: var(--MIRECO-content-edge)
+      border-color: var(--MIRECO-drawer-background)
       color: var(--MIRECO-drawer-text)
       &:hover
         background: var(--MIRECO-drawer-background-interact)
-      &.MIRECO-outline
-        background: none
-        border-color: var(--MIRECO-drawer-text)
-        color: var(--MIRECO-drawer-text)
-        &:hover
-          background: var(--MIRECO-drawer-background-interact)
+        border-color: var(--MIRECO-drawer-background-interact)
+
+    &.MIRECO-content
+      background: var(--MIRECO-content-background)
+      border-color: var(--MIRECO-content-background)
+      color: var(--MIRECO-content-text)
+      &:hover
+        background: var(--MIRECO-content-background-interact)
+        border-color: var(--MIRECO-content-background-interact)
   
-  &:disabled, &.disabled
+  &:disabled, &.MIRECO-disabled
     background: var(--MIRECO-form-field-background-disabled)
     color: var(--MIRECO-form-field-text)
+    cursor: default
     &:not(.MIRECO-embedded)
       border-color: var(--MIRECO-form-field-edge)

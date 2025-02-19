@@ -1,10 +1,11 @@
-import React, { useReducer, useMemo, useEffect, useRef, useCallback, forwardRef } from 'react'
+import React, { useReducer, useMemo, useEffect, useRef, useCallback } from 'react'
 import classNames from 'classnames'
 
 import { WidgetBlock, type TimeTextRef, TimeText, TimeSelector } from 'components'
 import Clock from '../vectors/clock.svg'
 import type { TimeInputValue, TimeValue, TimeFormatFunction, TimeParseFunction } from 'types'
-import { useInputKeyDownHandler } from 'hooks'
+import { useInputKeyDownHandler, useLabelHover } from 'hooks'
+import type { MirecoInputProps } from 'types/mireco'
 
 // todo: don't include hidden input without name
 // todo: add inputId prop or similar pattern
@@ -49,13 +50,16 @@ function timeReducer(state: TimeState, action: TimeAction): TimeState {
   }
 }
 
-export interface TimeProps {
-  // === Mireco
-  block?: boolean
+export type TimeRef = {
+  focus(): void
+  element: HTMLInputElement | null
+}
 
-  // === Time Input Specific
+export type TimeProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'value' | 'onChange' | 'onBlur'> & {
+  ref?: React.Ref<TimeRef>
   value?: TimeInputValue
-  onChange?(newValue: TimeInputValue, wasBlur: boolean): void
+  onChange?(newValue: TimeInputValue, wasBlur: boolean, event?: React.ChangeEvent<HTMLInputElement>): void
+  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
   locale?: string
   format?: TimeFormatFunction
   parse?: TimeParseFunction
@@ -72,47 +76,15 @@ export interface TimeProps {
   clearable?: boolean
   /** Whether to close the dropdown controls when a value is selected */
   closeOnSelect?: boolean
+} & MirecoInputProps
 
-  // === Text Input
-  placeholder?: string
-  textClassName?: string
-  textId?: string
-  size?: number
-  autoComplete?: string
-
-  // === Form
-  name?: string
-  required?: boolean
-  disabled?: boolean
-
-  // === HTML
-  id?: string
-  autoFocus?: boolean
-  tabIndex?: number
-  style?: React.CSSProperties
-  className?: string
-  title?: string
-
-  // === Event Handlers
-  onFocus?(event: React.FocusEvent<HTMLInputElement>): void
-  onBlur?(event?: React.FocusEvent<HTMLInputElement>): void
-  onClick?(event: React.MouseEvent<HTMLInputElement>): void
-  onDoubleClick?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseDown?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseEnter?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseLeave?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseMove?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseOut?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseOver?(event: React.MouseEvent<HTMLInputElement>): void
-  onMouseUp?(event: React.MouseEvent<HTMLInputElement>): void
-  onKeyDown?(event: React.KeyboardEvent<HTMLInputElement>): void
-  onKeyUp?(event: React.KeyboardEvent<HTMLInputElement>): void
-}
-
-export const Time = forwardRef<HTMLInputElement, TimeProps>(({
+export const Time = ({
   block,
+  marginless,
+  ref,
   value,
   onChange,
+  onFocus,
   locale,
   format,
   parse,
@@ -124,34 +96,14 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
   rightHang,
   clearable = true,
   closeOnSelect = true,
-  placeholder,
-  textClassName,
-  textId,
-  size,
-  autoComplete,
-  name,
-  required,
-  disabled,
+  // extract some input props to be on parent instead
   id,
-  autoFocus,
-  tabIndex,
-  style,
+  name,
   className,
-  title,
-  onFocus,
-  onBlur,
-  onClick,
-  onDoubleClick,
-  onMouseDown,
-  onMouseEnter,
-  onMouseLeave,
-  onMouseMove,
-  onMouseOut,
-  onMouseOver,
-  onMouseUp,
-  onKeyDown,
-  onKeyUp,
-}, forwardedRef) => {
+  style,
+  // rest passed through
+  ...vanillaProps
+}: TimeProps) => {
   const [state, dispatch] = useReducer(timeReducer, {
     dropdownOpen: false,
     inFocus: false,
@@ -162,23 +114,23 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     if (onChange) {
       onChange(typeof value === 'number' ? value : null, true)
     }
-    if (onBlur) {
-      onBlur(event)
+    if (vanillaProps.onBlur) {
+      vanillaProps.onBlur(event)
     }
   }, [
     value,
     onChange,
-    onBlur,
+    vanillaProps.onBlur,
   ])
 
   // respond to disabled change
   useEffect(() => {
-    if (disabled) {
+    if (vanillaProps.disabled) {
       handleBlur()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    disabled,
+    vanillaProps.disabled,
   ])
 
   const handleTextChange = useCallback((newValue: TimeInputValue) => {
@@ -210,11 +162,14 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     }
     handleBlur()
   }, [handleBlur])
-  const handleContainerClick = useCallback(() => {
+  const focus = useCallback(() => {
     if (textRef.current) {
       textRef.current.focus()
     }
   }, [])
+  const handleContainerClick = useCallback(() => {
+    focus()
+  }, [focus])
 
   const closeDropdown = useCallback(() => {
     dispatch({ type: 'close' })
@@ -270,40 +225,37 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
 
   const handleTextClick = useCallback((event: React.MouseEvent<HTMLInputElement>) => {
     dispatch({ type: 'open' })
-    if (onClick) {
-      onClick(event)
+    if (vanillaProps.onClick) {
+      vanillaProps.onClick(event)
     }
-  }, [onClick])
+  }, [vanillaProps.onClick])
   const textRef = useRef<TimeTextRef>(null)
   const handleSelect = useCallback((newValue: TimeValue, final: boolean) => {
     if (onChange) {
       onChange(newValue, false)
     }
-    if (textRef.current) {
-      textRef.current.focus()
-    }
+    focus()
     if (closeOnSelect && final) {
       dispatch({ type: 'close' })
     }
-  }, [onChange, closeOnSelect])
+  }, [onChange, focus, closeOnSelect])
   const handleClear = useCallback(() => {
-    if (disabled) {
+    if (vanillaProps.disabled) {
       return
     }
     if (onChange) {
       onChange(null, false)
-      if (textRef.current) {
-        textRef.current.focus()
-      }
+      focus()
     }
   }, [
-    disabled,
+    vanillaProps.disabled,
     onChange,
+    focus,
   ])
   const canClear = (
     typeof value === 'number' &&
     clearable &&
-    !disabled
+    !vanillaProps.disabled
   )
 
   const formValue = useMemo<string>(() => {
@@ -313,72 +265,43 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
     return ''
   }, [value])
 
-  const timeSelected = useCallback((time: TimeValue, rounding: number) => {
-    if (!value) return false
-    return value === time
-  }, [value])
+  const hovered = useLabelHover(id, focus)
 
   return (
     <WidgetBlock
       ref={containerRef}
+      id={id}
       block={block}
+      marginless={marginless}
+      className={classNames(className, 'MIRECO-time', { 'MIRECO-hover': hovered })}
       style={style}
-      className={classNames(className, 'MIRECO-time')}
       inFocus={state.inFocus}
       icon={icon}
       clearable={canClear}
-      everClearable={clearable}
-      disabled={disabled}
+      disabled={vanillaProps.disabled}
       onClear={handleClear}
       onClick={handleContainerClick}
       onBlur={handleContainerBlur}
-      onDoubleClick={onDoubleClick}
-      onMouseDown={onMouseDown}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onMouseMove={onMouseMove}
-      onMouseOut={onMouseOut}
-      onMouseOver={onMouseOver}
-      onMouseUp={onMouseUp}
       onKeyDown={handleTextKeyDown}
-      onKeyUp={onKeyUp}
-      id={id}
     >
       <TimeText
-        block
         ref={textRef}
-        id={textId}
+        {...vanillaProps}
+        block
         value={value}
         onChange={handleTextChange}
         onTextChange={handleTextTextChange}
+        onFocus={handleTextFocus}
+        onClick={handleTextClick}
         locale={locale}
         format={format}
         parse={parse}
         simplify={simplify}
         autoErase={autoErase}
-        placeholder={placeholder}
-        disabled={disabled}
-        required={required}
-        autoComplete={autoComplete}
-        className={classNames('MIRECO-embedded', textClassName)}
-        title={title}
-        autoFocus={autoFocus}
-        tabIndex={tabIndex}
-        size={size}
-        onFocus={handleTextFocus}
-        onClick={handleTextClick}
-        onDoubleClick={onDoubleClick}
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
-        onMouseOut={onMouseOut}
-        onMouseOver={onMouseOver}
-        onMouseUp={onMouseUp}
-        onKeyUp={onKeyUp}
+        className={classNames('MIRECO-embedded')} // textClassName
       />
       <input type="hidden" name={name} value={formValue} />
-      {state.inFocus && state.dropdownOpen && !disabled && (
+      {state.inFocus && state.dropdownOpen && !vanillaProps.disabled && (
         <TimeSelector
           className={classNames({
             'MIRECO-right-hang': rightHang,
@@ -389,4 +312,4 @@ export const Time = forwardRef<HTMLInputElement, TimeProps>(({
       )}
     </WidgetBlock>
   )
-})
+}

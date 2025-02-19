@@ -41,6 +41,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
 
 export interface DatetimeRangeProps {
   block?: boolean
+  marginless?: boolean
   rightHang?: boolean
   value: DatetimeRangeInputValue
   onChange(newValue: DatetimeRangeInputValue, wasBlur: boolean): void
@@ -249,6 +250,7 @@ function datetimeRangeReducer(state: DatetimeRangeState, action: DatetimeRangeAc
 
 export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   block,
+  marginless,
   rightHang,
   value,
   onChange,
@@ -1140,6 +1142,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     <WidgetBlock
       ref={containerRef}
       block={block}
+      marginless={marginless}
       className={classNames('MIRECO-datetime-range', {
         'MIRECO-end-date-showing': state.endDateShowing,
       }, className)}
@@ -1147,7 +1150,6 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
       onBlur={handleContainerBlur}
       icon={icon}
       clearable={clearable && hasValue}
-      everClearable={clearable}
       disabled={disabled}
       onClear={handleClear}
       clearButtonClassName={clearButtonClassName}

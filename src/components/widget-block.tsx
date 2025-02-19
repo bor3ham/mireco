@@ -6,7 +6,6 @@ import { ClearButton } from './clear-button'
 
 interface WidgetBlockProps extends BlockDivProps {
   clearable?: boolean
-  everClearable?: boolean
   onClear?(): void
   icon?: React.ReactNode
   inFocus?: boolean
@@ -18,13 +17,13 @@ interface WidgetBlockProps extends BlockDivProps {
 /** Wrapper to combine inputs together with an optional icon and/or clear prompt */
 export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
   clearable = false,
-  everClearable = false,
   onClear,
   icon = null,
   inFocus = false,
   disabled = false,
   children,
   block,
+  marginless,
   style,
   className,
   id,
@@ -46,10 +45,10 @@ export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
   return (
     <BlockDiv
       block={block}
+      marginless={marginless}
       ref={ref}
       style={style}
       className={classNames(className, 'MIRECO-widget-block', {
-        'ever-clearable': everClearable,
         'clearable': clearable,
         'has-icon': !!icon,
         'MIRECO-in-focus': inFocus,

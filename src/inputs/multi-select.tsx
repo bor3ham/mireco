@@ -111,6 +111,7 @@ interface MultiSelectRef {
 export interface MultiSelectProps {
   // mireco
   block?: boolean
+  marginless?: boolean
   // multi select
   value?: SelectValue[]
   options?: SelectOption[]
@@ -137,6 +138,7 @@ export interface MultiSelectProps {
 
 export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
   block,
+  marginless,
   value = [],
   options = [],
   onChange,
@@ -148,7 +150,7 @@ export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
   onTextChange,
   dropdownProps,
   autoComplete,
-  clearable,
+  clearable = true,
   id,
   style,
   className,
@@ -461,6 +463,7 @@ export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
     <WidgetBlock
       ref={containerRef}
       block={block}
+      marginless={marginless}
       className={classNames('MIRECO-multi-select', {
         'has-value': hasValue,
         'MIRECO-in-focus': state.inFocus,
@@ -472,7 +475,6 @@ export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
       tabIndex={-1}
       onClear={clearAll}
       clearable={canClear}
-      everClearable
       icon={icon}
       id={id}
     >

@@ -41,9 +41,10 @@ export const ToggleSelect: React.FC<ToggleSelectProps> = ({
             handleSelect(option.value)
           }}
           className={classNames({
-            active: option.value === value,
-          }, 'MIRECO-content MIRECO-outline')}
-          tabIndex={-1}
+            'MIRECO-active': option.value === value,
+            'MIRECO-content': option.value === value,
+            'MIRECO-drawer': option.value !== value,
+          })}
         >
           {option.label}
         </Button>

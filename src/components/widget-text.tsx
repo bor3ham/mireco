@@ -15,7 +15,6 @@ export interface WidgetTextProps extends TextProps {
   // widget text
   onClear?(): void
   icon?: React.ReactNode
-  everClearable?: boolean
   children?: React.ReactNode
   className?: string
   onContainerBlur?(event: React.FocusEvent): void
@@ -25,9 +24,9 @@ export interface WidgetTextProps extends TextProps {
 export const WidgetText = forwardRef<WidgetTextRef, WidgetTextProps>((props, forwardedRef) => {
   const {
     block,
+    marginless,
     onClear,
     icon = <Chevron className="MIRECO-chevron" />,
-    everClearable = true,
     onFocus,
     onBlur,
     children,
@@ -87,9 +86,9 @@ export const WidgetText = forwardRef<WidgetTextRef, WidgetTextProps>((props, for
     <WidgetBlock
       ref={containerRef}
       block={block}
+      marginless={marginless}
       className={classNames('MIRECO-widget-text', className)}
       clearable={clearable}
-      everClearable={everClearable}
       onClick={handleContainerClick}
       onClear={onClear}
       onBlur={handleContainerBlur}

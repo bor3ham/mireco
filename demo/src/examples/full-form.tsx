@@ -56,7 +56,7 @@ form.lab-controls {
 	--MIRECO-drawer-background-interact: rgb(49.3, 49.3, 49.3);
 	--MIRECO-drawer-text: #fff;
 	--MIRECO-content-background: #111;
-	--MIRECO-content-background-interact: rgb(32.3, 32.3, 32.3);
+	--MIRECO-content-background-interact: rgb(42.5, 42.5, 42.5);
 	--MIRECO-content-edge: #595c6a;
 	--MIRECO-content-text: #fff;
 	--MIRECO-content-text-soft: rgb(124.7367616089, 124.7367616089, 124.7367616089);
@@ -250,6 +250,10 @@ const randomFill = () => ({
 })
 
 export const FullFormExample = () => {
+  const [labelled, setLabelled] = useState(true)
+  const handleLabelledChange = useCallback((newValue: boolean) => {
+    setLabelled(newValue)
+  }, [])
   const [disabled, setDisabled] = useState(false)
   const handleDisabledChange = useCallback((newValue: boolean) => {
     setDisabled(newValue)
@@ -257,6 +261,10 @@ export const FullFormExample = () => {
   const [block, setBlock] = useState(true)
   const handleBlockChange = useCallback((newValue: boolean) => {
     setBlock(newValue)
+  }, [])
+  const [marginless, setMarginless] = useState(false)
+  const handleMarginlessChange = useCallback((newValue: boolean) => {
+    setMarginless(newValue)
   }, [])
   const [dark, setDark] = useState(false)
   const handleDarkChange = useCallback((newValue: boolean) => {
@@ -344,31 +352,54 @@ export const FullFormExample = () => {
   }, [value])
   return (
     <>
-      <Checkbox value={block} onChange={handleBlockChange}>Block</Checkbox>
-      {' '}
-      <Checkbox value={disabled} onChange={handleDisabledChange}>Disabled</Checkbox>
-      {' '}
-      <Checkbox value={dark} onChange={handleDarkChange}>Dark Mode</Checkbox>
-      {' '}
-      <Checkbox value={clearable} onChange={handleClearableChange}>Clearable Inputs</Checkbox>
-      {' '}
-      <Checkbox value={rightHang} onChange={handleRightHangChange}>Right Hang</Checkbox>
+      <div>
+        <Checkbox block value={labelled} onChange={handleLabelledChange}>Labelled</Checkbox>
+        {' '}
+        <Checkbox block value={block} onChange={handleBlockChange}>Block</Checkbox>
+        {block && (<>
+          {' '}
+          <Checkbox block value={marginless} onChange={handleMarginlessChange}>Marginless</Checkbox>
+        </>)}
+        {' '}
+        <Checkbox block value={disabled} onChange={handleDisabledChange}>Disabled</Checkbox>
+        {' '}
+        <Checkbox block value={dark} onChange={handleDarkChange}>Dark Mode</Checkbox>
+        {' '}
+        <Checkbox block value={clearable} onChange={handleClearableChange}>Clearable Inputs</Checkbox>
+        {' '}
+        <Checkbox block value={rightHang} onChange={handleRightHangChange}>Right Hang</Checkbox>
+      </div>
       <form className="lab-controls" onSubmit={handleFormSubmit} style={{
         background: dark ? '#111' : '#fff',
+        color: dark ? '#fff' : '#333',
       }}>
         {dark && (
           <style>{DARK_STYLE}</style>
         )}
+        {labelled && (
+          <label htmlFor="text">
+            Text
+          </label>
+        )}
         <Text
+          id="text"
           ref={textRef}
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.text}
           onChange={handleTextChange}
           placeholder="Text"
         />
+        {labelled && (
+          <label htmlFor="textarea">
+            Textarea
+          </label>
+        )}
         <Textarea
+          id="textarea"
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.textarea}
           onChange={handleTextareaChange}
@@ -376,27 +407,49 @@ export const FullFormExample = () => {
         />
         <Checkbox
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.checkbox}
           onChange={handleCheckboxChange}
         >
           Checkbox
         </Checkbox>
+        {labelled && (
+          <label htmlFor="number">
+            Number
+          </label>
+        )}
         <Number
+          id="number"
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.number}
           onChange={handleNumberChange}
           placeholder="Number"
         />
+        {labelled && (
+          <label htmlFor="range">
+            Range
+          </label>
+        )}
         <Range
+          id="range"
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.range}
           onChange={handleRangeChange}
         />
+        {labelled && (
+          <label htmlFor="time">
+            Time
+          </label>
+        )}
         <Time
+          id="time"
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.time}
           onChange={handleTimeChange}
@@ -404,16 +457,30 @@ export const FullFormExample = () => {
           clearable={clearable}
           rightHang={rightHang}
         />
+        {labelled && (
+          <label htmlFor="duration">
+            Duration
+          </label>
+        )}
         <Duration
+          id="duration"
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.duration}
           onChange={handleDurationChange}
           placeholder="Duration"
           clearable={clearable}
         />
+        {labelled && (
+          <label htmlFor="date">
+            Date
+          </label>
+        )}
         <Date
+          id="date"
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.date}
           onChange={handleDateChange}
@@ -423,6 +490,7 @@ export const FullFormExample = () => {
         />
         <Month
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.month}
           onChange={handleMonthChange}
@@ -432,6 +500,7 @@ export const FullFormExample = () => {
         />
         <CalendarMonth
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.calendarMonth}
           onChange={handleCalendarMonthChange}
@@ -441,6 +510,7 @@ export const FullFormExample = () => {
         />
         <Datetime
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.datetime}
           onChange={handleDatetimeChange}
@@ -451,6 +521,7 @@ export const FullFormExample = () => {
         />
         <DateRange
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.dateRange}
           onChange={handleDateRangeChange}
@@ -461,6 +532,7 @@ export const FullFormExample = () => {
         />
         <DatetimeRange
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.datetimeRange}
           onChange={handleDatetimeRangeChange}
@@ -473,6 +545,7 @@ export const FullFormExample = () => {
         />
         <Select
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.select}
           options={SELECT_OPTIONS}
@@ -481,6 +554,7 @@ export const FullFormExample = () => {
         />
         <MultiSelect
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.multiSelect}
           options={SELECT_OPTIONS}
@@ -490,6 +564,7 @@ export const FullFormExample = () => {
         />
         <AsyncSelect
           block={block}
+          marginless={marginless}
           disabled={disabled}
           value={value.asyncSelect}
           getOptions={fakeLoadResults}

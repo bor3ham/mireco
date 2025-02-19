@@ -14,9 +14,10 @@ export type TextProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChang
 } & MirecoInputProps
 
 export const Text = ({
+  block,
+  marginless,
   ref,
   onChange,
-  block,
   ...vanillaProps
 }: TextProps) => {
   const innerRef = useRef<HTMLInputElement>(null)
@@ -47,6 +48,7 @@ export const Text = ({
         'MIRECO-text MIRECO-blockable',
         {
           'MIRECO-block': block,
+          'MIRECO-marginless': marginless,
           'MIRECO-sized': !!vanillaProps.size,
         },
         vanillaProps.className,
