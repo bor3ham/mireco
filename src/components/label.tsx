@@ -1,51 +1,29 @@
-import React, { forwardRef } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 
-export interface LabelProps {
-  // mireco
-  block?: boolean
-  marginless?: boolean
-  // label
-  htmlFor?: string
-  // html
-  id?: string
-  className?: string
-  tabIndex?: number
-  title?: string
-  autoFocus?: boolean
-  style?: React.CSSProperties
-  children?: React.ReactNode
-}
+import type { MirecoLayoutProps } from 'types/mireco'
 
-export const Label = forwardRef<HTMLLabelElement, LabelProps>(({
+type LabelProps = React.HTMLProps<HTMLLabelElement> & MirecoLayoutProps
+
+export const Label = ({
   block,
   marginless,
-  htmlFor,
-  id,
-  className,
-  tabIndex,
-  title,
-  autoFocus,
-  style,
+  ref,
   children,
-}, ref) => (
+  ...vanillaProps
+}: LabelProps) => (
   <label
     ref={ref}
-    htmlFor={htmlFor}
-    id={id}
+    {...vanillaProps}
     className={classNames(
       'MIRECO-label MIRECO-blockable',
       {
         'MIRECO-block': block,
         'MIRECO-marginless': marginless,
       },
-      className,
+      vanillaProps.className,
     )}
-    tabIndex={tabIndex}
-    title={title}
-    autoFocus={autoFocus}
-    style={style}
   >
     {children}
   </label>
-))
+)

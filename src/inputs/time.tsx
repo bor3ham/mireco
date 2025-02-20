@@ -1,7 +1,7 @@
 import React, { useReducer, useMemo, useEffect, useRef, useCallback } from 'react'
 import classNames from 'classnames'
 
-import { WidgetBlock, type TimeTextRef, TimeText, TimeSelector } from 'components'
+import { WidgetBlock, type WidgetBlockRef, type TimeTextRef, TimeText, TimeSelector } from 'components'
 import Clock from '../vectors/clock.svg'
 import type { TimeInputValue, TimeValue, TimeFormatFunction, TimeParseFunction } from 'types'
 import { useInputKeyDownHandler, useLabelHover } from 'hooks'
@@ -148,13 +148,13 @@ export const Time = ({
     }
   }, [onFocus])
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<WidgetBlockRef>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
     if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
+      containerRef.current &&
+      containerRef.current.element && (
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur

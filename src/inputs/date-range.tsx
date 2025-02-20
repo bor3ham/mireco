@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { addDays, subDays, max } from 'date-fns'
 
 import type { DateRangeInputValue, DateInputValue, DateValue, DateRangeValue } from 'types'
-import { WidgetBlock, DateText, type DateTextRef, DayCalendar, TimeRangePopover, type AdvancedPopoverRef } from 'components'
+import { WidgetBlock, type WidgetBlockRef, DateText, type DateTextRef, DayCalendar, TimeRangePopover, type AdvancedPopoverRef } from 'components'
 import Calendar from '../vectors/calendar.svg'
 import { dateValueAsDate, dateAsDateValue } from 'types'
 import { useInputKeyDownHandler } from 'hooks'
@@ -377,7 +377,7 @@ export const DateRange: React.FC<DateRangeProps> = ({
     openShortcuts,
   )
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<WidgetBlockRef>(null)
   const startRef = useRef<DateTextRef>(null)
   const endRef = useRef<DateTextRef>(null)
   const focusedOnStart = state.focusInput === DateRangeInput.Start
@@ -430,9 +430,10 @@ export const DateRange: React.FC<DateRangeProps> = ({
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current &&
+      containerRef.current.element &&
       (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur

@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useReducer, useCallback, useEffect, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
-import { WidgetBlock, Dropdown, ClearButton } from 'components'
+import { type WidgetBlockRef, WidgetBlock, Dropdown, ClearButton } from 'components'
 import Chevron from '../vectors/chevron.svg'
 import {
   KEYBOARD_ARROW_DOWN,
@@ -159,7 +159,7 @@ export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
   required,
   // name,
 }, forwardedRef) => {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<WidgetBlockRef>(null)
   const textRef = useRef<TextRef>(null)
 
   const [state, dispatchState] = useReducer(multiSelectReducer, {
@@ -253,10 +253,10 @@ export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
   }, [options, value, filter])
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget)
-        || containerRef.current === event.relatedTarget
+      containerRef.current &&
+      containerRef.current.element && (
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -453,7 +453,7 @@ export const MultiSelect = forwardRef<MultiSelectRef, MultiSelectProps>(({
 
   useImperativeHandle(forwardedRef, () => ({
     focus,
-    element: containerRef.current,
+    element: containerRef.current ? containerRef.current.element : null,
   }), [focus])
 
   const filtered = getFilteredOptions(state.text)

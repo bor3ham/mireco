@@ -4,6 +4,7 @@ import classNames from 'classnames'
 
 import {
   WidgetBlock,
+  type WidgetBlockRef,
   DateText,
   TimeText,
   DayCalendar,
@@ -468,7 +469,7 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
     dispatch({ type: 'showControls' })
   }, [])
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<WidgetBlockRef>(null)
   const startDateRef = useRef<DateTextRef>(null)
   const startTimeRef = useRef<TimeTextRef>(null)
   const endDateRef = useRef<DateTextRef>(null)
@@ -574,9 +575,10 @@ export const DatetimeRange: React.FC<DatetimeRangeProps> = ({
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current &&
+      containerRef.current.element &&
       (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur

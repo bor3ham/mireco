@@ -4,6 +4,7 @@ import classNames from 'classnames'
 
 import {
   WidgetBlock,
+  type WidgetBlockRef,
   DateText,
   type DateTextRef,
   TimeText,
@@ -316,7 +317,7 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
     }
   }, [onChange, defaultDate, defaultTime])
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<WidgetBlockRef>(null)
   const dateRef = useRef<DateTextRef>(null)
   const timeRef = useRef<TimeTextRef>(null)
   const focusOnDate = useCallback(() => {
@@ -349,9 +350,10 @@ export const Datetime = forwardRef<HTMLDivElement, DatetimeProps>(({
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current &&
+      containerRef.current.element &&
       (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur

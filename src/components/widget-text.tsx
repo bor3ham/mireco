@@ -1,67 +1,67 @@
-import React, { forwardRef, useState, useCallback, useRef, useImperativeHandle } from 'react'
+import React, { useState, useCallback, useRef, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
 import { Text, type TextRef } from 'inputs'
 import type { TextProps } from 'inputs'
 import Chevron from '../vectors/chevron.svg'
-import { WidgetBlock } from './widget-block'
+import { WidgetBlock, type WidgetBlockRef } from './widget-block'
 
 export type WidgetTextRef = {
   focus(): void
   element: HTMLDivElement | null
 }
 
-export interface WidgetTextProps extends TextProps {
-  // widget text
-  onClear?(): void
+export type WidgetTextProps = Omit<TextProps, 'ref'> & {
+  ref?: React.Ref<WidgetTextRef>
   icon?: React.ReactNode
-  children?: React.ReactNode
-  className?: string
-  onContainerBlur?(event: React.FocusEvent): void
   inFocus?: boolean
+  onClear?(): void
+  onContainerBlur?(event: React.FocusEvent): void
 }
 
-export const WidgetText = forwardRef<WidgetTextRef, WidgetTextProps>((props, forwardedRef) => {
-  const {
-    block,
-    marginless,
-    onClear,
-    icon = <Chevron className="MIRECO-chevron" />,
-    onFocus,
-    onBlur,
-    children,
-    className,
-    onContainerBlur,
-    inFocus,
-    ...inputProps
-  } = props
-  const containerRef = useRef<HTMLDivElement>(null)
+export const WidgetText = ({
+  // widget text specific
+  ref,
+  icon = <Chevron className="MIRECO-chevron" />,
+  inFocus,
+  onClear,
+  onContainerBlur,
+  // parent steals some text props
+  className,
+  style,
+  block,
+  marginless,
+  children,
+  // rest are passed through
+  ...textProps
+}: WidgetTextProps) => {
+  const containerRef = useRef<WidgetBlockRef>(null)
   const textRef = useRef<TextRef>(null)
   const focus = useCallback(() => {
     if (textRef.current) {
       textRef.current.focus()
     }
   }, [])
-  useImperativeHandle(forwardedRef, () => ({
+  useImperativeHandle(ref, () => ({
     focus,
-    element: containerRef.current,
+    element: containerRef.current ? containerRef.current.element : null,
   }), [focus])
   const [innerInFocus, setInnerInFocus] = useState(false)
   const handleFocus = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInnerInFocus(true)
-    if (onFocus) {
-      onFocus(event)
+    if (textProps.onFocus) {
+      textProps.onFocus(event)
     }
   }, [
-    onFocus,
+    textProps.onFocus,
   ])
   const handleBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     setInnerInFocus(false)
-    if (onBlur) {
-      onBlur(event)
+    if (textProps.onBlur) {
+      textProps.onBlur(event)
     }
   }, [
-    onBlur,
+    textProps.onBlur,
   ])
   const clearable = !!onClear
   const handleContainerClick = useCallback(() => {
@@ -69,10 +69,10 @@ export const WidgetText = forwardRef<WidgetTextRef, WidgetTextProps>((props, for
   }, [focus])
   const handleContainerBlur = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
     if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
+      containerRef.current &&
+      containerRef.current.element && (
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur
@@ -88,18 +88,19 @@ export const WidgetText = forwardRef<WidgetTextRef, WidgetTextProps>((props, for
       block={block}
       marginless={marginless}
       className={classNames('MIRECO-widget-text', className)}
+      style={style}
       clearable={clearable}
       onClick={handleContainerClick}
       onClear={onClear}
       onBlur={handleContainerBlur}
       icon={icon}
       inFocus={typeof inFocus === 'undefined' ? innerInFocus : inFocus}
-      disabled={inputProps.disabled}
+      disabled={textProps.disabled}
     >
       <Text
         block
         ref={textRef}
-        {...inputProps}
+        {...textProps}
         onFocus={handleFocus}
         onBlur={handleBlur}
         className="MIRECO-embedded"
@@ -107,4 +108,4 @@ export const WidgetText = forwardRef<WidgetTextRef, WidgetTextProps>((props, for
       {children}
     </WidgetBlock>
   )
-})
+}

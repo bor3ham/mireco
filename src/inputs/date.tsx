@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, forwardRef, useMemo } 
 import classNames from 'classnames'
 import { addDays, subDays } from 'date-fns'
 
-import { DayCalendar, WidgetBlock, DateTextRef, DateText } from 'components'
+import { DayCalendar, WidgetBlock, type WidgetBlockRef, DateTextRef, DateText } from 'components'
 import Calendar from '../vectors/calendar.svg'
 import type { DateInputValue, DateValue, DateFormatFunction, DateParseFunction } from 'types'
 import { dateValueAsDate, dateAsDateValue } from 'types'
@@ -151,13 +151,13 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
     }
   }, [onFocus])
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<WidgetBlockRef>(null)
   const handleContainerBlur = useCallback((event: React.FocusEvent) => {
     if (
-      containerRef.current
-      && (
-        containerRef.current.contains(event.relatedTarget) ||
-        containerRef.current === event.relatedTarget
+      containerRef.current &&
+      containerRef.current.element && (
+        containerRef.current.element.contains(event.relatedTarget) ||
+        containerRef.current.element === event.relatedTarget
       )
     ) {
       // ignore internal blur

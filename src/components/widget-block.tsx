@@ -1,74 +1,57 @@
-import React, { forwardRef } from 'react'
+import React, { useRef, useImperativeHandle } from 'react'
 import classNames from 'classnames'
 
-import { BlockDiv, type BlockDivProps } from './block-div'
+import { BlockDiv } from './block-div'
 import { ClearButton } from './clear-button'
+import type { MirecoLayoutProps } from 'types/mireco'
 
-interface WidgetBlockProps extends BlockDivProps {
+export type WidgetBlockRef = {
+  element: HTMLDivElement | null
+}
+
+export type WidgetBlockProps = Omit<React.HTMLProps<HTMLDivElement>, 'ref'> & {
+  ref?: React.Ref<WidgetBlockRef>
   clearable?: boolean
   onClear?(): void
   icon?: React.ReactNode
   inFocus?: boolean
   disabled?: boolean
-  children?: React.ReactNode
   clearButtonClassName?: string
-}
+} & MirecoLayoutProps
 
 /** Wrapper to combine inputs together with an optional icon and/or clear prompt */
-export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
+export const WidgetBlock = ({
+  block,
+  marginless,
+  ref,
   clearable = false,
   onClear,
   icon = null,
   inFocus = false,
   disabled = false,
-  children,
-  block,
-  marginless,
-  style,
-  className,
-  id,
   clearButtonClassName,
-  onFocus,
-  onBlur,
-  onClick,
-  onDoubleClick,
-  onMouseDown,
-  onMouseEnter,
-  onMouseLeave,
-  onMouseMove,
-  onMouseOut,
-  onMouseOver,
-  onMouseUp,
-  onKeyDown,
-  onKeyUp,
-}, ref) => {
+  // parent steals some props
+  className,
+  children,
+  // rest are passed through
+  ...vanillaProps
+}: WidgetBlockProps) => {
+  const divRef = useRef(null)
+  useImperativeHandle(ref, () => ({
+    element: divRef.current,
+  }), [])
   return (
     <BlockDiv
+      ref={divRef}
+      {...vanillaProps}
       block={block}
       marginless={marginless}
-      ref={ref}
-      style={style}
       className={classNames(className, 'MIRECO-widget-block', {
         'clearable': clearable,
         'has-icon': !!icon,
         'MIRECO-in-focus': inFocus,
         disabled,
       })}
-      id={id}
-      tabIndex={-1}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onClick={onClick}
-      onDoubleClick={onDoubleClick}
-      onMouseDown={onMouseDown}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onMouseMove={onMouseMove}
-      onMouseOut={onMouseOut}
-      onMouseOver={onMouseOver}
-      onMouseUp={onMouseUp}
-      onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
     >
       {children}
       {clearable && !disabled && (
@@ -80,4 +63,4 @@ export const WidgetBlock = forwardRef<HTMLDivElement, WidgetBlockProps>(({
       {icon}
     </BlockDiv>
   )
-})
+}

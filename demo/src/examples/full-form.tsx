@@ -30,6 +30,7 @@ import {
   type SelectOption,
   type SelectOptionInputValue,
   AsyncSelect,
+  Label,
 } from 'mireco'
 import casual from 'casual-browserify'
 
@@ -377,9 +378,9 @@ export const FullFormExample = () => {
           <style>{DARK_STYLE}</style>
         )}
         {labelled && (
-          <label htmlFor="text">
+          <Label htmlFor="text" block={block} marginless={marginless}>
             Text
-          </label>
+          </Label>
         )}
         <Text
           id="text"
@@ -392,9 +393,9 @@ export const FullFormExample = () => {
           placeholder="Text"
         />
         {labelled && (
-          <label htmlFor="textarea">
+          <Label htmlFor="textarea" block={block} marginless={marginless}>
             Textarea
-          </label>
+          </Label>
         )}
         <Textarea
           id="textarea"
@@ -415,9 +416,9 @@ export const FullFormExample = () => {
           Checkbox
         </Checkbox>
         {labelled && (
-          <label htmlFor="number">
+          <Label htmlFor="number" block={block} marginless={marginless}>
             Number
-          </label>
+          </Label>
         )}
         <Number
           id="number"
@@ -429,9 +430,9 @@ export const FullFormExample = () => {
           placeholder="Number"
         />
         {labelled && (
-          <label htmlFor="range">
+          <Label htmlFor="range" block={block} marginless={marginless}>
             Range
-          </label>
+          </Label>
         )}
         <Range
           id="range"
@@ -442,9 +443,9 @@ export const FullFormExample = () => {
           onChange={handleRangeChange}
         />
         {labelled && (
-          <label htmlFor="time">
+          <Label htmlFor="time" block={block} marginless={marginless}>
             Time
-          </label>
+          </Label>
         )}
         <Time
           id="time"
@@ -458,9 +459,9 @@ export const FullFormExample = () => {
           rightHang={rightHang}
         />
         {labelled && (
-          <label htmlFor="duration">
+          <Label htmlFor="duration" block={block} marginless={marginless}>
             Duration
-          </label>
+          </Label>
         )}
         <Duration
           id="duration"
@@ -473,9 +474,9 @@ export const FullFormExample = () => {
           clearable={clearable}
         />
         {labelled && (
-          <label htmlFor="date">
+          <Label htmlFor="date" block={block} marginless={marginless}>
             Date
-          </label>
+          </Label>
         )}
         <Date
           id="date"
